@@ -1,0 +1,90 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Checkout Panel
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Checkout Panel</h2>
+
+The Checkout Panel is what you use to checkout a project
+from a CVS Server. Checkout is the only way to create a
+local working directory, or <i>project</i> in jCVS terminology.
+
+<h2>Access Method and Login</h2>
+Like all of the panels that allow you
+to access the CVS server, the top of the panel describes
+the access and login information. This
+<a href="../misc/cmnlogin.html">
+common access and login input area
+</a>
+determines how you access the server. You will need
+to get the information from the CVS system administrator.
+
+<h2>Checkout Parameters</h2>
+
+The checkout command requires a number of parameters to properly
+check out the source that you require. These parameters are specified
+in the text fields below the login area. These fields are detailed
+in the following table.
+
+<table border=2>
+
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>CVS Module</td>
+<td>
+This is the <i>path name</i> that identifies the CVS module
+that you wish to checkout from the server. This can be either
+a module alias, or a pathname to an actual module.
+</td>
+</tr>
+
+<tr>
+<td>CVS Server</td>
+<td>
+This is the hostname of the CVS server.
+</td>
+</tr>
+
+<tr>
+<td>CVS Repository</td>
+<td>
+This is the full path name of the repository you wish to
+access. The path is the root of the cvs repository.
+</td>
+</tr>
+
+<tr>
+<td>Checkout Directory</td>
+<td>
+This is the <b>full</b> pathname of the local checkout directory.
+The checked out files will be written to this directory. If the
+directory does not exist, it will be created after you confirm.
+</td>
+</tr>
+
+<tr>
+<td>Arguments</td>
+<td>
+Place any arguments for the CVS checkout command in this field.
+For instance, if you wish to checkout a specific revision, you
+would place the '-r rev' option in this field.
+</td>
+</tr>
+
+</table>
+
+</body>
+
+</html>

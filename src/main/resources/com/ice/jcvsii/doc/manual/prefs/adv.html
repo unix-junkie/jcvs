@@ -1,0 +1,64 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Advanced Preferences
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Advanced Preferences</h2>
+
+<dl>
+
+<dt><b>CVS Timezone</b>
+	<dd>
+	WARNING Changing this setting may cause jCVS to not work properly.
+	This is the CVS Timezone. This setting determines what timezone is
+	used to establish a zero offset from GMT. CVS uses GMT+00 for
+	all timestamp comparisons. This will affect how CVS decides if
+	files have been modified.
+	The only reason to change this setting is if your JVM does not
+	consider the timezone "GMT" as GMT+00 (which is a bug). For example
+	JVM's from Sun prior to release 1.1.4 require this setting to be "GMT+00".
+	<p>
+<dt><b>Checkout Command</b>
+	<dd>
+	The Checkout CVS command specification.
+	WARNING Changing this setting may cause checkouts to not work properly.
+	This is the CVS Command Specification string that determines the
+	way that new projects are checked out. \n\nIt is not recommended that
+	you change this setting unless you know exactly what you are doing.
+	Refer to the "CVSCommandSpec.html" documentation for further details.
+	<p>
+<dt><b>Debug CVSProject</b>
+	<dd>
+	This setting allows you to turn on extensive debugging that will
+	assist in debugging project handling. This should only be true
+	when you are interested in a log that can help debug a jCVS problem.
+	<p>
+<dt><b>Debug EntryIO</b>
+	<dd>
+	This setting allows you to turn on extensive debugging that will
+	assist in debugging CVS administration file IO. This should only be true
+	when you are interested in a log that can help debug a jCVS problem.
+	<p>
+<dt><b>Ignore Filename</b>
+	<dd>
+	The local CVS ignore filename.
+	By default, CVS reads files named '.cvsignore' for a list of files
+	that should be ignored during processing. Unfortunately, some operating
+	systems do not allow filenames to begin with a period. If you enter
+	a filename for this property, then files with that name will be checked
+	for ignore specification anytime there are found in a directory. Set this
+	to the empty string to use only '.cvsignore'.
+
+</dl>
+
+</body>
+
+</html>

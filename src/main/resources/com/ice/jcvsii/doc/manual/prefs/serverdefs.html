@@ -1,0 +1,118 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Server Definitions
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Server Definitions</h2>
+
+Server definitions allow jCVS to predefine the parameters needed to
+access a particular CVS server. The user can then select a predefined
+server definition in any of the command panels to have the server's
+information entered automatically.
+
+<p>
+JCVS includes a number of default server definitions. The user may
+also add their own server definitions by creating a server definitions
+file in their home directory (which is printed on stdout during startup
+as the 'user.home' property). This file will be named '.jcvsdef' on
+systems which use '/' as their file separator character (typically
+UNIX systems), and 'jcvsdef.txt' on all other systems including the
+MacOS and Windows.
+
+<h2>Server Definitions File Format</h2>
+
+The format of the server definitions file is based upon the Java properties
+file format. This means that all properties are defined using the 'name=value'
+syntax.
+
+<p>
+Each server definition is started by defining a property prefixed by 'server.'.
+The name that follows the prefix is considered the 'server definition name'.
+The property's value is a boolean which determines if the definition is actually
+presented to the user. Setting the value to false allows you to hide definitions
+from the user without deleting the definition. For example,
+<br><center><code>
+server.gjt=true
+</code></center>
+<br>
+defines a server definition named 'gjt', and indicates that the server
+definition should be presented to the user.
+
+<p>
+Once you define a server definition, you must then define a number of
+properties for the definition. Each property is defined using a property
+name constructed using the syntax 'param.servername.propertyname=value'.
+For example, the host property for the 'gjt' server would be defined
+using:
+<br><center><code>
+param.gjt.host=cvs.gjt.org
+</code></center>
+<br>
+
+<p>
+The following table lists the parameters that must be defined for a
+complete server definition.
+
+<dl>
+
+<dt><b>method</b>
+	<dd>
+	The connection method. Set to 'server' or 'pserver'.
+	<p>
+<dt><b>name</b>
+	<dd>
+	The displayed name of the server definition.
+	<p>
+<dt><b>module</b>
+	<dd>
+	The module name of the definition.
+	<p>
+<dt><b>host</b>
+	<dd>
+	The hostname of the CVS server.
+	<p>
+<dt><b>user</b>
+	<dd>
+	The login name for this definition.
+<dt><b>repos</b>
+	<dd>
+	The CVS repository, or root, directory.
+	<p>
+<dt><b>desc</b>
+	<dd>
+	A more complete description of the server definition.
+	<p>
+
+</dl>
+
+<h2>Example</h2>
+
+The following is an example definition which defines the CVS
+server for anonymous access of the Giant Java Tree project.
+
+<pre>
+<code>
+server.gjt=true
+param.gjt.method=pserver
+param.gjt.name=Giant Java Tree
+param.gjt.module=java
+param.gjt.host=cvs.gjt.org
+param.gjt.user=anoncvs
+param.gjt.repos=/gjt/cvsroot
+param.gjt.desc=\
+This is the root of the Giant Java Tree. \
+Use the password 'anoncvs'.
+</code>
+</pre>
+
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Action Preferences
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Action Preferences</h2>
+
+<dl>
+
+<dt><b>Use JAF</b>
+	<dd>
+	Determines whether or not the Java Activation Foundation (JAF) is used for.
+	driving the action verbs.
+	Set this preference to true if you wish to use JAF. This will cause 
+	jCVS to use JAF to drive action verbs such as open and edit. JAF
+	requires that you properly setup the mime types and mailcap files.
+	Set this preference to false if you do not wish to use JAF. This is 
+	the default, as most people do not like to setup their mime and mailcap
+	files. If you are having problems getting your file to open when you
+	double click on it, try setting this to false.
+	<p>
+<dt><b>Verb Commands</b>
+	<dd>
+	The ExecViewer's verb command map.
+	Each item in the combo box is an 'ext . verb' combination.
+	Each item has a command line and an environment string.
+	The command line is a standard argument string. The variable
+	'$FILE' will be expanded to the full pathname of the file
+	being acted upon. The variable '$CWD' will be expanded to
+	the current working directory.
+	The environment string is a string of 'key=value' environment
+	settings that will be passed into the command being exec-ed. If
+	this field is left empty, exec will be invoked with an environment
+	which will cause exec to pass in your shell environment.
+	You may define default verbs using '._DEF_.verb' definitions to
+	handle extensions \ that are not defined, or files that have no
+	extension.
+	You can handle specific files with no extention, for instance 'Makefile',
+	by defining '.Makefile.verb'.
+
+</dl>
+
+
+</body>
+
+</html>

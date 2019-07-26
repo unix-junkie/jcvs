@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+
+	<mapID target="toplevelfolder"			url="../images/toplevel.gif" />
+
+	<mapID target="top"						url="../manual/intro/index.html" />
+
+	<mapID target="intro.index"				url="../manual/intro/index.html" />
+
+	<mapID target="install.overview"		url="../manual/install/index.html" />
+	<mapID target="install.ia"				url="../manual/install/ia.html" />
+	<mapID target="install.windows"			url="../manual/install/windows.html" />
+	<mapID target="install.macos"			url="../manual/install/macos.html" />
+	<mapID target="install.unix"			url="../manual/install/unix.html" />
+
+	<mapID target="run.index"				url="../manual/run/index.html" />
+
+	<mapID target="misc.require"			url="../manual/misc/require.html" />
+
+	<mapID target="ui.index"				url="../manual/ui/index.html" />
+
+	<mapID target="ui.mw.index"				url="../manual/ui/mw/index.html" />
+	<mapID target="ui.mw.wb"				url="../manual/ui/mw/wb.html" />
+	<mapID target="ui.mw.chkout"			url="../manual/ui/mw/chkout.html" />
+	<mapID target="ui.mw.export"			url="../manual/ui/mw/export.html" />
+	<mapID target="ui.mw.import"			url="../manual/ui/mw/import.html" />
+	<mapID target="ui.mw.create"			url="../manual/ui/mw/create.html" />
+	<mapID target="ui.mw.test"				url="../manual/ui/mw/test.html" />
+	<mapID target="ui.mw.menus.index"		url="../manual/ui/mw/menus/index.html" />
+
+	<mapID target="ui.prefs.index"			url="../manual/ui/prefs/index.html" />
+	<mapID target="ui.prefs.editor"			url="../manual/ui/prefs/editor.html" />
+
+	<mapID target="ui.pw.index"				url="../manual/ui/pw/index.html" />
+	<mapID target="ui.pw.args"				url="../manual/ui/pw/args.html" />
+	<mapID target="ui.pw.files"				url="../manual/ui/pw/files.html" />
+	<mapID target="ui.pw.menus.index"		url="../manual/ui/pw/menus/index.html" />
+
+	<mapID target="ui.misc.selprj"			url="../manual/ui/misc/selectproject.html" />
+
+	<mapID target="prefs.index"				url="../manual/prefs/index.html" />
+	<mapID target="prefs.edit"				url="../manual/prefs/edit.html" />
+	<mapID target="prefs.global"			url="../manual/prefs/global.html" />
+	<mapID target="prefs.adv"				url="../manual/prefs/adv.html" />
+	<mapID target="prefs.actions"			url="../manual/prefs/actions.html" />
+	<mapID target="prefs.pw"				url="../manual/prefs/pw.html" />
+	<mapID target="prefs.wb"				url="../manual/prefs/wb.html" />
+	<mapID target="prefs.srvrdefs"			url="../manual/prefs/serverdefs.html" />
+
+	<mapID target="files.index"				url="../manual/files/index.html" />
+	<mapID target="files.rcfile"			url="../manual/files/rcfile.html" />
+	<mapID target="files.serverdefs"		url="../manual/files/serverdefs.html" />
+
+	<mapID target="terms.index"				url="../manual/terms/index.html" />
+	<mapID target="terms.module"			url="../manual/terms/module.html" />
+	<mapID target="terms.repos"				url="../manual/terms/repos.html" />
+
+</map>

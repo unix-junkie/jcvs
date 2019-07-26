@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+
+<toc version="1.0">
+
+<tocitem text="jCVS II" image="toplevelfolder">
+
+	<tocitem text="Introduction to jCVS" target="intro.index" />
+
+	<! ----------------------------------- >
+	<! ---        INSTALLATION         --- >
+	<! ----------------------------------- >
+
+	<tocitem text="jCVS Installation">
+
+		<tocitem text="Overview" target="install.overview" />
+		<tocitem text="InstallAnywhere Installation" target="install.ia" />
+		<tocitem text="Windows Installation" target="install.windows" />
+		<tocitem text="Macintosh Installation" target="install.macos" />
+		<tocitem text="UNIX Installation" target="install.unix" />
+
+	</tocitem>
+
+	<! ----------------------------------- >
+	<! ---           RUNNING           --- >
+	<! ----------------------------------- >
+
+	<tocitem text="Running jCVS" target="run.index">
+
+		<tocitem text="Overview" target="run.index" />
+		<tocitem text="Requirements" target="misc.require" />
+
+	</tocitem>
+
+	<! ----------------------------------- >
+	<! ---        USER INTERFACE       --- >
+	<! ----------------------------------- >
+
+	<tocitem text="User Interface" target="ui.index">
+
+		<tocitem text="Overview" target="ui.index" />
+
+		<tocitem text="Main Window">
+			<tocitem text="Overview" target="ui.mw.index" />
+			<tocitem text="Work Bench Panel" target="ui.mw.wb" />
+			<tocitem text="Checkout Panel" target="ui.mw.chkout" />
+			<tocitem text="Export Panel" target="ui.mw.export" />
+			<tocitem text="Import Panel" target="ui.mw.import" />
+			<tocitem text="Create Panel" target="ui.mw.create" />
+			<tocitem text="Test Panel" target="ui.mw.test" />
+			<tocitem text="Menus">
+				<tocitem text="Overview" target="ui.mw.menus.index" />
+			</tocitem>
+		</tocitem>
+
+		<tocitem text="Project Window">
+			<tocitem text="Overview" target="ui.pw.index" />
+			<tocitem text="Arguments" target="ui.pw.args" />
+			<tocitem text="Files" target="ui.pw.files" />
+			<tocitem text="Menus">
+				<tocitem text="Overview" target="ui.pw.menus.index" />
+			</tocitem>
+		</tocitem>
+
+		<tocitem text="Preferences">
+			<tocitem text="Overview" target="ui.prefs.index" />
+			<tocitem text="Preferences Editor" target="ui.prefs.editor" />
+		</tocitem>
+
+		<tocitem text="Miscellaneous">
+			<tocitem text="Selecting Projects" target="ui.misc.selprj" />
+		</tocitem>
+
+	</tocitem>
+
+	<! ----------------------------------- >
+	<! ---          PREFERENCES        --- >
+	<! ----------------------------------- >
+
+	<tocitem text="Configuring jCVS">
+
+		<tocitem text="Overview" target="prefs.index" />
+		<tocitem text="Editting" target="prefs.edit" />
+		<tocitem text="Global" target="prefs.global" />
+		<tocitem text="Actions" target="prefs.actions" />
+		<tocitem text="Advanced" target="prefs.adv" />
+		<tocitem text="Project Window" target="prefs.pw" />
+		<tocitem text="Work Bench" target="prefs.wb" />
+		<tocitem text="Server Defs" target="prefs.srvrdefs" />
+
+	</tocitem>
+
+	<! ----------------------------------- >
+	<! ---             FILES           --- >
+	<! ----------------------------------- >
+
+	<tocitem text="jCVS Files">
+
+		<tocitem text="rcfile (Prefs)" target="files.rcfile" />
+		<tocitem text="Server Definitions" target="files.serverdefs" />
+
+	</tocitem>
+
+	<! ----------------------------------- >
+	<! ---          TERMINOLOGY        --- >
+	<! ----------------------------------- >
+
+	<tocitem text="jCVS Terms">
+
+		<tocitem text="Module" target="terms.module" />
+		<tocitem text="Repository" target="terms.repos" />
+
+	</tocitem>
+
+</tocitem>
+
+</toc>

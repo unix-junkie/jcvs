@@ -1,0 +1,32 @@
+#
+# Example command map, using the MailcapCommandMap.
+#
+# for our viewers
+#
+# text/rtf;;			x-java-view=com.ice.viewer.EditorViewer
+# text/html;;			x-java-view=com.ice.viewer.EditorViewer
+# text/plain;;			x-java-view=com.ice.viewer.EditorViewer
+#
+# text/rtf;;			x-java-view=com.ice.jcvsii.Win32Viewer
+# text/html;;			x-java-view=com.ice.jcvsii.Win32Viewer
+# text/plain;;			x-java-view=com.ice.jcvsii.Win32Viewer
+#
+
+text/rtf;;				x-java-edit=com.ice.jcvsii.ExecViewer
+text/rtf;;				x-java-open=com.ice.jcvsii.ExecViewer
+
+text/html;;				x-java-edit=com.ice.jcvsii.ExecViewer
+text/html;;				x-java-open=com.ice.jcvsii.ExecViewer
+
+text/plain;;			x-java-edit=com.ice.jcvsii.ExecViewer
+text/plain;;			x-java-open=com.ice.jcvsii.ExecViewer
+
+image/*;;				x-java-edit=com.ice.jcvsii.ExecViewer
+image/*;;				x-java-open=com.ice.jcvsii.ExecViewer
+
+video/*;;				x-java-edit=com.ice.jcvsii.ExecViewer
+video/*;;				x-java-open=com.ice.jcvsii.ExecViewer
+
+#
+
+application/*;;			x-java-edit=com.ice.viewer.HexViewer

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_1_0.dtd">
+
+<index version="1.0">
+   <indexitem text="checkout panel" target="ui.mw.chkout"/>
+   <indexitem text="create panel" target="ui.mw.create"/>
+   
+   <indexitem text="export panel" target="ui.mw.export"/>
+   
+   <indexitem text="import panel" target="ui.mw.import"/>
+   
+   <indexitem text="test panel" target="ui.mw.test"/>
+   
+   <indexitem text="main window panels">
+	   <indexitem text="checkout panel" target="ui.mw.chkout"/>
+	   <indexitem text="create panel" target="ui.mw.create"/>
+	   <indexitem text="export panel" target="ui.mw.export"/>
+	   <indexitem text="import panel" target="ui.mw.import"/>
+	   <indexitem text="test panel" target="ui.mw.test"/>
+   </indexitem>
+   
+   <indexitem text="undone, see all instances of 'UNDONE'"/>
+
+</index>
+

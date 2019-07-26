@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+
+Name: "jCVS II"
+Main-Class: com.ice.jcvsii.JCVS
+Created-By: "Tim Endres <time@dotfile.com>"
+Implementation-Vendor: "com.ice"
+Implementation-Title: "jCVS II Release 5.2"
+Implementation-Version: "5.2.1"
+Class-Path: jh.jar activation.jar

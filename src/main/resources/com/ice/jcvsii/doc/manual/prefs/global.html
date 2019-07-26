@@ -1,0 +1,95 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Global Preferences
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Global Preferences</h2>
+
+Global preferences are those that apply to operations that are
+not part of another subsystem, or that apply to many instances
+of the preference throughout the application.
+
+
+<dl>
+
+<dt><b>GZIP File Mode</b>
+	<dd>
+	Whether or not GZIP compression is allowed to be used for file transfers.
+	Set this property to false if you get complaints from the server that
+	state something like "couldn't exec gzip".
+	If you are not sure if you should use this setting, leave it set to 'False'.
+	<p>
+<dt><b>GZIP Stream Level</b>
+	<dd>
+	This determines the level of compression used to compress the protocol
+	stream. The level should a value from 0 to 9. If you set the level to
+	zero, compression is disabled. If you set the level to 9, you get maximum
+	compression. Level 6 is a reasonable default if you used compression.
+	This compression is much preferrable to 'GZIP File Compression", as this
+	method compresses the entire protocol stream, not just the files transferred.
+	<p>
+<dt><b>Load Servers</b>
+	<dd>
+	Whether the default CVS server definitions should be loaded.
+	Set this to 'False' if you no longer want the default servers listed
+	with your own server definitions.
+	<p>
+<dt><b>Log File</b>
+	<dd>
+	The path of the file to use for CVSLog logging.
+	CVSLog is used for logging protocol traces and other
+	debugging information.
+	If you do not specify a path in the name, the file will
+	be created in the current directory.
+	<p>
+<dt><b>RSH Command</b>
+	<dd>
+	This setting defines the path to the rsh command.
+	If you are using jCVS under UNIX, the internal rsh implementation will not
+	work because it will no be able to create a 'priveleged' socket (512-1024).
+	If you are running on Windows or Macintosh, set this path to an empty string
+	to use jCVS's internal RSH implementation.
+	If you are running on UNIX, set this path to the location of your rsh command,
+	which is typically "/usr/bin/rsh".
+
+<dt><b>Server Commands</b>
+	<dd>
+	This setting defines the server command used to invoke the cvs program.
+	For each hostname in the first column of the table, the corresponding value
+	in the second column of the table will be used as the command used to invoke
+	the cvs program on the server.
+	Please note this only applies to the 'Server' connection method.
+	Use the hostname "DEFAULT" to define a default command for hosts that do
+	not have server commands defined explicitly.
+	<p>
+<dt><b>Temp Directory</b>
+	<dd>
+	The temporary directory used during CVS operations.
+	<p>
+<dt><b>Trace Protocol</b>
+	<dd>
+	Sets the 'global' CVS protocol tracing flags.
+	If you select 'Trace Protocol', then all CVS commands will
+	log all of the CVS protocol to your log file. This will assist
+	in efforts to debug jCVS operation.
+	<p>
+<dt><b>User Ignores</b>
+	<dd>
+	This CVS ignore specification will be added to the default CVS
+	ignore specification. For instance, Java programmers might add
+	'*.class' here to ignore compiled class files.
+
+</dl>
+
+
+</body>
+
+</html>

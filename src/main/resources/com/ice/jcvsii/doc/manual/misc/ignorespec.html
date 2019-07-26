@@ -1,0 +1,67 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Ignore Spec
+</title>
+
+</head>
+
+
+<body>
+
+<h2>CVS Ignore Spec</h2>
+
+There are many times during the operation of CVS that you
+wish to <i>ignore</i> certain files. For instance, if you
+were about to import your latest Java servlet, you would
+not wish to have the class files imported along with the
+source files.
+
+<p>
+To accomodate this problem, CVS defines <i>ignore specs</i>
+which describe files that are to be ignored. The ignore
+specs work much like the old "globbing" expressions used
+by some shells.
+
+<p>
+Ignore specs match file names, but they allow for two wildcard
+characters. The character '*' will match any number of any characters,
+and the '?' character will match any single character.
+
+<p>
+Ignore specs are separated by spaces. This is a problem for
+developers that allow spaces in their filenames.
+
+<h2>Examples</h2>
+
+Here are some examples of CVS ignore specs.
+
+<table border=1>
+
+<tr>
+<td>
+*.class *.txt *.jar
+</td>
+<td>
+This is a common ignore spec used by Java developers. It will
+ignore all class files, all JAR files, and text files. Thus,
+all of the following files would be ignored: Main.class,
+Utility.class, app.jar, notes.txt, stackTrace.txt.
+</td>
+</tr>
+
+<tr>
+<td>
+*.o *.a core *.so
+<td>
+This is a common ignore spec used by C developers. It will
+ignore all object files, library files, shared library files,
+and core files.
+</td>
+</tr>
+
+</body>
+
+</html>

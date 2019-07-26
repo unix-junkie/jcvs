@@ -1,0 +1,235 @@
+
+JCVS II - 5.2
+
+This is release 5.2.2. June 18, 2000.
+
+------------------------------------------------------------------------------
+INSTALLATION
+
+You place each of the files in the 'jars' folder on your CLASSPATH.
+
+Win32 DDE Support
+
+JCVS supports Win32 DDE via JNI for the action verbs. This is accomplished
+by using the Win32Viewer via JAF. However, most users find the ExecViewer
+interface to be easier to configure than the JAF interface. This is all
+configured under the 'Actions' area of the preferences.
+
+
+------------------------------------------------------------------------------
+COMMANDS TO START JCVS
+
+Change your current directory to the 'jars' folder in the jCVS
+distribution that you extracted. In other words, run the following
+commands from that directory.
+
+Start jCVS with Java 2 with a command such as:
+
+   java -jar jcvsii.jar
+
+This command must be run from the jars directory, or the classpath will
+not be able to locate the jar files.
+
+Start jCVS with Java 1.1 with a command such as:
+
+   CLASSPATH="./jars/jcvsii.jar;./jars/activation.jar;./jars/jh.jar;$CLASSPATH"
+   java -classpath $CLASSPATH com.ice.jcvsii.JCVS
+
+You can also put the folder 'classes' on your classpath, allong with
+the jar as in:
+
+   CLASSPATH="./classes;./jars/activation.jar;./jars/jh.jar;$CLASSPATH"
+   java -classpath $CLASSPATH com.ice.jcvsii.JCVS
+
+
+------------------------------------------------------------------------------
+BUG REPORTS
+
+Please use BugRat to report bugs.
+
+   <http://www.gjt.org/servlets/BugRatReport/SelectCat/jcvs>
+
+
+------------------------------------------------------------------------------
+DOCUMENTATION
+
+The documentation both builtin, and available for browsing with your
+web browser. To browse, start with the file 'doc/README.html'.
+
+
+------------------------------------------------------------------------------
+SIGNIFICANT FEATURE CHANGES
+
+
+This is primarily a bug fix release. The list of desired features is now
+relatively short, but each item is very time consuming.
+
+* Added support for 'java -jar jcvsii.jar' under Java 2.
+
+* Added new JavaScript examples.
+
+* Added code to check for unmanaged files when you release the project.
+  The results are now also displayed in a more informative dialog box.
+  This will make it less likely that files will be lost in releases.
+
+* Added preference to allow user to set the look and feel.
+
+* Added "Save To File" and "Copy" menu commands to the output window.
+
+* Added command to select and show all modified files.
+
+
+------------------------------------------------------------------------------
+FIXED IN THIS RELEASE
+
+* Fixed bug where a machine with multiple IP interfaces would use the
+  wrong interface to connect to the server.
+
+* Fixed bug where a trailing slash on the local directory during checkout
+  caused the project to be hosed.
+
+* Fixed NASTY bug when the user selected a directory and used the popup
+  menu and selected "Update Files". This was overwriting files that were
+  locally modified --> LOSS OF DATA. This was related to many issues and
+  was terribly difficult to fix, but I believe it is correct now. The
+  problem was one of the entries not being sent, so the server was not
+  cognizant of the files and their status.
+
+* Fixed bug that caused the ascii translation to not be canonical. This
+  was caused, actually, by a "bug" in the java.io package. The readers
+  would consider <CR><CR><NL> as a line termination, as opposed to being
+  a <CR> followed by line termination. This would cause file translation
+  to not be consistent. I had to write my own line handling code.
+
+* Fixed bug where new files added from a new directory on a branch were
+  not picking up the sticky tag of the parent directory.
+
+* Fixed the checkout panel to recognize the "-c" option so you can now
+  use that option to list the modules available.
+
+* Corrected code used to recognize the os, and not Macintosh is properly
+  recognized and appropriate config filenames are used.
+
+* Fixed "Add Multiple" to recognize that no selection means to add the
+  files at the top level.
+
+* Corrected root directory handling to work with Win32 based cvs servers.
+  The drive letter "C:" was confusing the root string parsing code.
+
+* Fixed the work bench info dialog to default the brief name so that it
+  is not accidentally left empty.
+
+* Fixed the code that save and restored the fields in the "Additional"
+  subpanel in the Import panel.
+
+* Fixed checkout, export, and update to understand the '-P' option to
+  prune empty directories from the working directory.
+
+* Fixed bug when adding a new file under a new directory, where the cvs
+  command to create the new directory did not properly set the port, 
+  causing the command to fail for RSH users.
+
+* Several cosmetic problems.
+
+
+------------------------------------------------------------------------------
+TODO
+
+* Add ability to display "unmanaged" files next to managed files.
+
+* Turn on the pretty diffs code.
+
+* Improve the JavaScript examples.
+
+* Files permissions "hook" to allow file permissions to be set
+  when this can be done via exec or other means.
+
+* Add some sort of visual queue to indicate that a file has a
+  sticky tag.
+
+* Add icon to represent mode/sticky/etc?
+
+* Add SSH support via the MindBright package. Code is written,
+  but needs to be debugged and better organized.
+
+
+------------------------------------------------------------------------------
+KNOWN PROBLEMS
+
+* The Project Window still does not properly disable controls during oprations.
+
+* The DDE code does not work properly for certain programs (Visual Cafe), and
+  launches a new app for each file open, instead of opening it in the currently
+  running app.
+
+* EBCDIC platforms do not work properly, as the default character set is
+  EBCDIC, not ASCII. User provided patch, need to apply.
+
+* If you use Java 2, and have the 'activation.jar' load automatically from
+  the extensions folder, JAF will not be able to locate the viewer classes
+  unless they are also in the extensions folder. To work around this, you
+  can copy the viewer classes into their own JAR in the extensions folder.
+  I may include this separate viewers jar in future releases.
+
+* Still not Macintosh Friendly; shorter class names, use of Mac classes to
+  get the temp dir, many other patches submitted by Mac users.
+
+* If you copy a working directory "across DST zones", the Entries timestamps will
+  no longer be in sync with the files.
+
+  This problem is very subtle. Java, Win32, and jCVS all make an effort to
+  properly manage DST and timezones. However, under Win32, it appears that some
+  programs that copy files (I have not established what), do not properly manage
+  the UTC offset during the copy. This results in the file's UTC offset being
+  modified, while the CVS/Entries timestamp remains the same. You will see files
+  that show that they are modified (red icon), but which show no diffs. If you
+  do a "status" command on these files, they should reset to their proper state.
+
+  See Microsoft's Knowledge Base:
+     <http://support.microsoft.com/support/kb/articles/q188/7/68.asp>
+  and
+     <http://support.microsoft.com/support/kb/articles/q128/1/26.asp>
+
+
+  It also appears that when Windows crosses a DST tz, the files all turn red.
+
+  Again, a status fixes the state. If you select a folder (directory) and
+  use the popup menu to select "Status Files", it will reset every file in
+  the folder. Select "Status All Files", and it will recurse down all files
+  and directories under the selected directory.
+
+
+------------------------------------------------------------------------------
+HOWTO
+
+* Configure Exec Viewer
+
+  CHANGE - You can now turn off JAF in the preferences and just configure
+           Exec Commands directly and be done with it. See the preference
+           named 'Actions.Use JAF'.
+
+  All "actions" are now driven by JAF. JAF uses a "mailcap" file to define
+  how things are "acted upon". The default mailcap in the jcvsii.jar file
+  defaults everything to 'com.ice.jcvsii.ExecViewer'. ExecViewer is a class
+  that simply invoke "System.exec()" with the environment and command line
+  that you supply via the configuration.
+
+  The configuration, which is accessed via 'Actions.Exec Commands' lets
+  you define "extension.action" commands. For example, if you wanted to
+  have vi open your java source code, you would click the "New" button
+  and enter ".java.open" (open is the default verb used when you double
+  click on a file. You can change this via 'Project Window.Double Click Verb').
+  This will put ".java.open" in the combo box, and select it. Now, enter
+  your command line in the Command text field using "$FILE" to reference the
+  file's full path name, and be sure to use double backslash if you are cursed
+  with Win32. You can enter environment also as "name=value" pairs in the
+  Environment field.
+
+* Define your own mailcap file?
+
+  jCVS, if it finds one, will read the file ~/.jcvsmailcap (~/jcvsmailcap.txt
+  for Win32 folks). Use the mailcap in the doc/examples folder for a template.
+  Win32 folks may wish to use the Win32Viewer, which uses the native DDE
+  interface to use the verbs configured via the Windows Folder Options.
+
+

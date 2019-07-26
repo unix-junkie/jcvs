@@ -1,0 +1,51 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Preferences
+</title>
+
+</head>
+
+
+<body>
+
+<h2>jCVS Preferences</h2>
+
+In order to deal with the diverse environments in which it operates,
+as well as make the UI as pleasant and efficient as possible, jCVS
+provides a large number of configurable preferences.
+
+<p>
+In previous releases of jCVS, the only way to configure these preferences
+was to edit a text file that contained Java property definitions. This
+was complicated and error prone. As of the 5.0 release of jCVS, all
+configuration can be done via the Preferences Editor GUI, with the sole
+exception of the
+<a href="../misc/serverdefs.html">
+server definitions,
+</a>
+which will get a configuration UI in a later release.
+
+<p>
+The preference configuration is stored in your
+<a href="../misc/rcfile.html">
+jCVS rc file
+</a>
+as a Java properties file. This file is written everytime jCVS exits
+so that it can remember all of your settings for the next time you
+launch. It even remembers window positions and column widths.
+
+<p>
+Another new addition in release 5.0 is <i>project preferences.</i>
+In other words, some preferences are set on a per project basis.
+In order to accomodate this, jCVS creates a preferences file in
+the 'CVS' admin directory alongside the standard CVS admin files.
+This file is named 'jcvs.txt'. It stores preferences such as the
+project's window size and location, and other preferences that
+apply specifically to a project.
+
+</body>
+
+</html>

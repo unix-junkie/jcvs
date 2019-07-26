@@ -1,0 +1,163 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Import Panel
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Import Panel</h2>
+
+The Import Panel is what you use to import a vendor export
+into the CVS repository. It is also a good way to add a
+large number of new files to a module.
+
+<h2>Access Method and Login</h2>
+Like all of the panels that allow you
+to access the CVS server, the top of the panel describes
+the access and login information. This
+<a href="../misc/cmnlogin.html">
+common access and login input area
+</a>
+determines how you access the server. You will need
+to get the information from the CVS system administrator.
+
+<h2>Connection Parameters</h2>
+
+The import command requires a number of parameters to properly
+import files properly. These parameters are specified in the
+text fields below the login area. These fields are detailed
+in the following table.
+
+<table border=2>
+
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>CVS Module</td>
+<td>
+This is the <i>path name</i> that identifies the CVS module
+that you wish to checkout from the server. This can be either
+a module alias, or a pathname to an actual module.
+</td>
+</tr>
+
+<tr>
+<td>CVS Server</td>
+<td>
+This is the hostname of the CVS server.
+</td>
+</tr>
+
+<tr>
+<td>CVS Repository</td>
+<td>
+This is the full path name of the repository you wish to
+access. The path is the root of the cvs repository.
+</td>
+</tr>
+
+<tr>
+<td>Import Directory</td>
+<td>
+This is the <b>full</b> pathname of the local import directory.
+The imported files will be read from this directory. If you
+checked the Import SubDirectories checkbox in the Additional
+panel, then all subdirectories in the subdirectories will be
+imported, as will their subdirectories.
+</td>
+</tr>
+
+<tr>
+<td>Arguments</td>
+<td>
+Place any arguments for the CVS import command in this field.
+</td>
+</tr>
+
+</table>
+
+<h2>Additional Parameters</h2>
+
+The import command allows for so many parameters, that a
+second panel was required to allow you to enter them.
+These fields are mostly text fields, which require a lot
+of screen space. These fields are detailed
+in the following table.
+
+<table border=2>
+
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>Import Subdirectories</td>
+<td>
+If checked, subdirectories will also be imported. Otherwise,
+only the files in the import directory will be imported, and
+subdirectories will be ignored.
+</td>
+</tr>
+
+<tr>
+<td>Vendor Tag</td>
+<td>
+The vendor tag that will be applied to the import branch.
+</td>
+</tr>
+
+<tr>
+<td>Release Tag</td>
+<td>
+The release tag that will be applied to the imported files.
+</td>
+</tr>
+
+<tr>
+<td>Log Message</td>
+<td>
+The log message that will be recorded with the imported
+files.
+</td>
+</tr>
+
+<tr>
+<td>Ignores</td>
+<td>
+This is a
+<a href="../../misc/ignorespec.html">
+CVS ignore spec
+</a>
+that identifies files that should be ignored and not imported.
+The specs in this field will be added to the default ignore spec.
+</td>
+</tr>
+
+<tr>
+<td>Binary Files</td>
+<td>
+This field is another "ignore spec", except that in this case
+every file that matches the spec will be treated as a BINARY
+file, and imported into the repository with the '-kb' flag.
+This allows you to check in both text and binary files in
+one operation. CVS users will recognize this as a feature
+provided by cvswrappers.
+</td>
+</tr>
+
+</table>
+
+
+</body>
+
+</html>

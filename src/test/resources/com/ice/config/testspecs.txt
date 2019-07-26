@@ -1,0 +1,79 @@
+#
+# spec.config.path.name=propertyType:propertyName:description
+#
+# Property Types:
+#
+#   string
+#   point
+#   dimension
+#   rectangle
+#   color
+#   font
+#   integer
+#   long
+#   float
+#   double
+#   boolean
+#   stringarray
+#   choice
+#   tokens
+#   tupletable
+#
+# choice.property.name.N=Choice Name
+#
+
+spec.client.misc.choice=\
+choice:misc.choice:A Choice property.
+
+choice.misc.choice.1=Choice One
+choice.misc.choice.2=Choice Two
+choice.misc.choice.3=Choice Three
+
+spec.client.misc.tokens=\
+tokens:misc.tokens:A Tokens property.
+
+spec.client.misc.people=\
+stringarray:misc.people:A String Array property.
+
+spec.client.misc.priorities=\
+tupletable:misc.priorities:A Tuple Table property of priorities.
+
+spec.client.ui.color=color:ui.color:A Color property.
+
+spec.client.ui.font=font:ui.font:A Font property.
+
+spec.client.numbers.float=\
+float:numbers.float:A Float property.
+
+spec.client.numbers.double=\
+double:numbers.double:A Double property.
+
+spec.client.numbers.long=\
+long:numbers.long:A Long property.
+
+spec.client.numbers.integer=\
+integer:numbers.integer:An Integer property.
+
+spec.client.contactDialog.quantity=\
+double:contactDialog.quantity:The quantity." );
+
+spec.client.contactDialog.origin=\
+point:contactDialog.origin:\
+The topleft corner of the dialog when displayed.
+
+spec.client.contactDialog.size=\
+dimension:contactDialog.size:\
+The width and height of the dialog \
+when it is displayed and layed out.
+
+spec.client.contactDialog.title=\
+string:contactDialog.title:The title of the Dialog window.
+
+spec.client.contactDialog.nodesc=\
+string:contactDialog.nodesc:
+
+spec.client.contactDialog.bounds=\
+rectangle:contactDialog.bounds:The bounds of the Dialog window.
+
+spec.client.contactDialog.visible=\
+boolean:contactDialog.visible:Whether or not the dialog box is visible.

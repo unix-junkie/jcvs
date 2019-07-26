@@ -1,0 +1,45 @@
+<html>
+
+<head>
+
+<title>
+jCVS - Project Window Arguments
+</title>
+
+</head>
+
+
+<body>
+
+<h2>Project Window Arguments</h2>
+
+At the top of the projct window, above the file tree, and below
+the menu bar, is a text input field in which you enter arguments
+for the CVS commands that you wish to execute.
+
+<p>
+<img src="../../../images/args.gif">
+
+<p>
+Because jCVS was designed to be configured by properties, and 
+thus did not define "fixed" commands, jCVS requires that you
+enter all arguments on the command line. A future version of
+jCVS may offer a UI that provides for fixed commands, and
+would thus provide dialogs to collect the specific arguments
+for each command.
+
+<p>
+For example, if you were running the <i>diff</i> command, you
+would need to specify the revisions that you wished to diff.
+The arguments input field is where you would enter them. Thus,
+you might enter "-r1.2 -r1.3" in the arguments field, and then
+run the 'diff' command.
+
+<p>
+Once a command is run, the arguments field is cleared so that
+you do not accidentally reuse the arguments in the next command
+that you run.
+
+</body>
+
+</html>

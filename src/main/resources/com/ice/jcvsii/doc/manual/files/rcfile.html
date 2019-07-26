@@ -1,0 +1,60 @@
+<html>
+
+<head>
+
+<title>
+jCVS - rcfile
+</title>
+
+</head>
+
+
+<body>
+
+<h2>rcfile</h2>
+
+jCVS embodies a UNIX programming tradition known as the 'rcfile'.
+Most UNIX applications would create a file in your home directory
+that contained any configuration information. The reason that it
+was called an 'rcfile' was that its name typically ended with 'rc'.
+For example, the mail program 'pine' uses the file '.pinerc', and
+procmail uses '.procmailrc'.
+
+<h2>Dot Files</h2>
+
+Dot files are files whose names start with a period, or 'dot'.
+Some operating systems, such as UNIX and Linux, allow filenames
+to begin with a dot, and their user interfaces recognize dot files
+as <i>hidden</i> files that are not displayed to the user, unless
+the user specifically requests they be displayed.
+
+<p>
+Other operating systems have other mechanisms for identifying
+hidden files; further, they use dot files to signify that the
+file has a special meaning or context. For instance, the original
+MacOS used dot files to identify drivers, and to this day does
+not allow file names to begin with a dot. On the other hand,
+Windows allows dot files, but then treats the entire file name
+as the file's <i>extension,</i> which does not accomodate the
+mechanism Windows uses to match files with an application.
+
+<p>
+Because of the above considerations, jCVS uses two different
+names for the preferences file, depending on what operating
+system you are running on. These are detailed below.
+
+<h2>UNIX (slash) Systems</h2>
+Operating systems that use the slash character, '/', as the path name
+separator character are assumed by jCVS to allow <i>dot files,</i>
+which includes UNIX systems and Linux.
+
+<p>
+On these systems, the rcfile will be named <b>'.jcvsrc'.</b>
+
+<h2>All Other Systems</h2>
+
+On all other systems, the rcfile will be named <b>'jcvsrc.txt'.</b>
+
+</body>
+
+</html>
