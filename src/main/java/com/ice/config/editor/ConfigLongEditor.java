@@ -16,12 +16,14 @@ extends		ConfigNumberEditor
 		super( "Long" );
 		}
 
+	@Override
 	public String
 	getTypeTitle()
 		{
 		return "Long";
 		}
 
+	@Override
 	public String
 	formatNumber( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -31,6 +33,7 @@ extends		ConfigNumberEditor
 		return Long.toString( num );
 		}
 
+	@Override
 	public boolean
 	isChanged( final UserPrefs prefs, final ConfigureSpec spec, final String numText )
 		{

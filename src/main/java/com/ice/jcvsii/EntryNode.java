@@ -83,6 +83,7 @@ implements	CVSEntry.ChildEventListener
 	/**
 	 * Returns the string to be used to display this leaf in the JTree.
 	 */
+	@Override
 	public String
 	toString()
 		{
@@ -187,6 +188,7 @@ implements	CVSEntry.ChildEventListener
 	 * Returns true if the receiver represents a leaf, that is it is
 	 * isn't a directory.
 	 */
+	@Override
 	public boolean
 	isLeaf()
 		{
@@ -209,6 +211,7 @@ implements	CVSEntry.ChildEventListener
      * under the store's defaultFolder
      */
 
+    @Override
     public int
 	getChildCount()
 		{

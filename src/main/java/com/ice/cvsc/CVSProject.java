@@ -3824,8 +3824,8 @@ CVSProject extends Object
 
 		if ( list != null )
 			{
-			for ( int i = 0 ; i < list.length ; ++i )
-				fileV.addElement( list[i] );
+			for ( final String element : list )
+				fileV.addElement( element );
 			}
 
 		for ( int i = 0 ; i < entries.size() ; ++i )
@@ -3990,9 +3990,9 @@ CVSProject extends Object
 						final File cvsDir = new File( rootDir, "CVS" );
 
 						files = cvsDir.list();
-						for ( int c = 0 ; c < files.length ; ++c )
+						for ( final String file : files )
 							{
-							final File dFile = new File( cvsDir, files[c] );
+							final File dFile = new File( cvsDir, file );
 							dFile.delete();
 							}
 
@@ -4021,9 +4021,9 @@ CVSProject extends Object
 
 			if ( files != null )
 				{
-				for ( int i = 0 ; i < files.length ; ++i )
+				for ( final String file : files )
 					{
-					final File f = new File( eFile, files[i] );
+					final File f = new File( eFile, file );
 					if ( f.exists() )
 						{
 						this.descendAndDelete( f );
@@ -4885,6 +4885,7 @@ CVSProject extends Object
 			super( in );
 			}
 
+		@Override
 		public String
 		readLine()
 			{
@@ -4955,6 +4956,7 @@ CVSProject extends Object
 	//
 
 
+	@Override
 	public String
 	toString()
 		{

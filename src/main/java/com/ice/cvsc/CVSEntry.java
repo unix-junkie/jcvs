@@ -1167,6 +1167,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		return result.toString();
 		}
 
+	@Override
 	public String
 	toString()
 		{

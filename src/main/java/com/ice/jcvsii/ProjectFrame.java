@@ -176,10 +176,12 @@ implements	ActionListener, CVSUserInterface
 			(
 			new WindowAdapter()
 				{
+				@Override
 				public void
 					windowClosing( final WindowEvent e )
 						{ dispose(); }
 
+				@Override
 				public void
 					windowClosed( final WindowEvent e )
 						{ windowBeingClosed(); }
@@ -517,9 +519,8 @@ implements	ActionListener, CVSUserInterface
 			final TreePath[] selPaths = this.entryPanel.getSelectionPaths();
 			if ( selPaths != null )
 				{
-				for ( int nIdx = 0 ; nIdx < selPaths.length ; ++nIdx )
+				for ( final TreePath selPath : selPaths )
 					{
-					final TreePath selPath = selPaths[ nIdx ];
 					final EntryNode node = (EntryNode)
 						selPath.getLastPathComponent();
 					if ( ! node.isLeaf() )
@@ -535,9 +536,8 @@ implements	ActionListener, CVSUserInterface
 			final TreePath[] selPaths = this.entryPanel.getSelectionPaths();
 			if ( selPaths != null )
 				{
-				for ( int nIdx = 0 ; nIdx < selPaths.length ; ++nIdx )
+				for ( final TreePath selPath : selPaths )
 					{
-					final TreePath selPath = selPaths[ nIdx ];
 					final EntryNode node = (EntryNode)
 						selPath.getLastPathComponent();
 					if ( ! node.isLeaf() )
@@ -1544,10 +1544,10 @@ CVSTracer.traceIf( true,
 
 		if ( selPaths != null )
 			{
-			for ( int i = 0 ; i < selPaths.length ; ++i )
+			for ( final TreePath selPath : selPaths )
 				{
 				final EntryNode node = (EntryNode)
-					selPaths[i].getLastPathComponent();
+					selPath.getLastPathComponent();
 
 				if ( node.isLeaf() || ! expandDirEntries )
 					{
@@ -1738,11 +1738,11 @@ CVSTracer.traceIf( true,
 
 		final CVSEntryVector result = new CVSEntryVector();
 
-		for ( int i = 0 ; i < files.length ; ++i )
+		for ( final String file : files )
 			{
 			final CVSEntry entry =
 				this.createAddFileEntry
-					( files[i], entryLocal, entryRepos );
+					( file, entryLocal, entryRepos );
 			result.appendEntry( entry );
 			}
 
@@ -1989,6 +1989,7 @@ CVSTracer.traceIf( true,
 			final Icon eraserIcon = new ImageIcon( iEraser );
 			eraserButton = new JButton( eraserIcon )
 				{
+				@Override
 				public boolean isFocusTraversable() { return false; }
 				};
 			eraserButton.setOpaque( false );
@@ -2658,12 +2659,12 @@ CVSTracer.traceIf( true,
 					else if ( dialog.isDeleteAction() )
 						{
 						// this deletes selected files
-						for ( int i = 0 ; i < array.length ; i++ )
+						for ( final File element : array )
 							{
-							if ( array[i].delete() )
+							if ( element.delete() )
 								{
 								final String msg =
-									"File "+array[i].getAbsolutePath()+" deleted.";
+									"File "+element.getAbsolutePath()+" deleted.";
 
 								this.showFeedback( msg );
 								}
@@ -2671,7 +2672,7 @@ CVSTracer.traceIf( true,
 								{
 								final String msg =
 									"Failed to delete file "
-									+ array[i].getAbsolutePath() + ".";
+									+ element.getAbsolutePath() + ".";
 
 								this.showFeedback( msg );
 								}
@@ -2684,9 +2685,9 @@ CVSTracer.traceIf( true,
 						{
 						final CVSEntryVector entries = new CVSEntryVector();
 
-						for ( int i=0 ; i < array.length ; i++ )
+						for ( final File element : array )
 							{
-							final CVSEntry tempEntry = this.toCVSEntry( array[i] );
+							final CVSEntry tempEntry = this.toCVSEntry( element );
 							if ( tempEntry != null )
 								{
 								entries.appendEntry( tempEntry );
@@ -2778,9 +2779,9 @@ CVSTracer.traceIf( true,
 						}
 					else
 						{
-						for ( int i = 0 ; i < array.length ; i++ )
+						for ( final File element : array )
 							{
-							final String path = array[i].getPath();
+							final String path = element.getPath();
 							if ( CVSCUtilities.isSubpathInPath( root, path ) )
 								{
 								String dirPath = path.substring( root.length() );

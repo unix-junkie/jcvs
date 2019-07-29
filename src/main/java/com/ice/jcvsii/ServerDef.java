@@ -50,6 +50,7 @@ class		ServerDef
 		this.desc = desc;
 		}
 
+	@Override
 	public String
 	toString()
 		{

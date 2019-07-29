@@ -1,6 +1,7 @@
 
 package com.ice.config.editor;
 
+import java.util.List;
 import java.util.Vector;
 
 import com.ice.config.ConfigureSpec;
@@ -18,36 +19,38 @@ extends		ConfigArrayEditor
 		super( "Tokens" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		final String[] tokes = prefs.getTokens( spec.getPropertyName(), null );
+		final String[] tokens = prefs.getTokens( spec.getPropertyName(), null );
 
-		if ( tokes != null )
+		if ( tokens != null )
 			{
-			final Vector v = new Vector();
-			for ( int i = 0 ; i < tokes.length ; ++i )
-				v.addElement( tokes[i] );
+			final List<String> v = new Vector<String>();
+			for ( final String token : tokens)
+				v.add( token );
 			this.model.setData( v );
 			}
 		else
 			{
-			this.model.setData( new Vector() );
+			this.model.setData( new Vector<String>() );
 			}
 
 		this.table.sizeColumnsToFit( -1 );
 		this.table.repaint( 100 );
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		final Vector vTokes = this.model.getData();
-		final String[] tokes = new String[ vTokes.size() ];
-		vTokes.copyInto( tokes );
-		prefs.setTokens( spec.getPropertyName(), tokes );
+		final List<String> vTokens = this.model.getData();
+		final String[] tokens = new String[ vTokens.size() ];
+		vTokens.toArray( tokens );
+		prefs.setTokens( spec.getPropertyName(), tokens );
 		}
 
 	}

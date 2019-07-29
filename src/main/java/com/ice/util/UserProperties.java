@@ -636,8 +636,8 @@ UserProperties
 		if ( sa != null )
 			{
 			result = new Vector();
-			for ( int s = 0 ; s < sa.length ; ++s )
-				result.addElement( sa[s] );
+			for ( final String element : sa )
+				result.addElement( element );
 			}
 
 		return result;
@@ -1100,10 +1100,8 @@ UserProperties
 			final String[] dynList =
 				StringUtilities.splitString( dynPropList, ":" );
 
-			for ( int sIdx = 0 ; sIdx < dynList.length ; ++sIdx )
+			for ( final String dynName : dynList )
 				{
-				final String dynName = dynList[sIdx];
-
 				final String pathPropName =
 					"global.dynamicPropFile." + dynName;
 

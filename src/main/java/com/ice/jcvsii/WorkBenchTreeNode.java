@@ -17,6 +17,7 @@ extends		DefaultMutableTreeNode
 		super( def );
 		}
 
+	@Override
 	public String
 	toString()
 		{
@@ -29,6 +30,7 @@ extends		DefaultMutableTreeNode
 		return (WorkBenchDefinition) getUserObject();
 		}
 
+	@Override
 	public boolean
 	isLeaf()
 		{

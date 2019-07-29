@@ -151,6 +151,7 @@ extends		DefaultTableColumnModel
 	 * "error" seemed to increase with the number of columns.
 	 */
 
+	@Override
 	public int
 	getColumnIndexAtX( final int x )
 		{
@@ -177,6 +178,7 @@ extends		DefaultTableColumnModel
 	 * "error" seemed to increase with the number of columns.
 	 */
 
+	@Override
 	public int
 	getTotalColumnWidth()
 		{

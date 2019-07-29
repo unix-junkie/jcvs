@@ -48,6 +48,7 @@ implements	FocusListener, ActionListener
 		super( "RGB Color" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -70,6 +71,7 @@ implements	FocusListener, ActionListener
 			}
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -110,6 +112,7 @@ implements	FocusListener, ActionListener
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -167,6 +170,7 @@ implements	FocusListener, ActionListener
 		this.computeColor();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{
@@ -221,6 +225,7 @@ implements	FocusListener, ActionListener
 
 		this.bField = new JTextField( "0" )
 			{
+			@Override
 			public Component
 			getNextFocusableComponent()
 				{ return rField; }

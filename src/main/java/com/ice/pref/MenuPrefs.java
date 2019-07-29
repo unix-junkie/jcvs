@@ -79,10 +79,10 @@ extends		Object
 
 		if ( itemList != null )
 			{
-			for ( int iIdx = 0 ; iIdx < itemList.length ; ++iIdx )
+			for ( final String item : itemList )
 				{
 				itemNameStr =
-					"item." + menuPropertyName + "." + itemList[iIdx];
+					"item." + menuPropertyName + "." + item;
 
 				itemString =
 					prefs.getProperty( itemNameStr, null );
@@ -124,7 +124,7 @@ extends		Object
 							final JMenu subMenu = new JMenu( title );
 
 							final String subMenuName =
-								menuPropertyName + "." + itemList[iIdx];
+								menuPropertyName + "." + item;
 
 							MenuPrefs.addMenuItems
 								( prefs, subMenu, subMenuName, listener );

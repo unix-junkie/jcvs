@@ -85,6 +85,7 @@ implements	ActionListener
 		this.addWindowListener(
 			new WindowAdapter()
 				{
+				@Override
 				public void
 				windowClosing( final WindowEvent e )
 					{ app.performShutDown(); }

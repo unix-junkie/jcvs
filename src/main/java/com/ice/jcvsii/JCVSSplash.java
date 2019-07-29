@@ -145,8 +145,10 @@ implements	KeyListener, MouseListener, ActionListener
 		this.addWindowListener(
 			new WindowAdapter()
 				{
+				@Override
 				public void windowClosing( final WindowEvent e )
 					{ dispose(); System.exit(0); }
+				@Override
 				public void windowClosed( final WindowEvent e )
 					{ }
 				}
@@ -217,6 +219,7 @@ implements	KeyListener, MouseListener, ActionListener
 		splash.addWindowListener
 			( new WindowAdapter()
 				{
+				@Override
 				public void windowClosed( final WindowEvent e )
 					{ System.exit(0); }
 				}
@@ -240,6 +243,7 @@ implements	KeyListener, MouseListener, ActionListener
 			this.model = m;
 			}
 
+		@Override
 		public void
 		run()
 			{

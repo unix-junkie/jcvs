@@ -468,9 +468,9 @@ implements	ConfigConstants, PropertyChangeListener
 			PLAF_LOOK_AND_FEEL_CLASSNAME
 			};
 
-		for ( int i = 0 ; i < subs.length ; ++i )
+		for ( final String sub : subs )
 			{
-			this.userPrefs.addPropertyChangeListener( subs[i], this );
+			this.userPrefs.addPropertyChangeListener( sub, this );
 			}
 		}
 

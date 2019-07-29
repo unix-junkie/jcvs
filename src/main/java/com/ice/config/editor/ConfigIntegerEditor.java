@@ -16,12 +16,14 @@ extends		ConfigNumberEditor
 		super( "Integer" );
 		}
 
+	@Override
 	public String
 	getTypeTitle()
 		{
 		return "Integer";
 		}
 
+	@Override
 	public String
 	formatNumber( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -31,6 +33,7 @@ extends		ConfigNumberEditor
 		return Integer.toString( num );
 		}
 
+	@Override
 	public boolean
 	isChanged( final UserPrefs prefs, final ConfigureSpec spec, final String numText )
 		{

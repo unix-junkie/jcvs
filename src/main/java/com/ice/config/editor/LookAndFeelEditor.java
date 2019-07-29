@@ -31,6 +31,7 @@ extends		ConfigureEditor
 		super( "Look And Feel Class" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -73,6 +74,7 @@ extends		ConfigureEditor
 		this.radioPanel.repaint( 250 );
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -91,11 +93,13 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

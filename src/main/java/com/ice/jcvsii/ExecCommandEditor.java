@@ -47,6 +47,7 @@ implements	ActionListener, ItemListener
 		this.descOffset = 10;
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -63,6 +64,7 @@ implements	ActionListener, ItemListener
 		this.validate();
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -73,6 +75,7 @@ implements	ActionListener, ItemListener
 		}
 
 	// REVIEW I'll bet we can think of a way to move this up a level...
+	@Override
 	public void
 	commitChanges( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
@@ -91,6 +94,7 @@ implements	ActionListener, ItemListener
 		Config.getInstance().loadExecCmdDefinitions();
 		}
 
+	@Override
 	public boolean
 	isModified( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
@@ -117,6 +121,7 @@ implements	ActionListener, ItemListener
 		return false;
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -256,6 +261,7 @@ implements	ActionListener, ItemListener
 			}
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

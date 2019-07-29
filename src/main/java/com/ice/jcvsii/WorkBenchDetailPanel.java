@@ -359,6 +359,7 @@ implements	ActionListener, PropertyChangeListener
 		this.descText =
 			new JTextArea()
 				{
+				@Override
 				public boolean isFocusTraversable() { return false; }
 				};
 

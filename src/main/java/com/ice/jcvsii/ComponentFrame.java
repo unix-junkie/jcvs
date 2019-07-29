@@ -119,6 +119,7 @@ ComponentFrame extends Frame
 	class
 	WinClose extends WindowAdapter
 		{
+		@Override
 		public void windowClosing( final WindowEvent e )
 			{
 			saveLayoutProperties();

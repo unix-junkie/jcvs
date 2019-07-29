@@ -30,6 +30,7 @@ extends		ConfigureEditor
 		super( "Point" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -50,6 +51,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -73,6 +75,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -80,6 +83,7 @@ extends		ConfigureEditor
 		this.xField.selectAll();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

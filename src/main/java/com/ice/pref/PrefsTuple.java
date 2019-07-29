@@ -107,6 +107,7 @@ class		PrefsTuple
 			this.values == null ? 0 : this.values.length;
 		}
 
+	@Override
 	public String
 	toString()
 		{

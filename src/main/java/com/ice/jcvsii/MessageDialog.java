@@ -78,6 +78,7 @@ implements	ActionListener
 		this.addWindowListener
 			( new WindowAdapter()
 				{
+				@Override
 				public void
 				windowActivated( final WindowEvent evt )
 					{ messageText.requestFocus(); }

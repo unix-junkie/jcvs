@@ -369,6 +369,7 @@ extends		JPanel
 			final Icon helpIcon = new ImageIcon( iHelp );
 			this.helpButton = new JButton( helpIcon )
 				{
+				@Override
 				public boolean isFocusTraversable() { return false; }
 				};
 			this.helpButton.setMargin( new Insets( 1,3,1,3 ) );

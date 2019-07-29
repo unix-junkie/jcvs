@@ -56,6 +56,7 @@ extends		ConfigTupleTableEditor
 		this.model.setData( table );
 		}
 
+	@Override
 	public void
 	insertElement()
 		{
@@ -76,6 +77,7 @@ extends		ConfigTupleTableEditor
 		this.table.repaint( 250 );
 		}
 
+	@Override
 	public void
 	appendElement()
 		{
@@ -96,6 +98,7 @@ extends		ConfigTupleTableEditor
 		this.table.repaint( 250 );
 		}
 
+	@Override
 	public void
 	deleteElement()
 		{

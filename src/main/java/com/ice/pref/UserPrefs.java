@@ -693,6 +693,7 @@ extends		Properties
 	 * @return The string value of the named property.
 	 */
 
+	@Override
 	public String
 	getProperty( final String name )
 		{
@@ -712,6 +713,7 @@ extends		Properties
 	 * @return The string value of the named property.
 	 */
 
+	@Override
 	public String
 	getProperty( final String name, final String defval )
 		{
@@ -1377,6 +1379,7 @@ extends		Properties
 	 * @return The replaced value of the property if it exists.
 	 */
 
+	@Override
 	public Object
 	setProperty( final String name, final String value )
 		{

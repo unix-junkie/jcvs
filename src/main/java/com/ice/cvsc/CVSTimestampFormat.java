@@ -117,6 +117,7 @@ CVSTimestampFormat	extends Format
 		return result;
 		}
 
+	@Override
 	public StringBuffer
 	format( final Object stamp, final StringBuffer appendTo, final FieldPosition fieldPos )
 		throws IllegalArgumentException
@@ -157,6 +158,7 @@ CVSTimestampFormat	extends Format
 		return parseTimestamp( source );
 		}
 
+	@Override
 	public Object
 	parseObject( final String source, final ParsePosition pos )
 		{

@@ -89,6 +89,7 @@ extends		UserPrefsLoader
 		this.outStream = out;
 		}
 
+	@Override
 	public void
 	loadPreferences( final UserPrefs prefs )
 		throws IOException
@@ -100,6 +101,7 @@ extends		UserPrefsLoader
 		prefs.loadProperties( this.inStream );
 		}
 
+	@Override
 	public void
 	storePreferences( final UserPrefs prefs )
 		throws IOException

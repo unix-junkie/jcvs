@@ -64,6 +64,7 @@ implements	FocusListener, ItemListener, ChangeListener
 		return new Font( name, style, size );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -87,6 +88,7 @@ implements	FocusListener, ItemListener, ChangeListener
 			}
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -112,6 +114,7 @@ implements	FocusListener, ItemListener, ChangeListener
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -163,6 +166,7 @@ implements	FocusListener, ItemListener, ChangeListener
 		this.showConfiguredFont();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{
@@ -228,6 +232,7 @@ implements	FocusListener, ItemListener, ChangeListener
 
 		this.italicCheck = new JCheckBox( "Italic" )
 			{
+			@Override
 			public Component
 			getNextFocusableComponent()
 				{ return fontName; }

@@ -552,6 +552,7 @@ implements	ActionListener, FocusListener,
 			super();
 			}
 
+		@Override
 		public void
 		mousePressed( final MouseEvent event )
 			{
@@ -583,6 +584,7 @@ implements	ActionListener, FocusListener,
 				}
 			}
 
+		@Override
 		public void
 		mouseReleased( final MouseEvent event )
 			{
@@ -615,6 +617,7 @@ implements	ActionListener, FocusListener,
 				}
 			}
 
+		@Override
 		public void
 		mouseClicked( final MouseEvent event )
 			{

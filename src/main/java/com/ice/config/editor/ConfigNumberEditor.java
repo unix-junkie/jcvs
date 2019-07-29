@@ -38,6 +38,7 @@ extends		ConfigureEditor
 	abstract public boolean
 		isChanged( UserPrefs prefs, ConfigureSpec spec, String numText );
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -45,6 +46,7 @@ extends		ConfigureEditor
 		this.numField.setText( this.formatNumber( prefs, spec ) );
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -56,6 +58,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -63,6 +66,7 @@ extends		ConfigureEditor
 		this.numField.selectAll();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

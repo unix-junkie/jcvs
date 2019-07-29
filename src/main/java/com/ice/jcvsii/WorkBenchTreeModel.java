@@ -54,9 +54,9 @@ extends		DefaultTreeModel
 			prefs.setTokens
 				( propName + ".children", this.getChildTokens( childs ) );
 
-			for ( int i = 0 ; i < childs.length ; ++i )
+			for ( final WorkBenchTreeNode child : childs )
 				{
-				this.recursiveSave( prefs, childs[i] );
+				this.recursiveSave( prefs, child );
 				}
 			}
 		}
@@ -92,10 +92,8 @@ extends		DefaultTreeModel
 		final String[] chNames =
 			prefs.getTokens( propName + ".children", new String[0] );
 
-		for ( int i = 0 ; i < chNames.length ; ++i )
+		for ( final String name : chNames )
 			{
-			final String name = chNames[i];
-
 			propName = "wb." + rootPath + "." + name;
 
 			final boolean isFolder =

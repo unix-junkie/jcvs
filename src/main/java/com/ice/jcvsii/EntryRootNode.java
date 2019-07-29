@@ -68,6 +68,7 @@ extends		EntryNode
 		this.tree = tree;
 		}
 
+	@Override
 	public String
 	toString()
 		{

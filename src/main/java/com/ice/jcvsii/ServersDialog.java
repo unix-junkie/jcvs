@@ -107,6 +107,7 @@ implements	ActionListener, ListSelectionListener
 		this.addWindowListener(
 			new WindowAdapter()
 				{
+				@Override
 				public void
 				windowActivated(final WindowEvent e)
 					{
@@ -309,6 +310,7 @@ implements	ActionListener, ListSelectionListener
 		this.descText =
 			new JTextArea()
 				{
+				@Override
 				public boolean isFocusTraversable() { return false; }
 				};
 

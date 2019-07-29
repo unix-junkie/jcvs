@@ -210,6 +210,7 @@ extends		JDialog
 	class		MyEditEventListener
 	extends		MouseAdapter
 		{
+		@Override
 		public void
 		mouseReleased( final MouseEvent e )
 			{
@@ -471,6 +472,7 @@ extends		JDialog
 		return deleted;
 		}
 
+	@Override
 	public void
 	dispose()
 		{
@@ -486,6 +488,7 @@ extends		JDialog
 		super.dispose();
 		}
 
+	@Override
 	public void
 	show()
 		{

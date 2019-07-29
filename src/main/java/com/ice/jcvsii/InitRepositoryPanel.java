@@ -81,6 +81,7 @@ implements	ActionListener, CVSUserInterface
 		this.info.loadPreferences( "initrep" );
 		}
 
+	@Override
 	public void
 	savePreferences()
 		{
@@ -461,6 +462,7 @@ implements	ActionListener, CVSUserInterface
 		this.outputText =
 			new JTextArea()
 				{
+				@Override
 				public boolean isFocusTraversable() { return false; }
 				};
 		this.outputText.setEditable( false );

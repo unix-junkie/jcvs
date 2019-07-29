@@ -155,10 +155,12 @@ implements	ActionListener, SwingConstants
 				// We do not dispose here, as these are expensize windows that
 				// we do not want to create and dispose of frequently. Only the
 				// project frame that owns us can dispose of us!
+				@Override
 				public void
 					windowClosing( final WindowEvent e )
 						{ setVisible( false ); dispose(); }
 
+				@Override
 				public void
 					windowClosed( final WindowEvent e )
 						{ windowBeingClosed(); }

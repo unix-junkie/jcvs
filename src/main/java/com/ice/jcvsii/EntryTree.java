@@ -102,6 +102,7 @@ extends		JTree
 	// related to the viewport tracks view settings in the scroll panel.
 	// Anyway, this appears to be preferred regardless here...
 
+	@Override
 	public Dimension
 	getPreferredSize()
 		{
@@ -141,6 +142,7 @@ extends		JTree
 	/**
 	 * We override setFont() so we can set the row height to match.
 	 */
+	@Override
 	public void
 	setFont( final Font f )
 		{

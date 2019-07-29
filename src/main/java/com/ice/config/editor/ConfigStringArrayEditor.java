@@ -1,6 +1,7 @@
 
 package com.ice.config.editor;
 
+import java.util.List;
 import java.util.Vector;
 
 import com.ice.config.ConfigureSpec;
@@ -18,18 +19,21 @@ extends		ConfigArrayEditor
 		super( "String Array" );
 		}
 
+	@Override
 	public boolean
 	isTupleTable( final ConfigureSpec spec )
 		{
 		return false;
 		}
 
+	@Override
 	public boolean
 	isStringArray( final ConfigureSpec spec )
 		{
 		return true;
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -50,16 +54,18 @@ extends		ConfigArrayEditor
 		this.table.repaint( 100 );
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		this.table.clearSelection();
-		final Vector vStrs = this.model.getData();
+		final List<String> vStrs = this.model.getData();
 		final String[] strs = new String[ vStrs.size() ];
-		vStrs.copyInto( strs );
+		vStrs.toArray( strs );
 		prefs.setStringArray( spec.getPropertyName(), strs );
 		}
 
+	@Override
 	public void
 	commitChanges( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{

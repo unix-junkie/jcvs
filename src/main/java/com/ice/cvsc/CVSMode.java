@@ -100,6 +100,7 @@ CVSMode extends Object
 		return result.toString();
 		}
 
+	@Override
 	public String
 	toString()
 		{

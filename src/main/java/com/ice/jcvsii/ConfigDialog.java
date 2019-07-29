@@ -116,6 +116,7 @@ implements	ActionListener
 		this.addWindowListener(
 			new WindowAdapter()
 			{
+			@Override
 			public void windowActivated( final WindowEvent evt )
 				{
 				configPan.setDividerLocation( 0.3 ); // UNDONE property this.

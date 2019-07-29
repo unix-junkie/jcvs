@@ -101,6 +101,7 @@ HexNumberFormat	extends Format
 		return hexBuf.toString();
 		}
 
+	@Override
 	public StringBuffer
 	format( final Object hexInt, final StringBuffer appendTo, final FieldPosition fieldPos )
 		throws IllegalArgumentException
@@ -133,6 +134,7 @@ HexNumberFormat	extends Format
 		throw new ParseException( "unimplemented!", 0 );
 		}
 
+	@Override
 	public Object
 	parseObject( final String source, final ParsePosition pos )
 		{

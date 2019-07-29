@@ -30,6 +30,7 @@ extends		ConfigureEditor
 		super( "Dimension" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -50,6 +51,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -74,6 +76,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -81,6 +84,7 @@ extends		ConfigureEditor
 		this.wField.selectAll();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

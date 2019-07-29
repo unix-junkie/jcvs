@@ -516,6 +516,7 @@ extends		JComponent
 		}
 
 
+    @Override
     public void
 	paint( final Graphics g )
 		{
@@ -646,6 +647,7 @@ extends		JComponent
      * Return the minimum size of the header. The minimum width is the sum
      * of the minimum widths of each column (plus inter-cell spacing).
      */
+    @Override
     public Dimension
 	getMinimumSize()
 		{
@@ -665,6 +667,7 @@ extends		JComponent
      * by the header renderers. The preferred width is the sum of the
      * preferred widths of each column (plus inter-cell spacing).
      */
+    @Override
     public Dimension
 	getPreferredSize()
 		{
@@ -682,6 +685,7 @@ extends		JComponent
      * Return the maximum size of the header. The maximum width is the sum
      * of the maximum widths of each column (plus inter-cell spacing).
      */
+    @Override
     public Dimension
 	getMaximumSize()
 		{
@@ -737,6 +741,7 @@ extends		JComponent
 		return new Rectangle();
 		}
 
+	@Override
 	public Point
 	getLocationOnScreen()
 		{
@@ -755,6 +760,7 @@ extends		JComponent
 			}
 		}
 
+	@Override
 	public boolean
 	isFocusTraversable()
 		{

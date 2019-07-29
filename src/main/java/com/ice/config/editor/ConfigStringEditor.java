@@ -28,6 +28,7 @@ extends		ConfigureEditor
 		super( "String" );
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -35,6 +36,7 @@ extends		ConfigureEditor
 		this.strField.selectAll();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{
@@ -56,6 +58,7 @@ extends		ConfigureEditor
 		return result;
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -74,6 +77,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{

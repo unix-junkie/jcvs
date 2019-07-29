@@ -25,6 +25,7 @@ extends		ConfigureEditor
 		super( "Combo" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -49,6 +50,7 @@ extends		ConfigureEditor
 		this.comboPanel.repaint( 250 );
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -60,11 +62,13 @@ extends		ConfigureEditor
 		prefs.setProperty( propName, newChoice );
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

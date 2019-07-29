@@ -49,6 +49,7 @@ implements	CVSUserInterface
 			append( response.getResultStatus() ).append( "\r\n" );
 		}
 
+	@Override
 	public String
 	toString()
 		{

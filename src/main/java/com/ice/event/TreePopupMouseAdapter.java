@@ -53,6 +53,7 @@ extends		MouseAdapter
 		this.actionCommand = command;
 		}
 
+	@Override
 	public void
 	mousePressed( final MouseEvent event )
 		{
@@ -73,6 +74,7 @@ extends		MouseAdapter
 			}
 		}
 
+	@Override
 	public void
 	mouseReleased( final MouseEvent event )
 		{
@@ -94,6 +96,7 @@ extends		MouseAdapter
 			}
 		}
 
+	@Override
 	public void
 	mouseClicked( final MouseEvent event )
 		{

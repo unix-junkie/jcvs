@@ -94,6 +94,7 @@ implements	CommandObject
 			}
 		}
 
+	@Override
 	public void
 	removeNotify()
 		{
@@ -440,6 +441,7 @@ implements	CommandObject
 			this.format = new HexNumberFormat( "XX" );
 			}
 
+		@Override
 		public boolean
 		isFocusTraversable()
 			{
@@ -462,12 +464,14 @@ implements	CommandObject
 			this.repaint( 500 );
 			}
 
+		@Override
 		public void
 		update( final Graphics updateG )
 			{
 			this.paint( updateG );
 			}
 
+		@Override
 		public synchronized void
 		paint( final Graphics g )
 			{
@@ -559,6 +563,7 @@ implements	CommandObject
 				}
 			}
 
+		@Override
 		public void
 		addNotify()
 			{
@@ -566,6 +571,7 @@ implements	CommandObject
 			this.computeDimensions();
 			}
 
+		@Override
 		public void
 		setFont( final Font f )
 			{
@@ -621,12 +627,14 @@ implements	CommandObject
 			this.pDim.height = mDim.height;
 			}
 
+		@Override
 		public Dimension
 		getPreferredSize()
 			{
 			return pDim;
 			}
 
+		@Override
 		public Dimension
 		getMinimumSize()
 			{

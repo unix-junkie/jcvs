@@ -100,6 +100,7 @@ implements	ActionListener, ListSelectionListener
 		this.addWindowListener
 			( new WindowAdapter()
 				{
+				@Override
 				public void
 				windowActivated( final WindowEvent evt )
 					{ fileList.requestFocus(); }
@@ -142,10 +143,8 @@ implements	ActionListener, ListSelectionListener
 			dirIgnore.addIgnoreFile( ignFile );
 			}
 
-		for ( int i = 0 ; i < files.length ; ++i )
+		for ( final String fileName : files )
 			{
-			final String fileName = files[i];
-
 			final File f = new File( this.dirFile, fileName );
 
 			if ( ! f.isFile() || ! f.exists() || ! f.canRead() )

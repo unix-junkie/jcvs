@@ -47,6 +47,7 @@ implements	FocusListener
 		super( typeName );
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -62,6 +63,7 @@ implements	FocusListener
 		{
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -76,18 +78,21 @@ implements	FocusListener
 		this.table.repaint( 100 );
 		}
 
+	@Override
 	public boolean
 	isTupleTable( final ConfigureSpec spec )
 		{
 		return true;
 		}
 
+	@Override
 	public boolean
 	isStringArray( final ConfigureSpec spec )
 		{
 		return false;
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -100,6 +105,7 @@ implements	FocusListener
 			}
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{
@@ -134,6 +140,7 @@ implements	FocusListener
 		this.insertButton.addActionListener(
 			this.new ActionAdapter()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{ insertElement(); }
@@ -145,6 +152,7 @@ implements	FocusListener
 		btn.addActionListener(
 			this.new ActionAdapter()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{ appendElement(); }
@@ -156,6 +164,7 @@ implements	FocusListener
 		btn.addActionListener(
 			this.new ActionAdapter()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{ deleteElement(); }
@@ -287,6 +296,7 @@ implements	FocusListener
 		// I N T E R F A C E    TableModel
 		//
 
+		@Override
 		public String
 		getColumnName( final int column )
 			{
@@ -296,6 +306,7 @@ implements	FocusListener
 				: "Value["+(column-1)+"]";
 			}
 
+		@Override
 		public Class
 		getColumnClass( final int column )
 			{
@@ -346,6 +357,7 @@ implements	FocusListener
 				}
 			}
 
+		@Override
 		public void
 		setValueAt( final Object value, final int row, final int column )
 			{
@@ -376,6 +388,7 @@ implements	FocusListener
 				}
 			}
 
+		@Override
 		public boolean
 		isCellEditable( final int row, final int column )
 			{

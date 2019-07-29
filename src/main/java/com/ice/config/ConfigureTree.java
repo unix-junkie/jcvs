@@ -32,6 +32,7 @@ extends		JTree
 				/**
 				 * Overrides return slightly taller preferred size value.
 				 */
+				@Override
 				public Dimension
 				getPreferredSize()
 					{

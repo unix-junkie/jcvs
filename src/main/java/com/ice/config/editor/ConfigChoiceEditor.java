@@ -27,6 +27,7 @@ extends		ConfigureEditor
 		super( "Choice" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -64,6 +65,7 @@ extends		ConfigureEditor
 		this.radioPanel.repaint( 250 );
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -71,22 +73,24 @@ extends		ConfigureEditor
 
 		final String oldChoice = prefs.getProperty( propName, null );
 
-		for ( int i = 0 ; i < this.choiceButtons.length ; ++i )
+		for ( final JRadioButton choiceButton : this.choiceButtons )
 			{
-			if ( this.choiceButtons[i].isSelected() )
+			if ( choiceButton.isSelected() )
 				{
-				final String newChoice = this.choiceButtons[i].getText();
+				final String newChoice = choiceButton.getText();
 				prefs.setProperty( propName, newChoice );
 				break;
 				}
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

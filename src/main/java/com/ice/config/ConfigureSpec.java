@@ -95,6 +95,7 @@ implements	ConfigureConstants, java.io.Serializable
 		return this.type.equals( CFG_TUPLETABLE );
 		}
 
+	@Override
 	public String
 	toString()
 		{

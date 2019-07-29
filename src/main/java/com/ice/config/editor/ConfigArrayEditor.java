@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -44,6 +44,7 @@ implements	FocusListener
 		super( typeName );
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
@@ -59,6 +60,7 @@ implements	FocusListener
 		{
 		}
 
+	@Override
 	public boolean
 	isTupleTable( final ConfigureSpec spec )
 		{
@@ -66,12 +68,14 @@ implements	FocusListener
 		}
 
 	// REVIEW Is this a reasonable assumption?
+	@Override
 	public boolean
 	isStringArray( final ConfigureSpec spec )
 		{
 		return true;
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{
@@ -92,6 +96,7 @@ implements	FocusListener
 		this.model = this.new SAETableModel();
 		this.table = new JTable( this.model )
 			{
+			@Override
 			public Component
 			getNextFocusableComponent()
 				{ return insertButton; }
@@ -111,6 +116,7 @@ implements	FocusListener
 		this.insertButton.addActionListener(
 			this.new ActionAdapter()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{ insertElement(); }
@@ -122,6 +128,7 @@ implements	FocusListener
 		this.appendButton.addActionListener(
 			this.new ActionAdapter()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{ appendElement(); }
@@ -133,6 +140,7 @@ implements	FocusListener
 		this.deleteButton.addActionListener(
 			this.new ActionAdapter()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{ deleteElement(); }
@@ -191,7 +199,7 @@ implements	FocusListener
 			String.class
 			};
 
-		private Vector			data;
+		private List<String>			data;
 
 
 		public
@@ -200,14 +208,14 @@ implements	FocusListener
 			this.data = null;
 			}
 
-		public Vector
+		public List<String>
 		getData()
 			{
 			return this.data;
 			}
 
 		public void
-		setData( final Vector data )
+		setData( final List<String> data )
 			{
 			this.data = data;
 
@@ -218,14 +226,14 @@ implements	FocusListener
 		public void
 		insertElement( final String val, final int row )
 			{
-			this.data.insertElementAt( val, row );
+			this.data.add(row, val);
 			this.fireTableRowsInserted( row, row );
 			}
 
 		public void
 		appendElement( final String val )
 			{
-			this.data.addElement( val );
+			this.data.add( val );
 			this.fireTableRowsInserted
 				( this.data.size(), this.data.size() );
 			}
@@ -233,7 +241,7 @@ implements	FocusListener
 		public void
 		deleteElement( final int row )
 			{
-			this.data.removeElementAt( row );
+			this.data.remove( row );
 			this.fireTableRowsDeleted( row, row );
 			}
 
@@ -241,12 +249,14 @@ implements	FocusListener
 		// I N T E R F A C E    TableModel
 		//
 
+		@Override
 		public String
 		getColumnName( final int column )
 			{
 			return columnNames[ column ];
 			}
 
+		@Override
 		public Class
 		getColumnClass( final int column )
 			{
@@ -271,15 +281,17 @@ implements	FocusListener
 		public Object
 		getValueAt( final int aRow, final int aColumn )
 			{
-			return this.data.elementAt( aRow );
+			return this.data.get( aRow );
 			}
 
+		@Override
 		public void
 		setValueAt( final Object value, final int row, final int column )
 			{
-			this.data.setElementAt( value, row );
+			this.data.set( row, (String) value );
 			}
 
+		@Override
 		public boolean
 		isCellEditable( final int row, final int column )
 			{

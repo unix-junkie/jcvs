@@ -222,6 +222,7 @@ extends		ResourceBundle
 	 * @return An enumeration of the resource keys.
 	 */
 
+	@Override
 	public Enumeration
 	getKeys()
 		{
@@ -236,6 +237,7 @@ extends		ResourceBundle
 	 * @return The object identified by the key.
 	 */
 
+	@Override
 	protected Object
 	handleGetObject( final String key )
 		{

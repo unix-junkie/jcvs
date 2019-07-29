@@ -77,6 +77,7 @@ extends		UserPrefsLoader
 		this.prefsFile = f;
 		}
 
+	@Override
 	public void
 	loadPreferences( final UserPrefs prefs )
 		throws IOException
@@ -99,6 +100,7 @@ extends		UserPrefsLoader
 		fin.close();
 		}
 
+	@Override
 	public void
 	storePreferences( final UserPrefs prefs )
 		throws IOException

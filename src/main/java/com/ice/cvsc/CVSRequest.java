@@ -441,6 +441,7 @@ CVSRequest extends Object
 		this.stickys = null;
 		}
 
+	@Override
 	protected void
 	finalize()
 		throws Throwable
@@ -1385,6 +1386,7 @@ CVSRequest extends Object
 	 *
 	 * @return String representing request.
 	 */
+	@Override
 	public String
 	toString()
 		{

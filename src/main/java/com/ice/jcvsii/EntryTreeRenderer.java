@@ -213,6 +213,7 @@ implements	TreeCellRenderer
 		this.model.setModifiedWidth( w );
 		}
 
+	@Override
 	public Dimension
 	getPreferredSize()
 		{
@@ -225,6 +226,7 @@ implements	TreeCellRenderer
 		return new Dimension( w, 18 ); // REVIEW that 18!
 		}
 
+    @Override
     public void
 	paint( final Graphics g )
 		{

@@ -30,6 +30,7 @@ extends		ConfigureEditor
 		super( "Boolean" );
 		}
 
+	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -48,6 +49,7 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -62,12 +64,14 @@ extends		ConfigureEditor
 			}
 		}
 
+	@Override
 	public void
 	requestInitialFocus()
 		{
 		this.tButton.requestFocus();
 		}
 
+	@Override
 	protected JPanel
 	createEditPanel()
 		{

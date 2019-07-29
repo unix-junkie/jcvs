@@ -16,12 +16,14 @@ extends		ConfigNumberEditor
 		super( "Double" );
 		}
 
+	@Override
 	public String
 	getTypeTitle()
 		{
 		return "Float";
 		}
 
+	@Override
 	public String
 	formatNumber( final UserPrefs prefs, final ConfigureSpec spec )
 		{
@@ -31,6 +33,7 @@ extends		ConfigNumberEditor
 		return Float.toString( num );
 		}
 
+	@Override
 	public boolean
 	isChanged( final UserPrefs prefs, final ConfigureSpec spec, final String numText )
 		{

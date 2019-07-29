@@ -105,6 +105,7 @@ implements	ActionListener, CVSUserInterface
 		this.infoPan.loadPreferences( "import" );
 		}
 
+	@Override
 	public void
 	savePreferences()
 		{
@@ -805,6 +806,7 @@ implements	ActionListener, CVSUserInterface
 		this.outputText =
 			new JTextArea()
 				{
+				@Override
 				public boolean isFocusTraversable() { return false; }
 				};
 		this.outputText.setEditable( false );
