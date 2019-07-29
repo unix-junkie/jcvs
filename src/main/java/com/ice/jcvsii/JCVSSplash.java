@@ -166,24 +166,33 @@ implements	KeyListener, MouseListener, ActionListener
 		}
 
 	// Dismiss the window on a key press
+	@Override
 	public void keyTyped(final KeyEvent event) {}
+	@Override
 	public void keyReleased(final KeyEvent event) {}
+	@Override
 	public void keyPressed(final KeyEvent event)
 		{
 		this.dispose();
 		}
 
 	// Dismiss the window on a mouse click
+	@Override
 	public void mousePressed(final MouseEvent event) {}
+	@Override
 	public void mouseReleased(final MouseEvent event) {}
+	@Override
 	public void mouseEntered(final MouseEvent event) {}
+	@Override
 	public void mouseExited(final MouseEvent event) {}
+	@Override
 	public void mouseClicked(final MouseEvent event)
 		{
 		this.dispose();
 		}
 
 	// Dismiss the window on a timeout
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{

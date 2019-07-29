@@ -215,6 +215,7 @@ implements	ActionListener, ItemListener
 			}
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -230,6 +231,7 @@ implements	ActionListener, ItemListener
 			}
 		}
 
+	@Override
 	public void
 	itemStateChanged( final ItemEvent evt )
 		{

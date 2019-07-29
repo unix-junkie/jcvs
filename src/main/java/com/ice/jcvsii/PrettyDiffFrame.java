@@ -198,6 +198,7 @@ implements	ActionListener, SwingConstants
 		this.savePreferences();
 		}
 
+    @Override
     public void
     actionPerformed( final ActionEvent evt )
         {
@@ -209,6 +210,7 @@ implements	ActionListener, SwingConstants
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{
 						dispose();

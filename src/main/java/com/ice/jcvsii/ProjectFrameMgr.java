@@ -32,7 +32,7 @@ public
 class		ProjectFrameMgr
 	{
 	private static boolean			debug = false;
-	private static Hashtable		frames = new Hashtable();
+	private static Hashtable<String, ProjectFrame>	frames = new Hashtable<String, ProjectFrame>();
 
 
 	public static void
@@ -68,8 +68,7 @@ class		ProjectFrameMgr
 			{
 			final String key = (String) keys.nextElement();
 
-			final ProjectFrame frm = (ProjectFrame)
-				ProjectFrameMgr.frames.get( key );
+			final ProjectFrame frm = ProjectFrameMgr.frames.get( key );
 
 			if ( frm == frame )
 				{
@@ -93,8 +92,7 @@ class		ProjectFrameMgr
 				( "PROJECT_FRAME_MGR: CHECK: " + localRootPath );
 			}
 
-		final ProjectFrame frame = (ProjectFrame)
-			ProjectFrameMgr.frames.get( localRootPath );
+		final ProjectFrame frame = ProjectFrameMgr.frames.get( localRootPath );
 
 		if ( frame != null )
 			{
@@ -108,21 +106,17 @@ class		ProjectFrameMgr
 		return frame != null;
 		}
 
-	public static Enumeration
+	public static Iterable<ProjectFrame>
 	enumerateProjectFrames()
 		{
-		return ProjectFrameMgr.frames.elements();
+		return ProjectFrameMgr.frames.values();
 		}
 
 	public static void
 	closeAllProjects()
 		{
-		final Enumeration enumeration =
-			ProjectFrameMgr.frames.keys();
-
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final String key : ProjectFrameMgr.frames.keySet() )
 			{
-			final String key = (String) enumeration.nextElement();
 			if ( ProjectFrameMgr.debug )
 				{
 				CVSLog.logMsgStderr
@@ -130,7 +124,7 @@ class		ProjectFrameMgr
 				}
 
 			final ProjectFrame frame =
-				(ProjectFrame) ProjectFrameMgr.frames.get( key );
+				ProjectFrameMgr.frames.get( key );
 
 			frame.dispose();
 			}

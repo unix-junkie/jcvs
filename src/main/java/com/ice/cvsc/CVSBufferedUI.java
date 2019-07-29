@@ -30,18 +30,21 @@ implements	CVSUserInterface
 	{
 	StringBuffer buf = new StringBuffer();
 
+	@Override
 	public void
 	uiDisplayProgressMsg( final String message )
 		{
 		buf.append( message ).append( "\r\n" );
 		}
 
+	@Override
 	public void
 	uiDisplayProgramError( final String error )
 		{
 		buf.append( error ).append( "\r\n" );
 		}
 
+	@Override
 	public void
 	uiDisplayResponse( final CVSResponse response )
 		{

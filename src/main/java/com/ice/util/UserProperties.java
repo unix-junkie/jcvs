@@ -226,14 +226,14 @@ UserProperties
 	 * dynamic property package names. Each Vector contains
 	 * the list of property names in the dynamic package.
 	 */
-	private static Hashtable	dynKeysTable;
+	private static Hashtable<String, Vector<String>>	dynKeysTable;
 
 	/**
 	 * This is a Hashtable of Strings. The table keys are
 	 * dynamic property package names. Each String is the
 	 * pathname to the property file for the dynamic package.
 	 */
-	private static Hashtable	dynPathTable;
+	private static Hashtable<String, String>	dynPathTable;
 
 	/**
 	 * Used for temporary working properties.
@@ -251,8 +251,8 @@ UserProperties
 		UserProperties.defaultsResource = null;
 		UserProperties.localPropertyFile = null;
 
-		UserProperties.dynKeysTable = new Hashtable();
-		UserProperties.dynPathTable = new Hashtable();
+		UserProperties.dynKeysTable = new Hashtable<String, Vector<String>>();
+		UserProperties.dynPathTable = new Hashtable<String, String>();
 		UserProperties.workingProps = new Properties();
 
 		UserProperties.osname = System.getProperty( "os.name" );
@@ -709,16 +709,8 @@ UserProperties
 	static public void
 	includeProperties( final Properties into, final Properties from )
 		{
-		final Enumeration enumeration = from.keys();
-
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final String key : from.stringPropertyNames() )
 			{
-			Object key = null;
-
-			try { key = enumeration.nextElement(); }
-				catch ( final NoSuchElementException ex )
-					{ key = null; }
-
 			if ( key != null )
 				{
 				into.put( key, from.get( key ) );
@@ -1124,12 +1116,9 @@ UserProperties
 			}
 
 		// Now, we do the actual loading of dynamic properties.
-		final Enumeration names = UserProperties.dynKeysTable.keys();
-		for ( ; names.hasMoreElements() ; )
+		for ( final String name : dynKeysTable.keySet() )
 			{
-			final String name = (String) names.nextElement();
-
-			final String path = (String)
+			final String path =
 				UserProperties.dynPathTable.get( name );
 
 			UserProperties.loadDynamicProperties( name, path );
@@ -1146,7 +1135,7 @@ UserProperties
 	private static void
 	addDynamicPropertyKeys( final String name, final Properties dynProps )
 		{
-		Vector dynKeys = (Vector)
+		Vector dynKeys =
 			UserProperties.dynKeysTable.get( name );
 
 		if ( dynKeys == null )
@@ -1181,8 +1170,8 @@ UserProperties
 	private static void
 	copyDynamicProperties( final String name, final Properties props )
 		{
-		final String path = (String) UserProperties.dynPathTable.get( name );
-		final Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
+		final String path = UserProperties.dynPathTable.get( name );
+		final Vector<String> keys = UserProperties.dynKeysTable.get(name );
 
 		if ( keys == null || path == null )
 			throw new NoSuchElementException
@@ -1192,10 +1181,8 @@ UserProperties
 		final Properties sysProps = System.getProperties();
 
 		try {
-			final Enumeration enumeration = props.keys();
-			for ( ; enumeration.hasMoreElements() ; )
+			for ( final String key : props.stringPropertyNames() )
 				{
-				final String key = (String)enumeration.nextElement();
 				if ( key != null )
 					{
 					final String normalKey =
@@ -1240,8 +1227,8 @@ UserProperties
 	public static void
 	removeDynamicProperty( final String name, final String propName )
 		{
-		final String path = (String) UserProperties.dynPathTable.get( name );
-		final Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
+		final String path = UserProperties.dynPathTable.get( name );
+		final Vector<String> keys = UserProperties.dynKeysTable.get(name );
 
 		if ( keys == null || path == null )
 			throw new NoSuchElementException
@@ -1262,8 +1249,8 @@ UserProperties
 	saveDynamicProperties( final String name )
 		throws IOException
 		{
-		final String path = (String) UserProperties.dynPathTable.get( name );
-		final Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
+		final String path = UserProperties.dynPathTable.get( name );
+		final Vector<String> keys = UserProperties.dynKeysTable.get(name );
 
 		if ( keys == null || path == null )
 			throw new NoSuchElementException
@@ -1276,7 +1263,7 @@ UserProperties
 		final int count = keys.size();
 		for ( int idx = 0 ; idx < count ; ++idx )
 			{
-			final String pName = (String) keys.elementAt(idx);
+			final String pName = keys.elementAt(idx);
 			dynProps.put( pName, sysProps.get( pName ) );
 			}
 

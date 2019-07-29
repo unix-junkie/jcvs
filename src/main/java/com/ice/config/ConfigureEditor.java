@@ -384,6 +384,7 @@ extends		JPanel
 		this.helpButton.addActionListener
 			( new ActionListener()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent evt )
 					{ toggleHelp(); }

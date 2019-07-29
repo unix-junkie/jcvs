@@ -28,12 +28,15 @@ public
 class		CVSNullUI
 implements	CVSUserInterface
 	{
+	@Override
 	public void
 	uiDisplayProgressMsg( final String message ) { }
 
+	@Override
 	public void
 	uiDisplayProgramError( final String error ) { }
 
+	@Override
 	public void
 	uiDisplayResponse( final CVSResponse response ) { }
 	}

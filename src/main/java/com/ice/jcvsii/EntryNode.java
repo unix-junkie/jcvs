@@ -24,6 +24,7 @@ package com.ice.jcvsii;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -142,10 +143,8 @@ implements	CVSEntry.ChildEventListener
 		this.tsCache = null;
 		if ( this.hasLoaded )
 			{
-			final Enumeration enumeration = this.children();
-			for ( ; enumeration.hasMoreElements() ; )
+			for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) this.children()) )
 				{
-				final EntryNode node = (EntryNode) enumeration.nextElement();
 				node.resetDisplayCaches();
 				}
 			}
@@ -297,6 +296,7 @@ implements	CVSEntry.ChildEventListener
 		return result;
 		}
 
+	@Override
 	public void
 	cvsEntryAddedChild( final CVSEntry.ChildEvent event )
 		{
@@ -331,6 +331,7 @@ implements	CVSEntry.ChildEventListener
 		model.fireEntryNodeInserted( this, idx, chNode );
 		}
 
+	@Override
 	public void
 	cvsEntryRemovedChild( final CVSEntry.ChildEvent event )
 		{

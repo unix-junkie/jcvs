@@ -3279,6 +3279,7 @@ implements	HostKeyVerification
 	// UNDONE HIGH
 	// There *is* a .ssh_known_hosts file, especially w/ cygwin.
 	//
+	@Override
 	public boolean
 	verifyHost( final String host, final SshPublicKey pk )
 		throws TransportProtocolException
@@ -3696,8 +3697,11 @@ implements	HostKeyVerification
 	class	NullCVSUI
 		implements CVSUserInterface
 		{
+		@Override
 		public void uiDisplayProgressMsg( final String message ) { }
+		@Override
 		public void uiDisplayProgramError( final String error ) { }
+		@Override
 		public void uiDisplayResponse( final CVSResponse response ) { }
 		}
 

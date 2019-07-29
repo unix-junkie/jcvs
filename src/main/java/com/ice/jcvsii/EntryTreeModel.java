@@ -22,6 +22,7 @@
 
 package com.ice.jcvsii;
 
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.tree.DefaultTreeModel;
@@ -74,10 +75,8 @@ extends		DefaultTreeModel
 			for ( int i = 0 ; i < len ; ++i ) ci[i] = i;
 			this.fireTreeNodesChanged( source, path, ci, null );
 
-			final Enumeration enumeration = source.children();
-			for ( ; enumeration.hasMoreElements() ; )
+			for ( final EntryNode cn : Collections.list((Enumeration<EntryNode>) source.children()) )
 				{
-				final EntryNode cn = (EntryNode) enumeration.nextElement();
 				if ( ! cn.isLeaf() )
 					{
 					this.fireColumnsResized( cn, isResizing );

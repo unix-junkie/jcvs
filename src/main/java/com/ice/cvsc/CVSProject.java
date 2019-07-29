@@ -38,8 +38,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.ParseException;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -132,7 +132,7 @@ CVSProject extends Object
 	private CVSProjectDef	projectDef;
 
 	private CVSEntry		rootEntry;
-	private Hashtable		pathTable;
+	private Hashtable<String, CVSEntry>	pathTable;
 
 
 	/**
@@ -945,15 +945,11 @@ CVSProject extends Object
 	CVSEntry
 	getPathIgnoringCase( final String subPath )
 		{
-		final Enumeration enumeration = this.pathTable.keys();
-
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final String key : this.pathTable.keySet() )
 			{
-			final String key = (String) enumeration.nextElement();
-
 			if ( key.equalsIgnoreCase( subPath ) )
 				{
-				return (CVSEntry) this.pathTable.get( key );
+				return this.pathTable.get( key );
 				}
 			}
 
@@ -979,7 +975,7 @@ CVSProject extends Object
 		{
 		CVSEntry result = null;
 
-		result = (CVSEntry) this.pathTable.get( path );
+		result = this.pathTable.get( path );
 
 		if ( result == null && ! CVSCUtilities.caseSensitivePathNames() )
 			{
@@ -1003,11 +999,11 @@ CVSProject extends Object
 		{
 		CVSEntry result = null;
 
-		final Enumeration enumeration = this.pathTable.keys();
-		for ( boolean match = false ; !match && enumeration.hasMoreElements() ; )
+		final Iterator<String> it = this.pathTable.keySet().iterator();
+		for ( boolean match = false ; !match && it.hasNext() ; )
 			{
-			final String localDir = (String) enumeration.nextElement();
-			final CVSEntry tblEntry = (CVSEntry) this.pathTable.get( localDir );
+			final String localDir = it.next();
+			final CVSEntry tblEntry = this.pathTable.get( localDir );
 
 			if ( CVSCUtilities.caseSensitivePathNames() )
 				match = repository.equals( tblEntry.getRepository() );
@@ -1671,6 +1667,7 @@ CVSProject extends Object
 		return entry;
 		}
 
+	@Override
 	public boolean
 	handleResponseItem(
 			final CVSRequest request, final CVSResponse response, final CVSResponseItem item )
@@ -2325,7 +2322,7 @@ CVSProject extends Object
 			if ( name != null && time != null && host != null && wdir != null )
 				{
 				final CVSEntry entry =
-					(CVSEntry) this.pathTable.get( wdir );
+					this.pathTable.get( wdir );
 
 				if ( entry != null )
 					{
@@ -4995,11 +4992,9 @@ CVSProject extends Object
 
 		buf.append( "\n" );
 
-		final Enumeration enumeration = this.pathTable.keys();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final String key : this.pathTable.keySet() )
 			{
-			final String key = (String) enumeration.nextElement();
-			final CVSEntry val = (CVSEntry) this.pathTable.get( key );
+			final CVSEntry val = this.pathTable.get( key );
 			buf.append( key ).append( " =\n\n   " );
 			buf.append( val.dumpString() ).append( "\n\n" );
 			}

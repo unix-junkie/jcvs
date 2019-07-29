@@ -120,6 +120,7 @@ implements	ActionListener
 		this.wbPanel.addProjectToWorkBench( project );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{

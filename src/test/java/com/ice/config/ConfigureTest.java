@@ -296,6 +296,7 @@ implements	ActionListener
 		return panel;
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{

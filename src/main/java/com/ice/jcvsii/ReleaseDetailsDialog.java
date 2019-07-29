@@ -125,6 +125,7 @@ implements	ActionListener
 		return this.okClicked;
 		}
 
+    @Override
     public void
     actionPerformed( final ActionEvent evt )
         {
@@ -134,13 +135,13 @@ implements	ActionListener
 			{
 			this.okClicked = true;
 			SwingUtilities.invokeLater
-				( new Runnable() { public void run() { dispose(); } } );
+				( new Runnable() { @Override public void run() { dispose(); } } );
 			}
 		else if ( command.compareTo( "CANCEL" ) == 0 )
 			{
 			this.okClicked = false;
 			SwingUtilities.invokeLater
-				( new Runnable() { public void run() { dispose(); } } );
+				( new Runnable() { @Override public void run() { dispose(); } } );
 			}
         }
 

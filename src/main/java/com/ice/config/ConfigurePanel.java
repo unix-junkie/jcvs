@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -38,7 +37,7 @@ implements	ConfigureConstants, TreeSelectionListener
 	protected JSplitPane	splitter = null;
 
 	protected UserPrefs		specs;
-	protected Vector		specVector;
+	protected Vector<ConfigureSpec>	specVector;
 
 	protected UserPrefs		prefs;
 	protected UserPrefs		origPrefs;
@@ -157,12 +156,8 @@ implements	ConfigureConstants, TreeSelectionListener
 	public void
 	commit()
 		{
-		for ( final Enumeration enumeration = this.specVector.elements()
-				; enumeration.hasMoreElements() ; )
+		for ( final ConfigureSpec spec : this.specVector )
 			{
-			final ConfigureSpec spec =
-				(ConfigureSpec) enumeration.nextElement();
-
 			final ConfigureEditor editor =
 				this.factory.createEditor( spec.getPropertyType() );
 
@@ -180,12 +175,8 @@ implements	ConfigureConstants, TreeSelectionListener
 	private void
 	establishConfigTree()
 		{
-		for ( final Enumeration enumeration = this.specVector.elements()
-				; enumeration.hasMoreElements() ; )
+		for ( final ConfigureSpec spec : this.specVector )
 			{
-			final ConfigureSpec spec =
-				(ConfigureSpec) enumeration.nextElement();
-
 			final String path = spec.getPropertyPath();
 
 			this.model.addPath( path, spec );
@@ -202,6 +193,7 @@ implements	ConfigureConstants, TreeSelectionListener
 			}
 		}
 
+	@Override
 	public void
 	valueChanged( final TreeSelectionEvent event )
 		{
@@ -336,8 +328,7 @@ implements	ConfigureConstants, TreeSelectionListener
 
 			for ( int j = 0 ; j < numSpecs ; ++j )
 				{
-				final ConfigureSpec spec = (ConfigureSpec)
-					this.specVector.elementAt(j);
+				final ConfigureSpec spec = this.specVector.elementAt(j);
 
 				if ( spec.getPropertyName().equals( propName ) )
 					{
@@ -392,12 +383,14 @@ implements	ConfigureConstants, TreeSelectionListener
 	extends		JPanel
 	implements	Scrollable
 		{
+		@Override
 		public Dimension
 		getPreferredScrollableViewportSize()
 			{
 			return this.getPreferredSize();
 			}
 
+		@Override
 		public int
 		getScrollableBlockIncrement
 				( final Rectangle visibleRect, final int orientation, final int direction )
@@ -408,18 +401,21 @@ implements	ConfigureConstants, TreeSelectionListener
 				return visibleRect.width - 10;
 			}
 
+		@Override
 		public boolean
 		getScrollableTracksViewportHeight()
 			{
 			return false;
 			}
 
+		@Override
 		public boolean
 		getScrollableTracksViewportWidth()
 			{
 			return true;
 			}
 
+		@Override
 		public int
 		getScrollableUnitIncrement
 				( final Rectangle visibleRect, final int orientation, final int direction )

@@ -1,7 +1,6 @@
 
 package com.ice.config;
 
-import java.util.Enumeration;
 import java.util.Vector;
 
 import com.ice.pref.UserPrefs;
@@ -20,11 +19,8 @@ implements	ConfigureConstants
 		final Vector result = new Vector();
 		final String propPfx = specs.getPropertyPrefix();
 
-		for ( final Enumeration enumeration = specs.keys()
-				; enumeration.hasMoreElements() ; )
+		for ( final String key : specs.stringPropertyNames() )
 			{
-			final String key = (String) enumeration.nextElement();
-
 			if ( ! key.endsWith( specSfx ) )
 				continue;
 

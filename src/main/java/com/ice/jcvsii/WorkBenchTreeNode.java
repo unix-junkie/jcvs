@@ -1,7 +1,8 @@
 
 package com.ice.jcvsii;
 
-import java.util.Enumeration;
+import java.util.Collections;
+import java.util.Iterator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -60,9 +61,9 @@ extends		DefaultMutableTreeNode
 		final WorkBenchTreeNode[] result =
 			new WorkBenchTreeNode[ this.getChildCount() ];
 
-		final Enumeration enumeration = this.children();
-		for ( int i = 0 ; enumeration.hasMoreElements() ; ++i )
-			result[i] = (WorkBenchTreeNode) enumeration.nextElement();
+		final Iterator<Object> it = Collections.list(this.children()).iterator();
+		for ( int i = 0 ; it.hasNext() ; ++i )
+			result[i] = (WorkBenchTreeNode) it.next();
 
 		return result;
 		}
@@ -75,10 +76,10 @@ extends		DefaultMutableTreeNode
 		final WorkBenchDefinition[] result =
 			new WorkBenchDefinition[ cnt ];
 
-		final Enumeration enumeration = this.children();
-		for ( int i = 0 ; enumeration.hasMoreElements() ; ++i )
+		final Iterator<Object> it = Collections.list(this.children()).iterator();
+		for ( int i = 0 ; it.hasNext() ; ++i )
 			{
-			result[i] = ((WorkBenchTreeNode) enumeration.nextElement()).getDefinition();
+			result[i] = ((WorkBenchTreeNode) it.next()).getDefinition();
 			}
 
 		return result;

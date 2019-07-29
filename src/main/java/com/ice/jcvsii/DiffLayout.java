@@ -46,12 +46,14 @@ implements	LayoutManager
 		}
 
     // Required by LayoutManager.
+	@Override
 	public void
 	addLayoutComponent( final String name, final Component comp )
 		{
 		}
 
     // Required by LayoutManager.
+	@Override
 	public void
 	removeLayoutComponent( final Component comp )
 		{
@@ -104,6 +106,7 @@ implements	LayoutManager
 
 
 	// Required by LayoutManager.
+	@Override
 	public Dimension
 	preferredLayoutSize( final Container parent )
 		{
@@ -128,6 +131,7 @@ implements	LayoutManager
 		}
 
 	// Required by LayoutManager.
+	@Override
 	public Dimension
 	minimumLayoutSize( final Container parent )
 		{
@@ -142,6 +146,7 @@ implements	LayoutManager
      * minimumLayoutSize will be called -- in the case
      * of applets, at least, they probably won't be.
      */
+	@Override
 	public void
 	layoutContainer( final Container parent )
 		{

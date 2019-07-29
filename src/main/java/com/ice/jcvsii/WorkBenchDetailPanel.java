@@ -74,6 +74,7 @@ implements	ActionListener, PropertyChangeListener
 			( ConfigConstants.WB_DET_TITLE_HEIGHT, this );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -84,6 +85,7 @@ implements	ActionListener, PropertyChangeListener
 			}
 		}
 
+	@Override
 	public void
 	propertyChange( final PropertyChangeEvent evt )
 		{

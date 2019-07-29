@@ -127,6 +127,7 @@ implements	ActionListener
 		this.mainPanel.addProjectToWorkBench( project );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -137,6 +138,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater(
 				new Runnable()
 					{
+					@Override
 					public void
 					run()
 						{
@@ -150,6 +152,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater(
 				new Runnable()
 					{
+					@Override
 					public void
 					run()
 						{
@@ -165,6 +168,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater(
 				new Runnable()
 					{
+					@Override
 					public void
 					run()
 						{
@@ -180,6 +184,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater(
 				new Runnable()
 					{
+					@Override
 					public void
 					run()
 						{
@@ -195,6 +200,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater(
 				new Runnable()
 					{
+					@Override
 					public void
 					run()
 						{
@@ -214,6 +220,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater(
 				new Runnable()
 					{
+					@Override
 					public void
 					run()
 						{

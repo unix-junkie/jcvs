@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
@@ -1717,11 +1716,8 @@ extends		Properties
 	public synchronized void
 	loadProperties( final Properties ap )
 		{
-		final Enumeration enumeration = ap.keys();
-
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final String nm : ap.stringPropertyNames() )
 			{
-			final String nm = (String) enumeration.nextElement();
 			final String val = ap.getProperty( nm );
 			this.put( nm, val );
 			}

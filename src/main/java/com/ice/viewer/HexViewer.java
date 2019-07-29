@@ -132,6 +132,7 @@ implements	CommandObject
      * the CommandObject method to accept our DataHandler
      * @param dh	the datahandler used to get the content
      */
+    @Override
     public void
 	setCommandContext( final String verb, final DataHandler dh )
 		throws IOException
@@ -668,6 +669,7 @@ implements	CommandObject
 	private class
 	ScrollerChangeListener implements ChangeListener
 		{
+		@Override
 		public void
 		stateChanged( final ChangeEvent event )
 			{

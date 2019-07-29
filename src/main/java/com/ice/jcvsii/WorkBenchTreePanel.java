@@ -69,6 +69,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		this.model.saveWorkBench( Config.getPreferences() );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -335,18 +336,21 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 			}
 		}
 
+	@Override
 	public void
 	focusGained( final FocusEvent e )
 		{
 		this.scroller.setBorder( this.actBorder );
 		}
 
+	@Override
 	public void
 	focusLost( final FocusEvent e )
 		{
 		this.scroller.setBorder( this.deActBorder );
 		}
 
+	@Override
 	public void
 	valueChanged( final TreeSelectionEvent event )
 		{
@@ -429,6 +433,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		this.dblClickAction =
 			new AbstractAction()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent event )
 					{ openSelection(); }

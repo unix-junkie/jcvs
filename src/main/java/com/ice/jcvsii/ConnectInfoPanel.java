@@ -328,6 +328,7 @@ implements	ItemListener, ActionListener
 		this.userNameText.requestFocus();
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent evt )
 		{
@@ -337,6 +338,7 @@ implements	ItemListener, ActionListener
 			}
 		}
 
+	@Override
 	public void
 	itemStateChanged( final ItemEvent event )
 		{
@@ -537,6 +539,7 @@ implements	ItemListener, ActionListener
 		defBtn.addActionListener(
 			new ActionListener()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent evt )
 					{

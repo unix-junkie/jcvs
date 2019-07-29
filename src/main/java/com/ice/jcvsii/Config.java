@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.activation.CommandMap;
@@ -474,6 +473,7 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 		}
 
+	@Override
 	public void
 	propertyChange( final PropertyChangeEvent evt )
 		{
@@ -542,11 +542,9 @@ implements	ConfigConstants, PropertyChangeListener
 			final MainFrame frm = JCVS.getMainFrame();
 			SwingUtilities.updateComponentTreeUI( frm );
 
-			final Enumeration enumeration = ProjectFrameMgr.enumerateProjectFrames();
-			for ( ; enumeration.hasMoreElements() ; )
+			for ( final ProjectFrame frame : ProjectFrameMgr.enumerateProjectFrames() )
 				{
-				SwingUtilities.updateComponentTreeUI
-					( (ProjectFrame) enumeration.nextElement() );
+				SwingUtilities.updateComponentTreeUI( frame );
 				}
 			}
 		}
@@ -621,9 +619,9 @@ implements	ConfigConstants, PropertyChangeListener
 		{
 		this.servers = new Vector();
 
-		this.enumerateServerDefinitions( this.defServers.keys() );
+		this.enumerateServerDefinitions( this.defServers.stringPropertyNames() );
 
-		this.enumerateServerDefinitions( this.userServers.keys() );
+		this.enumerateServerDefinitions( this.userServers.stringPropertyNames() );
 		}
 
 	/**
@@ -654,12 +652,10 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	enumerateServerDefinitions( final Enumeration enumeration )
+	enumerateServerDefinitions( final Iterable<String> serverDefinitions )
 		{
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final String key : serverDefinitions )
 			{
-			final String key = (String) enumeration.nextElement();
-
 			if ( ! key.startsWith( "server." ) )
 				continue;
 

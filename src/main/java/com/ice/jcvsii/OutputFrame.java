@@ -206,6 +206,7 @@ implements	ActionListener
 			}
 		}
 
+    @Override
     public void
     actionPerformed( final ActionEvent evt )
         {
@@ -217,6 +218,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{ setVisible( false ); }
 					}
@@ -227,6 +229,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{ dispose(); }
 					}
@@ -237,6 +240,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{
 						projectFrame.setVisible( true );
@@ -251,6 +255,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{ saveToFile(); }
 					}
@@ -261,6 +266,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{ redirectToFile(); }
 					}
@@ -271,6 +277,7 @@ implements	ActionListener
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{ endRedirection(); }
 					}

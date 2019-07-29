@@ -96,6 +96,7 @@ implements	FocusListener, ActionListener
 			}
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -157,6 +158,7 @@ implements	FocusListener, ActionListener
 			}
 		}
 
+	@Override
 	public void
 	focusGained( final FocusEvent event )
 		{
@@ -164,6 +166,7 @@ implements	FocusListener, ActionListener
 		((JTextField) event.getComponent()).selectAll();
 		}
 
+	@Override
 	public void
 	focusLost( final FocusEvent event )
 		{

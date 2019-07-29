@@ -223,7 +223,7 @@ extends		ResourceBundle
 	 */
 
 	@Override
-	public Enumeration
+	public Enumeration<String>
 	getKeys()
 		{
 		return this.bundle.getKeys();

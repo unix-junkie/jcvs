@@ -286,6 +286,7 @@ implements	ActionListener, CVSUserInterface
 		this.entryPanel.savePreferences( this.prefs );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent evt )
         {
@@ -393,6 +394,7 @@ implements	ActionListener, CVSUserInterface
 			SwingUtilities.invokeLater
 				( new Runnable()
 					{
+					@Override
 					public void run()
 						{
 						if ( traceCheckItem.getState() )
@@ -426,7 +428,7 @@ implements	ActionListener, CVSUserInterface
 			{
 			SwingUtilities.invokeLater
 				( new Runnable()
-					{ public void run() { dispose(); } }
+					{ @Override public void run() { dispose(); } }
 				);
 			}
 		else if ( command.equalsIgnoreCase( "HideOutputWindow" ) )
@@ -435,7 +437,7 @@ implements	ActionListener, CVSUserInterface
 				{
 				SwingUtilities.invokeLater
 					( new Runnable()
-						{ public void run() { output.setVisible( false ); } }
+						{ @Override public void run() { output.setVisible( false ); } }
 					);
 				}
 			}
@@ -482,7 +484,7 @@ implements	ActionListener, CVSUserInterface
 			{
 			SwingUtilities.invokeLater
 				( new Runnable()
-					{ public void run() { displayProjectDetails(); } }
+					{ @Override public void run() { displayProjectDetails(); } }
 				);
 			}
 		else if ( command.equalsIgnoreCase( "ClearResults" ) )
@@ -497,21 +499,21 @@ implements	ActionListener, CVSUserInterface
 			{
 			SwingUtilities.invokeLater
 				( new Runnable()
-					{ public void run() { clearArgumentsText(); } }
+					{ @Override public void run() { clearArgumentsText(); } }
 				);
 			}
 		else if ( command.equalsIgnoreCase( "PerformLogin" ) )
 			{
 			SwingUtilities.invokeLater
 				( new Runnable()
-					{ public void run() { performLogin(); } }
+					{ @Override public void run() { performLogin(); } }
 				);
 			}
 		else if ( command.equalsIgnoreCase( "AddToWorkBench" ) )
 			{
 			SwingUtilities.invokeLater
 				( new Runnable()
-					{ public void run() { addToWorkBench(); } }
+					{ @Override public void run() { addToWorkBench(); } }
 				);
 			}
 		else if ( command.equalsIgnoreCase( "ExpandBelow" ) )
@@ -1281,6 +1283,7 @@ CVSTracer.traceIf( true,
 			this.response = resp;
 			}
 
+		@Override
 		public void
 		run()
 			{
@@ -1394,17 +1397,20 @@ CVSTracer.traceIf( true,
 			this.response = resp;
 			}
 
+		@Override
 		public void
 		threadStarted()
 			{
 		//	actionButton.setText( "Cancel Export" );
 			}
 
+		@Override
 		public void
 		threadCanceled()
 			{
 			}
 
+		@Override
 		public void
 		threadFinished()
 			{
@@ -1425,7 +1431,7 @@ CVSTracer.traceIf( true,
 					SwingUtilities.invokeLater
 						(
 						new Runnable()
-							{ public void run() { dispose(); } }
+							{ @Override public void run() { dispose(); } }
 						);
 					}
 				else
@@ -2240,6 +2246,7 @@ CVSTracer.traceIf( true,
 					mItem.addActionListener
 						( new ActionListener()
 							{
+							@Override
 							public void
 							actionPerformed( final ActionEvent e )
 								{
@@ -2267,6 +2274,7 @@ CVSTracer.traceIf( true,
 			this.event = e;
 			}
 
+		@Override
 		public void
 		run()
 			{
@@ -2278,12 +2286,14 @@ CVSTracer.traceIf( true,
 	// CVS USER INTERFACE METHODS
 	//
 
+	@Override
 	public void
 	uiDisplayProgressMsg( final String message )
 		{
 		this.showFeedback( message );
 		}
 
+	@Override
 	public void
 	uiDisplayProgramError( final String error )
 		{
@@ -2293,6 +2303,7 @@ CVSTracer.traceIf( true,
 			( "CVSProjectFrame.uiDisplayProgramError: " + error );
 		}
 
+	@Override
 	public void
 	uiDisplayResponse( final CVSResponse response )
 		{

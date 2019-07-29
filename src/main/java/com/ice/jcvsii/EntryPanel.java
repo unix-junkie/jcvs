@@ -37,6 +37,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.JMenuItem;
@@ -218,6 +219,7 @@ implements	ActionListener, FocusListener,
 			unregisterComponent( this.entriesTree );
 		}
 
+	@Override
 	public void
 	propertyChange( final PropertyChangeEvent evt )
 		{
@@ -247,12 +249,14 @@ implements	ActionListener, FocusListener,
 			}
 		}
 
+	@Override
 	public void
 	focusGained( final FocusEvent e )
 		{
 		this.entriesScroller.setBorder( this.actBorder );
 		}
 
+	@Override
 	public void
 	focusLost( final FocusEvent e )
 		{
@@ -289,10 +293,8 @@ implements	ActionListener, FocusListener,
 		final TreePath rootPath = new TreePath( root.getPath() );
 		this.entriesTree.expandPath( rootPath );
 
-		final Enumeration enumeration = root.children();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.children()) )
 			{
-			final EntryNode node = (EntryNode) enumeration.nextElement();
 			if ( node.isLeaf() )
 				{
 				final TreePath path = new TreePath( node.getPath() );
@@ -322,10 +324,8 @@ implements	ActionListener, FocusListener,
 		//      that the children() enumerator will not be
 		//      empty.
 		final int cnt = root.getChildCount();
-		final Enumeration enumeration = root.children();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.children()) )
 			{
-			final EntryNode node = (EntryNode) enumeration.nextElement();
 			if ( node.isLeaf() )
 				{
 				final CVSEntry entry = node.getEntry();
@@ -361,10 +361,8 @@ implements	ActionListener, FocusListener,
 			{
 			// If the tree is not totally expanded,
 			// this approach quicker.
-			final Enumeration enumeration = root.depthFirstEnumeration();
-			for ( ; enumeration.hasMoreElements() ; )
+			for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.depthFirstEnumeration()) )
 				{
-				final EntryNode node = (EntryNode) enumeration.nextElement();
 				if ( node == root )
 					continue;
 				if ( ! node.isLeaf() )
@@ -379,10 +377,8 @@ implements	ActionListener, FocusListener,
 		{
 		// NOTE getChildCount() is used to force load the children.
 		final int cnt = root.getChildCount();
-		final Enumeration enumeration = root.children();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.children()) )
 			{
-			final EntryNode node = (EntryNode) enumeration.nextElement();
 			if ( ! node.isLeaf() )
 				{
 				this.entriesTree.expandPath
@@ -392,6 +388,7 @@ implements	ActionListener, FocusListener,
 			}
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -467,6 +464,7 @@ implements	ActionListener, FocusListener,
 	//
 	// COLUMN RESIZE LISTENER INTERFACE BEGIN
 	//
+	@Override
 	public void
 	columnHeadersNeedUpdate( final ColumnHeader.ResizeEvent event )
 		{
@@ -474,6 +472,7 @@ implements	ActionListener, FocusListener,
 		this.entriesTree.repaint();
 		}
 
+	@Override
 	public void
 	columnHeadersResized( final ColumnHeader.ResizeEvent event )
 		{

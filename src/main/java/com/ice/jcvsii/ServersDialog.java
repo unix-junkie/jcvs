@@ -138,6 +138,7 @@ implements	ActionListener, ListSelectionListener
 		return result;
 		}
 
+	@Override
 	public void
 	valueChanged( final ListSelectionEvent evt )
 		{
@@ -175,6 +176,7 @@ implements	ActionListener, ListSelectionListener
 			}
 		}
 
+    @Override
     public void
     actionPerformed( final ActionEvent event )
         {

@@ -45,6 +45,7 @@ implements	ConfigureEditorFactory, ConfigureConstants
 			( CFG_STRING, this.createDefaultEditor( CFG_STRING ) );
 		}
 
+	@Override
 	public ConfigureEditor
 	createEditor( final String propertyType )
 		{

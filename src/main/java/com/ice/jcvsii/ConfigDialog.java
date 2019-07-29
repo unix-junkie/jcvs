@@ -159,6 +159,7 @@ implements	ActionListener
 		this.configPan.editPaths( paths );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{

@@ -70,6 +70,7 @@ implements	ActionListener, CVSUserInterface
 		this.info.savePreferences( "testconn" );
 		}
 
+	@Override
 	public void
 	actionPerformed( final ActionEvent event )
 		{
@@ -252,6 +253,7 @@ implements	ActionListener, CVSUserInterface
 			this.response = response;
 			}
 
+		@Override
 		public void
 		run()
 			{
@@ -275,6 +277,7 @@ implements	ActionListener, CVSUserInterface
 			this.response = response;
 			}
 
+		@Override
 		public void
 		threadStarted()
 			{
@@ -282,11 +285,13 @@ implements	ActionListener, CVSUserInterface
 			actionButton.setActionCommand( "CANCEL" );
 			}
 
+		@Override
 		public void
 		threadCanceled()
 			{
 			}
 
+		@Override
 		public void
 		threadFinished()
 			{
@@ -329,6 +334,7 @@ implements	ActionListener, CVSUserInterface
 	// CVS USER INTERFACE METHODS
 	//
 
+	@Override
 	public void
 	uiDisplayProgressMsg( final String message )
 		{
@@ -336,11 +342,13 @@ implements	ActionListener, CVSUserInterface
 		this.feedback.repaint( 0 );
 		}
 
+	@Override
 	public void
 	uiDisplayProgramError( final String error )
 		{
 		}
 
+	@Override
 	public void
 	uiDisplayResponse( final CVSResponse response )
 		{

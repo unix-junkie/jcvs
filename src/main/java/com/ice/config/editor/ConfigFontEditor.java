@@ -138,18 +138,21 @@ implements	FocusListener, ItemListener, ChangeListener
 			}
 		}
 
+	@Override
 	public void
 	stateChanged( final ChangeEvent event )
 		{
 		this.showConfiguredFont();
 		}
 
+	@Override
 	public void
 	itemStateChanged( final ItemEvent event )
 		{
 		this.showConfiguredFont();
 		}
 
+	@Override
 	public void
 	focusGained( final FocusEvent event )
 		{
@@ -160,6 +163,7 @@ implements	FocusListener, ItemListener, ChangeListener
 			((JTextField) comp).selectAll();
 		}
 
+	@Override
 	public void
 	focusLost( final FocusEvent event )
 		{

@@ -34,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.JButton;
@@ -137,11 +138,8 @@ implements	ActionListener
 	private boolean
 	checkUniqueness( final String name )
 		{
-		final Enumeration enumeration = this.parentNode.children();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final WorkBenchTreeNode node : Collections.list((Enumeration<WorkBenchTreeNode>) this.parentNode.children()) )
 			{
-			final WorkBenchTreeNode node =
-				(WorkBenchTreeNode) enumeration.nextElement();
 			if ( node.getDefinition().getName().equals( name ) )
 				return false;
 			}
@@ -149,6 +147,7 @@ implements	ActionListener
 		return true;
 		}
 
+    @Override
     public void
     actionPerformed( final ActionEvent event )
         {

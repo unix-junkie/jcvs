@@ -35,7 +35,6 @@ import java.awt.Shape;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -100,6 +99,7 @@ implements	TreeCellRenderer
 		this.localRoot = localRoot;
 		}
 
+	@Override
 	public Component
 	getTreeCellRendererComponent(
 			final JTree tree, final Object value,
@@ -476,11 +476,10 @@ implements	TreeCellRenderer
 	public void
 	loadIconImages()
 		{
-		Image		image = null;
 		final Vector		names = new Vector();
-		Hashtable	iconTable;
+		final Hashtable<String, Image>	iconTable;
 
-		iconTable = new Hashtable();
+		iconTable = new Hashtable<String, Image>();
 
 		names.addElement( "openFolder" );
 		names.addElement( "closedFolder" );
@@ -509,6 +508,7 @@ implements	TreeCellRenderer
 			final String imageURLName =
 				"/com/ice/jcvsii/images/icons/" + iconName + ".gif";
 
+			Image image;
 			try {
 				image = AWTUtilities.getImageResource( imageURLName );
 				}
@@ -544,11 +544,8 @@ implements	TreeCellRenderer
 					+ "   " + ex.getMessage() );
 			}
 
-		final Enumeration enumeration = iconTable.elements();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final Image image : iconTable.values() )
 			{
-			image = (Image) enumeration.nextElement();
-
 			width = image.getWidth( null );
 			height = image.getHeight( null );
 
@@ -569,16 +566,16 @@ implements	TreeCellRenderer
 		this.iconWidth = maxWidth;
 		this.iconHeight = maxHeight;
 
-		this.openFolder		= new ImageIcon( (Image) iconTable.get( "openFolder" ) );
-		this.closedFolder	= new ImageIcon( (Image) iconTable.get( "closedFolder" ) );
+		this.openFolder		= new ImageIcon( iconTable.get( "openFolder" ) );
+		this.closedFolder	= new ImageIcon( iconTable.get( "closedFolder" ) );
 
-		this.addedFile		= new ImageIcon( (Image) iconTable.get( "addedFile" ) );
-		this.conflictFile	= new ImageIcon( (Image) iconTable.get( "conflictFile" ) );
-		this.conModFile		= new ImageIcon( (Image) iconTable.get( "conModFile" ) );
-		this.lostFile		= new ImageIcon( (Image) iconTable.get( "lostFile" ) );
-		this.removedFile	= new ImageIcon( (Image) iconTable.get( "removedFile" ) );
-		this.modifiedFile	= new ImageIcon( (Image) iconTable.get( "modifiedFile" ) );
-		this.unchangedFile	= new ImageIcon( (Image) iconTable.get( "unchangedFile" ) );
+		this.addedFile		= new ImageIcon( iconTable.get( "addedFile" ) );
+		this.conflictFile	= new ImageIcon( iconTable.get( "conflictFile" ) );
+		this.conModFile		= new ImageIcon( iconTable.get( "conModFile" ) );
+		this.lostFile		= new ImageIcon( iconTable.get( "lostFile" ) );
+		this.removedFile	= new ImageIcon( iconTable.get( "removedFile" ) );
+		this.modifiedFile	= new ImageIcon( iconTable.get( "modifiedFile" ) );
+		this.unchangedFile	= new ImageIcon( iconTable.get( "unchangedFile" ) );
 		}
 
 	}

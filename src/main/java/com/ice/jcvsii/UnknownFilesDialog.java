@@ -35,7 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.AbstractListModel;
@@ -117,6 +117,7 @@ extends		JDialog
 		this.btnCancel.addActionListener(
 			new java.awt.event.ActionListener()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{
@@ -133,6 +134,7 @@ extends		JDialog
 			this.btnDelete.addActionListener(
 				new java.awt.event.ActionListener()
 					{
+					@Override
 					public void
 					actionPerformed( final ActionEvent e )
 						{
@@ -148,6 +150,7 @@ extends		JDialog
 		this.btnSelectAll.addActionListener(
 			new java.awt.event.ActionListener()
 				{
+				@Override
 				public void
 				actionPerformed( final ActionEvent e )
 					{
@@ -163,6 +166,7 @@ extends		JDialog
 		this.btnAdd.addActionListener(
 			new java.awt.event.ActionListener()
 				{
+				@Override
 				public void
 				actionPerformed(final ActionEvent e)
 					{
@@ -235,6 +239,7 @@ extends		JDialog
 			this.setBorder( null );
 			}
 
+		@Override
 		public Component
 		getListCellRendererComponent(
 				final JList list, final Object value, final int index,
@@ -280,8 +285,9 @@ extends		JDialog
 	private
 	class		MyListModel
 	extends		AbstractListModel
+	implements Iterable<MyItem>
 		{
-		Vector		listItems = new Vector();
+		Vector<MyItem>	listItems = new Vector<MyItem>();
 		CVSIgnore	ignore = new CVSIgnore();
 
 		public
@@ -316,6 +322,7 @@ extends		JDialog
 			this.fireContentsChanged( this, 0, 1 );
 			}
 
+		@Override
 		public int
 		getSize()
 			{
@@ -327,7 +334,7 @@ extends		JDialog
 			{
 			if ( index > -1 && index < this.listItems.size() )
 				{
-				final MyItem item = (MyItem) this.listItems.elementAt( index );
+				final MyItem item = this.listItems.elementAt( index );
 				item.isSelected = ! item.isSelected;
 				this.fireContentsChanged( this, index, index );
 				}
@@ -339,12 +346,13 @@ extends		JDialog
 			final int size = this.listItems.size();
 			for ( int i = 0 ; i < size ; i++ )
 				{
-				((MyItem) this.listItems.elementAt(i)).isSelected = true;
+				this.listItems.elementAt(i).isSelected = true;
 				}
 
 			this.fireContentsChanged( this, 0, size-1 );
 			}
 
+		@Override
 		public Object
 		getElementAt( final int i )
 			{
@@ -397,17 +405,18 @@ extends		JDialog
 		public Object
 		deleteElement( final Object obj )
 			{
-			if ( this.listItems.size() == 0 )
+			if ( this.listItems.isEmpty() )
 				return null;
 			this.listItems.remove(obj);
 			this.fireContentsChanged( this, 0, this.listItems.size() );
 			return obj;
 			}
 
-		public Enumeration
-		elements()
+		@Override
+		public Iterator<MyItem>
+		iterator()
 			{
-			return this.listItems.elements();
+			return this.listItems.iterator();
 			}
 		}
 
@@ -477,10 +486,8 @@ extends		JDialog
 	dispose()
 		{
 		this.selectedList.clear();
-		for ( final Enumeration enumeration = this.mdlList.elements()
-				; enumeration.hasMoreElements() ; )
+		for ( final MyItem item : this.mdlList )
 			{
-			final MyItem item = (MyItem) enumeration.nextElement();
 			if ( item.isSelected )
 				this.selectedList.add( item.file );
 			}

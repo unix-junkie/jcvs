@@ -22,16 +22,15 @@
 
 package com.ice.pref;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
 
 public
 class		PrefsTupleTable
-extends		Hashtable
+extends		Hashtable<String, PrefsTuple>
 	{
-	private final Vector		keyOrder = new Vector();
+	private final Vector<String>		keyOrder = new Vector<String>();
 
 	public
 	PrefsTupleTable()
@@ -45,11 +44,8 @@ extends		Hashtable
 		if ( this.size() != that.size() )
 			return false;
 
-		for ( int i = 0 ; i < this.keyOrder.size() ; ++i )
+		for ( final String key : keyOrder )
 			{
-			final String key =
-				(String) this.keyOrder.elementAt(i);
-
 			final PrefsTuple thisTup = this.getTuple( key );
 			final PrefsTuple thatTup = that.getTuple( key );
 
@@ -63,7 +59,7 @@ extends		Hashtable
 		return true;
 		}
 
-	public Vector
+	public Vector<String>
 	getKeyOrder()
 		{
 		return this.keyOrder;
@@ -73,7 +69,7 @@ extends		Hashtable
 	getTuple( final String key )
 		{
 		final Object o = this.get( key );
-		return (PrefsTuple) this.get( key );
+		return this.get(key );
 		}
 
 	public PrefsTuple
@@ -82,16 +78,15 @@ extends		Hashtable
 		if ( idx < 0 || idx >= this.keyOrder.size() )
 			return null;
 
-		return (PrefsTuple)
-			this.get( this.keyOrder.elementAt( idx ) );
+		return this.get(this.keyOrder.elementAt(idx ) );
 		}
 
 	public PrefsTuple
 	setTupleAt( final PrefsTuple tup, final int idx )
 		{
-		final String key = (String) this.keyOrder.elementAt( idx );
+		final String key = this.keyOrder.elementAt(idx );
 
-		final PrefsTuple remTup = (PrefsTuple) this.remove( key );
+		final PrefsTuple remTup = this.remove(key );
 
 		this.keyOrder.setElementAt( tup.getKey(), idx );
 
@@ -147,10 +142,8 @@ extends		Hashtable
 		{
 		int max = 0;
 
-		final Enumeration enumeration = this.elements();
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final PrefsTuple tup : this.values() )
 			{
-			final PrefsTuple tup = (PrefsTuple) enumeration.nextElement();
 			if ( tup.length() > max )
 				max = tup.length();
 			}

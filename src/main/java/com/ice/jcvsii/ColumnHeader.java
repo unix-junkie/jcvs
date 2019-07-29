@@ -31,7 +31,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.EventListener;
 
 import javax.swing.CellRendererPane;
@@ -257,12 +257,14 @@ extends		JComponent
 		{
         private int lastEffectiveMouseX;
 
-        public void
+        @Override
+	public void
 		mouseClicked( final MouseEvent e )
 			{
 			}
 
-        public void
+        @Override
+	public void
 		mousePressed( final MouseEvent evt )
 			{
             setDraggedColumn( null );
@@ -295,7 +297,8 @@ extends		JComponent
 				}
 			}
 
-        public void
+        @Override
+	public void
 		mouseMoved( final MouseEvent evt )
 			{
             if ( computeResizingColumn( evt.getPoint() ) != -1 )
@@ -320,7 +323,8 @@ extends		JComponent
 				}
 			}
 
-        public void
+        @Override
+	public void
 		mouseDragged( final MouseEvent evt )
 			{
 			final int mouseX = evt.getX();
@@ -368,7 +372,8 @@ extends		JComponent
 				}
 			}
 
-        public void
+        @Override
+	public void
 		mouseReleased( final MouseEvent evt )
 			{
             final TableColumn rColumn = getResizingColumn();
@@ -388,12 +393,14 @@ extends		JComponent
 			repaint();
 			}
 
-        public void
+        @Override
+	public void
 		mouseEntered( final MouseEvent evt )
 			{
 			}
 
-        public void
+        @Override
+	public void
 		mouseExited( final MouseEvent evt )
 			{
 			}
@@ -492,11 +499,8 @@ extends		JComponent
 
             final int columnMargin = getColumnModel().getColumnMargin();
 
-            final Enumeration enumeration = getColumnModel().getColumns();
-
-            for ( ; enumeration.hasMoreElements() ; )
+            for ( final TableColumn aColumn : Collections.list(getColumnModel().getColumns()) )
 				{
-                final TableColumn aColumn = (TableColumn) enumeration.nextElement();
                 resizeRect.x += aColumn.getWidth() + columnMargin;
 
                 if ( resizeRect.x > p.x )
@@ -535,13 +539,8 @@ extends		JComponent
 		final Rectangle cellRect =
 			new Rectangle( 0, 0, size.width, size.height );
 
-		final Enumeration enumeration = getColumnModel().getColumns();
-
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final TableColumn aColumn : Collections.list(getColumnModel().getColumns()) )
 			{
-			final TableColumn aColumn =
-				(TableColumn) enumeration.nextElement();
-
 			final int columnMargin = this.getColumnModel().getColumnMargin();
 
 			cellRect.width = aColumn.getWidth() + columnMargin;
@@ -652,10 +651,8 @@ extends		JComponent
 	getMinimumSize()
 		{
         long width = 0;
-        final Enumeration enumeration = getColumnModel().getColumns();
-        for ( ; enumeration.hasMoreElements() ; )
+        for ( final TableColumn aColumn : Collections.list(getColumnModel().getColumns()) )
 			{
-            final TableColumn aColumn = (TableColumn)enumeration.nextElement();
             width += aColumn.getMinWidth();
 			}
         return createHeaderSize( width );
@@ -672,10 +669,8 @@ extends		JComponent
 	getPreferredSize()
 		{
         long width = 0;
-        final Enumeration enumeration = getColumnModel().getColumns();
-        for ( ; enumeration.hasMoreElements() ; )
+        for ( final TableColumn aColumn : Collections.list(getColumnModel().getColumns()) )
 			{
-            final TableColumn aColumn = (TableColumn)enumeration.nextElement();
             width += aColumn.getPreferredWidth();
 			}
         return createHeaderSize( width );
@@ -690,10 +685,8 @@ extends		JComponent
 	getMaximumSize()
 		{
         long width = 0;
-        final Enumeration enumeration = getColumnModel().getColumns();
-        for ( ; enumeration.hasMoreElements() ; )
+        for ( final TableColumn aColumn : Collections.list(getColumnModel().getColumns()) )
 			{
-            final TableColumn aColumn = (TableColumn)enumeration.nextElement();
             width += aColumn.getMaxWidth();
 			}
         return createHeaderSize( width );
@@ -722,12 +715,8 @@ extends		JComponent
 		int column = 0;
 		final int columnMargin = this.getColumnModel().getColumnMargin();
 
-		final Enumeration enumeration = this.getColumnModel().getColumns();
-
-		for ( ; enumeration.hasMoreElements() ; )
+		for ( final TableColumn aColumn : Collections.list(getColumnModel().getColumns()) )
 			{
-			final TableColumn aColumn = (TableColumn) enumeration.nextElement();
-
 			if ( column == columnIndex )
 				{
 				return new Rectangle
@@ -821,6 +810,7 @@ extends		JComponent
 						new EmptyBorder( 0, 3, 0, 3 ) ) );
 			}
 
+		@Override
 		public Component
 		getHeaderCellRendererComponent(
 				final ColumnHeader header, Object value, final int index )

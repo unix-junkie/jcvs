@@ -1,6 +1,7 @@
 
 package com.ice.config;
 
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -84,12 +85,8 @@ extends		DefaultMutableTreeNode
 	public ConfigureTreeNode
 	getChild( final String name )
 		{
-		for ( final Enumeration enumeration = children()
-				; enumeration.hasMoreElements() ; )
+		for ( final ConfigureTreeNode node : Collections.list((Enumeration<ConfigureTreeNode>) children()) )
 			{
-			final ConfigureTreeNode node =
-				(ConfigureTreeNode) enumeration.nextElement();
-
 			if ( node.toString().equals( name ) )
 				return node;
 			}

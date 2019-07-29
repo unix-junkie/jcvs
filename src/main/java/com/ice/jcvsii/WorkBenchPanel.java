@@ -134,6 +134,7 @@ implements	TreeSelectionListener
 		this.treePanel.addProjectToWorkBench( project );
 		}
 
+	@Override
 	public void
 	valueChanged( final TreeSelectionEvent event )
 		{
@@ -179,6 +180,7 @@ implements	TreeSelectionListener
 				this.browseAction =
 					new AbstractAction()
 						{
+						@Override
 						public void
 						actionPerformed( final ActionEvent event )
 							{ browseProject(); }
@@ -202,6 +204,7 @@ implements	TreeSelectionListener
 				this.openProjectAction =
 					new AbstractAction()
 						{
+						@Override
 						public void
 						actionPerformed( final ActionEvent event )
 							{ treePanel.openSelection(); }
@@ -220,6 +223,7 @@ implements	TreeSelectionListener
 				this.newFolderAction =
 					new AbstractAction()
 						{
+						@Override
 						public void
 						actionPerformed( final ActionEvent event )
 							{ treePanel.addNewFolder(); }
@@ -238,6 +242,7 @@ implements	TreeSelectionListener
 				this.newProjectAction =
 					new AbstractAction()
 						{
+						@Override
 						public void
 						actionPerformed( final ActionEvent event )
 							{ treePanel.addNewProject(); }
@@ -256,6 +261,7 @@ implements	TreeSelectionListener
 				this.deleteAction =
 					new AbstractAction()
 						{
+						@Override
 						public void
 						actionPerformed( final ActionEvent event )
 							{ treePanel.deleteSelection(); }
