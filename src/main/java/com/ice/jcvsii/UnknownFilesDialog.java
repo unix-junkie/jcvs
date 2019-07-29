@@ -287,7 +287,7 @@ extends		JDialog
 	extends		AbstractListModel
 	implements Iterable<MyItem>
 		{
-		Vector<MyItem>	listItems = new Vector<MyItem>();
+		Vector<MyItem>	listItems = new Vector<>();
 		CVSIgnore	ignore = new CVSIgnore();
 
 		public

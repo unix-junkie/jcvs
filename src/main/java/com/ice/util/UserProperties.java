@@ -251,8 +251,8 @@ UserProperties
 		UserProperties.defaultsResource = null;
 		UserProperties.localPropertyFile = null;
 
-		UserProperties.dynKeysTable = new Hashtable<String, Vector<String>>();
-		UserProperties.dynPathTable = new Hashtable<String, String>();
+		UserProperties.dynKeysTable = new Hashtable<>();
+		UserProperties.dynPathTable = new Hashtable<>();
 		UserProperties.workingProps = new Properties();
 
 		UserProperties.osname = System.getProperty( "os.name" );

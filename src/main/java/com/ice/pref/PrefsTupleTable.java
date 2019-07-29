@@ -30,7 +30,7 @@ public
 class		PrefsTupleTable
 extends		Hashtable<String, PrefsTuple>
 	{
-	private final Vector<String>		keyOrder = new Vector<String>();
+	private final Vector<String>		keyOrder = new Vector<>();
 
 	public
 	PrefsTupleTable()

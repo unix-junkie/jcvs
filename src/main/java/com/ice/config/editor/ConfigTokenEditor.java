@@ -29,7 +29,7 @@ extends		ConfigArrayEditor
 
 		if ( tokens != null )
 			{
-			final List<String> v = new Vector<String>();
+			final List<String> v = new Vector<>();
 			for ( final String token : tokens)
 				v.add( token );
 			this.model.setData( v );

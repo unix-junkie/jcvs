@@ -479,7 +479,7 @@ implements	TreeCellRenderer
 		final Vector		names = new Vector();
 		final Hashtable<String, Image>	iconTable;
 
-		iconTable = new Hashtable<String, Image>();
+		iconTable = new Hashtable<>();
 
 		names.addElement( "openFolder" );
 		names.addElement( "closedFolder" );

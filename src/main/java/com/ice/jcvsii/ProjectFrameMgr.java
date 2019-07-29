@@ -32,7 +32,7 @@ public
 class		ProjectFrameMgr
 	{
 	private static boolean			debug = false;
-	private static Hashtable<String, ProjectFrame>	frames = new Hashtable<String, ProjectFrame>();
+	private static Hashtable<String, ProjectFrame>	frames = new Hashtable<>();
 
 
 	public static void
