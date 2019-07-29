@@ -1,16 +1,18 @@
 /*
 ** Java cvs client library package.
-** Copyright (c) 1997 by Timothy Gerard Endres
+** Copyright (c) 1997-2002 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
 ** You may redistribute it and/or modify it under the terms of the GNU
-** General Public License as published by the Free Software Foundation.
+** Library General Public License (LGPL) as published by the Free Software
+** Foundation.
+**
 ** Version 2 of the license should be included with this distribution in
-** the file LICENSE, as well as License.html. If the license is not
+** the file LICENSE.txt, as well as License.html. If the license is not
 ** included	with this distribution, you may find a copy at the FSF web
-** site at 'www.gnu.org' or 'www.fsf.org', or you may write to the
-** Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139 USA.
+** site at 'www.gnu.org' or 'www.fsf.org', or you may write to the Free
+** Software Foundation at 59 Temple Place - Suite 330, Boston, MA 02111 USA.
 **
 ** THIS SOFTWARE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND,
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
@@ -38,18 +40,42 @@ import java.util.zip.*;
  * you need to communicate with a CVS Server and maintain
  * local working directories for CVS repositories.
  *
- * @version $Revision: 2.24 $
- * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
+ * @version $Revision: 2.25 $
+ * @author Timothy Gerard Endres, <time@gjt.org>.
  * @see CVSClient
  *
  */
+
+//
+// NOTES in code:
+//
+// NB-eol  Nick Bower <nick@brainstorm.co.uk>
+//   Nick Bower's EOL fix. The problem was that our line reader did
+//   not include the EOL line termination. This made is impossible to
+//   distinguish between an end-of-file line with no termination, and
+//   a line that included termination. By explicitly returning the
+//   EOL (and adjusting for its existence), we eliminate this problem.
+//   The problem manifested as adding line termination to files that
+//   lacked it on the last line. Some complained that it affected
+//   binary files checked in as ascii. That is another issue entirely!
+//
+// MTT-delete  Matthias Tichy <mtt@uni-paderborn.de>
+//   Code to delete the local file when a "removed" command is received.
+//
+// MTT-null-list  Matthias Tichy <mtt@uni-paderborn.de>
+//   Fixed to properly handle a null file file.
+//
+// GG-dot-rep  Gérard COLLIN <gcollin@netonomy.com>
+//   When we see a repository string of ".", it should be ignored.
+//
+
 
 public class
 CVSProject extends Object
 		implements CVSResponseHandler
 	{
-	static public final String		RCS_ID = "$Id: CVSProject.java,v 2.24 2000/06/11 05:07:06 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.24 $";
+	static public final String		RCS_ID = "$Id: CVSProject.java,v 2.25 2002/02/10 18:02:14 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.25 $";
 
 	static private final String		INFO_PREFIX		= "#   ";
 	static private final String		ERROR_PREFIX	= "*** ";
@@ -88,6 +114,7 @@ CVSProject extends Object
 
 	private CVSClient		client;
 	private CVSIgnore		ignore;
+	private CVSProjectDef	projectDef;
 
 	private CVSEntry		rootEntry;
 	private Hashtable		pathTable;
@@ -394,6 +421,7 @@ CVSProject extends Object
 		this.localRootDirectory = null;
 
 		this.client = null;
+		this.projectDef = null;
 
 		this.setVars = null;
 
@@ -582,6 +610,12 @@ CVSProject extends Object
 		this.connMethod = method;
 		}
 
+	public boolean
+	isSSHServer()
+		{
+		return (this.connMethod == CVSRequest.METHOD_SSH);
+		}
+
 	public String
 	getServerCommand()
 		{
@@ -632,6 +666,18 @@ CVSProject extends Object
 	getRootEntry()
 		{
 		return this.rootEntry;
+		}
+
+	public CVSProjectDef
+	setProjectDef()
+		{
+		return this.projectDef;
+		}
+
+	public void
+	setProjectDef( CVSProjectDef projectDef )
+		{
+		this.projectDef = projectDef;
 		}
 
 	public File
@@ -775,6 +821,11 @@ CVSProject extends Object
 				if ( noteLine == null )
 					break;
 
+				// NB-eol
+				// Now need this because NewLineReader.readLine
+				// returns an eol.
+				noteLine = noteLine.trim();
+
 				CVSNotifyItem notifyItem =
 					parseNotifyLine( noteLine );
 
@@ -801,7 +852,7 @@ CVSProject extends Object
 		CVSRequest	request;
 		boolean		result = false;
 
-		if ( ! this.isPServer() )
+		if ( ! this.isPServer() && ! this.isSSHServer() )
 			return true;
 
 		if ( this.hasValidLogin( userName ) )
@@ -812,9 +863,9 @@ CVSProject extends Object
 
 		request = new CVSRequest();
 
-		request.setPServer( true );
+		request.setPServer( this.isPServer() );
 		request.setUserName( userName );
-		request.setPassword( scrambled );
+		request.setPassword( this.isSSHServer() ? password : scrambled );
 
 		request.setPort( this.getClient().getPort() );
 		request.setHostName( this.getClient().getHostName() );
@@ -832,6 +883,10 @@ CVSProject extends Object
 		request.allowGzipFileMode = this.allowGzipFileMode;
 		request.gzipStreamLevel = this.gzipStreamLevel;
 
+		request.setConnectionMethod( this.getConnectionMethod() );
+		request.setServerCommand( this.getServerCommand() );
+		request.setRshProcess( this.getRshProcess() );
+
 		request.setUserInterface( ui );
 
 		CVSResponse response =
@@ -841,7 +896,7 @@ CVSProject extends Object
 			{
 			result = true;
 			this.setUserName( userName );
-			this.setPassword( scrambled );
+			this.setPassword( this.isSSHServer() ? password : scrambled );
 			response.appendStdout
 				( "Authentication of '" +userName+ "' succeeded.\n" );
 			}
@@ -1345,7 +1400,7 @@ CVSProject extends Object
 		request.setUserName( this.userName );
 		request.setPServer( this.isPServer() );
 
-		if ( this.isPServer() )
+		if ( this.isPServer() || this.isSSHServer() )
 			{
 			request.setPassword( this.password );
 			}
@@ -2515,20 +2570,20 @@ CVSProject extends Object
 			+ "   rootDirStr '" + rootDirectoryStr + "'\n"
 			+ "   reposStr   '" + repositoryStr + "'" );
 
-		CVSProjectDef def =
+		this.projectDef =
 			new CVSProjectDef( rootDirectoryStr, repositoryStr );
 
-		if ( ! def.isValid() )
+		if ( ! this.projectDef.isValid() )
 			throw new IOException
 				( "could not parse project specification, "
-					+ def.getReason() );
+					+ this.projectDef.getReason() );
 
-		this.isPServer = def.isPServer();
-		this.connMethod = def.getConnectMethod();
-		this.userName = def.getUserName();
-		this.getClient().setHostName( def.getHostName() );
+		this.isPServer = this.projectDef.isPServer();
+		this.connMethod = this.projectDef.getConnectMethod();
+		this.userName = this.projectDef.getUserName();
+		this.getClient().setHostName( this.projectDef.getHostName() );
 
-		rootDirectoryStr = def.getRootDirectory();
+		rootDirectoryStr = this.projectDef.getRootDirectory();
 
 		//
 		// REVIEW
@@ -2813,6 +2868,28 @@ CVSProject extends Object
 					( item.getRepositoryName() );
 
 			result = parentEntry.removeEntry( entryName );
+
+			//
+			// MTT-delete
+			// Fixes the problem in which the file is left undeleted.
+			//
+			if ( item.getType() == CVSResponseItem.REMOVED )
+				{
+				String pathName = item.getPathName();
+				if ( pathName.startsWith( "./" ) )
+					pathName = pathName.substring (2);
+
+				String fileName =
+					this.localRootDirectory + File.separator + pathName + entryName;
+
+				File file = new File( fileName.replace( '/', File.separatorChar ) );
+				if ( ! file.delete() )
+					{
+					CVSTracer.traceWithStack
+						("CVSProject.removeEntriesItem: Could not delete file " +
+							file.getAbsolutePath() );
+				 	}
+				}
 			}
 
 		return result;
@@ -3087,12 +3164,40 @@ CVSProject extends Object
 		//
 		// int index = rootDirectoryStr.lastIndexOf( ':' );
 		//
+		// REVIEW This patch was submitted, but I do not understand
+		//        in what context it ever occurs to be fixed. TGE
+		// GG-NT-no-server  Gérard COLLIN <gcollin@netonomy.com>
+		//    Changed to searching first : after @ because of
+		//    "user@host.domain:C:/src/cvs" specifications
+		//
+		//	int index = -1;
+		//	index = rootDirectoryStr.indexOf( '@');
+		//	if ( index >= 0 )
+		//		{
+		//		index = rootDirectoryStr.indexOf( ':', index+1 );
+		//		if ( index >= 0 )
+		//			{
+		//			rootDirectoryStr =
+		//			rootDirectoryStr.substring( index + 1 );
+		//			}
+		//		}
+		//
+
 		int index = -1;
-		for ( int i = 0 ; i < 3; ++i )
+
+		if ( ! rootDirectoryStr.startsWith( ":" ) )
 			{
-			index = rootDirectoryStr.indexOf( ':', index + 1 );
-			if ( index == -1 )
-				break;
+			// "user@host.domain:C:/src/cvs"
+			index = rootDirectoryStr.indexOf( ':', 0 );
+			}
+		else
+			{
+			for ( int i = 0 ; i < 3; ++i )
+				{
+				index = rootDirectoryStr.indexOf( ':', index + 1 );
+				if ( index == -1 )
+					break;
+				}
 			}
 
 		if ( index >= 0 )
@@ -3137,7 +3242,11 @@ CVSProject extends Object
 		//
 		if ( ! repositoryStr.startsWith( rootDirectoryStr ) )
 			{
-			repositoryStr = rootDirectoryStr + "/" + repositoryStr;
+			// GG-dot-rep . repositoryStr should be ignored.
+			if  ( repositoryStr.equals( "." ) )
+				repositoryStr = rootDirectoryStr;
+			else
+				repositoryStr = rootDirectoryStr + "/" + repositoryStr;
 			}
 
 		// ============  TABLE ENTRY  ===================
@@ -3197,7 +3306,11 @@ CVSProject extends Object
 				}
 
 			if ( line == null ) break;
-			
+
+			// UNDONE
+			// We need to properly handle "D/" entries (i.e. look up subfolders
+			// that contain CVS admin directories).
+			//
 			// Lines that starts with "D" are directories!
 			if ( line.startsWith( "D" ) )
 				{
@@ -3408,27 +3521,7 @@ CVSProject extends Object
 			if ( result )
 				{
 				// ==============    ROOT   ==================
-				String connMethod;
-				if ( this.getConnectionMethod()
-						== CVSRequest.METHOD_RSH )
-					{
-					connMethod = "server";
-					}
-				else if ( this.isPServer() )
-					{
-					connMethod = "pserver";
-					}
-				else
-					{
-					connMethod = "direct";
-					}
-
-				String rootDirStr =
-					":" + connMethod + ":"
-					+ ( (this.userName.length() > 0) ? ( this.userName + "@") : "" )
-					+ this.getClient().getHostName()
-					+ ":"
-					+ this.rootDirectory;
+				String rootDirStr = this.projectDef.getRootDirectorySpec();
 
 				if ( CVSProject.debugEntryIO )
 				CVSTracer.traceIf( true,
@@ -3779,7 +3872,8 @@ CVSProject extends Object
 				{
 				File dirF = this.getEntryFile( entry );
 				String[] list = dirF.list();
-				if ( list.length == 0 )
+				// MTT-null-list
+				if ( list == null || list.length == 0 )
 					{
 					this.descendAndDelete( dirF );
 					parent.removeEntry( entry );
@@ -4105,7 +4199,7 @@ CVSProject extends Object
 		// In that example, if we got 'include' before we got 'api', we would have
 		// to work back from include up to './', and assume that the top level entry
 		// subsumes the remainder of the repository path as its own, since only
-		// aliases should have this case, and aliases can only applt to the top level.
+		// aliases should have this case, and aliases can only apply to the top level.
 		//
 
 		if ( CVSProject.deepDebug )
@@ -4240,7 +4334,7 @@ CVSProject extends Object
 				{
 				if ( CVSProject.deepDebug )
 				CVSTracer.traceIf( true,
-					"CVSProject.ensureEntryHierarchy: HIT CURENTRY, BREAK" );
+					"CVSProject.ensureEntryHierarchy: HIT CUR-ENTRY, BREAK" );
 				break;
 				}
 
@@ -4270,7 +4364,44 @@ CVSProject extends Object
 			newEntry.setTag( "" );
 
 			// NOTE setDirectoryEntryList() sets 'isDir'-ness of entry.
+			//      If we do not do this, the the getFullPathName() used
+			//      to get the working directory will include the dir's
+			//      name in the path, which is redundant and throws off
+			//      the algorithm by a directory level!
+			//
 			newEntry.setDirectoryEntryList( new CVSEntryVector() );
+
+			//
+			// NOTE
+			//
+			// If there is an existing Entries file in place, then we have
+			// the case where we are picking up something that is laying on
+			// top of an existing working directory. This is almost always
+			// the case of the user performing a checkout of another module
+			// on top of an existing working directory. In this case, we
+			// must read in the existing Entries file, or we will end up
+			// over-writing the file when we save the current hierarchy!
+			//
+			File workingDirF = new File
+				( CVSCUtilities.exportPath( this.getLocalRootDirectory() ) );
+
+			workingDirF = new File
+				( workingDirF, CVSCUtilities.exportPath( newEntry.getFullPathName() ) );
+
+			CVSEntryVector entries =
+				this.readEntriesFile( newEntry, workingDirF );
+
+			if ( CVSProject.deepDebug )
+			CVSTracer.traceIf( true,
+				"CVSProject.ensureEntryHierarchy: "
+				+ "Entries = " + entries
+				+ ", size=" + (entries==null?0:entries.size())
+				+ ", at '" + workingDirF.getAbsolutePath() + "'" );
+
+			if ( entries != null )
+				{
+				newEntry.setDirectoryEntryList( entries );
+				}
 
 			if ( CVSProject.deepDebug )
 			CVSTracer.traceIf( true,
@@ -4573,7 +4704,13 @@ CVSProject extends Object
 					if ( line == null ) break;
 
 					out.write( line );
-					out.newLine();
+
+					// NB-eol
+					// readLine now returns the EOL also.  Stops cvsc from
+					// adding EOL to binaries checked in as ascii and files
+					// without eol at eof.
+					//
+					// out.newLine();
 					}
 				catch ( IOException ex )
 					{
@@ -4751,10 +4888,19 @@ CVSProject extends Object
 					ch = (char) inByte;
 					if ( ch == 0x0A )
 						{
+						// mtt - 21.02.02 
+						// we need to append the correct line end
+						// for the platform we are running under.
+						//
+						// NB-eol
+						// we need to not wrongly assume later
+						// the line always ends in eol.
+						//
+						line.append( System.getProperty("line.separator") );
 						break;
 						}
 
-					line.append( ch	);
+					line.append( ch );
 					}
 				}
 			catch ( IOException ex )

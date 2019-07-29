@@ -33,7 +33,6 @@ import java.lang.Throwable;
 import java.util.*;
 
 import java.awt.event.*;
-import javax.swing.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -386,7 +385,7 @@ extends		Properties
 	public String
 	getCurrentDirectory()
 		{
-		String result = System.getProperty( "user.home", null );
+		String result = System.getProperty( "user.dir", null );
 		if ( result == null )
 			result = ( (File.separatorChar == ':') ? "" : "." );
 		return result;
@@ -918,7 +917,7 @@ extends		Properties
 						style = Font.ITALIC;
 					else if ( flds[1].equalsIgnoreCase( "BOLDITALIC" ) )
 						style = Font.BOLD | Font.ITALIC;
-					result = new Font( flds[1], style, size );
+					result = new Font( flds[0], style, size );
 					}
 				catch ( NumberFormatException ex )
 					{
@@ -1841,130 +1840,6 @@ extends		Properties
 				this.values[i] = (String) values.elementAt(i);
 				}
 			}
-		}
-
-	public JPopupMenu
-    loadPopupMenu( String menuPropertyName, ActionListener listener )
-		{
-		JPopupMenu popup = new JPopupMenu();
-
-		this.addMenuItems( popup, menuPropertyName, listener );
-
-		return popup;
-		}
-
-	public void
-	addGenericItem( JComponent menu, JComponent item )
-		{
-		if ( menu instanceof JMenu )
-			{
-			JMenu jm = (JMenu) menu;
-
-			if ( item == null )
-				jm.addSeparator();
-			else
-				jm.add( item );
-			}
-		else
-			{
-			JPopupMenu jp = (JPopupMenu) menu;
-
-			if ( item == null )
-				jp.addSeparator();
-			else
-				jp.add( item );
-			}
-		}
-
-	public void
-	addMenuItems(
-			JComponent menu, String menuPropertyName,
-			ActionListener listener )
-		{
-		String		itemString;
-		String		menuString;
-		String		itemNameStr; 
-		JMenuItem	mItem;
-
-		String[] itemList = 
-			this.getTokens( "menu." + menuPropertyName, null );
-
-		if ( itemList == null || itemList.length == 0 )
-			{
-			(new Throwable
-				( "Menu definition property '"
-					+ menuPropertyName + "' is not defined." )).
-						printStackTrace();
-			return;
-			}
-
-		for ( int iIdx = 0 ; iIdx < itemList.length ; ++iIdx )
-			{
-			itemNameStr =
-				"item." + menuPropertyName + "." + itemList[ iIdx ];
-
-			itemString = this.getProperty( itemNameStr, null );
-
-			if ( itemString == null )
-				{
-				(new Throwable
-					( "Menu definition '" + menuPropertyName
-						+ "' is missing item definition property '"
-						+ itemNameStr + "'." )).printStackTrace();
-				}
-			else
-				{
-				int colonIdx = itemString.indexOf( ':' );
-
-				if ( itemString.equals( "-" ) )
-					{
-					this.addGenericItem( menu, null );
-					}
-				else if ( colonIdx < 0 )
-					{
-					(new Throwable
-						( "Menu '" + menuPropertyName
-							+ "' Item '" + itemNameStr
-							+ "' has invalid definition." )).printStackTrace();
-					}
-				 else
-					{
-					String title =
-						itemString.substring( 0, colonIdx );
-
-					String command =
-						itemString.substring( colonIdx + 1 );
-
-					if ( command.equals( "@" ) )
-						{
-						JMenu subMenu = new JMenu( title );
-
-						String subMenuName =
-							menuPropertyName + "." + itemList[ iIdx ];
-
-						this.addMenuItems
-							( subMenu, subMenuName, listener );
-
-						this.addGenericItem( menu, subMenu );
-						}
-					else if ( title.equals( "-" ) )
-						{
-						this.addGenericItem( menu, null );
-						}
-					else
-						{
-						mItem = new JMenuItem( title );
-						if ( listener != null )
-							{
-							mItem.addActionListener( listener );
-							mItem.setActionCommand( command );
-							}
-
-						this.addGenericItem( menu, mItem );
-						}
-					}
-				} // itemString != null
-			} // foreach item
 		}
 
 	/**

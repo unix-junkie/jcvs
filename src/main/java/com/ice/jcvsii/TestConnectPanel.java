@@ -37,11 +37,13 @@ implements	ActionListener, CVSUserInterface
 	public void
 	loadPreferences()
 		{
+		this.info.loadPreferences( "testconn" );
 		}
 
 	public void
 	savePreferences()
 		{
+		this.info.savePreferences( "testconn" );
 		}
 
 	public void
@@ -81,12 +83,9 @@ implements	ActionListener, CVSUserInterface
 		String hostname = this.info.getServer();
 		String rootDirectory = this.info.getRepository();
 
-		boolean isPServer = this.info.isPasswordSelected();
+		boolean isPServer = this.info.isPServer();
 
-		int connMethod =
-			( this.info.isInetdSelected()
-				? CVSRequest.METHOD_INETD
-				: CVSRequest.METHOD_RSH );
+		int connMethod = this.info.getConnectionMethod();
 
 		int cvsPort =
 			CVSUtilities.computePortNum
@@ -108,8 +107,9 @@ implements	ActionListener, CVSUserInterface
 			return;
 			}
 
-		if ( connMethod == CVSRequest.METHOD_RSH
-				&& userName.length() < 1 )
+		if ( userName.length() < 1
+				&& (connMethod == CVSRequest.METHOD_RSH
+					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
 			JOptionPane.showMessageDialog
 				( (Frame)this.getTopLevelAncestor(),
@@ -123,7 +123,7 @@ implements	ActionListener, CVSUserInterface
 		//
 		this.getMainPanel().setAllTabsEnabled( false );
 
-		this.client = new CVSClient( hostname, cvsPort );
+		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
 
 		this.request = new CVSRequest();
 
@@ -138,6 +138,10 @@ implements	ActionListener, CVSUserInterface
 					( new String( passWord ), 'A' );
 			 
 			request.setPassword( scrambled );
+			}
+		else if ( connMethod == CVSRequest.METHOD_SSH )
+			{
+			request.setPassword( passWord );
 			}
 
 		request.setConnectionMethod( connMethod );
@@ -176,6 +180,13 @@ implements	ActionListener, CVSUserInterface
 
 		request.setGzipStreamLevel
 			( prefs.getInteger( Config.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
+
+		if ( connMethod == CVSRequest.METHOD_SSH )
+			{
+			// UNDONE Inform user!
+			request.setGzipStreamLevel( 0 );
+			request.allowGzipFileMode = false;
+			}
 
 		request.setEntries( new CVSEntryVector() );
 

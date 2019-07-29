@@ -1,6 +1,6 @@
 /*
 ** Java cvs client application package.
-** Copyright (c) 1997 by Timothy Gerard Endres
+** Copyright (c) 1997-2002 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
@@ -43,18 +43,26 @@ import com.ice.util.StringUtilities;
  * text area, the user feedback display area, and a series of menus.
  * The primary unit of display in this class is a CVSProject.
  *
- * @version $Id: ProjectFrame.java,v 1.10 2000/06/13 05:40:47 time Exp $
+ * @version $Id: ProjectFrame.java,v 1.11 2002/02/10 18:04:15 time Exp $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  *
  */
+
+//
+// CONTRIBUTIONS
+//
+// SK-unknown by Sherali Karimov <sherali.karimov@proxima-tech.com>
+// This code implements a dialog that displays the unmanaged (unknown)
+// files and allows the user to delete or add them to the project.
+//
 
 public
 class		ProjectFrame
 extends		JFrame
 implements	ActionListener, CVSUserInterface
 	{
-	static public final String		RCS_ID = "$Id: ProjectFrame.java,v 1.10 2000/06/13 05:40:47 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.10 $";
+	static public final String		RCS_ID = "$Id: ProjectFrame.java,v 1.11 2002/02/10 18:04:15 time Exp $";
+	static public final String		RCS_REV = "$Revision: 1.11 $";
 
 	private CVSProject		project;
 	private OutputFrame		output;
@@ -351,6 +359,15 @@ implements	ActionListener, CVSUserInterface
 					}
 				);
 			}
+		else if ( command.startsWith( "DisplayUnkFiles:" ) )
+			{
+			String subCmd = command.substring( "DisplayUnkFiles:".length() );
+			this.processUnknownFiles( subCmd );
+			}
+		else if ( command.equalsIgnoreCase( "DisplayUnkDirs" ) )
+			{
+			this.processUnknownDirs();
+			}
 		else if ( command.equalsIgnoreCase( "Close" ) )
 			{
 			SwingUtilities.invokeLater
@@ -380,7 +397,7 @@ implements	ActionListener, CVSUserInterface
 			{
 			ensureOutputAvailable();
 
-			if ( output != null )
+			if ( this.output != null )
 				{
 				this.output.show();
 				this.output.toFront();
@@ -683,7 +700,8 @@ implements	ActionListener, CVSUserInterface
 	public void
 	verifyLogin()
 		{
-		if ( ! this.project.isPServer() )
+		if ( ! this.project.isPServer()
+				&& ! this.project.isSSHServer() )
 			return;
 
 		boolean valid;
@@ -698,7 +716,8 @@ implements	ActionListener, CVSUserInterface
 	public void
 	performLogin()
 		{
-		if ( ! this.project.isPServer() )
+		if ( ! this.project.isPServer()
+				&& ! this.project.isSSHServer() )
 			return;
 
 		String password;
@@ -1021,10 +1040,11 @@ implements	ActionListener, CVSUserInterface
 		else
 			{
 			String argStr = this.getArgumentString();
-			request.parseArgumentString( argStr );
+			request.parseArgumentString( argStr.trim() );
 			}
 
 		allok = request.parseControlString( command );
+
 		if ( ! allok )
 			{
 			String[] fmtArgs =
@@ -1164,7 +1184,6 @@ CVSTracer.traceIf( true,
 
 		//  UNDONE - it would be nice to "verifyRequest" here,
 		//           but it is not _fully_ built (hostname, et.al.).
-
 		if ( allok )
 			{
 			this.setWaitCursor();
@@ -1292,8 +1311,19 @@ CVSTracer.traceIf( true,
 
 			if ( ! fail )
 				{
-				project.performCVSRequest
-					( this.request, this.response );
+				//
+				// SK-unknown If the user did an update, display the Unkowns dialog.
+				// UNDONE disabled until configurable. - TGE
+				//
+				if ( project.performCVSRequest( this.request, this.response ) )
+					{
+					/*
+					if ( false && this.request.getCommand().equals("update") )
+						{
+						processUnknownFiles();
+						}
+					*/
+					}
 				}
 			}
 		}
@@ -1806,35 +1836,38 @@ CVSTracer.traceIf( true,
 	protected void
 	displayPrettyDiffs( boolean ok )
 		{
-		String resultLine;
-		StringBuffer finalResult = new StringBuffer("");
+		String resultLine =
+			ResourceMgr.getInstance().getUIString( "project.fdbk.result.ok" );
 
-		if ( ok )
+		// NOTE
+		// REVIEW
+		// The only time that the stdout has zero length is when there was
+		// an error, in which case stderr will have a non-zero length. If
+		// both stdout and stderr are empty, then there were no diffs. In
+		// the case of an error, we will use the normal results display.
+
+		if ( ! ok || displayStderr.length() > 0 )
 			{
-		//	resultLine = ResourceMgr.getInstance().getUIString
-		//		( "project.fdbk.result.ok" );
+			this.displayFinalResults( ok );
+			resultLine = ResourceMgr.getInstance().getUIString
+				( "project.fdbk.result.err" );
 			}
-		else
+		else if ( ok && this.displayStdout.length() > 0 )
 			{
-		//	resultLine = ResourceMgr.getInstance().getUIString
-		//		( "project.fdbk.result.err" );
+			PrettyDiffFrame diffFrame =
+				new PrettyDiffFrame( this, "Diffs", null, this.displayStdout, null, null );
+
+			Dimension sz = this.getSize();
+			Point loc = this.getLocationOnScreen();
+			Rectangle defBounds =
+				new Rectangle( loc.x + 15, loc.y + 15, 600, 440 );
+
+			diffFrame.loadPreferences( defBounds );
+
+			diffFrame.show();
 			}
 
-		if ( ok && this.displayStdout.length() > 0 )
-			{
-			StringBuffer htmlBuf =
-				new StringBuffer( this.displayStdout.length() + 1024 );
-
-			HTMLHelper.generateHTMLDiff
-				( htmlBuf, this.displayStdout, "FileName", "Rev 1", "Rev 2" );
-
-			HTMLDialog dlg =
-				new HTMLDialog( this, "Diffs", false, htmlBuf.toString() );
-
-			dlg.show();
-			}
-
-		this.showFeedback( "Diff completed." );
+		this.showFeedback( resultLine );
 		}
 
 	private void
@@ -2022,7 +2055,7 @@ CVSTracer.traceIf( true,
 
 		this.mFile.addSeparator();
 
-		if ( this.project.isPServer() )
+		if ( this.project.isPServer() || this.project.isSSHServer() )
 			{
 			name = rmgr.getUIString( "menu.projW.file.login.name" );
 			mItem = new JMenuItem( name );
@@ -2344,7 +2377,7 @@ CVSTracer.traceIf( true,
 		Config cfg = Config.getInstance();
 		UserPrefs prefs = cfg.getPreferences();
 
-		CVSClient client = new CVSClient();
+		CVSClient client = CVSUtilities.createCVSClient();
 		CVSProject project = new CVSProject( client );
 
 		project.setTempDirectory( cfg.getTemporaryDirectory() );
@@ -2493,6 +2526,313 @@ CVSTracer.traceIf( true,
 				}
 			}
 		
+		return result;
+		}
+
+	//
+	// SK-unknown
+	//
+	/**
+	 * This method will determine the unknown files (not managed by cvs),
+	 * and display them to the user in a dialog to allow the user to either
+	 * delete the files, or add them to the project.
+	 *
+	 * Thanks to Sherali Karimov <sherali.karimov@proxima-tech.com> for this code!
+	 *
+	 */
+
+	public void
+	processUnknownFiles( String cvsCommandSpec )
+		{
+		Vector unks = new Vector();
+		Vector mods = new Vector();
+		Vector adds = new Vector();
+		Vector rems = new Vector();
+		CVSIgnore ignore = new CVSIgnore();
+		Config cfg = Config.getInstance();
+		UserPrefs prefs = cfg.getPreferences();
+
+		String userIgnores =
+			prefs.getProperty( Config.GLOBAL_USER_IGNORES, null );
+
+		// this finds all the unknown files
+		this.project.checkReleaseStatus( ignore, mods, adds, rems, unks );
+
+		if ( unks.size() > 0 )
+			{
+			String root = this.project.getLocalRootDirectory();
+			if ( root == null )
+				return;
+
+			root = root.trim();
+			char ch = root.charAt( root.length()-1 );
+			if ( ch != '/' && ch != '\\' && ch != File.separatorChar )
+				root = root + File.separatorChar;
+
+			// sift out directories and files from the unknowns list
+			int size = unks.size();
+			Vector unkFiles = new Vector();
+			for ( int i=0 ; i < size ; i++ )
+				{
+				String nextStr = (String) unks.elementAt(i);
+				if ( nextStr.startsWith( "./" ) )
+					nextStr = nextStr.substring( 2, nextStr.length() );
+
+				File f = new File( root + nextStr );
+				if ( f.exists() && ! f.isDirectory() )
+					{
+					unkFiles.add( f );
+					}
+				}
+
+			if ( unkFiles.size() > 0 )
+				{
+				// this displays a dialog for the user to choose which ones to delete
+				UnknownFilesDialog dialog =
+					new UnknownFilesDialog( this, unkFiles, this.getTitle(), false );
+
+				if ( dialog.isCancelAction() )
+					{
+					showFeedback( "User cancelled." );
+					}
+				else
+					{
+					File array[] = dialog.selectFiles();
+					if ( array.length == 0 )
+						{
+						showFeedback( "No selection to operate on." );
+						}
+					else if ( dialog.isDeleteAction() )
+						{
+						// this deletes selected files
+						for ( int i = 0 ; i < array.length ; i++ )
+							{
+							if ( array[i].delete() )
+								{
+								String msg =
+									"File "+array[i].getAbsolutePath()+" deleted.";
+
+								this.showFeedback( msg );
+								}
+							else
+								{
+								String msg =
+									"Failed to delete file "
+									+ array[i].getAbsolutePath() + ".";
+
+								this.showFeedback( msg );
+								}
+							}
+
+						this.showFeedback
+							( "Finished deleting selected unknown files." );
+						}
+					else if ( dialog.isAddAction() )
+						{
+						CVSEntryVector entries = new CVSEntryVector();
+
+						for ( int i=0 ; i < array.length ; i++ )
+							{
+							CVSEntry tempEntry = this.toCVSEntry( array[i] );
+							if ( tempEntry != null )
+								{
+								entries.appendEntry( tempEntry );
+								}
+							}
+
+						this.commonCVSCommand( cvsCommandSpec, entries, null );
+						}
+					}
+				}
+			}
+		else
+			{
+			String msg = ResourceMgr.getInstance().getUIString
+				( "project.no.unknowns.msg" );
+			String title = ResourceMgr.getInstance().getUIString
+				( "project.no.unknowns.title" );
+
+			JOptionPane.showMessageDialog
+				( this, msg, title, JOptionPane.INFORMATION_MESSAGE );
+			}
+		}
+
+	public void
+	processUnknownDirs()
+		{
+		Vector unks = new Vector();
+		Vector mods = new Vector();
+		Vector adds = new Vector();
+		Vector rems = new Vector();
+		CVSIgnore ignore = new CVSIgnore();
+		Config cfg = Config.getInstance();
+		UserPrefs prefs = cfg.getPreferences();
+		StringBuffer resultBuffer = new StringBuffer( 4 * 1024 );
+
+		String userIgnores =
+			prefs.getProperty( Config.GLOBAL_USER_IGNORES, null );
+
+		// this finds all the unknown files
+		this.project.checkReleaseStatus( ignore, mods, adds, rems, unks );
+
+		if ( unks.size() > 0 )
+			{
+			String root = this.project.getLocalRootDirectory();
+			if ( root == null )
+				return;
+
+			root = root.trim();
+			char ch = root.charAt( root.length()-1 );
+			if ( ch != '/' && ch != '\\' && ch != File.separatorChar )
+				root = root + File.separatorChar;
+
+			// sift out directories and files from the unknowns list
+			int size = unks.size();
+			Vector unkDirs = new Vector();
+			for ( int i=0 ; i < size ; i++ )
+				{
+				String nextStr = (String) unks.elementAt(i);
+				if ( nextStr.startsWith( "./" ) )
+					nextStr = nextStr.substring( 2, nextStr.length() );
+
+				File f = new File( root + nextStr );
+				if ( f.exists() && f.isDirectory() )
+					{
+					unkDirs.add( f );
+					}
+				}
+
+			//
+			// DIRECTORIES
+			//
+			if ( unkDirs.size() > 0 )
+				{
+				// this displays a dialog for the user to choose which ones to delete
+				UnknownFilesDialog dialog =
+					new UnknownFilesDialog( this, unkDirs,
+						"Directories in " + this.getTitle(), true );
+
+				if ( dialog.isCancelAction() )
+					{
+					showFeedback( "User cancelled." );
+					}
+				else
+					{
+					File array[] = dialog.selectFiles();
+					if ( array.length == 0 )
+						{
+						showFeedback( "No selection to operate on." );
+						}
+					else
+						{
+						for ( int i = 0 ; i < array.length ; i++ )
+							{
+							String path = array[i].getPath();
+							if ( CVSCUtilities.isSubpathInPath( root, path ) )
+								{
+								String dirPath = path.substring( root.length() );
+								dirPath = CVSCUtilities.importPath( dirPath );
+								this.addUnknownDirectory( resultBuffer, dirPath );
+								}
+							else
+								{
+								String msg =
+									"Directory " + path
+									+ " not under root directory!";
+
+								resultBuffer.append( msg ).append( "\n" );
+								this.showFeedback( msg );
+								}
+							}
+
+						this.project.writeAdminFiles();
+						}
+					}
+
+				if ( resultBuffer.length() > 0 )
+					{
+					this.ensureOutputAvailable();
+					this.output.setText( resultBuffer.toString() );
+					this.output.setVisible( true );
+					this.output.requestFocus();
+					}
+				}
+			}
+		else
+			{
+			String msg = ResourceMgr.getInstance().getUIString
+				( "project.no.unknowns.msg" );
+			String title = ResourceMgr.getInstance().getUIString
+				( "project.no.unknowns.title" );
+
+			JOptionPane.showMessageDialog
+				( this, msg, title, JOptionPane.INFORMATION_MESSAGE );
+			}
+		}
+
+	protected void
+	addUnknownDirectory( StringBuffer resultBuffer, String dirPath )
+		{
+		CVSResponse		result;
+		StringBuffer	addPath = new StringBuffer();
+
+		CVSEntry dirEntry = this.project.getRootEntry();
+
+		// The root entry has a 'bad' fullname, so we use getLocalDirectory().
+		addPath.append( dirEntry.getLocalDirectory() + dirPath );
+		// Make sure that it ends with "/."
+		if ( addPath.charAt( addPath.length() - 1 ) != '/' )
+			{
+			addPath.append( "/" );
+			}
+		addPath.append( "." );
+
+		result =
+			this.project.ensureRepositoryPath
+				( this, addPath.toString(), new CVSResponse() );
+
+		resultBuffer.append( result.getResultText() );
+		}
+
+	/**
+	 * Given a local file, return a CVSEntry describing it.
+	 */
+
+	public CVSEntry
+	toCVSEntry( File f )
+		{
+		CVSEntry result = null;
+		String fileName = f.getName();
+
+		if ( fileName != null )
+			{
+			String localPath =
+				CVSCUtilities.ensureFinalSlash
+					( CVSCUtilities.importPath( f.getParent() ) );
+
+			String repos = this.project.getRepository();
+
+			String rootDir =
+				CVSCUtilities.ensureFinalSlash
+					( this.project.getRootDirectory() );
+
+			String localRootDir =
+				CVSCUtilities.ensureFinalSlash
+					( this.project.getLocalRootDirectory() );
+
+			if ( CVSCUtilities.isSubpathInPath( localRootDir, localPath ) )
+				{
+				String entryLocal = localPath.substring( localRootDir.length() );
+				String entryRepos = rootDir + repos + "/" + entryLocal;
+
+				entryLocal =
+					CVSCUtilities.ensureFinalSlash
+						( "./" + /* repos + "/" + */ entryLocal );
+
+				result = this.createAddFileEntry( fileName, entryLocal, entryRepos );
+				}
+			}
+
 		return result;
 		}
 

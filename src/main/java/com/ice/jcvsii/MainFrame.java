@@ -171,6 +171,21 @@ implements	ActionListener
 					}
 				);
 			}
+		else if ( command.equals( "MAILLIST" ) )
+			{
+			SwingUtilities.invokeLater(
+				new Runnable()
+					{
+					public void
+					run()
+						{
+						showHTMLDialog
+							( "info.maillist.title",
+								"info.maillist.html" );
+						}
+					}
+				);
+			}
 		else if ( command.equals( "BROWSE" ) )
 			{
 			this.performBrowse();
@@ -332,6 +347,11 @@ implements	ActionListener
 		this.helpMenu.add( item );
 		item.addActionListener( this );
 		item.setActionCommand( "HOMEPAGE" );
+
+		item = new JMenuItem( rmgr.getUIString( "menu.help.maillist.name" ) );
+		this.helpMenu.add( item );
+		item.addActionListener( this );
+		item.setActionCommand( "MAILLIST" );
 
 		item = new JMenuItem( rmgr.getUIString( "menu.help.bugreport.name" ) );
 		this.helpMenu.add( item );

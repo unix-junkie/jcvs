@@ -66,14 +66,14 @@ implements	ConfigureConstants
 				invalid = true;
 				reason = "the spec has no property name";
 				}
-			else if ( type.equals( "choice" ) )
+			else if ( type.equals( "choice" ) || type.equals( "combo" ) )
 				{
 				Vector sV = new Vector();
-				for ( int ci = 0 ; ci < 32 ; ++ci )
+				for ( int ci = 0 ; ci < 64 ; ++ci )
 					{
 					String item =
 						specs.getProperty
-							( (keyBase + ".choice." + ci), null );
+							( (keyBase + "." + type + "." + ci), null );
 					if ( item == null )
 						break;
 					sV.addElement( item );

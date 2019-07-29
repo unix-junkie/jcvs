@@ -46,6 +46,7 @@ implements	ItemListener, ActionListener
 	private JTextField		exportDirText;
 
 	private JRadioButton	rshRadio;
+	private JRadioButton	sshRadio;
 	private JRadioButton	inetdRadio;
 	private JCheckBox		passwordCheck;
 
@@ -66,6 +67,17 @@ implements	ItemListener, ActionListener
 	loadPreferences( String panName )
 		{
 		UserPrefs prefs = Config.getPreferences();
+
+		String connMethod =
+			( prefs.getProperty
+				( panName + "." + Config.INFOPAN_METHOD, "" ) );
+
+		if ( connMethod != null )
+			{
+			this.setServerMode( connMethod.equals( "RSH" ) );
+			this.setPServerMode( connMethod.equals( "INET" ) );
+			this.setSecureServerMode( connMethod.equals( "SSH" ) );
+			}
 
 		this.setUserName
 			( prefs.getProperty
@@ -93,6 +105,12 @@ implements	ItemListener, ActionListener
 		UserPrefs prefs = Config.getPreferences();
 
 		prefs.setProperty
+			( panName + "." + Config.INFOPAN_METHOD,
+				  (this.inetdRadio.isSelected() ? "INET"
+				: (this.sshRadio.isSelected() ? "SSH"
+				: "RSH")) );
+
+		prefs.setProperty
 			( panName + "." + Config.INFOPAN_USER_NAME,
 				this.getUserName() );
 		prefs.setProperty
@@ -115,14 +133,24 @@ implements	ItemListener, ActionListener
 	public void
 	setServerMode( boolean state )
 		{
-		this.inetdRadio.setSelected( ! state );
 		this.rshRadio.setSelected( state );
+		this.sshRadio.setSelected( ! state );
+		this.inetdRadio.setSelected( ! state );
+		}
+
+	public void
+	setSecureServerMode( boolean state )
+		{
+		this.rshRadio.setSelected( ! state );
+		this.sshRadio.setSelected( state );
+		this.inetdRadio.setSelected( ! state );
 		}
 
 	public void
 	setPServerMode( boolean state )
 		{
 		this.rshRadio.setSelected( ! state );
+		this.sshRadio.setSelected( ! state );
 		this.inetdRadio.setSelected( state );
 		}
 
@@ -132,10 +160,22 @@ implements	ItemListener, ActionListener
 		this.passwordCheck.setSelected( state );
 		}
 
-	public boolean
-	isInetdSelected()
+	public int
+	getConnectionMethod()
 		{
-		return this.inetdRadio.isSelected();
+		return
+			( this.inetdRadio.isSelected()
+				? CVSRequest.METHOD_INETD
+				: ( this.sshRadio.isSelected()
+					? CVSRequest.METHOD_SSH
+					: CVSRequest.METHOD_RSH ) );
+		}
+
+	public boolean
+	isPServer()
+		{
+		return ( this.passwordCheck.isSelected()
+					&& this.inetdRadio.isSelected() );
 		}
 
 	public boolean
@@ -315,6 +355,20 @@ implements	ItemListener, ActionListener
 			
 			relay = true;
 			}
+		else if ( item == this.sshRadio )
+			{
+			if ( this.sshRadio.isSelected() )
+				{
+				this.passwordCheck.setSelected( true );
+				this.passwordCheck.setEnabled( true );
+				this.passwordText.setEnabled( true );
+				this.userNameLbl.setEnabled( true );
+				this.userNameText.setEnabled( true );
+				this.userNameText.requestFocus();
+				}
+			
+			relay = true;
+			}
 		else if ( item == this.passwordCheck )
 			{
 			if ( this.passwordCheck.isSelected() )
@@ -358,7 +412,8 @@ implements	ItemListener, ActionListener
 		fldPan.setLayout( new GridBagLayout() );
 
 		// ------------------- Module -------------------
-		if ( ! operation.equals( "test" ) )
+		if ( ! operation.equals( "test" )
+				&& ! operation.equals( "initrep" ) )
 			{
  			lbl = this.new MyLabel
 				( rmgr.getUIString( "name.for.cvsmodule" ) );
@@ -494,8 +549,14 @@ implements	ItemListener, ActionListener
 
 						if ( def.getConnectMethod() == CVSRequest.METHOD_RSH )
 							{
-							passwordCheck.setSelected( false );
 							rshRadio.setSelected( true );
+							passwordCheck.setSelected( false );
+							}
+						else if ( def.getConnectMethod() == CVSRequest.METHOD_SSH )
+							{
+							sshRadio.setSelected( true );
+							passwordCheck.setSelected( true );
+							passwordText.requestFocus();
 							}
 						else
 							{
@@ -516,8 +577,24 @@ implements	ItemListener, ActionListener
 
 		// ============== USER LOGIN INFO PANEL ================
 
-		JPanel namePan = new JPanel();
-		namePan.setLayout( new GridBagLayout() );
+		JPanel infoPan = new JPanel();
+		infoPan.setLayout( new GridBagLayout() );
+
+		JPanel buttonPan = new JPanel();
+		buttonPan.setLayout( new GridBagLayout() );
+		AWTUtilities.constrain(
+			infoPan, buttonPan,
+			GridBagConstraints.NONE,
+			GridBagConstraints.WEST,
+			0, 0, 1, 1, 0.0, 0.0 );
+
+		JPanel inputPan = new JPanel();
+		inputPan.setLayout( new GridBagLayout() );
+		AWTUtilities.constrain(
+			infoPan, inputPan,
+			GridBagConstraints.HORIZONTAL,
+			GridBagConstraints.WEST,
+			1, 0, 1, 1, 1.0, 0.0 );
 
 		row = 0;
 
@@ -527,28 +604,21 @@ implements	ItemListener, ActionListener
 				( rmgr.getUIString( "name.for.connect.method.server" ) );
 		this.rshRadio.addItemListener( this );
 		AWTUtilities.constrain(
-			namePan, this.rshRadio,
+			buttonPan, this.rshRadio,
 			GridBagConstraints.NONE,
 			GridBagConstraints.WEST,
-			0, row, 1, 1,  0.0, 0.0 );
+			0, row++, 1, 1, 0.0, 0.0 );
 
- 		this.userNameLbl = this.new MyLabel
-				( rmgr.getUIString( "name.for.user.name" ) );
-		this.userNameLbl.setForeground( Color.black );
+		// secure server method
+		this.sshRadio =
+			new JRadioButton
+				( rmgr.getUIString( "name.for.connect.method.sserver" ) );
+		this.sshRadio.addItemListener( this );
 		AWTUtilities.constrain(
-			namePan, this.userNameLbl,
+			buttonPan, this.sshRadio,
 			GridBagConstraints.NONE,
-			GridBagConstraints.EAST,
-			1, row, 1, 1, 0.0, 0.0 );
-
- 		this.userNameText = new JTextField();
-		this.userNameText.addActionListener( this );
-
-		AWTUtilities.constrain(
-			namePan, this.userNameText,
-			GridBagConstraints.HORIZONTAL,
 			GridBagConstraints.WEST,
-			2, row++, 1, 1, 1.0, 0.0 );
+			0, row++, 1, 1, 0.0, 0.0 );
 
 		// pserver method
 		this.inetdRadio =
@@ -556,32 +626,53 @@ implements	ItemListener, ActionListener
 				( rmgr.getUIString( "name.for.connect.method.pserver" ) );
 		this.inetdRadio.addItemListener( this );
 		AWTUtilities.constrain(
-			namePan, this.inetdRadio,
+			buttonPan, this.inetdRadio,
 			GridBagConstraints.NONE,
 			GridBagConstraints.WEST,
-			0, row, 1, 1,  0.0, 0.0 );
+			0, row, 1, 1, 0.0, 0.0 );
+
+		row = 0;
+
+		this.userNameLbl = this.new MyLabel
+				( rmgr.getUIString( "name.for.user.name" ) );
+		this.userNameLbl.setForeground( Color.black );
+		AWTUtilities.constrain(
+			inputPan, this.userNameLbl,
+			GridBagConstraints.NONE,
+			GridBagConstraints.EAST,
+			0, row, 1, 1, 0.0, 0.0 );
+
+ 		this.userNameText = new JTextField();
+		this.userNameText.addActionListener( this );
+
+		AWTUtilities.constrain(
+			inputPan, this.userNameText,
+			GridBagConstraints.HORIZONTAL,
+			GridBagConstraints.WEST,
+			1, row++, 1, 1, 1.0, 0.0 );
 
 		// Password Checkbox
 		this.passwordCheck =
 			new JCheckBox( rmgr.getUIString( "name.for.user.pass" ) );
 		this.passwordCheck.addItemListener( this );
 		AWTUtilities.constrain(
-			namePan, this.passwordCheck,
+			inputPan, this.passwordCheck,
 			GridBagConstraints.NONE,
 			GridBagConstraints.EAST,
-			1, row, 1, 1, 0.0, 0.0 );
+			0, row, 1, 1, 0.0, 0.0 );
 
 		this.passwordText = new JPasswordField();
 		this.passwordText.setEchoChar( '*' );
 		AWTUtilities.constrain(
-			namePan, this.passwordText,
+			inputPan, this.passwordText,
 			GridBagConstraints.HORIZONTAL,
 			GridBagConstraints.WEST,
-			2, row++, 1, 1, 1.0, 0.0 );
+			1, row++, 1, 1, 1.0, 0.0 );
 
 
 		ButtonGroup btnGrp = new ButtonGroup();
 		btnGrp.add( this.rshRadio );
+		btnGrp.add( this.sshRadio );
 		btnGrp.add( this.inetdRadio );
 
 		row = 0;
@@ -605,7 +696,7 @@ implements	ItemListener, ActionListener
 			new Insets( 0, 0, 0, 10 ) );
 
 		AWTUtilities.constrain(
-			topPan, namePan,
+			topPan, infoPan,
 			GridBagConstraints.HORIZONTAL,
 			GridBagConstraints.CENTER,
 			2, row++, 1, 1, 0.7, 0.0 );

@@ -1,16 +1,18 @@
 /*
 ** Java cvs client library package.
-** Copyright (c) 1997 by Timothy Gerard Endres
+** Copyright (c) 1997-2002 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
 ** You may redistribute it and/or modify it under the terms of the GNU
-** General Public License as published by the Free Software Foundation.
+** Library General Public License (LGPL) as published by the Free Software
+** Foundation.
+**
 ** Version 2 of the license should be included with this distribution in
-** the file LICENSE, as well as License.html. If the license is not
+** the file LICENSE.txt, as well as License.html. If the license is not
 ** included	with this distribution, you may find a copy at the FSF web
-** site at 'www.gnu.org' or 'www.fsf.org', or you may write to the
-** Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139 USA.
+** site at 'www.gnu.org' or 'www.fsf.org', or you may write to the Free
+** Software Foundation at 59 Temple Place - Suite 330, Boston, MA 02111 USA.
 **
 ** THIS SOFTWARE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND,
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
@@ -19,7 +21,6 @@
 ** REDISTRIBUTION OF THIS SOFTWARE. 
 ** 
 */
-
 
 package com.ice.cvsc;
 
@@ -38,7 +39,7 @@ import java.util.*;
  * a CVS file, such as its name, check-out time, modification status,
  * local pathname, repository, etc.
  *
- * @version $Revision: 2.2 $
+ * @version $Revision: 2.3 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSProject
@@ -49,8 +50,8 @@ public
 class		CVSProjectDef
 extends		Object
 	{
-	static public final String		RCS_ID = "$Id: CVSProjectDef.java,v 2.2 1999/07/31 01:04:55 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+	static public final String		RCS_ID = "$Id: CVSProjectDef.java,v 2.3 2002/02/10 18:01:44 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.3 $";
 
 	/**
 	 * True if this definition is parsed and valid.
@@ -93,11 +94,51 @@ extends		Object
 	 */
 	private String			reason;
 
+	/**
+	 * Set to true when we see a Root spec with no "method",
+	 * such as "user@host:/path/to/cvs".
+	 */
+	private boolean			noModeRoot;
+
 
 	public
 	CVSProjectDef( String rootStr, String reposStr )
 		{
 		this.parseRootDirectory( rootStr, reposStr );
+		}
+
+	public
+	CVSProjectDef(
+			int connMeth, boolean isPServ, boolean noMode,
+			String host, String user, String rootDir, String repos )
+		{
+		this.isValid = true; // UNDONE
+		this.isPServer = isPServ;
+		this.noModeRoot = noMode;
+
+		this.hostName = host;
+		this.userName = user;
+		this.repository = repos;
+		this.rootDirectory = rootDir;
+
+		this.connectMethod = connMeth;
+
+		if ( this.connectMethod == CVSRequest.METHOD_RSH )
+			{
+			this.connectMethodStr = "server";
+			}
+		else if ( this.connectMethod == CVSRequest.METHOD_SSH )
+			{
+			this.connectMethodStr = "ext";
+			}
+		else if ( this.isPServer )
+			{
+			this.connectMethodStr = "pserver";
+			}
+		else
+			{
+			this.connectMethodStr = "direct";
+			}
 		}
 
 	public synchronized boolean
@@ -110,6 +151,12 @@ extends		Object
 	isPServer()
 		{
 		return this.isPServer;
+		}
+
+	public synchronized boolean
+	isSSHServer()
+		{
+		return (this.connectMethod == CVSRequest.METHOD_SSH);
 		}
 
 	public synchronized int
@@ -154,6 +201,50 @@ extends		Object
 		return this.reason;
 		}
 
+	public String
+	getRootDirectorySpec()
+		{
+		String connMethod;
+
+		if ( this.connectMethod == CVSRequest.METHOD_RSH )
+			{
+			connMethod = "server";
+			}
+		else if ( this.connectMethod == CVSRequest.METHOD_SSH )
+			{
+			connMethod = "ext";
+			}
+		else if ( this.isPServer() )
+			{
+			connMethod = "pserver";
+			}
+		else
+			{
+			connMethod = "direct";
+			}
+
+		StringBuffer rootDirStr = new StringBuffer( 128 );
+
+		if ( ! this.noModeRoot )
+			{
+			rootDirStr.append( ":" );
+			rootDirStr.append( connMethod );
+			rootDirStr.append( ":" );
+			}
+
+		if ( this.userName.length() > 0 )
+			{
+			rootDirStr.append( this.userName );
+			rootDirStr.append( "@" );
+			}
+
+		rootDirStr.append( this.hostName );
+		rootDirStr.append( ":" );
+		rootDirStr.append( this.rootDirectory );
+
+		return rootDirStr.toString();
+		}
+
 	public synchronized boolean
 	parseRootDirectory( String specification, String repos )
 		{
@@ -168,6 +259,7 @@ extends		Object
 		this.isValid = false;
 		this.isPServer = false;
 		this.repository = repos;
+		this.noModeRoot = false;
 
 		this.reason = "parsed '" + specification + "'";
 
@@ -183,7 +275,8 @@ extends		Object
 				methodStr = rootDirSpec.substring( 0, index );
 				rootDirSpec = rootDirSpec.substring( index + 1 );
 			
-				if ( methodStr.equalsIgnoreCase( "pserver" )
+				if ( methodStr.equalsIgnoreCase( "ext" )
+						|| methodStr.equalsIgnoreCase( "pserver" )
 						|| methodStr.equalsIgnoreCase( "direct" )
 						|| methodStr.equalsIgnoreCase( "server" ) )
 					{
@@ -206,6 +299,11 @@ extends		Object
 							{
 							this.isPServer = false;
 							this.connectMethod = CVSRequest.METHOD_RSH;
+							}
+						else if ( methodStr.equals( "ext" ) )
+							{
+							this.isPServer = false;
+							this.connectMethod = CVSRequest.METHOD_SSH;
 							}
 						else if ( methodStr.equals( "direct" ) )
 							{
@@ -277,6 +375,7 @@ extends		Object
 			if ( index > 0 && subidx > index )
 				{
 				this.isValid = true;
+				this.noModeRoot = true;
 				this.isPServer = false;
 				this.connectMethod = CVSRequest.METHOD_RSH;
 				this.connectMethodStr = "";

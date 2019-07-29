@@ -26,7 +26,7 @@ package com.ice.jcvsii;
 /**
  * The Configuration constants.
  *
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @author Timothy Gerard Endres,
  *  <a href="mailto:time@ice.com">time@ice.com</a>.
  */
@@ -44,12 +44,18 @@ interface	ConfigConstants
 	public static final String		GLOBAL_IGNORE_FILENAME = "global.ignoreFileName";
 	public static final String		GLOBAL_USER_IGNORES = "global.userIgnores";
 	public static final String		GLOBAL_RSH_COMMAND = "global.rshCommand";
+	public static final String		GLOBAL_SSH_COMMAND = "global.sshCommand";
 	public static final String		GLOBAL_SVRCMD_TABLE = "global.serverTable";
 	public static final String		GLOBAL_ALLOWS_FILE_GZIP = "global.allowGzipFileMode";
 	public static final String		GLOBAL_GZIP_STREAM_LEVEL = "global.gzipStreamLevel";
 	public static final String		GLOBAL_CVS_TRACE_ALL = "global.traceAll";
 	public static final String		GLOBAL_PROJECT_DEEP_DEBUG = "global.project.deepDebug";
 	public static final String		GLOBAL_PROJECT_DEBUG_ENTRYIO = "global.project.debugEntryIO";
+	public static final String		GLOBAL_RSH_PORT = "global.defPorts.server";
+	public static final String		GLOBAL_SSH_PORT = "global.defPorts.ext";
+	public static final String		GLOBAL_DIRECT_PORT = "global.defPorts.direct";
+	public static final String		GLOBAL_PSERVER_PORT = "global.defPorts.pserver";
+	public static final String		GLOBAL_MULTI_INTF = "global.multipleInterfaceSupport";
 
 	public static final String		PLAF_LOOK_AND_FEEL_CLASSNAME = "plaf.lookAndFeel.classname";
 
@@ -78,10 +84,17 @@ interface	ConfigConstants
 	public static final String		PROJECT_WINDOW_BOUNDS = "project.bounds";
 	public static final String		PROJECT_NAME_WIDTH = "project.name.width";
 	public static final String		PROJECT_VERSION_WIDTH = "project.version.width";
+	public static final String		PROJECT_TAG_WIDTH = "project.tag.width";
 	public static final String		PROJECT_MODIFIED_WIDTH = "project.modified.width";
 
-	public static final String		OUTPUT_WINDOW_BOUNDS = "outputFrame.bounds";
 	public static final String		OUTPUT_WINDOW_FONT = "outputFrame.font";
+	public static final String		OUTPUT_WINDOW_BOUNDS = "outputFrame.bounds";
+
+	public static final String		PRETTY_RAW_FONT = "prettyDiff.raw.font";
+	public static final String		PRETTY_DIFF_FONT = "prettyDiff.lbl.font";
+	public static final String		PRETTY_HEADER_FONT = "prettyDiff.header.font";
+	public static final String		PRETTY_TITLE_FONT = "prettyDiff.title.font";
+	public static final String		PRETTY_WINDOW_BOUNDS = "prettyDiff.bounds";
 
 	public static final String		SELECT_ENTRIES_HELP = "help.selectEntriesFile";
 
@@ -89,6 +102,7 @@ interface	ConfigConstants
 	public static final String		WB_DET_TITLE_FONT = "workBench.details.title.font";
 	public static final String		WB_DET_TITLE_HEIGHT = "workBench.details.title.height";
 
+	public static final String		INFOPAN_METHOD = "info.method";
 	public static final String		INFOPAN_USER_NAME = "info.user";
 	public static final String		INFOPAN_SERVER_NAME = "info.server";
 	public static final String		INFOPAN_MODULE_NAME = "info.module";

@@ -261,8 +261,7 @@ extends		JComponent
             Point p = evt.getPoint();
             lastEffectiveMouseX = p.x;
 
-            int index = columnModel.getColumnIndexAtX( p.x );
-
+            int index = getColumnModel().getColumnIndexAtX( p.x );
             if ( index != -1 )
 				{
                 // The last 3 pixels + 3 pixels of next column are for resizing
@@ -617,8 +616,12 @@ extends		JComponent
 	createHeaderSize( long width )
 		{
         TableColumnModel columnModel = getColumnModel();
+
         // None of the callers include the intercell spacing, do it here.
-        width += columnModel.getColumnMargin() * columnModel.getColumnCount();
+		// The + 1 includes the extra margin on the last column.
+
+        width += columnModel.getColumnMargin()
+					* (columnModel.getColumnCount() + 1);
         if ( width > Integer.MAX_VALUE )
 			{
             width = Integer.MAX_VALUE;

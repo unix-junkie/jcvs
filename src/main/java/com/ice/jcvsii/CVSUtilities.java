@@ -1,6 +1,6 @@
 /*
 ** Java cvs client application package.
-** Copyright (c) 1997 by Timothy Gerard Endres
+** Copyright (c) 1997-2002 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
@@ -38,6 +38,30 @@ import com.ice.pref.PrefsTupleTable;
 public class
 CVSUtilities extends Object
 	{
+
+	static public CVSClient
+	createCVSClient()
+		{
+		CVSClient client = new CVSClient();
+
+		client.setMultipleInterfaceSupport
+			( Config.getInstance().getPrefs().getBoolean
+				( Config.GLOBAL_MULTI_INTF, false ) );
+
+		return client;
+		}
+
+	static public CVSClient
+	createCVSClient( String cvsHost, int cvsPort )
+		{
+		CVSClient client = CVSUtilities.createCVSClient();
+
+		client.setHostName( cvsHost );
+		client.setPort( cvsPort );
+
+		return client;
+		}
+
 	static public String
 	establishServerCommand( String hostname, int connMethod, boolean pServer )
 		{
@@ -48,6 +72,28 @@ CVSUtilities extends Object
 		String command = "(not applicable)";
 
 		if ( connMethod == CVSRequest.METHOD_RSH )
+			{
+			command = "cvs server";
+
+			PrefsTupleTable table =
+				prefs.getTupleTable
+					( Config.GLOBAL_SVRCMD_TABLE, null );
+
+			if ( table != null )
+				{
+				tup = table.getTuple( hostname );
+				if ( tup != null )
+					command = tup.getValueAt(0);
+
+				if ( command == null )
+					{
+					tup = table.getTuple( "DEFAULT" );
+					if ( tup != null )
+						command = tup.getValueAt(0);
+					}
+				}
+			}
+		else if ( connMethod == CVSRequest.METHOD_SSH )
 			{
 			command = "cvs server";
 
@@ -111,42 +157,36 @@ CVSUtilities extends Object
 
 		StringBuffer prefName = new StringBuffer( "portNum." );
 
-		// NOTE
-		//  isPServer: 'portNum.pserver.cvs.ice.com=2401'
-		//  !isPServer: 'portNum.server.cvs.ice.com=2402'
-
 		if ( connMethod == CVSRequest.METHOD_RSH )
 			{
-			defPort = 514;
 			prefName.append( "server." );
+			defPort = prefs.getInteger( Config.GLOBAL_RSH_PORT, 0 );
+			if ( defPort == 0 )
+				defPort = CVSClient.DEFAULT_RSH_PORT;
+			}
+		else if ( connMethod == CVSRequest.METHOD_SSH )
+			{
+			prefName.append( "ext." );
+			defPort = prefs.getInteger( Config.GLOBAL_SSH_PORT, 0 );
+			if ( defPort == 0 )
+				defPort = CVSClient.DEFAULT_SSH_PORT;
 			}
 		else if ( isPServer )
 			{
-			defPort = 2401;
 			prefName.append( "pserver." );
+			defPort = prefs.getInteger( Config.GLOBAL_PSERVER_PORT, 0 );
+			if ( defPort == 0 )
+				defPort = CVSClient.DEFAULT_CVS_PORT;
 			}
 		else
 			{
-			defPort = 2402;
 			prefName.append( "direct." ); 
+			defPort = prefs.getInteger( Config.GLOBAL_DIRECT_PORT, 0 );
+			if ( defPort == 0 )
+				defPort = CVSClient.DEFAULT_DIR_PORT;
 			}
-		 
-		cvsPort =
-			prefs.getInteger
-				( (prefName + hostname), 0 );
 
-		if ( cvsPort == 0 )
-			{
-			// -------- SET DEFAULT PORT VALUE ------------
-			//  RSH: 'jCVS.portNum.server.default=514'
-			//  !RSH:
-			//    isPServer: 'portNum.pserver.default=2401'
-			//    !isPServer: 'portNum.direct.default=2402'
-				
-			cvsPort =
-				prefs.getInteger
-					( prefName.append( "default" ).toString(), defPort );
-			}
+		cvsPort = prefs.getInteger( (prefName + hostname), defPort );
 
 		return cvsPort;
 		}

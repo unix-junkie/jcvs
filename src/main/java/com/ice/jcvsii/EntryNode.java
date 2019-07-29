@@ -85,10 +85,16 @@ implements	CVSEntry.ChildEventListener
 	public String
 	toString()
 		{ 
+		EntryRootNode root = (EntryRootNode) this.getRoot();
 		return "[EntryNode " +
 				" hasLoaded=" + hasLoaded +
 				" entry=" + entry +
-				"]";
+				" entryPath='" + this.entry.getFullPathName() +
+				"' localFile='" +
+					CVSCUtilities.exportPath( root.getLocalRootPath() ) +
+					File.separator +
+					CVSCUtilities.exportPath( this.entry.getFullPathName() ) +
+				"']";
 		}
 
 	/**
@@ -108,13 +114,22 @@ implements	CVSEntry.ChildEventListener
 		}
 
 	/**
-	 * Returns this node's CVSEntry.
+	 * Returns this version of this node's CVSEntry.
 	 */
 	public String
 	getEntryVersion()
 		{ 
 		return this.entry.getVersion();
 		}
+
+	/**
+	 * Returns the tag of this node's CVSEntry.
+	 */
+	public String
+	getEntryTag()
+ 		{
+ 		return this.entry.getTag();
+ 		}
 
 	/**
 	 * Resets the cached display strings so they will be recomputed.
@@ -335,6 +350,7 @@ implements	CVSEntry.ChildEventListener
 			// occurred there.
 			//
 			EntryNode remNode = null;
+			CVSEntry remEntry = event.getChildEntry();
 
 			if ( ! this.hasLoaded )
 				{
@@ -350,8 +366,24 @@ implements	CVSEntry.ChildEventListener
 				}
 			else
 				{
-				remNode = (EntryNode) this.getChildAt(idx);
-				this.remove( idx );
+				// NOTE
+				// WARNING
+				// We cannot depend on the entry's index, because the
+				// index here is in the land of CVSEntryVector, not the
+				// EntryNode vector. Thus, we must look for the entry and
+				// use the index we determine from the lookup.
+				//
+				for ( int i = 0, sz = this.getChildCount() ; i < sz ; ++i )
+					{
+					EntryNode node = (EntryNode) this.getChildAt(i);
+					if ( remEntry.getName().equals( node.getEntry().getName() ) )
+						{
+						idx = i;
+						remNode = node;
+						this.remove(i);
+						break;
+						}
+					}
 				}
 
 			if ( remNode != null )

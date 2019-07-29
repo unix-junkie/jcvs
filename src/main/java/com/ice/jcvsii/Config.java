@@ -119,6 +119,10 @@ implements	ConfigConstants, PropertyChangeListener
 	private String					userServersFilename;
 	private String					lastDitchTempDirname;
 
+	private boolean					isMacintoshF = false;
+	private boolean					isOS2F = false;
+	private boolean					isWindowsF = false;
+
 
 	/**
 	 * We create an instance when the Class is loaded
@@ -151,6 +155,18 @@ implements	ConfigConstants, PropertyChangeListener
 		this.defServers = null;
 		this.userServers = null;
 		this.execCmdTable = null;
+		}
+
+	public boolean
+	isMacintosh()
+		{
+		return this.isMacintoshF;
+		}
+
+	public boolean
+	isWindows()
+		{
+		return this.isWindowsF;
 		}
 
 	public void
@@ -219,6 +235,7 @@ implements	ConfigConstants, PropertyChangeListener
 			this.defMailcapFilename = "jCVS Mailcap";
 			this.defMimetypesFilename = "jCVS Mimetypes";
 			this.lastDitchTempDirname = "";
+			this.isMacintoshF = true;
 			}
 		else if ( osName.startsWith( "windows" ) )
 			{
@@ -228,6 +245,7 @@ implements	ConfigConstants, PropertyChangeListener
 			this.defMailcapFilename = "jcvsmailcap.txt";
 			this.defMimetypesFilename = "jcvsmime.txt";
 			this.lastDitchTempDirname = ".";
+			this.isWindowsF = true;
 			}
 		else if ( osName.startsWith( "os/2" ) )
 			{
@@ -237,6 +255,7 @@ implements	ConfigConstants, PropertyChangeListener
 			this.defMailcapFilename = "jcvsmailcap.txt";
 			this.defMimetypesFilename = "jcvsmime.txt";
 			this.lastDitchTempDirname = ".";
+			this.isOS2F = true;
 			}
 		else // we assume UNIX-style
 			{

@@ -180,6 +180,18 @@ implements	TreeCellRenderer
 		}
 
 	public int
+	getTagWidth()
+		{
+		return this.model.getTagWidth();
+		}
+
+	public void
+	setTagWidth( int w )
+		{
+		this.model.setTagWidth( w );
+		}
+
+	public int
 	getModifiedWidth()
 		{
 		return this.model.getModifiedWidth();
@@ -197,7 +209,8 @@ implements	TreeCellRenderer
 		Insets ins = this.getInsets();
 
 		int w = this.getNameWidth() + this.getVersionWidth()
-				+ this.getModifiedWidth() + ins.left + ins.right;
+				+ this.getTagWidth() + this.getModifiedWidth()
+				+ ins.left + ins.right;
 
 		return new Dimension( w, 18 ); // REVIEW that 18!
 		}
@@ -266,9 +279,14 @@ implements	TreeCellRenderer
 				( (nameR.x + nameR.width), ins.top,
 					this.getVersionWidth(), height );
 
-		Rectangle modfR =
+		Rectangle tagR =
 			new Rectangle
 				( (versR.x + versR.width), ins.top,
+					this.getTagWidth(), height );
+
+		Rectangle modfR =
+			new Rectangle
+				( (tagR.x + tagR.width), ins.top,
 					this.getModifiedWidth(), height );
 
 		g.setFont( this.getFont() );
@@ -326,17 +344,6 @@ implements	TreeCellRenderer
 				int textX = versR.x + 1; // REVIEW should be property
 				int textY = versR.y + baseLine;
 
-				if ( false && this.isSelected )
-					{
-					int w = fm.stringWidth( text ) + 3;
-					Rectangle hiR =
-						new Rectangle
-							( versR.x, textY - fAscent, w, fHeight );
-
-					g.setColor( new Color(200, 200, 200 ) );
-					g.fillRect( hiR.x, hiR.y, hiR.width, hiR.height );
-					}
-
 				g.setColor( Color.black );
 				g.drawString( text, textX, textY );
 
@@ -345,6 +352,31 @@ implements	TreeCellRenderer
 					int w = fm.stringWidth( text ) + 1;
 					int x1 = versR.x;
 					int x2 = versR.x + w;
+					int y = textY + 1;
+					g.setColor( Color.gray );
+					g.drawLine( x1, y, x2, y );
+					}
+				}
+
+			//
+			// T A G    V E R S I O N
+			//
+			text = this.node.getEntryTag();
+			if ( text != null )
+				{
+				g.setClip( tagR.intersection(clipBounds) );
+
+				int textX = tagR.x + 1; // REVIEW should be property
+				int textY = tagR.y + baseLine;
+
+				g.setColor( Color.black );
+				g.drawString( text, textX, textY );
+
+				if ( this.isSelected && this.hasFocus )
+					{
+					int w = fm.stringWidth( text ) + 1;
+					int x1 = tagR.x;
+					int x2 = tagR.x + w;
 					int y = textY + 1;
 					g.setColor( Color.gray );
 					g.drawLine( x1, y, x2, y );
@@ -393,9 +425,13 @@ implements	TreeCellRenderer
 			g.setColor( new Color( 0, 0, 255 ) );
 			g.drawRect( iconR.x, iconR.y, iconR.width, iconR.height );
 			g.setColor( new Color( 0, 255, 0 ) );
-			g.drawRect( versR.x, versR.y, versR.width, versR.height );
+			g.drawRect( nameR.x, nameR.y, nameR.width, nameR.height );
 			g.setColor( new Color( 255, 0, 0 ) );
 			g.drawRect( versR.x, versR.y, versR.width, versR.height );
+			g.setColor( new Color( 0, 0, 255 ) );
+			g.drawRect( tagR.x, tagR.y, tagR.width, tagR.height );
+			g.setColor( new Color( 0, 255, 0 ) );
+			g.drawRect( modfR.x, modfR.y, modfR.width, modfR.height );
 			g.setColor( new Color( 64, 128, 64 ) );
 			g.drawRect( bounds.x, bounds.y, bounds.width, bounds.height );
 			}

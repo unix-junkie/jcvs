@@ -141,10 +141,13 @@ implements	ActionListener, CVSUserInterface
 
 		String	rootRepository = rootDirectory + "/" + repository;
 
-		int connMethod =
-			( this.infoPan.isInetdSelected()
-				? CVSRequest.METHOD_INETD
-				: CVSRequest.METHOD_RSH );
+		boolean isPServer = this.infoPan.isPServer();
+
+		int connMethod = this.infoPan.getConnectionMethod();
+
+		int cvsPort =
+			CVSUtilities.computePortNum
+				( hostname, connMethod, isPServer );
 
 		//
 		// SANITY
@@ -178,8 +181,9 @@ implements	ActionListener, CVSUserInterface
 			return;
 			}
 
-		if ( connMethod == CVSRequest.METHOD_RSH
-				&& userName.length() < 1 )
+		if ( userName.length() < 1
+				&& (connMethod == CVSRequest.METHOD_RSH
+					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
 			String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
 			String title = rmgr.getUIString("common.rsh.needs.user.title" );
@@ -238,17 +242,11 @@ implements	ActionListener, CVSUserInterface
 			return;
 			}
 
-		boolean isPServer =  this.infoPan.isPasswordSelected();
-
-		int cvsPort =
-			CVSUtilities.computePortNum
-				( hostname, connMethod, isPServer );
-		
 		String serverCommand = 
 			CVSUtilities.establishServerCommand
 				( hostname, connMethod, isPServer );
 
-		this.client = new CVSClient( hostname, cvsPort );
+		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
 
 		this.client.setTempDirectory( cfg.getTemporaryDirectory() );
 				
@@ -264,7 +262,11 @@ implements	ActionListener, CVSUserInterface
 
 			request.setPassword( scrambled );
 			}
-			
+		else if ( connMethod == CVSRequest.METHOD_SSH )
+			{
+			request.setPassword( passWord );
+			}
+
 		request.setConnectionMethod( connMethod );
 		request.setServerCommand( serverCommand );
 

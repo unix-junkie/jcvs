@@ -30,7 +30,7 @@ FileUtilities
 	{
 	static public final String		RCS_ID = "$Id: FileUtilities.java,v 1.4 1999/03/09 19:44:39 time Exp $";
 	static public final String		RCS_REV = "$Revision: 1.4 $";
-	static public final String		RCS_NAME = "$Name: release-2-8 $";
+	static public final String		RCS_NAME = "$Name:  $";
 
 	public static void
 	copyFile( File from, File to )

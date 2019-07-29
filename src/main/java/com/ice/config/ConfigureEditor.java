@@ -348,7 +348,7 @@ extends		JPanel
 		try {
 			Image iHelp =
 				AWTUtilities.getImageResource
-					( "/com/ice/jcvsii/images/icons/confighelp.gif" );
+					( "/com/ice/config/images/icons/confighelp.gif" );
 			Icon helpIcon = new ImageIcon( iHelp );
 			this.helpButton = new JButton( helpIcon )
 				{

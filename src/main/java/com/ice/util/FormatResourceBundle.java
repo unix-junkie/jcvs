@@ -181,7 +181,7 @@ extends		ResourceBundle
 		{
 		String rsrcStr = defValue;
 		
-		try { this.bundle.getString( key ); }
+		try { rsrcStr = this.bundle.getString( key ); }
 		catch ( MissingResourceException ex )
 			{
 			if ( this.debug )
@@ -312,7 +312,7 @@ extends		ResourceBundle
 
 					result.append( "{" );
 
-					workStr = workStr.substring( lcbIdx + 1 );
+					workStr = workStr.substring( lcbIdx + 2 );
 					}
 				else if ( (num >= '0' && num <= '9') && rcb == '}' )
 					{

@@ -1,0 +1,282 @@
+<HTML>
+<!-- $Id: CVSCommandSpec.html,v 2.2 1997/04/21 05:02:27 time Exp $ -->
+<!-- Copyright (c) 1997 by Timothy Gerard Endres -->
+<!-- This is free software. Please refer to the file named -->
+<!-- 'LICENSE' or the file named 'License.html' for licensing details. -->
+
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>CVS Command Specification</TITLE>
+</HEAD>
+
+<BODY>
+<H2>CVS Commands</H2>
+<P>
+CVS commands are specified by a string consisting
+of colon separated fields. A proper cvs command has the following
+format:
+<P>
+<center>
+<strong>command:entries:request:response:arguments</strong>
+</center>
+<FONT SIZE="+1"><STRONG>Where:</STRONG></FONT>
+
+<DL>
+
+<!-- COMMAND -->
+<DT>
+<STRONG>command</STRONG>
+<DD>
+The cvs command to send to the server, such as 'add',
+'ci', or 'update'.
+<P>
+
+<!-- ENTRIES -->
+<DT>
+<STRONG>entries</STRONG>
+<DD>
+A string specifying the entries in the project to apply
+the command to. This string consists of an initial character which
+specifies the type of selection to make, which can possibly be
+following by a parameter that is used by the selection.
+<P>
+<STRONG>The possible selectors are as follows:</STRONG>
+<P>
+<UL>
+<LI>
+<STRONG>N</STRONG> - No entries.
+<LI>
+<STRONG>A</STRONG> - All entries in the project.
+<LI>
+<STRONG>a</STRONG> - All entries selected in the displayed list of entries.
+<LI>
+<STRONG>M</STRONG> - All entries which have been modified.
+<LI>
+<STRONG>m</STRONG> - All entries selected in the displayed list which are
+modified.
+<LI>
+<STRONG>L</STRONG> - All entries which have been lost (removed from local
+working directory).
+<LI>
+<STRONG>l</STRONG> - All entries selected in the displayed list which have
+been lost.
+<LI>
+<STRONG>U</STRONG> - All entries which are unchanged.
+<LI>
+<STRONG>u</STRONG> - All entries selected in the displayed list which are
+unchanged.
+<LI>
+<STRONG>p</STRONG> - The entry that the popup menu was clicked on.
+<LI>
+<STRONG>G</STRONG> - A new file selected by the user
+<DL>
+<DD>
+Currently the only parameter that is used is when the
+selector is 'G', which is to select a new file provided by the
+user via a FileDialog. The parameter specifies a pathname for
+which the FileDialog should initialize its display.
+</DL>
+</UL>
+
+<!-- REQUEST -->
+<DT>
+<STRONG>request</STRONG>
+<DD>
+A string of option characters specifying the entries in
+the project to apply the command to. This string consists of an
+initial character which specifies the type of selection to make,
+which can possibly be following by a parameter that is used by
+the selection.
+<P>
+<STRONG>The possible selectors are as follows:</STRONG>
+<P>
+<UL>
+<LI>
+<STRONG>A</STRONG> - Send any specified argument with the request
+<LI>
+<STRONG>E</STRONG> - Send 'Entry' lines for the selected entries.
+<DL>
+<DD>
+If this setting is used, each entry will have its 'Entry' line sent
+to the server, as well as the entry's 'status ('Lost', 'Unchanged', etc.).
+However, in the case of modified files, which request is sent with the
+entry is determined by the 'S' and 'U' settings. 
+<P>
+</DL>
+<LI>
+<STRONG>S</STRONG> - Send 'special' empty 'Modified' requests.
+<DL>
+<DD>
+When a file
+is modified locally, and the server expects a 'Modified' request, but the
+contents of the file are unused by the server, then you can use this setting.
+The 'Modified' request is sent as usual, however, the size of the file is
+sent as 'zero' to avoid sending the entire contents of the file. This should
+be used with <strong>caution</strong> as some commands will not work properly
+with empty files.
+<P>
+</DL>
+<LI>
+<STRONG>U</STRONG> - Send 'Modified' requests for locally modified files.
+<DL>
+<DD>
+When a file is modified locally, this setting will cause a 'Modified'
+request to be sent to the server. If the 'S' setting is also used, the
+file contents uploaded will be zero length. Otherwise, the current
+contents of the file are uploaded with the modified request.
+<P>
+</DL>
+<LI>
+<STRONG>F</STRONG> - Send the selected entries as the [files...] argument
+to the cvs command</STRONG>
+<LI>
+<STRONG>M</STRONG> - Send the project name as the [module] argument to
+the cvs command</STRONG>
+<LI>
+<STRONG>G</STRONG> - Guarantee the '-m' message option is provided in the
+list of arguments.</STRONG>
+<DL>
+<DD>
+If the option is not provided, a dialog will be displayed
+prompting the user to provide one.
+<P>
+</DL>
+<LI>
+<STRONG>P</STRONG> - <em>Do not</em> queue the reponse before processing it.</STRONG>
+<DL>
+<DD>
+When processing cvs requests, jCVS queues all of the responses from the
+server before processing them. This is critical for some procedures, such
+as checking out a 3000 file repository, since queueing the response would
+typically exhaust available memory.
+<P>
+</DL>
+<LI>
+<STRONG>R</STRONG> - Redirect the stdout of the reponse.</STRONG>
+<DL>
+<DD>
+The user will be prompted for a file into which to store the stdout output
+of the server reponse.
+<P>
+</DL>
+<LI>
+<STRONG>V</STRONG> - Verification Only.</STRONG>
+<DL>
+<DD>
+Only perform the authentication part of the request and return.
+<P>
+</DL>
+<LI>
+<STRONG>O</STRONG> - Trace the processing of the request 'output' phase.
+<LI>
+<STRONG>I</STRONG> - Trace the processing of the response 'input' phase.
+<LI>
+<STRONG>T</STRONG> - Trace the TCP data exchanged between jCVS and the cvs server.
+</UL>
+
+
+<!-- RESPONSE -->
+<DT>
+<STRONG>response</STRONG>
+<DD>
+A string of option characters specifying the entries in
+the project to apply the command to. This string consists of an
+initial character which specifies the type of selection to make,
+which can possibly be following by a parameter that is used by
+the selection.
+<P>
+<STRONG>The possible selectors are as follows:</STRONG>
+<UL>
+<LI>
+<STRONG>c</STRONG> - Handle the 'Copy-file' response from the server.
+<LI>
+<STRONG>d</STRONG> - Display the results of the request and the responses
+from the server.
+<LI>
+<STRONG>e</STRONG> - Handle all 'Entry' responses.
+<DL>
+<DD>
+This includes responses such as 'Checked-in', 'Remove-entry',
+as well as 'Updated' and 'Merged', which provide Entry lines with
+the response.
+<P>
+</DL>
+<LI>
+<STRONG>f</STRONG> - Handle all 'settings' related responses.
+<DL>
+<DD>
+This includes responses such as 'Set-sticky', and 'Set-sticky-directory'.
+<P>
+</DL>
+<LI>
+<STRONG>i</STRONG> - Ignore the status of the cvs server response.
+<DL>
+<DD>
+Each request returns a result indicating the status of
+the command. However, some commands, namely 'diff', return an
+error status even when the command completes successfully. When
+this setting is used the result is simply ignored and assumed
+to indicate success.
+<P>
+</DL>
+<LI>
+<STRONG>k</STRONG> - Keep temporary files.
+<DL>
+<DD>
+Sometimes it is convenient to keep the temporary files that jCVS
+creates, say for debugging. If this option is set, jCVS will <em>not</em>
+delete the temporary files it uses in processing a request.
+<P>
+</DL>
+<LI>
+<STRONG>m</STRONG> - Handle 'Merged' responses from the server.
+<LI>
+<STRONG>o</STRONG> - Allow overwrites of local files, <em>even when modified!</em>
+<LI>
+<STRONG>t</STRONG> - Traces the processing of the response processing phase.
+<LI>
+<STRONG>u</STRONG> - Handle 'Updated responses from the server.
+</UL>
+
+
+<!-- ARGUMENTS -->
+<DT>
+<STRONG>arguments</STRONG>
+<DD>
+A string specifying arguments to be included with the
+command. The arguments in this string will be overridden by any
+provided by the user that match. These are to be considered default
+arguments. To prevent the user from overriding these arguments,
+do not provide the 'A' option to the request specification, so
+that the user's arguments are not sent.
+
+</DL> <!-- End of the huge DL list of fields -->
+
+<H2><STRONG>Examples</STRONG></H2>
+<P>
+
+<ul>
+
+<li> cvs status command on the currently selected files
+<dl><dd>status:a:EUAF:d:</dl>
+
+<li> commit the entire project
+<dl><dd>co:A:AMP:deou:</dl>
+
+</ul>
+
+<STRONG>UNDONE</STRONG>
+
+
+<hr>
+<FONT SIZE="-2">
+<center>
+$Id: CVSCommandSpec.html,v 2.2 1997/04/21 05:02:27 time Exp $<br>
+Copyright (c) 1997 By Timothy Gerard Endres<br>
+jCVS is licensed to you under the <a href="License.html">GNU General Public License</a>.
+</center>
+</FONT>
+
+</BODY>
+
+</HTML>

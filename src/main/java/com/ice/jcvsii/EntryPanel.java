@@ -154,6 +154,10 @@ implements	ActionListener, FocusListener,
 		this.columnModel.setVersionWidth( w );
 		totalW += w;
 
+		w = prefs.getInteger( Config.PROJECT_TAG_WIDTH, 50 );
+		this.columnModel.setTagWidth( w );
+		totalW += w;
+
 		w = prefs.getInteger( Config.PROJECT_MODIFIED_WIDTH, 175 );
 		this.columnModel.setModifiedWidth( w );
 		totalW += w;
@@ -175,6 +179,10 @@ implements	ActionListener, FocusListener,
 		prefs.setInteger
 			( Config.PROJECT_VERSION_WIDTH,
 				this.columnModel.getVersionWidth() );
+
+		prefs.setInteger
+			( Config.PROJECT_TAG_WIDTH,
+				this.columnModel.getTagWidth() );
 
 		prefs.setInteger
 			( Config.PROJECT_MODIFIED_WIDTH,

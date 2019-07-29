@@ -113,12 +113,9 @@ implements	ActionListener, CVSUserInterface
 		String rootDirectory = this.info.getRepository();
 		String exportDirectory = this.info.getExportDirectory();
 
-		boolean isPServer = this.info.isPasswordSelected();
+		boolean isPServer = this.info.isPServer();
 
-		int connMethod =
-			( this.info.isInetdSelected()
-				? CVSRequest.METHOD_INETD
-				: CVSRequest.METHOD_RSH );
+		int connMethod = this.info.getConnectionMethod();
 
 		int cvsPort =
 			CVSUtilities.computePortNum
@@ -161,8 +158,9 @@ implements	ActionListener, CVSUserInterface
 			return;
 			}
 
-		if ( connMethod == CVSRequest.METHOD_RSH
-				&& userName.length() < 1 )
+		if ( userName.length() < 1
+				&& (connMethod == CVSRequest.METHOD_RSH
+					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
 			String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
 			String title = rmgr.getUIString("common.rsh.needs.user.title" );
@@ -211,7 +209,7 @@ implements	ActionListener, CVSUserInterface
 
 		this.getMainPanel().setAllTabsEnabled( false );
 
-		this.client = new CVSClient( hostname, cvsPort );
+		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
 		project = new CVSProject( this.client );
 				
 		project.setUserName( userName );
@@ -247,6 +245,10 @@ implements	ActionListener, CVSUserInterface
 
 			project.setPassword( scrambled );
 			}
+		else if ( connMethod == CVSRequest.METHOD_SSH )
+			{
+			project.setPassword( passWord );
+			}
 
 		// Finally, we must make sure that the Project has its root entry, as
 		// CVSProject will not be able to create it from the context that the
@@ -265,7 +267,7 @@ implements	ActionListener, CVSUserInterface
 		request.setPServer( isPServer );
 		request.setUserName( userName );
 
-		if ( isPServer )
+		if ( isPServer || connMethod == CVSRequest.METHOD_SSH )
 			{
 			request.setPassword( project.getPassword() );
 			}

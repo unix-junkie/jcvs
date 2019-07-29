@@ -19,6 +19,7 @@ interface	ConfigureConstants
 	public static final String		CFG_BOOLEAN			= "boolean";
 	public static final String		CFG_STRINGARRAY		= "stringarray";
 	public static final String		CFG_CHOICE			= "choice";
+	public static final String		CFG_COMBO			= "combo";
 	public static final String		CFG_TOKENS			= "tokens";
 	public static final String		CFG_TUPLETABLE		= "tupletable";
 	}

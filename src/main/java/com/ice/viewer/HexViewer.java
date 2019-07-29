@@ -37,8 +37,9 @@ implements	CommandObject
 	private Document		doc = null;
 
 	private boolean			hitEOF;
+	private boolean			closeStream;
 	private int				dataLength;
-	private InputStream		dataStream;
+	private InputStream		dataStream = null;
 
 	private int				currentBlkIdx;
 	private Vector			blockCache;
@@ -63,6 +64,7 @@ implements	CommandObject
 	HexViewer( InputStream content, int length )
 		{
 		this.hitEOF = false;
+		this.dataStream = null;
 		this.blockCache = new Vector();
 		this.setDoubleBuffered( true );
 
@@ -74,6 +76,39 @@ implements	CommandObject
 			}
 		}
     
+	public void
+	removeNotify()
+		{
+		super.removeNotify();
+		this.checkClose();
+		}
+
+	protected void
+	checkClose()
+		{
+		if ( this.dataStream != null )
+			{
+			if ( this.closeStream )
+				{
+				try { this.dataStream.close(); }
+				catch ( IOException ex ) { }
+				this.dataStream = null;
+				}
+			}
+		}
+
+	public boolean
+	getCloseStream()
+		{
+		return this.closeStream;
+		}
+
+	public void
+	setCloseStream( boolean flag )
+		{
+		this.closeStream = flag;
+		}
+
     /**
      * the CommandObject method to accept our DataHandler
      * @param dh	the datahandler used to get the content
@@ -88,8 +123,6 @@ implements	CommandObject
 		InputStream content = dh.getInputStream();
 
 		this.setMessage( content, -1 );
-
-		content.close();
 		}
 
     /**
@@ -208,7 +241,7 @@ implements	CommandObject
 
 		this.scrollBar.setValue( this.currentBlkIdx );
 
-		this.setWaitCursor();
+		this.resetCursor();
 		}
 
 	public int
@@ -230,6 +263,7 @@ implements	CommandObject
 				if ( numRead < 0 )
 					{
 					result = -1;
+					this.checkClose();
 					if ( this.dataLength < 0 )
 						{
 						this.dataLength =
@@ -243,7 +277,9 @@ implements	CommandObject
 				}
 
 			if ( off > 0 )
+				{
 				this.blockCache.addElement( buf );
+				}
 			}
 
 		return result;

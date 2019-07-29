@@ -32,7 +32,7 @@ FileLog extends Object
 	{
 	private static final String		RCS_ID = "$Id: FileLog.java,v 1.3 1998/12/26 20:59:06 time Exp $";
 	private static final String		RCS_REV = "$Revision: 1.3 $";
-	private static final String		RCS_NAME = "$Name: release-2-8 $";
+	private static final String		RCS_NAME = "$Name:  $";
 
 	private static final String		DEFAULT_FILENAME = "log.txt";
 

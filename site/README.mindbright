@@ -1,0 +1,13 @@
+
+This is a repackaging of the MindTerm distribution built for jCVS II. The
+reason for this repackaging is that MindBright packages their SSH libraries
+specifically for their MindTerm application (which is very good). However,
+they do not appear to provide a JAR file for applications that wish to use
+their SSH sessions. Thus, I had to build one. I wanted to keep MindBright's
+code in a separate JAR to highlight more clearly the use of their excellent
+code within jCVS. The source code is included in this package, under the
+mindbright directory, per their license agreement.
+
+tim.
+
+For more info on MindTerm and related issues visit http://www.appgate.com/

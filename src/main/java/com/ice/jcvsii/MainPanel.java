@@ -15,15 +15,16 @@ class		MainPanel
 extends		JPanel
 implements	ActionListener
 	{
-	MainFrame			mainFrame;
+	MainFrame				mainFrame = null;
 
-	WorkBenchPanel		wbPanel;
-	CheckOutPanel		coPanel;
-	ExportPanel			expPanel;
-	ImportPanel			impPanel;
-	CreatePanel			crtPanel;
-	TestConnectPanel	testPanel;
-	JTabbedPane			tabbedPane;
+	WorkBenchPanel			wbPanel = null;
+	CheckOutPanel			coPanel = null;
+	ExportPanel				expPanel = null;
+	ImportPanel				impPanel = null;
+	CreatePanel				crtPanel = null;
+	InitRepositoryPanel		initPanel = null;
+	TestConnectPanel		testPanel = null;
+	JTabbedPane				tabbedPane = null;
 
 
 	public
@@ -61,6 +62,10 @@ implements	ActionListener
 		this.crtPanel = new CreatePanel( this );
 		this.tabbedPane.addTab( tabName, null, this.crtPanel );
 
+		tabName = rmgr.getUIString( "mainpan.initrep.tab.name" );
+		this.initPanel = new InitRepositoryPanel( this );
+		this.tabbedPane.addTab( tabName, null, this.initPanel );
+
 		tabName = rmgr.getUIString( "mainpan.testconn.tab.name" );
 		this.testPanel = new TestConnectPanel( this );
 		this.tabbedPane.addTab( tabName, null, this.testPanel );
@@ -82,6 +87,7 @@ implements	ActionListener
 		this.expPanel.loadPreferences();
 		this.impPanel.loadPreferences();
 		this.crtPanel.loadPreferences();
+		this.initPanel.loadPreferences();
 		this.testPanel.loadPreferences();
 		}
 
@@ -93,6 +99,7 @@ implements	ActionListener
 		this.expPanel.savePreferences();
 		this.impPanel.savePreferences();
 		this.crtPanel.savePreferences();
+		this.initPanel.savePreferences();
 		this.testPanel.savePreferences();
 		}
 

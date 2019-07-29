@@ -1,0 +1,219 @@
+
+JCVS II - 5.3
+
+This is release 5.3.1. February 18, 2002.
+
+------------------------------------------------------------------------------
+
+INSTALLATION
+
+jCVS is now Java 2 "ready". Therefore, you should not have to deal with
+the CLASSPATH unless you want to build jCVS.
+
+
+------------------------------------------------------------------------------
+COMMANDS TO START JCVS
+
+Change your current directory to the 'bin' directory in the jCVS
+distribution that you extracted. Then, you can start jCVS with the
+following commands.
+
+Start jCVS with Java 2 with a command such as:
+
+   java -jar jcvsii.jar
+
+This command must be run from the bin directory, or Java will not be
+able to locate the jar files.
+
+Windows users may wish to use the Shortcut included in the bin directory.
+If you wish to use this shortcut, you must edit its "Target" via the
+"Properties" of the shortcut. The Target must have the path of the Java
+executable (javaw.exe) as it is installed on your machine. If you are
+having trouble launching jCVS, change the executable to "java.exe",
+as opposed to "javaw.exe", and you will get a shell window in which
+error messages will be displayed.
+
+If you can not start jCVS with either of the two methods above, then
+you can use the more traditional approach described here.
+
+Start jCVS with command such as follows. It assumes that you are in
+the bin directory of the distribution.
+
+   CLASSPATH="jcvsii.jar;jars/activation.jar;jars/jh.jar;jars/mindbright.jar;$CLASSPATH"
+   java -classpath $CLASSPATH com.ice.jcvsii.JCVS
+
+
+------------------------------------------------------------------------------
+MAILING LIST
+
+You may subscribe to the jCVS mailing list at:
+
+   <http://www.gjt.org/servlets/MailingLists/ListInfo.html/jcvs>
+
+To post to the list, you must subscribe (spam filter).
+
+
+------------------------------------------------------------------------------
+BUG REPORTS
+
+Please use BugRat to report bugs.
+
+   <http://www.gjt.org/bugrat/report/SelectCat/jcvs>
+
+If you have troubles with BugRat, please feel free to email bug reports
+to myself at time@jcvs.org, or to the jCVS mailing list.
+
+
+------------------------------------------------------------------------------
+DOCUMENTATION
+
+The documentation both builtin, and available for browsing with your
+web browser. To browse, start with the file 'doc/readme.html'.
+
+
+------------------------------------------------------------------------------
+SIGNIFICANT FEATURE CHANGES
+
+
+This release adds a couple of major enhancements, including support for
+SSH and unmanaged files, as well as a number of bug fixes.
+
+* Added support SSH connections using the MindBright MindTerm package.
+
+* Added new "show unmanaged files" dialog. The dialog helps ensure that
+  you do not 
+
+* Added new Pretty Diffs display.
+
+* Added new "Tag" column to highlight sticky tags.
+
+* Added ability to define port numbers used by various connection methods.
+
+* Added flag to control use of multiple-interface IP determination. This
+  code made extra connection calls, which is expensive, so it is now turned
+  off by default, but can be turned on in the preferences.
+
+* Created new Ant build script.
+
+
+------------------------------------------------------------------------------
+FIXED IN THIS RELEASE
+
+* Fixed bug in MANIFEST.MF file that prevented "java -jar" from working.
+
+* Fixed bug where "removed" (cvs protocol remove) files were not removed.
+  When another user removed a file, updates by other users did not remove
+  the file.
+
+* Notify bug fixed. Notify worked for freshly checked-out projects, but
+  not projects that were "opened". Now works for all cases.
+
+* "No connection method" Root files now properly recognized. If the CVS/Root
+  file did not have the ":method:" prefix, it was considered invalid. Now it
+  is recognized as RSH.
+
+* Extraneous EOL on EOF fixed. jCVS had a bug where EOL was added to the end
+  of files that did not have an EOL. This caused all sorts of problems.
+
+* GZIP flush(). When using GZIP compression on the cvs protocol stream,
+  connections would hang. Now call flush().
+
+* ":ext:" connection method prefix now recognized for SSH connections.
+
+* Fixed exec() paths for Windows (specifically Excel). Quoted path for
+  spaces, and converted file separators to be native
+
+* 
+
+
+------------------------------------------------------------------------------
+TODO
+
+* Add ability to display "unmanaged" files next to managed files.
+
+* Improve the JavaScript examples.
+
+* Files permissions "hook" to allow file permissions to be set
+  when this can be done via exec or other means.
+
+
+------------------------------------------------------------------------------
+KNOWN PROBLEMS
+
+* The Project Window still does not properly disable controls during oprations.
+
+* The DDE code does not work properly for certain programs (Visual Cafe), and
+  launches a new app for each file open, instead of opening it in the currently
+  running app.
+
+* EBCDIC platforms do not work properly, as the default character set is
+  EBCDIC, not ASCII. User provided patch, need to apply.
+
+* If you use Java 2, and have the 'activation.jar' load automatically from
+  the extensions folder, JAF will not be able to locate the viewer classes
+  unless they are also in the extensions folder. To work around this, you
+  can copy the viewer classes into their own JAR in the extensions folder.
+  I may include this separate viewers jar in future releases.
+
+* Still not Macintosh Friendly; shorter class names, use of Mac classes to
+  get the temp dir, many other patches submitted by Mac users.
+
+* If you copy a working directory "across DST zones", the Entries timestamps will
+  no longer be in sync with the files.
+
+  This problem is very subtle. Java, Win32, and jCVS all make an effort to
+  properly manage DST and timezones. However, under Win32, it appears that some
+  programs that copy files (I have not established what), do not properly manage
+  the UTC offset during the copy. This results in the file's UTC offset being
+  modified, while the CVS/Entries timestamp remains the same. You will see files
+  that show that they are modified (red icon), but which show no diffs. If you
+  do a "status" command on these files, they should reset to their proper state.
+
+  See Microsoft's Knowledge Base:
+     <http://support.microsoft.com/support/kb/articles/q188/7/68.asp>
+  and
+     <http://support.microsoft.com/support/kb/articles/q128/1/26.asp>
+
+
+  It also appears that when Windows crosses a DST tz, the files all turn red.
+
+  Again, a status fixes the state. If you select a folder (directory) and
+  use the popup menu to select "Status Files", it will reset every file in
+  the folder. Select "Status All Files", and it will recurse down all files
+  and directories under the selected directory.
+
+
+------------------------------------------------------------------------------
+HOWTO
+
+* Configure Exec Viewer
+
+  CHANGE - You can now turn off JAF in the preferences and just configure
+           Exec Commands directly and be done with it. See the preference
+           named 'Actions.Use JAF'.
+
+  All "actions" are now driven by JAF. JAF uses a "mailcap" file to define
+  how things are "acted upon". The default mailcap in the jcvsii.jar file
+  defaults everything to 'com.ice.jcvsii.ExecViewer'. ExecViewer is a class
+  that simply invoke "System.exec()" with the environment and command line
+  that you supply via the configuration.
+
+  The configuration, which is accessed via 'Actions.Exec Commands' lets
+  you define "extension.action" commands. For example, if you wanted to
+  have vi open your java source code, you would click the "New" button
+  and enter ".java.open" (open is the default verb used when you double
+  click on a file. You can change this via 'Project Window.Double Click Verb').
+  This will put ".java.open" in the combo box, and select it. Now, enter
+  your command line in the Command text field using "$FILE" to reference the
+  file's full path name, and be sure to use double backslash if you are cursed
+  with Win32. You can enter environment also as "name=value" pairs in the
+  Environment field.
+
+* Define your own mailcap file?
+
+  jCVS, if it finds one, will read the file ~/.jcvsmailcap (~/jcvsmailcap.txt
+  for Win32 folks). Use the mailcap in the doc/examples folder for a template.
+  Win32 folks may wish to use the Win32Viewer, which uses the native DDE
+  interface to use the verbs configured via the Windows Folder Options.
+
+

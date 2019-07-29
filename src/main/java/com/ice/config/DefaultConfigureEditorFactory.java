@@ -100,6 +100,9 @@ implements	ConfigureEditorFactory, ConfigureConstants
 		else if ( propertyType.equalsIgnoreCase( CFG_CHOICE ) )
 			return new ConfigChoiceEditor();
 
+		else if ( propertyType.equalsIgnoreCase( CFG_COMBO ) )
+			return new ConfigComboEditor();
+
 		else if ( propertyType.equalsIgnoreCase( CFG_STRINGARRAY ) )
 			return new ConfigStringArrayEditor();
 

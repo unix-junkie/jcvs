@@ -1,16 +1,18 @@
 /*
 ** Java cvs client library package.
-** Copyright (c) 1997 by Timothy Gerard Endres
+** Copyright (c) 1997-2002 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
 ** You may redistribute it and/or modify it under the terms of the GNU
-** General Public License as published by the Free Software Foundation.
+** Library General Public License (LGPL) as published by the Free Software
+** Foundation.
+**
 ** Version 2 of the license should be included with this distribution in
-** the file LICENSE, as well as License.html. If the license is not
+** the file LICENSE.txt, as well as License.html. If the license is not
 ** included	with this distribution, you may find a copy at the FSF web
-** site at 'www.gnu.org' or 'www.fsf.org', or you may write to the
-** Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139 USA.
+** site at 'www.gnu.org' or 'www.fsf.org', or you may write to the Free
+** Software Foundation at 59 Temple Place - Suite 330, Boston, MA 02111 USA.
 **
 ** THIS SOFTWARE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND,
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
@@ -275,8 +277,18 @@ CVSResponse extends Object
 	public String
 	getDisplayResults()
 		{
-		StringBuffer finalResult =
-						new StringBuffer("");
+		StringBuffer finalResult = new StringBuffer( 1024 );
+
+		finalResult.append( this.getResultText() );
+		finalResult.append( this.getResultStatus() );
+
+		return finalResult.toString();
+		}
+
+	public String
+	getResultText()
+		{
+		StringBuffer resultBuf = new StringBuffer( 1024 );
 
 		String stdout = this.getStdout();
 		String stderr = this.getStderr();
@@ -285,29 +297,32 @@ CVSResponse extends Object
 			{
 			if ( stderr.length() > 0 )
 				{
-				finalResult.append( stderr );
+				resultBuf.append( stderr );
 				if ( stdout.length() > 0 )
-					finalResult.append( "\n" );
+					resultBuf.append( "\n" );
 				}
 
 			if ( stdout.length() > 0 )
 				{
-				finalResult.append( stdout );
+				resultBuf.append( stdout );
 				}
 			}
 
+		return resultBuf.toString();
+		}
+
+
+	public String
+	getResultStatus()
+		{
 		if ( this.getStatus() == CVSResponse.OK )
 			{
-			finalResult.append
-				( "\n** The command completed successfully." );
+			return "\n** The command completed successfully.";
 			}
 		else
 			{
-			finalResult.append
-				( "\n** The command completed with an error status." );
+			return "\n** The command completed with an error status.";
 			}
-
-		return finalResult.toString();
 		}
 
 	public String

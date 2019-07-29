@@ -112,12 +112,9 @@ implements	ActionListener, CVSUserInterface
 		String releaseTag = "release-tag";
 		String message = "Creating new repository.";
 
-		boolean isPServer = this.info.isPasswordSelected();
+		boolean isPServer = this.info.isPServer();
 
-		int connMethod =
-			( this.info.isInetdSelected()
-				? CVSRequest.METHOD_INETD
-				: CVSRequest.METHOD_RSH );
+		int connMethod = this.info.getConnectionMethod();
 
 		int cvsPort =
 			CVSUtilities.computePortNum
@@ -145,8 +142,9 @@ implements	ActionListener, CVSUserInterface
 			return;
 			}
 
-		if ( connMethod == CVSRequest.METHOD_RSH
-				&& userName.length() < 1 )
+		if ( userName.length() < 1
+				&& (connMethod == CVSRequest.METHOD_RSH
+					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
 			String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
 			String title = rmgr.getUIString("common.rsh.needs.user.title" );
@@ -161,7 +159,7 @@ implements	ActionListener, CVSUserInterface
 		//
 		this.getMainPanel().setAllTabsEnabled( false );
 
-		client = new CVSClient( hostname, cvsPort );
+		client = CVSUtilities.createCVSClient( hostname, cvsPort );
 		project = new CVSProject( client );
 				
 		project.setUserName( userName );
@@ -197,7 +195,11 @@ implements	ActionListener, CVSUserInterface
 
 			project.setPassword( scrambled );
 			}
-			
+		else if ( connMethod == CVSRequest.METHOD_SSH )
+			{
+			project.setPassword( passWord );
+			}
+
 		request = new CVSRequest();
 
 
@@ -209,7 +211,7 @@ implements	ActionListener, CVSUserInterface
 		request.setPServer( isPServer );
 		request.setUserName( userName );
 
-		if ( isPServer )
+		if ( isPServer || connMethod == CVSRequest.METHOD_SSH )
 			{
 			request.setPassword( project.getPassword() );
 			}

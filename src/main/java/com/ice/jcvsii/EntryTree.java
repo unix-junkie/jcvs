@@ -187,6 +187,20 @@ extends		JTree
 		}
 
 	public int
+	getTagWidth()
+		{
+		return this.renderer.getTagWidth();
+		}
+
+	public void
+	setTagWidth( int w )
+		{
+		this.renderer.setTagWidth( w );
+		Dimension sz = this.renderer.getPreferredSize();
+		this.setSize( new Dimension( sz.width, this.getSize().height ) );
+		}
+
+	public int
 	getModifiedWidth()
 		{
 		return this.renderer.getModifiedWidth();

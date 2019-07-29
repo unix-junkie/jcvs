@@ -30,6 +30,12 @@ public
 class		EntryColumnModel
 extends		DefaultTableColumnModel
 	{
+	private static final int		IDX_NAME  = 0;
+	private static final int		IDX_REV   = 1;
+	private static final int		IDX_TAG   = 2;
+	private static final int		IDX_MOD   = 3;
+
+
 	public
 	EntryColumnModel()
 		{
@@ -39,17 +45,22 @@ extends		DefaultTableColumnModel
 		ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		titleStr = rmgr.getUIString( "project.tree.entry.header" );
-		tblCol = new TableColumn( 0, 275 );
+		tblCol = new TableColumn( IDX_NAME, 275 );
 		tblCol.setHeaderValue( titleStr );
 		this.addColumn( tblCol );
 
 		titleStr = rmgr.getUIString( "project.tree.rev.header" );
-		tblCol = new TableColumn( 1, 50 );
+		tblCol = new TableColumn( IDX_REV, 50 );
+		tblCol.setHeaderValue( titleStr );
+		this.addColumn( tblCol );
+
+		titleStr = rmgr.getUIString( "project.tree.tag.header" );
+		tblCol = new TableColumn( IDX_TAG, 50 );
 		tblCol.setHeaderValue( titleStr );
 		this.addColumn( tblCol );
 
 		titleStr = rmgr.getUIString( "project.tree.mod.header" );
-		tblCol = new TableColumn( 2, 150 );
+		tblCol = new TableColumn( IDX_MOD, 150 );
 		tblCol.setHeaderValue( titleStr );
 		this.addColumn( tblCol );
 		}
@@ -79,40 +90,108 @@ extends		DefaultTableColumnModel
 	public int
 	getNameWidth()
 		{
-		return this.getColumn(0).getWidth();
+		return this.getColumn(IDX_NAME).getWidth();
 		}
 
 	public void
 	setNameWidth( int w )
 		{
-		this.getColumn(0).setWidth( w );
-		this.getColumn(0).setPreferredWidth( w );
+		this.getColumn(IDX_NAME).setWidth( w );
+		this.getColumn(IDX_NAME).setPreferredWidth( w );
+		this.recalcWidthCache();
 		}
 
 	public int
 	getVersionWidth()
 		{
-		return this.getColumn(1).getWidth();
+		return this.getColumn(IDX_REV).getWidth();
 		}
 
 	public void
 	setVersionWidth( int w )
 		{
-		this.getColumn(1).setWidth( w );
-		this.getColumn(1).setPreferredWidth( w );
+		this.getColumn(IDX_REV).setWidth( w );
+		this.getColumn(IDX_REV).setPreferredWidth( w );
+		this.recalcWidthCache();
+		}
+
+	public int
+	getTagWidth()
+		{
+		return this.getColumn(IDX_TAG).getWidth();
+		}
+
+	public void
+	setTagWidth( int w )
+		{
+		this.getColumn(IDX_TAG).setWidth( w );
+		this.getColumn(IDX_TAG).setPreferredWidth( w );
+		this.recalcWidthCache();
 		}
 
 	public int
 	getModifiedWidth()
 		{
-		return this.getColumn(2).getWidth();
+		return this.getColumn(IDX_MOD).getWidth();
 		}
 
 	public void
 	setModifiedWidth( int w )
 		{
-		this.getColumn(2).setWidth( w );
-		this.getColumn(2).setPreferredWidth( w );
+		this.getColumn(IDX_MOD).setWidth( w );
+		this.getColumn(IDX_MOD).setPreferredWidth( w );
+		this.recalcWidthCache();
 		}
+
+	/**
+	 * We had to implement our own column indexer because the
+	 * one in ColumnModel was not working for the right hand
+	 * edge of the last column. I do not know why, but I am
+	 * sure that it was related to the margin, since the
+	 * "error" seemed to increase with the number of columns.
+	 */
+
+	public int
+	getColumnIndexAtX( int x )
+		{
+		int width = 0;
+		int cnt = this.getColumnCount();
+		int mgn = this.getColumnMargin();
+
+        for ( int colIdx = 0 ; colIdx < cnt ; colIdx++ )
+			{
+			TableColumn col = this.getColumn( colIdx );
+			width += col.getWidth() + mgn;
+			if ( x < width )
+				return colIdx;
+			}
+
+		return -1;
+		}
+
+	/**
+	 * We had to implement our own column sizer because the
+	 * one in ColumnModel was not working for the right hand
+	 * edge of the last column. I do not know why, but I am
+	 * sure that it was related to the margin, since the
+	 * "error" seemed to increase with the number of columns.
+	 */
+
+	public int
+	getTotalColumnWidth()
+		{
+		int width = 0;
+		int cnt = this.getColumnCount();
+		int mgn = this.getColumnMargin();
+
+        for ( int colIdx = 0 ; colIdx < cnt ; colIdx++ )
+			{
+			TableColumn col = this.getColumn( colIdx );
+			width += col.getWidth() + mgn;
+			}
+
+		return width;
+		}
+
 	}
 

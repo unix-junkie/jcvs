@@ -39,6 +39,12 @@ import com.ice.util.StringUtilities;
  *  <a href="mailto:time@gjt.org">time@gjt.org</a>
  */
 
+//
+// UW-sep-char  Urban Widmark <urban@svenskatest.se>
+// Excel, and other applications, insist that any path passed
+// to them be in native format. Thus, we normalize...
+//
+
 public
 class		ExecViewer
 extends		Thread
@@ -101,6 +107,7 @@ implements	CommandObject
 		String fileName = file.getAbsolutePath();
 		String cwdPath = Config.getPreferences().getCurrentDirectory();
 
+		// UW-sep-char
 		// Some programs (namely windows) like Excel do not like / in
 		// pathnames, so we replace / with the platform file separator.
 		//
@@ -118,18 +125,17 @@ implements	CommandObject
 
 		Config cfg = Config.getInstance();
 
-		int index = fileName.lastIndexOf( "." );
-
-		if ( index != -1 && index < (fileName.length() - 1) )
+		int index = name.lastIndexOf( "." );
+		if ( index != -1 && index < (name.length() - 1) )
 			{
-			extension = fileName.substring( index );
+			extension = name.substring( index );
 			envSpec = cfg.getExecCommandEnv( verb, extension );
 			argSpec = cfg.getExecCommandArgs( verb, extension );
 			}
 		else
 			{
-			envSpec = cfg.getExecCommandEnv( verb, "."+fileName );
-			argSpec = cfg.getExecCommandArgs( verb, "."+fileName );
+			envSpec = cfg.getExecCommandEnv( verb, "."+name );
+			argSpec = cfg.getExecCommandArgs( verb, "."+name );
 			}
 
 		if ( argSpec == null )
@@ -151,6 +157,18 @@ implements	CommandObject
 			}
 
 		Hashtable subHash = new Hashtable();
+
+		// UW-path-spaces
+		// Some platforms (namely Windows) encourage spaces in their
+		// filenames, but their applications expect them wrapped inside
+		// quotes.
+		//
+		// @author Urban Widmark <urban@svenskatest.se>
+		//
+		if ( cfg.isWindows() && fileName.indexOf( ' ' ) > -1 )
+			{
+			fileName = '"' + fileName + '"';
+			}
 
 		subHash.put( "FILE", fileName );
 		subHash.put( "PATH", path );

@@ -1,6 +1,6 @@
 /*
 ** Java CVS client application package.
-** Copyright (c) 1997 by Timothy Gerard Endres
+** Copyright (c) 1997-2002 by Timothy Gerard Endres, <time@jcvs.org>
 ** 
 ** This program is free software.
 ** 
@@ -38,17 +38,17 @@ import com.ice.util.ResourceUtilities;
 /**
  * The jCVS application class.
  *
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
 public
 class		JCVS
 	{
-	static public final String		RCS_ID = "$Id: JCVS.java,v 1.7 2000/06/13 05:50:30 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.7 $";
+	static public final String		RCS_ID = "$Id: JCVS.java,v 1.8 2002/02/10 18:04:15 time Exp $";
+	static public final String		RCS_REV = "$Revision: 1.8 $";
 
-	static public final String		VERSION_STR = "5.2.2";
+	static public final String		VERSION_STR = "5.3.2";
 
 	static private JCVS		instance;
 	

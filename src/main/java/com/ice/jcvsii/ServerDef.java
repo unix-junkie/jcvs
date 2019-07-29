@@ -98,13 +98,23 @@ class		ServerDef
 		return this.method.equalsIgnoreCase( "pserver" );
 		}
 
+	public boolean
+	isSSHServer()
+		{
+		return this.method.equalsIgnoreCase( "ext" );
+		}
+
 	public int
 	getConnectMethod()
 		{
 		return
-			this.method.equalsIgnoreCase( "server" )
+			( this.method.equalsIgnoreCase( "server" )
 				? CVSRequest.METHOD_RSH
-				: CVSRequest.METHOD_INETD;
+				: ( this.method.equalsIgnoreCase( "ext" )
+					? CVSRequest.METHOD_SSH
+					: CVSRequest.METHOD_INETD
+					)
+			);
 		}
 
 	public String
