@@ -7,8 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.Icon;
@@ -381,15 +379,7 @@ extends		JPanel
 
 		this.helpButton.setToolTipText( this.getHelpButtonToolTipText() );
 
-		this.helpButton.addActionListener
-			( new ActionListener()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent evt )
-					{ toggleHelp(); }
-				}
-			);
+		this.helpButton.addActionListener( evt -> toggleHelp() );
 		AWTUtilities.constrain(
 			typePan, this.helpButton,
 			GridBagConstraints.NONE,

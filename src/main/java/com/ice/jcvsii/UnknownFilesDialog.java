@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -115,15 +116,7 @@ extends		JDialog
 		this.getContentPane().setLayout( this.borderLayout1 );
 		this.btnCancel.setText("Cancel");
 		this.btnCancel.addActionListener(
-			new java.awt.event.ActionListener()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{
-					btnCancelActionPerformed(e);
-					}
-				}
+			this::btnCancelActionPerformed
 			);
 
 		if ( ! dirs )
@@ -132,15 +125,7 @@ extends		JDialog
 			this.btnDelete.setForeground( Color.red );
 			this.btnDelete.setText( "Delete" );
 			this.btnDelete.addActionListener(
-				new java.awt.event.ActionListener()
-					{
-					@Override
-					public void
-					actionPerformed( final ActionEvent e )
-						{
-						btnDeleteActionPerformed(e);
-						}
-					}
+				this::btnDeleteActionPerformed
 				);
 			}
 
@@ -148,15 +133,7 @@ extends		JDialog
 		this.pnlControl.setBorder( BorderFactory.createEtchedBorder() );
 		this.btnSelectAll.setText( "Select All" );
 		this.btnSelectAll.addActionListener(
-			new java.awt.event.ActionListener()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{
-						btnSelectAllActionPerformed(e);
-					}
-				}
+			this::btnSelectAllActionPerformed
 			);
 
 		this.scrlList.setBorder(titledBorder1);
@@ -164,15 +141,7 @@ extends		JDialog
 		this.btnAdd.setForeground(Color.blue);
 		this.btnAdd.setText("Add to project");
 		this.btnAdd.addActionListener(
-			new java.awt.event.ActionListener()
-				{
-				@Override
-				public void
-				actionPerformed(final ActionEvent e)
-					{
-						btnAddActionPerformed(e);
-					}
-				}
+			this::btnAddActionPerformed
 			);
 
 		this.getContentPane().add(pnlControl,  BorderLayout.SOUTH);
@@ -524,10 +493,7 @@ extends		JDialog
 
 		// sort the results out after dispose has been called
 		final File[] array = new File[ selectedList.size() ];
-		for ( int i = 0 ; i < array.length ; i++ )
-			{
-			array[i] = (File) this.selectedList.elementAt( i );
-			}
+		Arrays.setAll(array, i -> (File) this.selectedList.elementAt(i));
 
 		return array;
 		}

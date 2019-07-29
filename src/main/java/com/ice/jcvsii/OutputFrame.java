@@ -216,72 +216,35 @@ implements	ActionListener
 		if ( command.startsWith( "Hide" ) )
 			{
 			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
-						{ setVisible( false ); }
-					}
+				( () -> setVisible( false )
 				);
 			}
 		else if ( command.startsWith( "Close" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
-						{ dispose(); }
-					}
-				);
+			SwingUtilities.invokeLater(this::dispose);
 			}
 		else if ( command.startsWith( "Show" ) )
 			{
 			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
+				( () ->
 						{
 						projectFrame.setVisible( true );
 						projectFrame.toFront();
 						projectFrame.requestFocus();
 						}
-					}
 				);
 			}
 		else if ( command.startsWith( "SaveToFile" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
-						{ saveToFile(); }
-					}
-				);
+			SwingUtilities.invokeLater(this::saveToFile);
 			}
 		else if ( command.startsWith( "Redirect" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
-						{ redirectToFile(); }
-					}
-				);
+			SwingUtilities.invokeLater(this::redirectToFile);
 			}
 		else if ( command.startsWith( "EndRedirect" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
-						{ endRedirection(); }
-					}
-				);
+			SwingUtilities.invokeLater(this::endRedirection);
 			}
 		else if ( command.startsWith( "CopyText" ) )
 			{

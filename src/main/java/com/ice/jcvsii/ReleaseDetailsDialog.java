@@ -134,14 +134,12 @@ implements	ActionListener
 		if ( command.compareTo( "OK" ) == 0 )
 			{
 			this.okClicked = true;
-			SwingUtilities.invokeLater
-				( new Runnable() { @Override public void run() { dispose(); } } );
+			SwingUtilities.invokeLater(this::dispose);
 			}
 		else if ( command.compareTo( "CANCEL" ) == 0 )
 			{
 			this.okClicked = false;
-			SwingUtilities.invokeLater
-				( new Runnable() { @Override public void run() { dispose(); } } );
+			SwingUtilities.invokeLater(this::dispose);
 			}
         }
 

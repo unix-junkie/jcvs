@@ -206,21 +206,17 @@ implements	ActionListener, ListSelectionListener
 		if ( command.compareTo( "OK" ) == 0 )
 			{
 			this.okClicked = true;
-			SwingUtilities.invokeLater
-				( new Runnable() { @Override public void run() { dispose(); } } );
+			SwingUtilities.invokeLater(this::dispose);
 			}
 		else if ( command.compareTo( "CANCEL" ) == 0 )
 			{
 			this.okClicked = false;
-			SwingUtilities.invokeLater
-				( new Runnable() { @Override public void run() { dispose(); } } );
+			SwingUtilities.invokeLater(this::dispose);
 			}
 		else if ( command.compareTo( "CLEAR" ) == 0 )
 			{
 			SwingUtilities.invokeLater
-				( new Runnable()
-					{ @Override public void run()
-						{ fileList.clearSelection(); } } );
+				( () -> fileList.clearSelection() );
 			}
         }
 
@@ -256,15 +252,7 @@ implements	ActionListener, ListSelectionListener
 		ignoreLbl.setBorder( new EmptyBorder( 1, 1, 1, 4 ) );
 		this.ignoreText = new JTextField( this.ignoreStr );
 		this.ignoreText.addActionListener
-			( new ActionListener()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent evt )
-					{
-					refreshFileList( dirFile, dirEntry );
-					}
-				} );
+			( evt -> refreshFileList( dirFile, dirEntry ) );
 
 		ignorePanel.add( BorderLayout.WEST, ignoreLbl );
 		ignorePanel.add( BorderLayout.CENTER, this.ignoreText );

@@ -392,10 +392,7 @@ implements	ActionListener, CVSUserInterface
 		else if ( command.equals( "TRACE" ) )
 			{
 			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
+				( () ->
 						{
 						if ( traceCheckItem.getState() )
 							{
@@ -412,7 +409,6 @@ implements	ActionListener, CVSUserInterface
 							traceTCP = false;
 							}
 						}
-					}
 				);
 			}
 		else if ( command.startsWith( "DisplayUnkFiles:" ) )
@@ -426,18 +422,14 @@ implements	ActionListener, CVSUserInterface
 			}
 		else if ( command.equalsIgnoreCase( "Close" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{ @Override public void run() { dispose(); } }
-				);
+			SwingUtilities.invokeLater(this::dispose);
 			}
 		else if ( command.equalsIgnoreCase( "HideOutputWindow" ) )
 			{
 			if ( this.output != null )
 				{
 				SwingUtilities.invokeLater
-					( new Runnable()
-						{ @Override public void run() { output.setVisible( false ); } }
+					( () -> output.setVisible( false )
 					);
 				}
 			}
@@ -482,10 +474,7 @@ implements	ActionListener, CVSUserInterface
 			}
 		else if ( command.equalsIgnoreCase( "ShowDetails" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{ @Override public void run() { displayProjectDetails(); } }
-				);
+			SwingUtilities.invokeLater(this::displayProjectDetails);
 			}
 		else if ( command.equalsIgnoreCase( "ClearResults" ) )
 			{
@@ -497,24 +486,15 @@ implements	ActionListener, CVSUserInterface
 			}
 		else if ( command.equalsIgnoreCase( "ClearArgText" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{ @Override public void run() { clearArgumentsText(); } }
-				);
+			SwingUtilities.invokeLater(this::clearArgumentsText);
 			}
 		else if ( command.equalsIgnoreCase( "PerformLogin" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{ @Override public void run() { performLogin(); } }
-				);
+			SwingUtilities.invokeLater(this::performLogin);
 			}
 		else if ( command.equalsIgnoreCase( "AddToWorkBench" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{ @Override public void run() { addToWorkBench(); } }
-				);
+			SwingUtilities.invokeLater(this::addToWorkBench);
 			}
 		else if ( command.equalsIgnoreCase( "ExpandBelow" ) )
 			{
@@ -1430,8 +1410,7 @@ CVSTracer.traceIf( true,
 					project.releaseProject();
 					SwingUtilities.invokeLater
 						(
-						new Runnable()
-							{ @Override public void run() { dispose(); } }
+						ProjectFrame.this::dispose
 						);
 					}
 				else
@@ -2244,16 +2223,9 @@ CVSTracer.traceIf( true,
 					final JMenuItem mItem = new JMenuItem( title );
 					mItem.setActionCommand( command );
 					mItem.addActionListener
-						( new ActionListener()
-							{
-							@Override
-							public void
-							actionPerformed( final ActionEvent e )
-								{
+						( e ->
 								SwingUtilities.invokeLater
-									( ProjectFrame.this.new PJInvoker( e ) );
-								}
-							}
+									( ProjectFrame.this.new PJInvoker( e ) )
 						);
 					menu.add( mItem );
 					}

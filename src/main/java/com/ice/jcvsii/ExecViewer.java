@@ -253,12 +253,7 @@ implements	CommandObject
 					( new InputStreamReader
 						( this.proc.getErrorStream() ) );
 
-			final Thread t = new Thread(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
+			final Thread t = new Thread(() ->
 						{
 						try {
 							for ( ; ; )
@@ -276,7 +271,6 @@ implements	CommandObject
 								( ex, "reading exec stderr stream" );
 							}
 						}
-					}
 				);
 
 			t.start();

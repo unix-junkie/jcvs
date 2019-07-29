@@ -135,80 +135,40 @@ implements	ActionListener
 
 		if ( command.equals( "QUIT" ) )
 			{
-			SwingUtilities.invokeLater(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
-						{
-						app.performShutDown();
-						}
-					}
-				);
+			SwingUtilities.invokeLater(app::performShutDown);
 			}
 		else if ( command.equals( "ABOUT" ) )
 			{
-			SwingUtilities.invokeLater(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
+			SwingUtilities.invokeLater(() ->
 						{
 						final AboutDialog dlg =
 							new AboutDialog( MainFrame.this );
 						dlg.show();
 						}
-					}
 				);
 			}
 		else if ( command.equals( "BUGREPORT" ) )
 			{
-			SwingUtilities.invokeLater(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
-						{
+			SwingUtilities.invokeLater(() ->
 						showHTMLDialog
 							( "info.howto.report.bug.title",
-								"info.howto.report.bug.html" );
-						}
-					}
+								"info.howto.report.bug.html" )
 				);
 			}
 		else if ( command.equals( "HOMEPAGE" ) )
 			{
-			SwingUtilities.invokeLater(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
-						{
+			SwingUtilities.invokeLater(() ->
 						showHTMLDialog
 							( "info.homepage.title",
-								"info.homepage.html" );
-						}
-					}
+								"info.homepage.html" )
 				);
 			}
 		else if ( command.equals( "MAILLIST" ) )
 			{
-			SwingUtilities.invokeLater(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
-						{
+			SwingUtilities.invokeLater(() ->
 						showHTMLDialog
 							( "info.maillist.title",
-								"info.maillist.html" );
-						}
-					}
+								"info.maillist.html" )
 				);
 			}
 		else if ( command.equals( "BROWSE" ) )
@@ -217,17 +177,9 @@ implements	ActionListener
 			}
 		else if ( command.equals( "CONFIG" ) )
 			{
-			SwingUtilities.invokeLater(
-				new Runnable()
-					{
-					@Override
-					public void
-					run()
-						{
+			SwingUtilities.invokeLater(() ->
 						Config.getInstance().editConfiguration
-							( MainFrame.this );
-						}
-					}
+							( MainFrame.this )
 				);
 			}
 		else

@@ -207,16 +207,7 @@ implements	ActionListener, SwingConstants
 
 		if ( command.startsWith( "Close" ) )
 			{
-			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void run()
-						{
-						dispose();
-						}
-					}
-				);
+			SwingUtilities.invokeLater(this::dispose);
 			}
 		}
 

@@ -536,12 +536,7 @@ implements	ItemListener, ActionListener
 
 		final JButton defBtn =
 			new JButton( rmgr.getUIString( "name.for.servers.button" ) );
-		defBtn.addActionListener(
-			new ActionListener()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent evt )
+		defBtn.addActionListener(evt ->
 					{
 					final ServersDialog dlg =
 						new ServersDialog
@@ -591,7 +586,6 @@ implements	ItemListener, ActionListener
 							}
 						}
 					}
-				}
 			);
 
 		// ============== USER LOGIN INFO PANEL ================

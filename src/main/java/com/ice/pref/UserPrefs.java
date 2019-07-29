@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
@@ -1834,10 +1835,7 @@ extends		Properties
 		setValues( final Vector values )
 			{
 			this.values = new String[ values.size() ];
-			for ( int i = 0 ; i < this.values.length ; ++i )
-				{
-				this.values[i] = (String) values.elementAt(i);
-				}
+			Arrays.setAll(this.values, i -> (String) values.elementAt(i));
 			}
 		}
 

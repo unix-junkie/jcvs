@@ -135,11 +135,7 @@ extends		MouseAdapter
 		if ( this.action != null && this.action.isEnabled() )
 			{
 			SwingUtilities.invokeLater
-				( new Runnable()
-					{
-					@Override
-					public void
-					run()
+				( () ->
 						{
 						final ActionEvent event =
 							new ActionEvent
@@ -148,7 +144,6 @@ extends		MouseAdapter
 
 						action.actionPerformed( event );
 						}
-					}
 				);
 			}
 		}
