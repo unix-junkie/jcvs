@@ -1,11 +1,16 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import com.ice.config.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.EmptyBorder;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -26,11 +31,11 @@ extends		ConfigureEditor
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		boolean val =
+		final boolean val =
 			prefs.getBoolean( spec.getPropertyName(), false );
 
 		if ( val )
@@ -44,12 +49,12 @@ extends		ConfigureEditor
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		boolean newVal = this.tButton.isSelected();
-		boolean oldVal = prefs.getBoolean( propName, false );
+		final boolean newVal = this.tButton.isSelected();
+		final boolean oldVal = prefs.getBoolean( propName, false );
 
 		if ( newVal != oldVal )
 			{
@@ -66,11 +71,11 @@ extends		ConfigureEditor
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 		result.setBorder( new EmptyBorder( 5, 25, 5, 5 ) );
 
-		int col = 0;
+		final int col = 0;
 		int row = 0;
 
 		this.tButton = new JRadioButton( "True" );

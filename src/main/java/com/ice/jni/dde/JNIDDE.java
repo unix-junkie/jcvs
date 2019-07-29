@@ -40,7 +40,7 @@ JNIDDE
 		}
 
 	public static void
-	main( String argv[] )
+	main( final String argv[] )
 		{
 		if ( argv.length < 3 )
 			{
@@ -56,7 +56,7 @@ JNIDDE
 				JNIDDE.ddeExecute
 					( argv[0], argv[1], argv[2], false );
 			}
-		catch ( DDEException ex )
+		catch ( final DDEException ex )
 			{
 			System.err.println
 				( "JNIDDE.main: DDEException: " + ex.getMessage() );

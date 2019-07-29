@@ -1,9 +1,9 @@
 /*
 ** Tim Endres' utilities package.
 ** Copyright (c) 1997 by Tim Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,8 +16,8 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
@@ -49,12 +49,12 @@ JFCUtilities
 	 */
 
 	static public Point
-	computePopupLocation( MouseEvent event, Component rel, JPopupMenu popup )
+	computePopupLocation( final MouseEvent event, final Component rel, final JPopupMenu popup )
 		{
-		Dimension psz = popup.getSize();
-		Dimension ssz = Toolkit.getDefaultToolkit().getScreenSize();
-		Point gLoc = rel.getLocationOnScreen();
-		Point result = new Point( event.getX(), event.getY() );
+		final Dimension psz = popup.getSize();
+		final Dimension ssz = Toolkit.getDefaultToolkit().getScreenSize();
+		final Point gLoc = rel.getLocationOnScreen();
+		final Point result = new Point( event.getX(), event.getY() );
 
 		gLoc.x += event.getX();
 		gLoc.y += event.getY();
@@ -62,24 +62,24 @@ JFCUtilities
 		if ( psz.width == 0 || psz.height == 0 )
 			{
 			// DRAT! Now we need to "estimate"...
-			int items = popup.getSubElements().length;
-			psz.height = ( items * 22 );
+			final int items = popup.getSubElements().length;
+			psz.height = items * 22;
 			psz.width = 100;
 			}
 
 		psz.height += 5;
 
-		if ( (gLoc.x + psz.width) > ssz.width )
+		if ( gLoc.x + psz.width > ssz.width )
 			{
-			result.x -= (( gLoc.x + psz.width) - ssz.width);
-			if ( (gLoc.x + result.x) < 0 )
+			result.x -= gLoc.x + psz.width - ssz.width;
+			if ( gLoc.x + result.x < 0 )
 				result.x = -(gLoc.x + event.getX());
 			}
 
-		if ( (gLoc.y + psz.height) > ssz.height )
+		if ( gLoc.y + psz.height > ssz.height )
 			{
-			result.y -= (( gLoc.y + psz.height) - ssz.height);
-			if ( (gLoc.y + result.y) < 0 )
+			result.y -= gLoc.y + psz.height - ssz.height;
+			if ( gLoc.y + result.y < 0 )
 				result.y = -gLoc.y;
 			}
 

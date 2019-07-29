@@ -1,9 +1,9 @@
 /*
 ** User Preferences Package.
 ** Copyright (c) 1999 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,13 +16,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.pref;
 
 import java.util.Vector;
+
 import com.ice.util.StringUtilities;
 
 public
@@ -37,7 +38,7 @@ class		PrefsTuple
 		}
 
 	public
-	PrefsTuple( String key, String[] values )
+	PrefsTuple( final String key, final String[] values )
 		{
 		super();
 		this.key = key;
@@ -45,7 +46,7 @@ class		PrefsTuple
 		}
 
 	public
-	PrefsTuple( String key, Vector values )
+	PrefsTuple( final String key, final Vector values )
 		{
 		super();
 		this.key = key;
@@ -54,7 +55,7 @@ class		PrefsTuple
 		}
 
 	public boolean
-	equals( PrefsTuple that )
+	equals( final PrefsTuple that )
 		{
 		if ( ! this.key.equals( that.key ) )
 			return false;
@@ -82,19 +83,19 @@ class		PrefsTuple
 		}
 
 	public void
-	setValues( String[] values )
+	setValues( final String[] values )
 		{
 		this.values = values;
 		}
 
 	public String
-	getValueAt( int idx )
+	getValueAt( final int idx )
 		{
 		return this.values[ idx ];
 		}
 
 	public void
-	setValueAt( String value, int idx )
+	setValueAt( final String value, final int idx )
 		{
 		this.values[ idx ] = value;
 		}
@@ -102,8 +103,8 @@ class		PrefsTuple
 	public int
 	length()
 		{
-		return 
-			( this.values == null ? 0 : this.values.length);
+		return
+			this.values == null ? 0 : this.values.length;
 		}
 
 	public String

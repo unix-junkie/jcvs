@@ -1,9 +1,6 @@
 
 package com.ice.jcvsii;
 
-import java.lang.*;
-
-
 public
 class		CVSThread
 extends		Thread
@@ -17,17 +14,17 @@ extends		Thread
 	 */
 	private CVSThread() { }
 
-	private CVSThread( String name ) { }
+	private CVSThread( final String name ) { }
 
-	private CVSThread( Runnable runner ) { }
+	private CVSThread( final Runnable runner ) { }
 
-	private CVSThread( ThreadGroup group, String name ) { }
+	private CVSThread( final ThreadGroup group, final String name ) { }
 
-	private CVSThread( ThreadGroup group, Runnable runner, String name ) { }
+	private CVSThread( final ThreadGroup group, final Runnable runner, final String name ) { }
 
 
 	public
-	CVSThread( String name, Runnable runner, Monitor monitor )
+	CVSThread( final String name, final Runnable runner, final Monitor monitor )
 		{
 		super( name );
 		this.monitor = monitor;

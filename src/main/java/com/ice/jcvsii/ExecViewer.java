@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,16 +16,22 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Hashtable;
 
-import javax.activation.*;
+import javax.activation.CommandObject;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.swing.JOptionPane;
 
 import com.ice.cvsc.CVSLog;
@@ -66,10 +72,10 @@ implements	CommandObject
 	 * @param dh The datahandler used to get the content.
 	 */
 	public void
-	setCommandContext( String verb, DataHandler dh )
+	setCommandContext( final String verb, final DataHandler dh )
 		throws IOException
 		{
-		DataSource ds = dh.getDataSource();
+		final DataSource ds = dh.getDataSource();
 
 		// REVIEW
 		// UNDONE
@@ -78,7 +84,7 @@ implements	CommandObject
 		String fileName = "unknown";
 		if ( ds instanceof FileDataSource )
 			{
-			FileDataSource fds = (FileDataSource) ds;
+			final FileDataSource fds = (FileDataSource) ds;
 			fileName = fds.getFile().getPath();
 			}
 
@@ -86,12 +92,12 @@ implements	CommandObject
 		}
 
 	public void
-	exec( String verb, DataHandler dh )
+	exec( final String verb, final DataHandler dh )
 		{
-		String cmdSpec = null;
+		final String cmdSpec = null;
 		String extension = null;
 
-		DataSource ds = dh.getDataSource();
+		final DataSource ds = dh.getDataSource();
 
 		if ( ! (ds instanceof FileDataSource) )
 			{
@@ -99,10 +105,10 @@ implements	CommandObject
 			return;
 			}
 
-		FileDataSource fds = (FileDataSource) ds;
-		File file = fds.getFile();
+		final FileDataSource fds = (FileDataSource) ds;
+		final File file = fds.getFile();
 
-		String name = file.getName();
+		final String name = file.getName();
 		String path = file.getParent();
 		String fileName = file.getAbsolutePath();
 		String cwdPath = Config.getPreferences().getCurrentDirectory();
@@ -123,10 +129,10 @@ implements	CommandObject
 		String[] env = null;
 		String[] args = null;
 
-		Config cfg = Config.getInstance();
+		final Config cfg = Config.getInstance();
 
-		int index = name.lastIndexOf( "." );
-		if ( index != -1 && index < (name.length() - 1) )
+		final int index = name.lastIndexOf( "." );
+		if ( index != -1 && index < name.length() - 1 )
 			{
 			extension = name.substring( index );
 			envSpec = cfg.getExecCommandEnv( verb, extension );
@@ -146,17 +152,17 @@ implements	CommandObject
 
 		if ( argSpec == null )
 			{
-			String[] fmtArgs = { verb, fileName, extension };
-			String msg = ResourceMgr.getInstance().getUIFormat
+			final String[] fmtArgs = { verb, fileName, extension };
+			final String msg = ResourceMgr.getInstance().getUIFormat
 				( "execviewer.not.found.msg", fmtArgs );
-			String title = ResourceMgr.getInstance().getUIString
+			final String title = ResourceMgr.getInstance().getUIString
 				( "execviewer.not.found.title" );
 			JOptionPane.showMessageDialog
 				( null, msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
 
-		Hashtable subHash = new Hashtable();
+		final Hashtable subHash = new Hashtable();
 
 		// UW-path-spaces
 		// Some platforms (namely Windows) encourage spaces in their
@@ -201,12 +207,12 @@ implements	CommandObject
 
 			this.start();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
-			String[] fmtArgs = { verb, fileName, ex.getMessage() };
-			String msg = ResourceMgr.getInstance().getUIFormat
+			final String[] fmtArgs = { verb, fileName, ex.getMessage() };
+			final String msg = ResourceMgr.getInstance().getUIFormat
 				( "execviewer.exec.error.msg", fmtArgs );
-			String title = ResourceMgr.getInstance().getUIString
+			final String title = ResourceMgr.getInstance().getUIString
 				( "execviewer.exec.error.title" );
 			JOptionPane.showMessageDialog
 				( null, msg, title, JOptionPane.ERROR_MESSAGE );
@@ -214,22 +220,22 @@ implements	CommandObject
 		}
 
 	public String[]
-	parseCommandArgs( String argStr, Hashtable subHash )
+	parseCommandArgs( final String argStr, final Hashtable subHash )
 		{
 		if ( argStr == null || argStr.length() == 0 )
 			return new String[0];
 
-		String[] args = StringUtilities.parseArgumentString( argStr );
+		final String[] args = StringUtilities.parseArgumentString( argStr );
 		return StringUtilities.argumentSubstitution( args, subHash );
 		}
 
 	public String[]
-	parseCommandEnv( String envStr, Hashtable subHash )
+	parseCommandEnv( final String envStr, final Hashtable subHash )
 		{
 		if ( envStr == null || envStr.length() == 0 )
 			return new String[0];
 
-		String[] env = StringUtilities.parseArgumentString( envStr );
+		final String[] env = StringUtilities.parseArgumentString( envStr );
 		return StringUtilities.argumentSubstitution( env, subHash );
 		}
 
@@ -245,7 +251,7 @@ implements	CommandObject
 					( new InputStreamReader
 						( this.proc.getErrorStream() ) );
 
-			Thread t = new Thread(
+			final Thread t = new Thread(
 				new Runnable()
 					{
 					public void
@@ -254,14 +260,14 @@ implements	CommandObject
 						try {
 							for ( ; ; )
 								{
-								String ln = errRdr.readLine();
+								final String ln = errRdr.readLine();
 								if ( ln == null )
 									break;
 								}
 
 							errRdr.close();
 							}
-						catch ( IOException ex )
+						catch ( final IOException ex )
 							{
 							CVSLog.traceMsg
 								( ex, "reading exec stderr stream" );
@@ -280,34 +286,34 @@ implements	CommandObject
 
 			for ( ; ; )
 				{
-				String ln = this.outRdr.readLine();
+				final String ln = this.outRdr.readLine();
 				if ( ln == null )
-					break;				
+					break;
 				}
 
 			this.outRdr.close();
 
 			try { t.join(); }
-			catch ( InterruptedException ex )
+			catch ( final InterruptedException ex )
 				{
 				CVSLog.traceMsg
 					( ex, "interrupted joining the stderr reader" );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.traceMsg
 				( ex, "reading exec stdout stream" );
 			}
 
 		try { proc.waitFor(); }
-		catch ( InterruptedException ex )
+		catch ( final InterruptedException ex )
 			{
 			CVSLog.traceMsg
 				( ex, "interrupted waiting for process" );
 			}
 
-		int exitVal = proc.exitValue();
+		final int exitVal = proc.exitValue();
 		}
 
 	}

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,14 +18,13 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.lang.*;
-import java.util.*;
+import java.util.Date;
 
 /**
  * The CVSTimestamp class is a subclass of Date, specifically
@@ -52,13 +51,13 @@ CVSTimestamp extends Date
 		}
 
 	public
-	CVSTimestamp( long msSinceEpoch )
+	CVSTimestamp( final long msSinceEpoch )
 		{
 		super( msSinceEpoch );
 		}
 
 	public
-	CVSTimestamp( Date date )
+	CVSTimestamp( final Date date )
 		{
 		super( date.getTime() );
 		}
@@ -74,12 +73,12 @@ CVSTimestamp extends Date
 	 *
 	 */
 	public boolean
-	equalsTime( long time )
+	equalsTime( final long time )
 		{
-		return 
-			( ( this.getTime() > time )
-				? ( (this.getTime() - time) < 1000 )
-				: ( (time - this.getTime()) < 1000 ) );
+		return
+			this.getTime() > time
+			? this.getTime() - time < 1000
+			: time - this.getTime() < 1000;
 		}
 
 	/**
@@ -92,12 +91,12 @@ CVSTimestamp extends Date
 	 * because we can not be sure of the rounding.
 	 */
 	public boolean
-	equalsTimestamp( CVSTimestamp stamp )
+	equalsTimestamp( final CVSTimestamp stamp )
 		{
-		return 
-			( ( this.getTime() > stamp.getTime() )
-				? ( (this.getTime() - stamp.getTime()) < 1000 )
-				: ( (stamp.getTime() - this.getTime()) < 1000 ) );
+		return
+			this.getTime() > stamp.getTime()
+			? this.getTime() - stamp.getTime() < 1000
+			: stamp.getTime() - this.getTime() < 1000;
 		}
 
 	}

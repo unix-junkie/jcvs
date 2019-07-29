@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,15 +18,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 
 public class
@@ -63,14 +63,14 @@ CVSLog extends Object
 		}
 
 	static public void
-	setLogFilename( String filename )
+	setLogFilename( final String filename )
 		{
 		CVSLog.filename = filename;
 		CVSLog.checked = false;
 		}
 
     static public void
-    setAutoFlush( boolean autoflush )
+    setAutoFlush( final boolean autoflush )
         {
         CVSLog.autoFlush = autoFlush;
         }
@@ -95,7 +95,7 @@ CVSLog extends Object
 		boolean isok = true;
 
 		if ( CVSLog.debugOpen )
-			(new Throwable( "OPEN CVS LOG")).printStackTrace();
+			new Throwable( "OPEN CVS LOG").printStackTrace();
 
 		if ( CVSLog.debug)
 			System.err.println
@@ -107,13 +107,13 @@ CVSLog extends Object
 		try {
 			CVSLog.file = new FileWriter( CVSLog.filename );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			CVSLog.logMsg
 				( "error opening log file '" + CVSLog.filename
 					+ "', trying 'user.dir' - " + ex.getMessage() );
 
-			String userDirStr = System.getProperty( "user.dir", "" );
+			final String userDirStr = System.getProperty( "user.dir", "" );
 
 			CVSLog.filename =
 				userDirStr + File.separator + CVSLog.DEFAULT_FILENAME;
@@ -121,7 +121,7 @@ CVSLog extends Object
 			try {
 				CVSLog.file = new FileWriter( CVSLog.filename );
 				}
-			catch ( Exception ex2 )
+			catch ( final Exception ex2 )
 				{
 				CVSLog.logMsg
 					( "error opening log file '" + CVSLog.filename
@@ -157,13 +157,13 @@ CVSLog extends Object
         }
 
     static public void
-    setEcho( boolean setting )
+    setEcho( final boolean setting )
         {
         CVSLog.echo = setting;
         }
 
 	static public void
-	traceMsg( Throwable thrown, String msg )
+	traceMsg( final Throwable thrown, final String msg )
 		{
 		CVSLog.logMsg( msg );
 		CVSLog.logMsg( thrown.getMessage() );
@@ -179,7 +179,7 @@ CVSLog extends Object
 
 
 	static public void
-	logMsg( String msg )
+	logMsg( final String msg )
 		{
 		CVSLog.checkLogOpen();
 
@@ -197,7 +197,7 @@ CVSLog extends Object
 		}
 
 	static public void
-	logMsgStdout( String msg )
+	logMsgStdout( final String msg )
 		{
 		CVSLog.checkLogOpen();
 
@@ -212,7 +212,7 @@ CVSLog extends Object
 		}
 
 	static public void
-	logMsgStderr( String msg )
+	logMsgStderr( final String msg )
 		{
 		CVSLog.checkLogOpen();
 

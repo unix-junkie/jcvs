@@ -1,14 +1,37 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
-import com.ice.cvsc.*;
+import com.ice.cvsc.CVSArgumentVector;
+import com.ice.cvsc.CVSCUtilities;
+import com.ice.cvsc.CVSClient;
+import com.ice.cvsc.CVSEntryVector;
+import com.ice.cvsc.CVSProject;
+import com.ice.cvsc.CVSProjectDef;
+import com.ice.cvsc.CVSRequest;
+import com.ice.cvsc.CVSResponse;
+import com.ice.cvsc.CVSScramble;
+import com.ice.cvsc.CVSUserInterface;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -30,7 +53,7 @@ implements	ActionListener, CVSUserInterface
 
 
 	public
-	CheckOutPanel( MainPanel parent )
+	CheckOutPanel( final MainPanel parent )
 		{
 		super( parent );
 		this.establishContents();
@@ -49,9 +72,9 @@ implements	ActionListener, CVSUserInterface
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equalsIgnoreCase( "CHECKOUT" ) )
 			{
@@ -73,30 +96,30 @@ implements	ActionListener, CVSUserInterface
 	performCheckout()
 		{
 		boolean listingModules = false;
-		Config cfg = Config.getInstance();
-		UserPrefs prefs = cfg.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final Config cfg = Config.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		String argumentStr = info.getArguments();
-		String userName = this.info.getUserName();
-		String passWord = this.info.getPassword();
-		String hostname = this.info.getServer();
-		String repository = this.info.getModule();
-		String rootDirectory = this.info.getRepository();
+		final String argumentStr = info.getArguments();
+		final String userName = this.info.getUserName();
+		final String passWord = this.info.getPassword();
+		final String hostname = this.info.getServer();
+		final String repository = this.info.getModule();
+		final String rootDirectory = this.info.getRepository();
 
-		String localDirectory =
+		final String localDirectory =
 			CVSCUtilities.stripFinalSeparator
 				( this.info.getLocalDirectory() );
 
-		boolean isPServer = this.info.isPServer();
+		final boolean isPServer = this.info.isPServer();
 
-		int connMethod = this.info.getConnectionMethod();
+		final int connMethod = this.info.getConnectionMethod();
 
-		int cvsPort =
+		final int cvsPort =
 			CVSUtilities.computePortNum
 				( hostname, connMethod, isPServer );
 
-		CVSArgumentVector arguments =
+		final CVSArgumentVector arguments =
 			CVSArgumentVector.parseArgumentString( argumentStr );
 
 		if ( arguments.containsArgument( "-c" ) )
@@ -106,16 +129,16 @@ implements	ActionListener, CVSUserInterface
 		else if ( repository.length() < 1 )
 			{
 			// SANITY
-			String[] fmtArgs = new String[1];
+			final String[] fmtArgs = new String[1];
 			fmtArgs[0] = rmgr.getUIString( "name.for.cvsmodule" );
 
-			String title =
+			final String title =
 				rmgr.getUIString( "checkout.needs.input.title" );
-			String msg =
+			final String msg =
 				rmgr.getUIFormat( "checkout.needs.input.msg", fmtArgs );
 
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			}
 
@@ -124,18 +147,18 @@ implements	ActionListener, CVSUserInterface
 				|| rootDirectory.length() < 1
 					|| localDirectory.length() < 1 )
 			{
-			String[] fmtArgs = new String[1];
+			final String[] fmtArgs = new String[1];
 			fmtArgs[0] =
-				( hostname.length() < 1
+				hostname.length() < 1
 					? rmgr.getUIString( "name.for.cvsserver" ) :
-				( rootDirectory.length() < 1
+				rootDirectory.length() < 1
 					? rmgr.getUIString( "name.for.cvsrepos" )
-					: rmgr.getUIString( "name.for.checkoutdir" ) ));
+					: rmgr.getUIString( "name.for.checkoutdir" );
 
-			String msg = rmgr.getUIFormat( "checkout.needs.input.msg", fmtArgs );
-			String title = rmgr.getUIString( "checkout.needs.input.title" );
+			final String msg = rmgr.getUIFormat( "checkout.needs.input.msg", fmtArgs );
+			final String title = rmgr.getUIString( "checkout.needs.input.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 
 			return;
@@ -146,45 +169,45 @@ implements	ActionListener, CVSUserInterface
 				&& (connMethod == CVSRequest.METHOD_RSH
 					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
-			String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
-			String title = rmgr.getUIString("common.rsh.needs.user.title" );
+			final String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
+			final String title = rmgr.getUIString("common.rsh.needs.user.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
 
-		File localRootDir = new File( localDirectory );
+		final File localRootDir = new File( localDirectory );
 		if ( ! localRootDir.exists() && ! listingModules )
 			{
 			if ( ! localRootDir.mkdirs() )
 				{
-				String [] fmtArgs = { localRootDir.getPath() };
-				String msg = ResourceMgr.getInstance().getUIFormat
+				final String [] fmtArgs = { localRootDir.getPath() };
+				final String msg = ResourceMgr.getInstance().getUIFormat
 					("checkout.create.dir.failed.msg", fmtArgs );
-				String title = ResourceMgr.getInstance().getUIString
+				final String title = ResourceMgr.getInstance().getUIString
 					("checkout.create.dir.failed.title" );
 				JOptionPane.showMessageDialog
-					( (Frame)this.getTopLevelAncestor(),
+					( this.getTopLevelAncestor(),
 						msg, title, JOptionPane.ERROR_MESSAGE );
 				return;
 				}
 			}
 
-		CVSRequest request = new CVSRequest();
+		final CVSRequest request = new CVSRequest();
 
-		String checkOutCommand =
+		final String checkOutCommand =
 			prefs.getProperty
 				( "global.checkOutCommand", ":co:N:ANP:deou:" );
 
 		if ( ! request.parseControlString( checkOutCommand ) )
 			{
-			String [] fmtArgs =
+			final String [] fmtArgs =
 				{ checkOutCommand, request.getVerifyFailReason() };
-			String msg = rmgr.getUIFormat("checkout.cmd.parse.failed.msg", fmtArgs );
-			String title = rmgr.getUIString("checkout.cmd.parse.failed.title" );
+			final String msg = rmgr.getUIFormat("checkout.cmd.parse.failed.msg", fmtArgs );
+			final String title = rmgr.getUIString("checkout.cmd.parse.failed.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
@@ -192,7 +215,7 @@ implements	ActionListener, CVSUserInterface
 		//
 		// DO IT
 		//
-		CVSEntryVector entries = new CVSEntryVector();
+		final CVSEntryVector entries = new CVSEntryVector();
 
 		if ( ! listingModules )
 			{
@@ -202,9 +225,9 @@ implements	ActionListener, CVSUserInterface
 		this.getMainPanel().setAllTabsEnabled( false );
 
 		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
-		CVSProject project = new CVSProject( this.client );
+		final CVSProject project = new CVSProject( this.client );
 
-		CVSProjectDef projectDef = new CVSProjectDef
+		final CVSProjectDef projectDef = new CVSProjectDef
 			( connMethod, isPServer, false,
 				hostname, userName, rootDirectory, repository );
 
@@ -222,20 +245,20 @@ implements	ActionListener, CVSUserInterface
 
 		project.setSetVariables
 			( CVSUtilities.getUserSetVariables( hostname ) );
-			
+
 		project.setServerCommand(
 			CVSUtilities.establishServerCommand
 				( hostname, connMethod, isPServer ) );
 
 		project.setAllowsGzipFileMode
-			( prefs.getBoolean( Config.GLOBAL_ALLOWS_FILE_GZIP, false ) );
+			( prefs.getBoolean( ConfigConstants.GLOBAL_ALLOWS_FILE_GZIP, false ) );
 
 		project.setGzipStreamLevel
-			( prefs.getInteger( Config.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
+			( prefs.getInteger( ConfigConstants.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
 
 		if ( isPServer )
 			{
-			String scrambled =
+			final String scrambled =
 				CVSScramble.scramblePassword( passWord, 'A' );
 
 			project.setPassword( scrambled );
@@ -262,7 +285,7 @@ implements	ActionListener, CVSUserInterface
 		if ( ! ProjectFrameMgr.checkProjectOpen
 				( project.getLocalRootDirectory() ) )
 			{
-			String title = repository + " project";
+			final String title = repository + " project";
 
 			// NOTE that all of these redundant setters on request are
 			//      needed because we are not using the typicall call to
@@ -307,9 +330,9 @@ implements	ActionListener, CVSUserInterface
 
 			request.setUserInterface( this );
 
-			CVSResponse response = new CVSResponse();
+			final CVSResponse response = new CVSResponse();
 
-			CVSThread thread =
+			final CVSThread thread =
 				new CVSThread
 					( "CheckOut",
 						this.new MyRunner
@@ -326,16 +349,16 @@ implements	ActionListener, CVSUserInterface
 	class		MyRunner
 	implements	Runnable
 		{
-		private CVSClient client;
-		private CVSProject project;
-		private CVSRequest request;
-		private CVSResponse response;
-		private boolean listingMods;
+		private final CVSClient client;
+		private final CVSProject project;
+		private final CVSRequest request;
+		private final CVSResponse response;
+		private final boolean listingMods;
 
 		public
-		MyRunner( CVSProject project, CVSClient client,
-					CVSRequest request, CVSResponse response,
-					boolean listingMods )
+		MyRunner( final CVSProject project, final CVSClient client,
+					final CVSRequest request, final CVSResponse response,
+					final boolean listingMods )
 			{
 			this.client = client;
 			this.project = project;
@@ -366,12 +389,12 @@ implements	ActionListener, CVSUserInterface
 	class		MyMonitor
 	implements	CVSThread.Monitor
 		{
-		private CVSRequest request;
-		private CVSResponse response;
-		private boolean listingMods;
+		private final CVSRequest request;
+		private final CVSResponse response;
+		private final boolean listingMods;
 
 		public
-		MyMonitor( CVSRequest request, CVSResponse response, boolean listingMods )
+		MyMonitor( final CVSRequest request, final CVSResponse response, final boolean listingMods )
 			{
 			this.request = request;
 			this.response = response;
@@ -400,7 +423,7 @@ implements	ActionListener, CVSUserInterface
 				( ResourceMgr.getInstance().getUIString
 					( "checkout.perform.label" ) );
 
-			String resultStr = this.response.getDisplayResults();
+			final String resultStr = this.response.getDisplayResults();
 
 			if ( this.response.getStatus() == CVSResponse.OK )
 				{
@@ -410,7 +433,7 @@ implements	ActionListener, CVSUserInterface
 
 				if ( ! this.listingMods )
 					{
-					File rootDirFile =
+					final File rootDirFile =
 						new File( request.getLocalDirectory()
 									+ "/" + request.getRepository() );
 
@@ -445,19 +468,19 @@ implements	ActionListener, CVSUserInterface
 	//
 
 	public void
-	uiDisplayProgressMsg( String message )
+	uiDisplayProgressMsg( final String message )
 		{
 		this.feedback.setText( message );
 		this.feedback.repaint( 0 );
 		}
 
 	public void
-	uiDisplayProgramError( String error )
+	uiDisplayProgramError( final String error )
 		{
 		}
 
 	public void
-	uiDisplayResponse( CVSResponse response )
+	uiDisplayResponse( final CVSResponse response )
 		{
 		}
 
@@ -468,9 +491,9 @@ implements	ActionListener, CVSUserInterface
 	private void
 	establishContents()
 		{
-		JLabel		lbl;
-		JPanel		panel;
-		JButton		button;
+		final JLabel		lbl;
+		final JPanel		panel;
+		final JButton		button;
 
 		this.setLayout( new GridBagLayout() );
 
@@ -482,7 +505,7 @@ implements	ActionListener, CVSUserInterface
 
 		int row = 0;
 
-		JSeparator sep;
+		final JSeparator sep;
 
 		AWTUtilities.constrain(
 			this, info,
@@ -529,10 +552,10 @@ implements	ActionListener, CVSUserInterface
 				};
 		this.outputText.setEditable( false );
 
-		JScrollPane scroller =
+		final JScrollPane scroller =
 			new JScrollPane( this.outputText );
 		scroller.setVerticalScrollBarPolicy
-			( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
+			( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 
 		AWTUtilities.constrain(
 			this, scroller,

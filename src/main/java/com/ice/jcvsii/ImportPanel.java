@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,20 +16,52 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.*;
-import javax.swing.border.*;
 
-import com.ice.cvsc.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+import com.ice.cvsc.CVSArgumentVector;
+import com.ice.cvsc.CVSClient;
+import com.ice.cvsc.CVSEntry;
+import com.ice.cvsc.CVSEntryVector;
+import com.ice.cvsc.CVSIgnore;
+import com.ice.cvsc.CVSMode;
+import com.ice.cvsc.CVSProject;
+import com.ice.cvsc.CVSRequest;
+import com.ice.cvsc.CVSResponse;
+import com.ice.cvsc.CVSScramble;
+import com.ice.cvsc.CVSTracer;
+import com.ice.cvsc.CVSUserInterface;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -59,7 +91,7 @@ implements	ActionListener, CVSUserInterface
 
 
 	public
-	ImportPanel( MainPanel parent )
+	ImportPanel( final MainPanel parent )
 		{
 		super( parent );
 		this.scanText = new StringBuffer();
@@ -81,9 +113,9 @@ implements	ActionListener, CVSUserInterface
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equalsIgnoreCase( "IMPORT" ) )
 			{
@@ -104,30 +136,30 @@ implements	ActionListener, CVSUserInterface
 	private void
 	performImport()
 		{
-		Config cfg = Config.getInstance();
-		UserPrefs prefs = cfg.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final Config cfg = Config.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		CVSRequest		request;
 		boolean			allok = true;
 
-		CVSEntryVector		entries = new CVSEntryVector();
-		CVSEntryVector		binEntries = new CVSEntryVector();
+		final CVSEntryVector		entries = new CVSEntryVector();
+		final CVSEntryVector		binEntries = new CVSEntryVector();
 
-		CVSArgumentVector arguments =
+		final CVSArgumentVector arguments =
 			CVSArgumentVector.parseArgumentString
 				( this.infoPan.getArguments() );
 
-		String userName = this.infoPan.getUserName();
-		String passWord = this.infoPan.getPassword();
-		String hostname = this.infoPan.getServer();
+		final String userName = this.infoPan.getUserName();
+		final String passWord = this.infoPan.getPassword();
+		final String hostname = this.infoPan.getServer();
 		String repository = this.infoPan.getModule();
 		String rootDirectory = this.infoPan.getRepository();
-		String importDirectory = this.infoPan.getImportDirectory();
+		final String importDirectory = this.infoPan.getImportDirectory();
 
-		String vendorTag = this.addPan.getVendorTag();
-		String releaseTag = this.addPan.getReleaseTag();
-		String messageStr = this.addPan.getLogMessage();
+		final String vendorTag = this.addPan.getVendorTag();
+		final String releaseTag = this.addPan.getReleaseTag();
+		final String messageStr = this.addPan.getLogMessage();
 
 		if ( repository.startsWith( "/" ) )
 			repository = repository.substring( 1 );
@@ -139,13 +171,13 @@ implements	ActionListener, CVSUserInterface
 			rootDirectory =
 				rootDirectory.substring( 0, rootDirectory.length()-1 );
 
-		String	rootRepository = rootDirectory + "/" + repository;
+		final String	rootRepository = rootDirectory + "/" + repository;
 
-		boolean isPServer = this.infoPan.isPServer();
+		final boolean isPServer = this.infoPan.isPServer();
 
-		int connMethod = this.infoPan.getConnectionMethod();
+		final int connMethod = this.infoPan.getConnectionMethod();
 
-		int cvsPort =
+		final int cvsPort =
 			CVSUtilities.computePortNum
 				( hostname, connMethod, isPServer );
 
@@ -157,26 +189,26 @@ implements	ActionListener, CVSUserInterface
 				|| releaseTag.length() < 1 || messageStr.length() < 1
 					|| importDirectory.length() < 1 )
 			{
-			String[] fmtArgs = new String[1];
+			final String[] fmtArgs = new String[1];
 			fmtArgs[0] =
-				( hostname.length() < 1
+				hostname.length() < 1
 					? rmgr.getUIString( "name.for.cvsserver" ) :
-				( repository.length() < 1
+				repository.length() < 1
 					? rmgr.getUIString( "name.for.cvsmodule" ) :
-				( rootDirectory.length() < 1
+				rootDirectory.length() < 1
 					? rmgr.getUIString( "name.for.cvsrepos" ) :
-				( importDirectory.length() < 1
+				importDirectory.length() < 1
 					? rmgr.getUIString( "name.for.importdir" ) :
-				( vendorTag.length() < 1
+				vendorTag.length() < 1
 					? rmgr.getUIString( "name.for.vendortag" ) :
-				( releaseTag.length() < 1
+				releaseTag.length() < 1
 					? rmgr.getUIString( "name.for.releasetag" )
-					: rmgr.getUIString( "name.for.logmsg" ) ))))));
+					: rmgr.getUIString( "name.for.logmsg" );
 
-			String msg = rmgr.getUIFormat( "import.needs.input.msg", fmtArgs );
-			String title = rmgr.getUIString( "import.needs.input.title" );
+			final String msg = rmgr.getUIFormat( "import.needs.input.msg", fmtArgs );
+			final String title = rmgr.getUIString( "import.needs.input.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
@@ -185,10 +217,10 @@ implements	ActionListener, CVSUserInterface
 				&& (connMethod == CVSRequest.METHOD_RSH
 					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
-			String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
-			String title = rmgr.getUIString("common.rsh.needs.user.title" );
+			final String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
+			final String title = rmgr.getUIString("common.rsh.needs.user.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
@@ -196,34 +228,34 @@ implements	ActionListener, CVSUserInterface
 		this.scanText.setLength( 0 );
 
 		this.ignoreName =
-			prefs.getProperty( Config.GLOBAL_IGNORE_FILENAME, null );
+			prefs.getProperty( ConfigConstants.GLOBAL_IGNORE_FILENAME, null );
 
-		CVSIgnore ignore = new CVSIgnore();
+		final CVSIgnore ignore = new CVSIgnore();
 
-		String userIgnores =
-			prefs.getProperty( Config.GLOBAL_USER_IGNORES, null );
+		final String userIgnores =
+			prefs.getProperty( ConfigConstants.GLOBAL_USER_IGNORES, null );
 
 		if ( userIgnores != null )
 			{
 			ignore.addIgnoreSpec( userIgnores );
 			}
 
-		String ignoreStr = this.addPan.getIgnores();
+		final String ignoreStr = this.addPan.getIgnores();
 		if ( ignoreStr.length() > 0 )
 			{
 			ignore.addIgnoreSpec( ignoreStr );
 			}
 
 		// We leverage the ignores mechanism to indicate binaries!
-		CVSIgnore binaries = new CVSIgnore( "" );
+		final CVSIgnore binaries = new CVSIgnore( "" );
 
-		String binariesStr = this.addPan.getBinaries();
+		final String binariesStr = this.addPan.getBinaries();
 		if ( binariesStr.length() > 0 )
 			{
 			binaries.addIgnoreSpec( binariesStr );
 			}
 
-		boolean descend = this.addPan.isDescendChecked();
+		final boolean descend = this.addPan.isDescendChecked();
 
 		allok =
 			this.importScan
@@ -232,24 +264,24 @@ implements	ActionListener, CVSUserInterface
 
 		if ( ! allok )
 			{
-			String msg = rmgr.getUIString( "import.scan.error.msg" );
-			String title = rmgr.getUIString( "import.scan.error.title" );
+			final String msg = rmgr.getUIString( "import.scan.error.msg" );
+			final String title = rmgr.getUIString( "import.scan.error.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			this.outputText.setText( this.scanText.toString() );
 			this.outputText.repaint( 500 );
 			return;
 			}
 
-		String serverCommand = 
+		final String serverCommand =
 			CVSUtilities.establishServerCommand
 				( hostname, connMethod, isPServer );
 
 		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
 
 		this.client.setTempDirectory( cfg.getTemporaryDirectory() );
-				
+
 		request = new CVSRequest();
 
 		request.setPServer( isPServer );
@@ -257,7 +289,7 @@ implements	ActionListener, CVSUserInterface
 
 		if ( isPServer )
 			{
-			String scrambled =
+			final String scrambled =
 				CVSScramble.scramblePassword( passWord, 'A' );
 
 			request.setPassword( scrambled );
@@ -297,10 +329,10 @@ implements	ActionListener, CVSUserInterface
 		request.traceProcessing = CVSProject.overTraceProcessing;
 
 		request.allowGzipFileMode =
-			( prefs.getBoolean( Config.GLOBAL_ALLOWS_FILE_GZIP, false ) );
+			prefs.getBoolean( ConfigConstants.GLOBAL_ALLOWS_FILE_GZIP, false );
 
 		request.setGzipStreamLevel
-			( prefs.getInteger( Config.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
+			( prefs.getInteger( ConfigConstants.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
 
 		arguments.appendArgument( "-m" );
 		arguments.appendArgument( messageStr );
@@ -317,9 +349,9 @@ implements	ActionListener, CVSUserInterface
 
 		request.setUserInterface( this );
 
-		CVSResponse response = new CVSResponse();
+		final CVSResponse response = new CVSResponse();
 
-		CVSThread thread =
+		final CVSThread thread =
 			new CVSThread( "Import",
 				this.new MyRunner
 						( this.client, request, response, binEntries ),
@@ -332,16 +364,16 @@ implements	ActionListener, CVSUserInterface
 	class		MyRunner
 	implements	Runnable
 		{
-		private CVSClient client;
+		private final CVSClient client;
 		private CVSProject project;
-		private CVSRequest request;
-		private CVSResponse response;
-		private CVSEntryVector binEntries;
+		private final CVSRequest request;
+		private final CVSResponse response;
+		private final CVSEntryVector binEntries;
 
 
 		public
-		MyRunner( CVSClient client, CVSRequest request,
-					CVSResponse response, CVSEntryVector binEntries )
+		MyRunner( final CVSClient client, final CVSRequest request,
+					final CVSResponse response, final CVSEntryVector binEntries )
 			{
 			this.client = client;
 			this.request = request;
@@ -357,11 +389,11 @@ implements	ActionListener, CVSUserInterface
 			this.response.appendStderr( scanText.toString() );
 
 			boolean success =
-				( response.getStatus() == CVSResponse.OK );
+				response.getStatus() == CVSResponse.OK;
 
 			if ( this.binEntries.size() >  0 )
 				{
-				CVSResponse binResponse = new CVSResponse();
+				final CVSResponse binResponse = new CVSResponse();
 
 				this.request.setEntries( this.binEntries );
 
@@ -411,11 +443,11 @@ implements	ActionListener, CVSUserInterface
 	class		MyMonitor
 	implements	CVSThread.Monitor
 		{
-		private CVSRequest request;
-		private CVSResponse response;
+		private final CVSRequest request;
+		private final CVSResponse response;
 
 		public
-		MyMonitor( CVSRequest request, CVSResponse response )
+		MyMonitor( final CVSRequest request, final CVSResponse response )
 			{
 			this.request = request;
 			this.response = response;
@@ -441,7 +473,7 @@ implements	ActionListener, CVSUserInterface
 				( ResourceMgr.getInstance().getUIString
 					( "import.perform.label" ) );
 
-			String resultStr = this.response.getDisplayResults();
+			final String resultStr = this.response.getDisplayResults();
 
 			if ( this.response.getStatus() == CVSResponse.OK )
 				{
@@ -473,18 +505,18 @@ implements	ActionListener, CVSUserInterface
 
 	public boolean
 	importScan(
-			String repository, String module, String importPath,
-			boolean descend, CVSEntryVector entries, CVSIgnore ignore,
-			CVSEntryVector binEntries, CVSIgnore binaries )
+			final String repository, final String module, final String importPath,
+			final boolean descend, final CVSEntryVector entries, final CVSIgnore ignore,
+			final CVSEntryVector binEntries, final CVSIgnore binaries )
 		{
 		boolean result = true;
 
-		File dirFile = new File( importPath );
+		final File dirFile = new File( importPath );
 
 		if ( ! dirFile.exists() )
 			{
 			result = false;
-			String[] fmtArgs = { dirFile.getPath() };
+			final String[] fmtArgs = { dirFile.getPath() };
 			this.scanText.append
 				( ResourceMgr.getInstance().getUIFormat
 						( "import.scan.dir.doesnotexist", fmtArgs ) );
@@ -496,7 +528,7 @@ implements	ActionListener, CVSUserInterface
 		else if ( ! dirFile.isDirectory() )
 			{
 			result = false;
-			String[] fmtArgs = { dirFile.getPath() };
+			final String[] fmtArgs = { dirFile.getPath() };
 			this.scanText.append
 				( ResourceMgr.getInstance().getUIFormat
 						( "import.scan.dir.notdir", fmtArgs ) );
@@ -535,13 +567,13 @@ implements	ActionListener, CVSUserInterface
 
 	private boolean
 	importScanDescend(
-			String repository, String module,
-			String localDirectory, File dirFile, boolean descend,
-			CVSEntryVector entries, CVSIgnore ignore,
-			CVSEntryVector binEntries, CVSIgnore binaries )
+			final String repository, final String module,
+			final String localDirectory, final File dirFile, final boolean descend,
+			final CVSEntryVector entries, final CVSIgnore ignore,
+			final CVSEntryVector binEntries, final CVSIgnore binaries )
 		{
 		boolean result = true;
-		String[] contents = dirFile.list();
+		final String[] contents = dirFile.list();
 
 		if ( contents == null )
 			{
@@ -586,9 +618,9 @@ implements	ActionListener, CVSUserInterface
 
 		for ( int i = 0 ; result && i < contents.length ; ++i )
 			{
-			String	fileName = contents[i];
+			final String	fileName = contents[i];
 
-			File file = new File( dirFile, fileName );
+			final File file = new File( dirFile, fileName );
 
 			CVSTracer.traceIf( false,
 				"ImportDescend["+i+"] fileName '"
@@ -602,8 +634,8 @@ implements	ActionListener, CVSUserInterface
 				continue;
 
 			if ( ignore.isFileToBeIgnored( fileName )
-				|| ( dirIgnore != null
-						&& dirIgnore.isFileToBeIgnored( fileName ) ) )
+				|| dirIgnore != null
+						&& dirIgnore.isFileToBeIgnored( fileName ) )
 				{
 				CVSTracer.traceIf( false,
 					"ImportDescend["+i+"] IGNORE '" +fileName+ "'" );
@@ -616,7 +648,7 @@ implements	ActionListener, CVSUserInterface
 
 			if ( file.isDirectory() )
 				{
-				String newLocal =
+				final String newLocal =
 					localDirectory + fileName + "/";
 
 				if ( false )
@@ -635,9 +667,9 @@ implements	ActionListener, CVSUserInterface
 				}
 			else
 				{
-				CVSEntry entry = new CVSEntry();
+				final CVSEntry entry = new CVSEntry();
 
-				String modPath = module + "/" + localDirectory;
+				final String modPath = module + "/" + localDirectory;
 
 				String localDir = localDirectory;
 				if ( localDir.length() == 0 )
@@ -648,7 +680,7 @@ implements	ActionListener, CVSUserInterface
 					{
 					reposPath = reposPath + "/" +
 						localDirectory.substring
-							( 0, (localDirectory.length() - 1) );
+							( 0, localDirectory.length() - 1 );
 					}
 
 				entry.setName( fileName );
@@ -685,19 +717,19 @@ implements	ActionListener, CVSUserInterface
 	//
 
 	public void
-	uiDisplayProgressMsg( String message )
+	uiDisplayProgressMsg( final String message )
 		{
 		this.feedback.setText( message );
 		this.feedback.repaint( 0 );
 		}
 
 	public void
-	uiDisplayProgramError( String error )
+	uiDisplayProgramError( final String error )
 		{
 		}
 
 	public void
-	uiDisplayResponse( CVSResponse response )
+	uiDisplayResponse( final CVSResponse response )
 		{
 		}
 
@@ -708,11 +740,11 @@ implements	ActionListener, CVSUserInterface
 	private void
 	establishContents()
 		{
-		JLabel		lbl;
-		JPanel		panel;
-		JButton		button;
+		final JLabel		lbl;
+		final JPanel		panel;
+		final JButton		button;
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		this.setLayout( new GridBagLayout() );
 
@@ -735,7 +767,7 @@ implements	ActionListener, CVSUserInterface
 
 		int row = 0;
 
-		JSeparator sep;
+		final JSeparator sep;
 
 		AWTUtilities.constrain(
 			this, this.tabbed,
@@ -777,10 +809,10 @@ implements	ActionListener, CVSUserInterface
 				};
 		this.outputText.setEditable( false );
 
-		JScrollPane scroller =
+		final JScrollPane scroller =
 			new JScrollPane( this.outputText );
 		scroller.setVerticalScrollBarPolicy
-			( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
+			( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 
 		AWTUtilities.constrain(
 			this, scroller,
@@ -793,12 +825,12 @@ implements	ActionListener, CVSUserInterface
 	class		AdditionalInfoPanel
 	extends		JPanel
 		{
-		private JTextArea		ignores;
-		private JTextArea		binaries;
-		private JTextArea		logmsg;
-		private JTextField		vendor;
-		private JTextField		release;
-		private JCheckBox		descend;
+		private final JTextArea		ignores;
+		private final JTextArea		binaries;
+		private final JTextArea		logmsg;
+		private final JTextField		vendor;
+		private final JTextField		release;
+		private final JCheckBox		descend;
 
 		public String
 		getIgnores()
@@ -807,7 +839,7 @@ implements	ActionListener, CVSUserInterface
 			}
 
 		public void
-		setIgnores( String ignoreText )
+		setIgnores( final String ignoreText )
 			{
 			this.ignores.setText( ignoreText );
 			}
@@ -819,7 +851,7 @@ implements	ActionListener, CVSUserInterface
 			}
 
 		public void
-		setBinaries( String binText )
+		setBinaries( final String binText )
 			{
 			this.binaries.setText( binText );
 			}
@@ -831,7 +863,7 @@ implements	ActionListener, CVSUserInterface
 			}
 
 		public void
-		setLogMessage( String logText )
+		setLogMessage( final String logText )
 			{
 			this.logmsg.setText( logText );
 			}
@@ -843,7 +875,7 @@ implements	ActionListener, CVSUserInterface
 			}
 
 		public void
-		setVendorTag( String tag )
+		setVendorTag( final String tag )
 			{
 			this.vendor.setText( tag );
 			}
@@ -855,7 +887,7 @@ implements	ActionListener, CVSUserInterface
 			}
 
 		public void
-		setReleaseTag( String tag )
+		setReleaseTag( final String tag )
 			{
 			this.release.setText( tag );
 			}
@@ -867,50 +899,50 @@ implements	ActionListener, CVSUserInterface
 			}
 
 		public void
-		loadPreferences( String panName )
+		loadPreferences( final String panName )
 			{
-			UserPrefs prefs = Config.getPreferences();
+			final UserPrefs prefs = Config.getPreferences();
 
 			this.setIgnores
 				( prefs.getProperty
-					( panName + "." + Config.IMPADDPAN_IGNORES, "" ) );
+					( panName + "." + ConfigConstants.IMPADDPAN_IGNORES, "" ) );
 			this.setBinaries
 				( prefs.getProperty
-					( panName + "." + Config.IMPADDPAN_BINARIES, "" ) );
+					( panName + "." + ConfigConstants.IMPADDPAN_BINARIES, "" ) );
 
 			this.setLogMessage
 				( prefs.getProperty
-					( panName + "." + Config.IMPADDPAN_LOGMSG, "" ) );
+					( panName + "." + ConfigConstants.IMPADDPAN_LOGMSG, "" ) );
 
 			this.setVendorTag
 				( prefs.getProperty
-					( panName + "." + Config.IMPADDPAN_VENDOR_TAG, "" ) );
+					( panName + "." + ConfigConstants.IMPADDPAN_VENDOR_TAG, "" ) );
 			this.setReleaseTag
 				( prefs.getProperty
-					( panName + "." + Config.IMPADDPAN_RELEASE_TAG, "" ) );
+					( panName + "." + ConfigConstants.IMPADDPAN_RELEASE_TAG, "" ) );
 			}
 
 		public void
-		savePreferences( String panName )
+		savePreferences( final String panName )
 			{
-			UserPrefs prefs = Config.getPreferences();
+			final UserPrefs prefs = Config.getPreferences();
 
 			prefs.setProperty
-				( panName + "." + Config.IMPADDPAN_IGNORES,
+				( panName + "." + ConfigConstants.IMPADDPAN_IGNORES,
 					this.getIgnores() );
 			prefs.setProperty
-				( panName + "." + Config.IMPADDPAN_BINARIES,
+				( panName + "." + ConfigConstants.IMPADDPAN_BINARIES,
 					this.getBinaries() );
 
 			prefs.setProperty
-				( panName + "." + Config.IMPADDPAN_LOGMSG,
+				( panName + "." + ConfigConstants.IMPADDPAN_LOGMSG,
 					this.getLogMessage() );
 
 			prefs.setProperty
-				( panName + "." + Config.IMPADDPAN_VENDOR_TAG,
+				( panName + "." + ConfigConstants.IMPADDPAN_VENDOR_TAG,
 					this.getVendorTag() );
 			prefs.setProperty
-				( panName + "." + Config.IMPADDPAN_RELEASE_TAG,
+				( panName + "." + ConfigConstants.IMPADDPAN_RELEASE_TAG,
 					this.getReleaseTag() );
 			}
 
@@ -919,9 +951,9 @@ implements	ActionListener, CVSUserInterface
 			{
 			super();
 			this.setLayout( new GridLayout( 2, 2, 4, 4 ) );
-			ResourceMgr rmgr = ResourceMgr.getInstance();
+			final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-			JPanel tagPan = new JPanel();
+			final JPanel tagPan = new JPanel();
 			tagPan.setLayout( new GridBagLayout() );
 
 			int row = 0;
@@ -929,7 +961,7 @@ implements	ActionListener, CVSUserInterface
 			this.descend =
 				new JCheckBox
 					( rmgr.getUIString( "import.subdir.checkbox.label" ) );
-			
+
 			this.descend.setSelected( true );
 			AWTUtilities.constrain(
 				tagPan, this.descend,
@@ -971,7 +1003,7 @@ implements	ActionListener, CVSUserInterface
 				new Insets( 1, 3, 3, 3 ) );
 
 			this.logmsg = new JTextArea();
-			JPanel logPan = new JPanel();
+			final JPanel logPan = new JPanel();
 			logPan.setLayout( new BorderLayout() );
 			logPan.add( BorderLayout.CENTER, this.logmsg );
 			logPan.setBorder
@@ -981,7 +1013,7 @@ implements	ActionListener, CVSUserInterface
 						rmgr.getUIString( "import.logmsg.label" ) ) );
 
 			this.ignores = new JTextArea();
-			JPanel ignPan = new JPanel();
+			final JPanel ignPan = new JPanel();
 			ignPan.setLayout( new BorderLayout() );
 			ignPan.add( BorderLayout.CENTER, this.ignores );
 			ignPan.setBorder
@@ -991,7 +1023,7 @@ implements	ActionListener, CVSUserInterface
 						rmgr.getUIString( "import.ignores.label" ) ) );
 
 			this.binaries = new JTextArea();
-			JPanel binPan = new JPanel();
+			final JPanel binPan = new JPanel();
 			binPan.setLayout( new BorderLayout() );
 			binPan.add( BorderLayout.CENTER, this.binaries );
 			binPan.setBorder

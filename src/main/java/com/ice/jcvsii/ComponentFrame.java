@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,15 +16,23 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.activation.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.activation.DataSource;
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 
 /**
  * this Frame provides a utility class for displaying a single
@@ -43,15 +51,15 @@ ComponentFrame extends Frame
 	 * @param name	the name of the Frame
 	 */
 	public
-	ComponentFrame( Component comp, String name, DataSource source )
+	ComponentFrame( final Component comp, final String name, final DataSource source )
 		{
 		super( name );
 
 		try {
-			MimeType mime = new MimeType( source.getContentType() );
+			final MimeType mime = new MimeType( source.getContentType() );
 			this.contentType = mime.getBaseType();
 			}
-		catch ( MimeTypeParseException ex )
+		catch ( final MimeTypeParseException ex )
 			{
 			this.contentType = source.getContentType();
 			}
@@ -79,21 +87,21 @@ ComponentFrame extends Frame
 	saveLayoutProperties()
 		{
 		}
-	
+
 	private Rectangle
 	computeDefaultPosition()
 		{
-		Dimension sz = this.getSize();
-		Dimension scrnSz = this.getToolkit().getScreenSize();
+		final Dimension sz = this.getSize();
+		final Dimension scrnSz = this.getToolkit().getScreenSize();
 
-		if ( sz.width > (scrnSz.width - 10) )
+		if ( sz.width > scrnSz.width - 10 )
 			sz.width = scrnSz.width - 10;
-		if ( sz.height > (scrnSz.height - 10) )
+		if ( sz.height > scrnSz.height - 10 )
 			sz.height = scrnSz.height - 10;
 
 		int x = (scrnSz.width - sz.width) / 2;
 		int y = (scrnSz.height - sz.height) / 3;
-		
+
 		// Make sure we are not off the screen.
 		if ( x < 0 ) x = 0;
 		if ( y < 0 ) y = 0;
@@ -111,7 +119,7 @@ ComponentFrame extends Frame
 	class
 	WinClose extends WindowAdapter
 		{
-		public void windowClosing( WindowEvent e )
+		public void windowClosing( final WindowEvent e )
 			{
 			saveLayoutProperties();
 			e.getWindow().dispose();

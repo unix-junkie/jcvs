@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,15 +18,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.io.PrintStream;
+import java.util.Vector;
 
 /**
  * Implements a Vector subclass that handles CVSResonseItems
@@ -52,34 +51,34 @@ CVSRespItemVector extends Vector
 		super();
 		}
 
-	public CVSRespItemVector( int initCap )
+	public CVSRespItemVector( final int initCap )
 		{
 		super( initCap );
 		}
 
-	public CVSRespItemVector( int initCap, int capIncr )
+	public CVSRespItemVector( final int initCap, final int capIncr )
 		{
 		super( initCap, capIncr );
 		}
 
 	public CVSResponseItem
-	itemAt( int index )
+	itemAt( final int index )
 		{
 		return (CVSResponseItem) this.elementAt( index );
 		}
 
 	public void
-	appendItem( CVSResponseItem item )
+	appendItem( final CVSResponseItem item )
 		{
 		this.addElement( item );
 		}
 
 	public void
-	printResponseItemList( PrintStream out, String prefix )
+	printResponseItemList( final PrintStream out, final String prefix )
 		{
 		for ( int i = 0 ; i < this.size() ; ++i )
 			{
-			CVSResponseItem item = this.itemAt(i);
+			final CVSResponseItem item = this.itemAt(i);
 
 			out.print( prefix + "ITEM " );
 			out.print( "type '" + item.getType() + "' " );

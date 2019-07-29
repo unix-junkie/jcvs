@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,33 +18,22 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-/**
- * The CVSIgnore class implements the concept of a '.cvsignore' file.
- * This is used by CVSProject's to handling CVS's concept of files that
- * should be ignored during processing.	Currently, we only need this for
- * the 'import' function, since in all other cases we have a list of
- * entries to work from. In other words, 'import' is the only function
- * we implement that scans directories, and thus cares about ignoring
- * certain files.
- *
- * @version $Revision: 2.4 $
- * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
- * @see CVSProject
- *
- */
-
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 
-public class CVSIgnore extends Object 
+public class CVSIgnore extends Object
 	{
 	static public final String		RCS_ID = "$Id: CVSIgnore.java,v 2.4 2003/07/27 01:08:32 time Exp $";
 	static public final String		RCS_REV = "$Revision: 2.4 $";
@@ -77,7 +66,7 @@ public class CVSIgnore extends Object
 	 * @param default_spec The default ignore specs.
 	 */
 	public
-	CVSIgnore( String default_spec )
+	CVSIgnore( final String default_spec )
 		{
 		super();
 		this.specs = null;
@@ -93,32 +82,32 @@ public class CVSIgnore extends Object
 	/**
 	 * Adds the cvsignore specifications to the current list
 	 * of ignored files.
-	 * 
+	 *
 	 * @param spec The string listing the specs to add.
 	 */
 	public void
-	addIgnoreSpec( String spec )
+	addIgnoreSpec( final String spec )
 		{
 		if ( spec == null )
 			return;
 
 		String	toke;
 		int		i, count;
-		
+
 		if ( this.specs == null )
 			{
 			this.specs = new Vector();
 			}
 
-		StringTokenizer toker
+		final StringTokenizer toker
 			= new StringTokenizer( spec );
-		
+
 		count = toker.countTokens();
-		
+
 		for ( i = 0 ; i < count ; ++i )
 			{
 			try { toke = toker.nextToken(); }
-			catch ( NoSuchElementException ex )
+			catch ( final NoSuchElementException ex )
 				{
 				break;
 				}
@@ -137,11 +126,11 @@ public class CVSIgnore extends Object
 	/**
 	 * Adds the cvsignore specifications from the file
 	 * provided to the current list of ignored files.
-	 * 
+	 *
 	 * @param ignoreFile The file containing the ignore specs.
 	 */
 	public void
-	addIgnoreFile( File ignoreFile )
+	addIgnoreFile( final File ignoreFile )
 		{
 		if ( ignoreFile == null )
 			return;
@@ -149,7 +138,7 @@ public class CVSIgnore extends Object
 		String	line;
 		boolean	ok = true;
 		BufferedReader in = null;
-		
+
 		if ( this.specs == null )
 			{
 			this.specs = new Vector();
@@ -159,7 +148,7 @@ public class CVSIgnore extends Object
 			in = new BufferedReader
 				( new FileReader( ignoreFile ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			in = null;
 			ok = false;
@@ -168,28 +157,28 @@ public class CVSIgnore extends Object
 		for ( ; ok ; )
 			{
 			try { line = in.readLine();	}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{ line = null; }
 
 			if ( line == null ) break;
-			
+
 			this.addIgnoreSpec( line );
 			}
 
 		if ( in != null )
 			{
 			try { in.close(); }
-				catch ( IOException ex ) { }
+				catch ( final IOException ex ) { }
 			}
 		}
 
 	/**
 	 * Replaces all current ignore specs with those passed in.
-	 * 
+	 *
 	 * @param spec The string listing the specs to replace with.
 	 */
 	public void
-	setIgnoreSpec( String spec )
+	setIgnoreSpec( final String spec )
 		{
 		if ( this.specs != null )
 			{
@@ -201,18 +190,18 @@ public class CVSIgnore extends Object
 
 	/**
 	 * Determines if a file is to be ignored.
-	 * 
+	 *
 	 * @param name The name of the file to check.
 	 * @return If the file is to be ignored, true, else false.
 	 */
 	public boolean
-	isFileToBeIgnored( String name )
+	isFileToBeIgnored( final String name )
 		{
 		int		i;
 
 		for ( i = 0 ; i < this.specs.size() ; ++i )
 			{
-			String spec = (String)this.specs.elementAt(i);
+			final String spec = (String)this.specs.elementAt(i);
 			if ( fileMatchesExpr( name, spec ) )
 				{
 				return true;
@@ -224,13 +213,13 @@ public class CVSIgnore extends Object
 
 	/**
 	 * Determines if a filename matches an expression.
-	 * 
+	 *
 	 * @param fileName The name of the file to check.
 	 * @param matchExpr The expression to check against.
 	 * @return If the file name matches the expression, true, else false.
 	 */
 	private boolean
-	fileMatchesExpr( String fileName, String matchExpr )
+	fileMatchesExpr( final String fileName, final String matchExpr )
 		{
 		return this.matchExprRecursor( fileName, matchExpr, 0, 0 );
 		}
@@ -238,7 +227,7 @@ public class CVSIgnore extends Object
 	/**
 	 * An internal routine to implement expression matching.
 	 * This routine is based on a self-recursive algorithm.
-	 * 
+	 *
 	 * @param string The string to be compared.
 	 * @param pattern The expression to compare <em>string</em> to.
 	 * @param sIdx The index of where we are in <em>string</em>.
@@ -246,10 +235,10 @@ public class CVSIgnore extends Object
 	 * @return True if <em>string</em> matched pattern, else false.
 	 */
 	private boolean
-	matchExprRecursor( String string, String pattern, int sIdx, int pIdx )
+	matchExprRecursor( final String string, final String pattern, int sIdx, int pIdx )
 		{
-		int		pLen = pattern.length();
-		int		sLen = string.length();
+		final int		pLen = pattern.length();
+		final int		sLen = string.length();
 
 		for ( ; ; )
 			{
@@ -310,20 +299,20 @@ public class CVSIgnore extends Object
 					if ( pattern.charAt(pIdx) == string.charAt(sIdx) )
 						break;
 
-					if ( pIdx < (pLen - 1)
+					if ( pIdx < pLen - 1
 							&& pattern.charAt(pIdx + 1) == '-' )
 						{
-						if ( pIdx >= (pLen - 2) )
+						if ( pIdx >= pLen - 2 )
 							return false;
 
-						char chStr = string.charAt(sIdx);
-						char chPtn = pattern.charAt(pIdx);
-						char chPtn2 = pattern.charAt(pIdx+2);
+						final char chStr = string.charAt(sIdx);
+						final char chPtn = pattern.charAt(pIdx);
+						final char chPtn2 = pattern.charAt(pIdx+2);
 
-						if ( ( chPtn <= chStr ) && ( chPtn2 >= chStr ) )
+						if ( chPtn <= chStr && chPtn2 >= chStr )
 							break;
 
-						if ( ( chPtn >= chStr ) && ( chPtn2 <= chStr ) )
+						if ( chPtn >= chStr && chPtn2 <= chStr )
 							break;
 
 						pIdx += 2;
@@ -362,14 +351,14 @@ public class CVSIgnore extends Object
 		}
 
 	public void
-	dumpIgnoreList( String message )
+	dumpIgnoreList( final String message )
 		{
 		if ( message != null )
 			CVSLog.logMsg( message );
 
 		for ( int i = 0 ; i < this.specs.size() ; ++i )
 			{
-			String spec =
+			final String spec =
 				(String) this.specs.elementAt(i);
 
 			CVSLog.logMsg

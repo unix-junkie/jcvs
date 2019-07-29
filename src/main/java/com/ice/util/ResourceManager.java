@@ -1,17 +1,17 @@
 /*
 ** ResourceBundle Manager Utility class.
 ** Authored in 1999 by Timothy Gerard Endres.
-** 
+**
 ** This Java Class source has been placed in the public domain.
-** 
+**
 */
 
 package com.ice.util;
 
 import java.text.MessageFormat;
 import java.util.Hashtable;
-import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 
 /**
@@ -84,14 +84,14 @@ class		ResourceManager
 	 *  load the resource bundle.
 	 */
 	public static void
-	load( String id, String name )
+	load( final String id, final String name )
 		{
 		try {
-			ResourceBundle rsrc = ResourceBundle.getBundle( name );
-			ResourceManager rMgr = new ResourceManager( name, rsrc );
+			final ResourceBundle rsrc = ResourceBundle.getBundle( name );
+			final ResourceManager rMgr = new ResourceManager( name, rsrc );
 			ResourceManager.bundles.put( id, rMgr );
 			}
-		catch ( MissingResourceException ex )
+		catch ( final MissingResourceException ex )
 			{
 			ex.printStackTrace();
 			}
@@ -104,7 +104,7 @@ class		ResourceManager
 	 * @return The ResourceManager identied by id.
 	 */
 	public static ResourceManager
-	get( String id )
+	get( final String id )
 		{
 		return (ResourceManager)
 			ResourceManager.bundles.get( id );
@@ -118,7 +118,7 @@ class		ResourceManager
 	 * @return The previous ResourceManager identied by id, or null.
 	 */
 	public static ResourceManager
-	put( String id, ResourceManager rMgr )
+	put( final String id, final ResourceManager rMgr )
 		{
 		return (ResourceManager)
 			ResourceManager.bundles.put( id, rMgr );
@@ -139,7 +139,7 @@ class		ResourceManager
 	 * @param rsrc The resource bundle to be managed.
 	 */
 	public
-	ResourceManager( String name, ResourceBundle rsrc )
+	ResourceManager( final String name, final ResourceBundle rsrc )
 		throws MissingResourceException
 		{
 		this.name = name;
@@ -153,7 +153,7 @@ class		ResourceManager
 	 * @param debug The new debugging setting.
 	 */
 	public void
-	setDebug( boolean debug )
+	setDebug( final boolean debug )
 		{
 		this.debug = debug;
 		}
@@ -166,7 +166,7 @@ class		ResourceManager
 	 * @return The resource string.
 	 */
 	public String
-	getString( String key )
+	getString( final String key )
 		{
 		return this.rsrc.getString( key );
 		}
@@ -183,7 +183,7 @@ class		ResourceManager
 	 */
 
 	public String
-	getFormat( String key, Object[] args )
+	getFormat( final String key, final Object[] args )
 		{
 		return MessageFormat.format
 			( this.rsrc.getString( key ), args );

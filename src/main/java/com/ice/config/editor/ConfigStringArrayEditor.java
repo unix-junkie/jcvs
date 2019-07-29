@@ -1,17 +1,10 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.util.Vector;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
 
-import com.ice.config.*;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
-import com.ice.util.AWTUtilities;
 
 
 public
@@ -26,23 +19,23 @@ extends		ConfigArrayEditor
 		}
 
 	public boolean
-	isTupleTable( ConfigureSpec spec )
+	isTupleTable( final ConfigureSpec spec )
 		{
 		return false;
 		}
 
 	public boolean
-	isStringArray( ConfigureSpec spec )
+	isStringArray( final ConfigureSpec spec )
 		{
 		return true;
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		Vector v = prefs.getStringVector( spec.getPropertyName(), null );
+		final Vector v = prefs.getStringVector( spec.getPropertyName(), null );
 
 		if ( v != null )
 			{
@@ -58,20 +51,20 @@ extends		ConfigArrayEditor
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		this.table.clearSelection();
-		Vector vStrs = this.model.getData();
-		String[] strs = new String[ vStrs.size() ];
+		final Vector vStrs = this.model.getData();
+		final String[] strs = new String[ vStrs.size() ];
 		vStrs.copyInto( strs );
 		prefs.setStringArray( spec.getPropertyName(), strs );
 		}
 
 	public void
-	commitChanges( ConfigureSpec spec, UserPrefs prefs, UserPrefs orig )
+	commitChanges( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
-		String propName = spec.getPropertyName();
-		String[] strs = prefs.getStringArray( propName, null );
+		final String propName = spec.getPropertyName();
+		final String[] strs = prefs.getStringArray( propName, null );
 		orig.removeStringArray( propName );
 		if ( strs != null )
 			{

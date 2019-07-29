@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres, <time@jcvs.org>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,14 +16,17 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.util.Vector;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 
 
 public
@@ -44,21 +47,21 @@ implements	LayoutManager
 
     // Required by LayoutManager.
 	public void
-	addLayoutComponent( String name, Component comp )
+	addLayoutComponent( final String name, final Component comp )
 		{
 		}
 
     // Required by LayoutManager.
 	public void
-	removeLayoutComponent( Component comp )
+	removeLayoutComponent( final Component comp )
 		{
 		}
 
 	private void
-	setSizes( Container parent )
+	setSizes( final Container parent )
 		{
-		Dimension compSz = null;
-		int nComps = parent.getComponentCount();
+		final Dimension compSz = null;
+		final int nComps = parent.getComponentCount();
 
 		//Reset preferred/minimum width and height.
 		this.leftWidth = 0;
@@ -70,22 +73,22 @@ implements	LayoutManager
 			{
 			int rowH = 0;
 
-			Component cL = parent.getComponent( i );
+			final Component cL = parent.getComponent( i );
 			if ( cL.isVisible() )
 				{
-				Dimension dL = cL.getPreferredSize();
+				final Dimension dL = cL.getPreferredSize();
 				if ( dL.height > rowH )
 					rowH = dL.height;
 				if ( dL.width > this.leftWidth )
 					this.leftWidth = dL.width;
 				}
 
-			if ( (i + 1) < nComps )
+			if ( i + 1 < nComps )
 				{
-				Component cR = parent.getComponent( i + 1 );
+				final Component cR = parent.getComponent( i + 1 );
 				if ( cR.isVisible() )
 					{
-					Dimension dR = cR.getPreferredSize();
+					final Dimension dR = cR.getPreferredSize();
 					if ( dR.height > rowH )
 						rowH = dR.height;
 					if ( dR.width > this.rightWidth )
@@ -102,21 +105,21 @@ implements	LayoutManager
 
 	// Required by LayoutManager.
 	public Dimension
-	preferredLayoutSize( Container parent )
+	preferredLayoutSize( final Container parent )
 		{
-		Dimension dim = new Dimension( 0, 0 );
+		final Dimension dim = new Dimension( 0, 0 );
 
 		this.setSizes( parent );
 
 		//Always add the container's insets!
-		Insets insets = parent.getInsets();
+		final Insets insets = parent.getInsets();
 
 		dim.width =
-			this.preferredWidth 
+			this.preferredWidth
 			+ insets.left + insets.right;
 
 		dim.height =
-			this.preferredHeight 
+			this.preferredHeight
 			+ insets.top + insets.bottom;
 
 		this.sizeUnknown = false;
@@ -126,47 +129,47 @@ implements	LayoutManager
 
 	// Required by LayoutManager.
 	public Dimension
-	minimumLayoutSize( Container parent )
+	minimumLayoutSize( final Container parent )
 		{
 		return this.preferredLayoutSize( parent );
 		}
 
 	// Required by LayoutManager.
-    /* 
-     * This is called when the panel is first displayed, 
-     * and every time its size changes. 
-     * Note: You CAN'T assume preferredLayoutSize or 
-     * minimumLayoutSize will be called -- in the case 
-     * of applets, at least, they probably won't be. 
+    /*
+     * This is called when the panel is first displayed,
+     * and every time its size changes.
+     * Note: You CAN'T assume preferredLayoutSize or
+     * minimumLayoutSize will be called -- in the case
+     * of applets, at least, they probably won't be.
      */
 	public void
-	layoutContainer( Container parent )
+	layoutContainer( final Container parent )
 		{
-		Insets insets = parent.getInsets();
+		final Insets insets = parent.getInsets();
 
-		Dimension parentSz = parent.getSize();
+		final Dimension parentSz = parent.getSize();
 
-		int maxWidth =
+		final int maxWidth =
 			parentSz.width - ( insets.left + insets.right );
 
-		int maxHeight =
+		final int maxHeight =
 			parentSz.height - ( insets.top + insets.bottom );
 
-		int nComps = parent.getComponentCount();
+		final int nComps = parent.getComponentCount();
 
-		int previousWidth = 0, previousHeight = 0;
+		final int previousWidth = 0, previousHeight = 0;
 		int x = insets.left, y = insets.top;
-		int rowh = 0, start = 0;
+		final int rowh = 0, start = 0;
 		int xFudge = 0;
 
-		// Go through the components' sizes, if neither 
-		// preferredLayoutSize nor minimumLayoutSize has 
+		// Go through the components' sizes, if neither
+		// preferredLayoutSize nor minimumLayoutSize has
 		// been called.
 		if ( this.sizeUnknown )
 			{
 			this.setSizes( parent );
 			}
-        
+
 		if ( maxWidth != this.preferredWidth )
 			{
 			xFudge = (maxWidth - preferredWidth) / 2;
@@ -182,22 +185,22 @@ implements	LayoutManager
 			int rowH = 0;
 
 			x = insets.left;
-			Component cL = parent.getComponent( i );
+			final Component cL = parent.getComponent( i );
 			Component cR = null;
 
 			if ( cL.isVisible() )
 				{
-				Dimension dL = cL.getPreferredSize();
+				final Dimension dL = cL.getPreferredSize();
 				if ( dL.height > rowH )
 					rowH = dL.height;
 				}
 
-			if ( (i + 1) < nComps )
+			if ( i + 1 < nComps )
 				{
 				cR = parent.getComponent( i + 1 );
 				if ( cR.isVisible() )
 					{
-					Dimension dR = cR.getPreferredSize();
+					final Dimension dR = cR.getPreferredSize();
 					if ( dR.height > rowH )
 						rowH = dR.height;
 					}
@@ -217,7 +220,7 @@ implements	LayoutManager
 			y += rowH;
 			}
 		}
-    
+
 	public String
 	toString()
 		{

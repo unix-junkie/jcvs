@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,23 +16,26 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-import com.ice.cvsc.*;
-import com.ice.pref.UserPrefs;
+import com.ice.cvsc.CVSClient;
+import com.ice.cvsc.CVSLog;
+import com.ice.cvsc.CVSProject;
+import com.ice.cvsc.CVSRequest;
 import com.ice.pref.PrefsTuple;
 import com.ice.pref.PrefsTupleTable;
+import com.ice.pref.UserPrefs;
 
 
 public class
@@ -42,19 +45,19 @@ CVSUtilities extends Object
 	static public CVSClient
 	createCVSClient()
 		{
-		CVSClient client = new CVSClient();
+		final CVSClient client = new CVSClient();
 
 		client.setMultipleInterfaceSupport
 			( Config.getInstance().getPrefs().getBoolean
-				( Config.GLOBAL_MULTI_INTF, false ) );
+				( ConfigConstants.GLOBAL_MULTI_INTF, false ) );
 
 		return client;
 		}
 
 	static public CVSClient
-	createCVSClient( String cvsHost, int cvsPort )
+	createCVSClient( final String cvsHost, final int cvsPort )
 		{
-		CVSClient client = CVSUtilities.createCVSClient();
+		final CVSClient client = CVSUtilities.createCVSClient();
 
 		client.setHostName( cvsHost );
 		client.setPort( cvsPort );
@@ -63,11 +66,11 @@ CVSUtilities extends Object
 		}
 
 	static public String
-	establishServerCommand( String hostname, int connMethod, boolean pServer )
+	establishServerCommand( final String hostname, final int connMethod, final boolean pServer )
 		{
 		PrefsTuple tup;
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
 		String command = "(not applicable)";
 
@@ -75,9 +78,9 @@ CVSUtilities extends Object
 			{
 			command = "cvs server";
 
-			PrefsTupleTable table =
+			final PrefsTupleTable table =
 				prefs.getTupleTable
-					( Config.GLOBAL_SVRCMD_TABLE, null );
+					( ConfigConstants.GLOBAL_SVRCMD_TABLE, null );
 
 			if ( table != null )
 				{
@@ -97,9 +100,9 @@ CVSUtilities extends Object
 			{
 			command = "cvs server";
 
-			PrefsTupleTable table =
+			final PrefsTupleTable table =
 				prefs.getTupleTable
-					( Config.GLOBAL_SVRCMD_TABLE, null );
+					( ConfigConstants.GLOBAL_SVRCMD_TABLE, null );
 
 			if ( table != null )
 				{
@@ -120,85 +123,85 @@ CVSUtilities extends Object
 		}
 
 	static public void
-	establishRSHProcess( CVSRequest request )
+	establishRSHProcess( final CVSRequest request )
 		{
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
-		String rshCommand =
-			prefs.getProperty( Config.GLOBAL_RSH_COMMAND, null );
-		
+		final String rshCommand =
+			prefs.getProperty( ConfigConstants.GLOBAL_RSH_COMMAND, null );
+
 		if ( rshCommand != null && rshCommand.length() > 0 )
 			{
 			request.setRshProcess( rshCommand );
-			} 
+			}
 		}
 
 	static public void
-	establishRSHProcess( CVSProject project )
+	establishRSHProcess( final CVSProject project )
 		{
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
-		String rshCommand =
-			prefs.getProperty( Config.GLOBAL_RSH_COMMAND, null );
-		
+		final String rshCommand =
+			prefs.getProperty( ConfigConstants.GLOBAL_RSH_COMMAND, null );
+
 		if ( rshCommand != null && rshCommand.length() > 0 )
 			{
 			project.setRshProcess( rshCommand );
-			} 
+			}
 		}
 
 	static public int
-	computePortNum( String hostname, int connMethod, boolean isPServer )
+	computePortNum( final String hostname, final int connMethod, final boolean isPServer )
 		{
 		int defPort;
 		int cvsPort;
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
-		StringBuffer prefName = new StringBuffer( "portNum." );
+		final StringBuffer prefName = new StringBuffer( "portNum." );
 
 		if ( connMethod == CVSRequest.METHOD_RSH )
 			{
 			prefName.append( "server." );
-			defPort = prefs.getInteger( Config.GLOBAL_RSH_PORT, 0 );
+			defPort = prefs.getInteger( ConfigConstants.GLOBAL_RSH_PORT, 0 );
 			if ( defPort == 0 )
 				defPort = CVSClient.DEFAULT_RSH_PORT;
 			}
 		else if ( connMethod == CVSRequest.METHOD_SSH )
 			{
 			prefName.append( "ext." );
-			defPort = prefs.getInteger( Config.GLOBAL_SSH_PORT, 0 );
+			defPort = prefs.getInteger( ConfigConstants.GLOBAL_SSH_PORT, 0 );
 			if ( defPort == 0 )
 				defPort = CVSClient.DEFAULT_SSH_PORT;
 			}
 		else if ( isPServer )
 			{
 			prefName.append( "pserver." );
-			defPort = prefs.getInteger( Config.GLOBAL_PSERVER_PORT, 0 );
+			defPort = prefs.getInteger( ConfigConstants.GLOBAL_PSERVER_PORT, 0 );
 			if ( defPort == 0 )
 				defPort = CVSClient.DEFAULT_CVS_PORT;
 			}
 		else
 			{
-			prefName.append( "direct." ); 
-			defPort = prefs.getInteger( Config.GLOBAL_DIRECT_PORT, 0 );
+			prefName.append( "direct." );
+			defPort = prefs.getInteger( ConfigConstants.GLOBAL_DIRECT_PORT, 0 );
 			if ( defPort == 0 )
 				defPort = CVSClient.DEFAULT_DIR_PORT;
 			}
 
-		cvsPort = prefs.getInteger( (prefName + hostname), defPort );
+		cvsPort = prefs.getInteger( prefName + hostname, defPort );
 
 		return cvsPort;
 		}
 
 	static public String[]
-	getUserSetVariables( String hostname )
+	getUserSetVariables( final String hostname )
 		{
 		int		i;
 		String	prop;
 		int		count = 0;
-		String	prefix = "setVars.";
-		UserPrefs prefs = Config.getPreferences();
+		final String	prefix = "setVars.";
+		final UserPrefs prefs = Config.getPreferences();
 
 		// First, get a count...
 		for ( i = 0 ; ; ++i, ++count )
@@ -218,7 +221,7 @@ CVSUtilities extends Object
 		if ( count == 0 )
 			return null;
 
-		String[] result = new String[ count ];
+		final String[] result = new String[ count ];
 
 		// Now fill it in...
 		int idx = 0;
@@ -244,13 +247,13 @@ CVSUtilities extends Object
 		}
 
 	static public String
-	getFilePath( File file )
+	getFilePath( final File file )
 		{
 		int		index;
-		String	newName;
+		final String	newName;
 		String	parent = null;
 
-		String	pathName = file.getPath();
+		final String	pathName = file.getPath();
 
 		index = pathName.lastIndexOf( File.separatorChar );
 		if ( index < 0 )
@@ -270,13 +273,13 @@ CVSUtilities extends Object
 		}
 
 	static public String
-	getFileName( File file )
+	getFileName( final File file )
 		{
 		return CVSUtilities.getFileName( file.getPath() );
 		}
 
 	static public String
-	getFileName( String path )
+	getFileName( final String path )
 		{
 		int		index;
 		String	newName = path;
@@ -299,9 +302,9 @@ CVSUtilities extends Object
 		}
 
 	static public boolean
-	renameFile( File entryFile, String pattern, boolean overWrite )
+	renameFile( final File entryFile, final String pattern, final boolean overWrite )
 		{
-		int		i;
+		final int		i;
 		boolean	result;
 		String	newName;
 		String	fileName;
@@ -310,7 +313,7 @@ CVSUtilities extends Object
 		rootPath = CVSUtilities.getFilePath( entryFile );
 		fileName = CVSUtilities.getFileName( entryFile );
 
-		int index = pattern.indexOf( '@' );
+		final int index = pattern.indexOf( '@' );
 		if ( index < 0 )
 			{
 			// If there is no '@', pattern is a suffix.
@@ -325,21 +328,21 @@ CVSUtilities extends Object
 				+ pattern.substring( index + 1 );
 			}
 
-		File backFile = // UNDONE separator
+		final File backFile = // UNDONE separator
 			new File( rootPath + "/" + newName );
 
 		if ( overWrite && backFile.exists() )
 			backFile.delete();
 
 		result = entryFile.renameTo( backFile );
-		
+
 		return result;
 		}
 
 	static public boolean
-	copyFile( File entryFile, String pattern )
+	copyFile( final File entryFile, final String pattern )
 		{
-		int		i;
+		final int		i;
 		int		bytes;
 		long	length;
 		long	fileSize;
@@ -353,7 +356,7 @@ CVSUtilities extends Object
 		rootPath = CVSUtilities.getFilePath( entryFile );
 		fileName = CVSUtilities.getFileName( entryFile );
 
-		int index = pattern.indexOf( '@' );
+		final int index = pattern.indexOf( '@' );
 		if ( index < 0 )
 			{
 			// If there is no '@', pattern is a suffix.
@@ -368,14 +371,14 @@ CVSUtilities extends Object
 				+ pattern.substring( index + 1 );
 			}
 
-		File copyFile = // UNDONE separator
+		final File copyFile = // UNDONE separator
 			new File( rootPath + "/" + newName );
 
 		try {
 			in = new BufferedInputStream(
 					new FileInputStream( entryFile ) );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			in = null;
 			result = false;
@@ -389,7 +392,7 @@ CVSUtilities extends Object
 			out = new BufferedOutputStream(
 					new FileOutputStream( copyFile ) );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			out = null;
 			result = false;
@@ -419,7 +422,7 @@ CVSUtilities extends Object
 				try {
 					bytes = in.read( buffer, 0, bytes );
 					}
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					result = false;
 					CVSLog.logMsg
@@ -435,7 +438,7 @@ CVSUtilities extends Object
 				length -= bytes;
 
 				try { out.write( buffer, 0, bytes ); }
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					result = false;
 					CVSLog.logMsg
@@ -451,14 +454,14 @@ CVSUtilities extends Object
 			if ( in != null ) in.close();
 			if ( out != null ) out.close();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg
 				( "CVSUtilities.copyFile: failed closing files: "
 					+ ex.getMessage() );
 			result = false;
 			}
-		
+
 		return result;
 		}
 

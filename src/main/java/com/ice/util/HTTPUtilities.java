@@ -1,9 +1,9 @@
 /*
 ** Tim Endres' utilities package.
 ** Copyright (c) 1997 by Tim Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,13 +16,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 
 public class
@@ -33,18 +34,18 @@ HTTPUtilities
 	// HTTP/1.0 200 OK
 	//
 	static public String[]
-	parseStatusLine( String statusLine )
+	parseStatusLine( final String statusLine )
 		{
-		StringTokenizer toker =
+		final StringTokenizer toker =
 			new StringTokenizer( statusLine, " \t" );
 
-		int count = toker.countTokens();
-		String[] result = new String[count];
+		final int count = toker.countTokens();
+		final String[] result = new String[count];
 
 		for ( int i = 0 ; i < count ; ++i )
 			{
 			try { result[i] = toker.nextToken(); }
-				catch ( NoSuchElementException ex )
+				catch ( final NoSuchElementException ex )
 					{ break; }
 			}
 
@@ -52,9 +53,9 @@ HTTPUtilities
 		}
 
 	static public String
-	getResultCode( String statusLine )
+	getResultCode( final String statusLine )
 		{
-		String[] tokes =
+		final String[] tokes =
 			HTTPUtilities.parseStatusLine( statusLine );
 
 		if ( tokes.length > 1 )

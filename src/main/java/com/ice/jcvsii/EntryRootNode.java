@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,29 +16,25 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.util.Vector;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import com.ice.cvsc.CVSEntry;
-import com.ice.cvsc.CVSEntryVector;
 
 
 public
 class		EntryRootNode
 extends		EntryNode
-	{ 
+	{
 	protected String		localRoot;
 	protected EntryTree		tree;
 
 
 	public
-	EntryRootNode( CVSEntry entry, String rootPath )
+	EntryRootNode( final CVSEntry entry, final String rootPath )
 		{
 		super( entry );
 		this.tree = null;
@@ -50,7 +46,7 @@ extends		EntryNode
 	 */
 	public String
 	getLocalRootPath()
-		{ 
+		{
 		return this.localRoot;
 		}
 
@@ -59,7 +55,7 @@ extends		EntryNode
 	 */
 	public EntryTree
 	getEntryTree()
-		{ 
+		{
 		return this.tree;
 		}
 
@@ -67,8 +63,8 @@ extends		EntryNode
 	 * Returns this node's CVSEntry.
 	 */
 	public void
-	setEntryTree( EntryTree tree )
-		{ 
+	setEntryTree( final EntryTree tree )
+		{
 		this.tree = tree;
 		}
 

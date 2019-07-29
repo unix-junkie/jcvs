@@ -1,9 +1,8 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
 import java.util.Vector;
-import javax.swing.*;
+
 import com.ice.util.StringUtilities;
 
 
@@ -11,35 +10,35 @@ public
 class		HTMLHelper
 	{
 	public static StringBuffer
-	generateHTMLDiff( StringBuffer buf, String rawDiff, String fileName, String rev1, String rev2 )
+	generateHTMLDiff( final StringBuffer buf, final String rawDiff, final String fileName, final String rev1, final String rev2 )
 		{
-		String lnSep = "\r\n";
+		final String lnSep = "\r\n";
 
-		String lgdBgColor = "#FF6200";
-		String lgdTitleColor = "#FFFFFF";
+		final String lgdBgColor = "#FF6200";
+		final String lgdTitleColor = "#FFFFFF";
 
-		String tableColor = "#F0F0F0";
-		String titleColor = "#C0C0F0";
-		String revHdrColor = "#E0E0E0";
-		String diffHdrColor = "#99CCCC";
+		final String tableColor = "#F0F0F0";
+		final String titleColor = "#C0C0F0";
+		final String revHdrColor = "#E0E0E0";
+		final String diffHdrColor = "#99CCCC";
 
-		String diffColorAdd = "#CCCCFF";
-		String diffColorChg = "#99FF99";
-		String diffColorRem = "#FFCCCC";
-		String diffColorNil = "#CCCCCC";
+		final String diffColorAdd = "#CCCCFF";
+		final String diffColorChg = "#99FF99";
+		final String diffColorRem = "#FFCCCC";
+		final String diffColorNil = "#CCCCCC";
 
-		String codeFontBeg = "<font face=\"Helvetica,Arial\" size=\"-1\">";
-		String codeFontEnd = "</font>";
+		final String codeFontBeg = "<font face=\"Helvetica,Arial\" size=\"-1\">";
+		final String codeFontEnd = "</font>";
 
 		// UNDONE
 		// REVIEW
 		// I prefer a loop that processed lines individually. This
 		// is very wasteful of memory!
 		//
-		String[] lines = StringUtilities.splitString( rawDiff, "\n" );
+		final String[] lines = StringUtilities.splitString( rawDiff, "\n" );
 
 		int lnIdx = 0;
-		int numLines = lines.length;
+		final int numLines = lines.length;
 
 		for ( ; lnIdx < numLines ; ++lnIdx )
 			{
@@ -126,31 +125,31 @@ class		HTMLHelper
 		//
 		char state = 'D';
 
-		Vector ltColV = new Vector();
-		Vector rtColV = new Vector();
+		final Vector ltColV = new Vector();
+		final Vector rtColV = new Vector();
 
 		for ( ; lnIdx < numLines ; ++lnIdx )
 			{
-			String ln = lines[lnIdx];
+			final String ln = lines[lnIdx];
 
 			if ( ln.startsWith( "@@" ) )
 				{
 				String[] flds;
-				
+
 				flds = StringUtilities.splitString( ln, " " );
 
-				String oldStr = flds[1].substring(1);
-				String newStr = flds[2].substring(1);
+				final String oldStr = flds[1].substring(1);
+				final String newStr = flds[2].substring(1);
 
 				flds = StringUtilities.splitString( oldStr, "," );
 				String oldLineCnt = "";
-				String oldLineNum = flds[0];
+				final String oldLineNum = flds[0];
 				if ( flds.length > 1 )
 					oldLineCnt = flds[1];
 
 				flds = StringUtilities.splitString( newStr, "," );
 				String newLineCnt = "1";
-				String newLineNum = flds[0];
+				final String newLineNum = flds[0];
 				if ( flds.length > 1 )
 					newLineCnt = flds[1];
 
@@ -194,8 +193,8 @@ class		HTMLHelper
 				}
 			else
 				{
-				char diffCode = ln.charAt(0);
-				String remStr = HTMLHelper.escapeHTML( ln.substring(1) );
+				final char diffCode = ln.charAt(0);
+				final String remStr = HTMLHelper.escapeHTML( ln.substring(1) );
 
 				//########
 				// ZZ
@@ -248,7 +247,7 @@ class		HTMLHelper
 					{
 					// ZZ empty diffcode
 					HTMLHelper.appendDiffLines( buf, state, ltColV, rtColV );
-					
+
 					buf.append( "<tr>" + lnSep );
 
 					buf.append( "<td>" + lnSep );
@@ -375,18 +374,18 @@ class		HTMLHelper
 		}
 
 	private static StringBuffer
-	appendDiffLines( StringBuffer buf, char state, Vector ltColV, Vector rtColV )
+	appendDiffLines( final StringBuffer buf, final char state, final Vector ltColV, final Vector rtColV )
 		{
-		String lnSep = "\r\n";
+		final String lnSep = "\r\n";
 
-		String clrRmv = "#FFCCCC";
-		String clrChg = "#99FF99";
-		String clrChgDk = "#44CC44";
-		String clrAdd = "#CCCCFF";
-		String clrNil = "#CCCCCC";
+		final String clrRmv = "#FFCCCC";
+		final String clrChg = "#99FF99";
+		final String clrChgDk = "#44CC44";
+		final String clrAdd = "#CCCCFF";
+		final String clrNil = "#CCCCCC";
 
-		String codeFontBeg = "<font face=\"Helvetica,Arial\" size=\"-1\">";
-		String codeFontEnd = "</font>";
+		final String codeFontBeg = "<font face=\"Helvetica,Arial\" size=\"-1\">";
+		final String codeFontEnd = "</font>";
 
 		if ( state == 'R' )
 			{
@@ -479,31 +478,31 @@ class		HTMLHelper
 		}
 
 	public static String
-	adjustPlainText( String text )
+	adjustPlainText( final String text )
 		{
-		int saveIdx = 0;
+		final int saveIdx = 0;
 
-		int textLen = text.length();
+		final int textLen = text.length();
 
-		StringBuffer result = new StringBuffer( textLen + 2048 );
+		final StringBuffer result = new StringBuffer( textLen + 2048 );
 
 		result.append( "<pre>\n" );
 
 		result.append( HTMLHelper.escapeHTML( text ) );
-		
+
 		result.append( "\n</pre>\n" );
 
 		return result.toString();
 		}
 
 	public static String
-	escapeHTML( String text )
+	escapeHTML( final String text )
 		{
-		int saveIdx = 0;
-		int textLen = text.length();
+		final int saveIdx = 0;
+		final int textLen = text.length();
 		boolean sendNBSP = false;
 
-		StringBuffer result =
+		final StringBuffer result =
 			new StringBuffer( textLen + 2048 );
 
 		if ( textLen == 0 )
@@ -511,7 +510,7 @@ class		HTMLHelper
 
 		for ( int i = 0 ; i < textLen ; ++i )
 			{
-			char ch = text.charAt(i);
+			final char ch = text.charAt(i);
 
 			if ( ch == '<' )
 				result.append( "&lt;" );
@@ -537,7 +536,7 @@ class		HTMLHelper
 			else
 				result.append( ch );
 			}
-	
+
 		return result.toString();
 		}
 

@@ -1,17 +1,28 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Vector;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
 
-import com.ice.config.*;
-import com.ice.pref.UserPrefs;
-import com.ice.util.AWTUtilities;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.AbstractTableModel;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 
 
 public
@@ -28,7 +39,7 @@ implements	FocusListener
 
 
 	public
-	ConfigArrayEditor( String typeName )
+	ConfigArrayEditor( final String typeName )
 		{
 		super( typeName );
 		}
@@ -39,24 +50,24 @@ implements	FocusListener
 		}
 
 	public void
-	focusGained( FocusEvent event )
+	focusGained( final FocusEvent event )
 		{
 		}
 
 	public void
-	focusLost( FocusEvent event )
+	focusLost( final FocusEvent event )
 		{
 		}
 
 	public boolean
-	isTupleTable( ConfigureSpec spec )
+	isTupleTable( final ConfigureSpec spec )
 		{
 		return false;
 		}
 
 	// REVIEW Is this a reasonable assumption?
 	public boolean
-	isStringArray( ConfigureSpec spec )
+	isStringArray( final ConfigureSpec spec )
 		{
 		return true;
 		}
@@ -64,7 +75,7 @@ implements	FocusListener
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new BorderLayout() );
 		result.setBorder(
 			new CompoundBorder(
@@ -88,11 +99,11 @@ implements	FocusListener
 
 		this.table.setIntercellSpacing( new Dimension( 3, 3 ) );
 
-		JScrollPane scroller = new JScrollPane( this.table );
+		final JScrollPane scroller = new JScrollPane( this.table );
 
 		result.add( "Center", scroller );
 
-		JPanel ctlPan = new JPanel();
+		final JPanel ctlPan = new JPanel();
 		ctlPan.setLayout( new GridLayout( 1, 3, 5, 5 ) );
 
 		result.add( "South", ctlPan );
@@ -101,7 +112,7 @@ implements	FocusListener
 			this.new ActionAdapter()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{ insertElement(); }
 				}
 			);
@@ -112,7 +123,7 @@ implements	FocusListener
 			this.new ActionAdapter()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{ appendElement(); }
 				}
 			);
@@ -123,7 +134,7 @@ implements	FocusListener
 			this.new ActionAdapter()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{ deleteElement(); }
 				}
 			);
@@ -137,7 +148,7 @@ implements	FocusListener
 	public void
 	insertElement()
 		{
-		int row = this.table.getSelectedRow();
+		final int row = this.table.getSelectedRow();
 		this.model.insertElement( "New String", row );
 		this.table.setRowSelectionInterval( row, row );
 		this.table.repaint( 250 );
@@ -147,7 +158,7 @@ implements	FocusListener
 	appendElement()
 		{
 		this.model.appendElement( "New String" );
-		int row = this.model.getRowCount() - 1;
+		final int row = this.model.getRowCount() - 1;
 		this.table.setRowSelectionInterval( row, row );
 		this.table.repaint( 250 );
 		}
@@ -171,11 +182,11 @@ implements	FocusListener
 	class		SAETableModel
 	extends		AbstractTableModel
 		{
-		private String[]		columnNames =
+		private final String[]		columnNames =
 			{
 			"Value"
 			};
-		private Class[]			columnTypes =
+		private final Class[]			columnTypes =
 			{
 			String.class
 			};
@@ -196,7 +207,7 @@ implements	FocusListener
 			}
 
 		public void
-		setData( Vector data )
+		setData( final Vector data )
 			{
 			this.data = data;
 
@@ -205,14 +216,14 @@ implements	FocusListener
 			}
 
 		public void
-		insertElement( String val, int row )
+		insertElement( final String val, final int row )
 			{
 			this.data.insertElementAt( val, row );
 			this.fireTableRowsInserted( row, row );
 			}
 
 		public void
-		appendElement( String val )
+		appendElement( final String val )
 			{
 			this.data.addElement( val );
 			this.fireTableRowsInserted
@@ -220,7 +231,7 @@ implements	FocusListener
 			}
 
 		public void
-		deleteElement( int row )
+		deleteElement( final int row )
 			{
 			this.data.removeElementAt( row );
 			this.fireTableRowsDeleted( row, row );
@@ -231,13 +242,13 @@ implements	FocusListener
 		//
 
 		public String
-		getColumnName( int column )
+		getColumnName( final int column )
 			{
 			return columnNames[ column ];
 			}
- 
+
 		public Class
-		getColumnClass( int column )
+		getColumnClass( final int column )
 			{
 			return columnTypes[column];
 			}
@@ -245,7 +256,7 @@ implements	FocusListener
 		public int
 		getColumnCount()
 			{
-			return columnNames.length; 
+			return columnNames.length;
 			}
 
 		public int
@@ -253,24 +264,24 @@ implements	FocusListener
 			{
 			if ( this.data == null )
 				return 0;
-			
+
 			return data.size();
 			}
- 
+
 		public Object
-		getValueAt( int aRow, int aColumn )
+		getValueAt( final int aRow, final int aColumn )
 			{
 			return this.data.elementAt( aRow );
 			}
 
 		public void
-		setValueAt( Object value, int row, int column )
+		setValueAt( final Object value, final int row, final int column )
 			{
 			this.data.setElementAt( value, row );
 			}
 
 		public boolean
-		isCellEditable( int row, int column )
+		isCellEditable( final int row, final int column )
 			{
 			return true;
 			}
@@ -281,7 +292,7 @@ implements	FocusListener
 	implements	ActionListener
 		{
 		public void
-		actionPerformed( ActionEvent event )
+		actionPerformed( final ActionEvent event )
 			{
 			}
 		}

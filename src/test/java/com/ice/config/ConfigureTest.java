@@ -1,16 +1,33 @@
 
 package com.ice.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
-import com.ice.pref.*;
+import com.ice.pref.PrefsTuple;
+import com.ice.pref.PrefsTupleTable;
+import com.ice.pref.UserPrefs;
+import com.ice.pref.UserPrefsConstants;
+import com.ice.pref.UserPrefsFileLoader;
+import com.ice.pref.UserPrefsLoader;
 
 
 public
@@ -32,10 +49,10 @@ implements	ActionListener
 
 		setLayout(new BorderLayout());
 
-		String dir = System.getProperty( "user.dir" );
+		final String dir = System.getProperty( "user.dir" );
 
-		UserPrefsFileLoader loader = (UserPrefsFileLoader)
-			UserPrefsLoader.getLoader( UserPrefsLoader.FILE_LOADER );
+		final UserPrefsFileLoader loader = (UserPrefsFileLoader)
+			UserPrefsLoader.getLoader( UserPrefsConstants.FILE_LOADER );
 
 		this.prefs = new UserPrefs( "ConfigTest", null );
 		this.prefs.setPropertyPrefix( "com.ice.config" );
@@ -81,19 +98,19 @@ implements	ActionListener
 		this.configure = new ConfigurePanel( prefs, specs );
 
 		this.add("Center", configure);
-		
-		JPanel buttons = new JPanel();
+
+		final JPanel buttons = new JPanel();
 		buttons.setLayout( new GridLayout( 1, 2 ) );
 		buttons.add( buttonPanel( ok = new JButton( "OK" ) ) );
 		buttons.add( buttonPanel( cancel = new JButton( "Cancel" ) ) );
 		ok.addActionListener( this );
 		cancel.addActionListener( this );
-		
-		JPanel butPan = new JPanel();
+
+		final JPanel butPan = new JPanel();
 		butPan.setLayout( new BorderLayout() );
 		butPan.add( "East", buttons );
 
-		JPanel south = new JPanel();
+		final JPanel south = new JPanel();
 		south.setLayout( new BorderLayout() );
 		south.add( "North", new JSeparator( SwingConstants.HORIZONTAL ) );
 		south.add( "Center", butPan );
@@ -102,7 +119,7 @@ implements	ActionListener
 		}
 
 	private void
-	setDefaultProperties( UserPrefs prefs )
+	setDefaultProperties( final UserPrefs prefs )
 		{
 		prefs.setProperty
 			( "contactDialog.title", "Contact Information" );
@@ -148,14 +165,14 @@ implements	ActionListener
 
 		prefs.setStringArray( "misc.people", sa );
 
-		String[] ta = new String[3];
+		final String[] ta = new String[3];
 		ta[0] = "token1";
 		ta[1] = "token2";
 		ta[2] = "token3";
 		prefs.setTokens( "misc.tokens", ta );
 
-		PrefsTuple tup;
-		PrefsTupleTable tupT = new PrefsTupleTable();
+		final PrefsTuple tup;
+		final PrefsTupleTable tupT = new PrefsTupleTable();
 		sa = new String[3];
 		sa[0] = "1";
 		sa[1] = "4";
@@ -184,7 +201,7 @@ implements	ActionListener
 		}
 
 	private void
-	setDefaultSpecifications( UserPrefs specs )
+	setDefaultSpecifications( final UserPrefs specs )
 		{
 		specs.setProperty
 			( "spec.client.misc.choice",
@@ -270,9 +287,9 @@ implements	ActionListener
 		}
 
 	private JPanel
-	buttonPanel( JButton button )
+	buttonPanel( final JButton button )
 		{
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(4, 4, 4, 4));
 		panel.setLayout(new BorderLayout());
 		panel.add("Center", button);
@@ -280,10 +297,10 @@ implements	ActionListener
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
 		boolean doExit = false;
-		Object source = event.getSource();
+		final Object source = event.getSource();
 
 		if ( source == ok )
 			{
@@ -311,7 +328,7 @@ implements	ActionListener
 
 		String dir = System.getProperty( "user.dir" );
 
-		FileDialog dlg =
+		final FileDialog dlg =
 			new FileDialog
 				( (Frame)this.getTopLevelAncestor(),
 					"Save Properties To", FileDialog.SAVE );
@@ -321,22 +338,22 @@ implements	ActionListener
 
 		dlg.show();
 
-		String file = dlg.getFile();
+		final String file = dlg.getFile();
 		dir = dlg.getDirectory();
 
 		if ( file != null && dir != null )
 			{
-			UserPrefsFileLoader loader = (UserPrefsFileLoader)
-				UserPrefsLoader.getLoader( UserPrefsLoader.FILE_LOADER );
+			final UserPrefsFileLoader loader = (UserPrefsFileLoader)
+				UserPrefsLoader.getLoader( UserPrefsConstants.FILE_LOADER );
 
-			File f = new File( dir, file );
+			final File f = new File( dir, file );
 
 			loader.setFile( f );
 
 			try {
 				loader.storePreferences( this.prefs );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				ex.printStackTrace();
 				}
@@ -344,10 +361,10 @@ implements	ActionListener
 		}
 
 	public static void
-	main( String[] args )
+	main( final String[] args )
 		throws IOException
 		{
-		JFrame frame = new JFrame("Configure Test");
+		final JFrame frame = new JFrame("Configure Test");
 		frame.setBounds(100, 100, 500, 440);
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add("Center", new ConfigureTest());

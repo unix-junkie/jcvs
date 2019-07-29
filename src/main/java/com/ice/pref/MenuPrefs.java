@@ -3,10 +3,10 @@ package com.ice.pref;
 
 import java.awt.event.ActionListener;
 
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import com.ice.util.StringUtilities;
 
@@ -17,10 +17,10 @@ extends		Object
 	{
 	static public JPopupMenu
     loadPopupMenu(
-			UserPrefs prefs, String menuPropertyName,
-			ActionListener listener )
+			final UserPrefs prefs, final String menuPropertyName,
+			final ActionListener listener )
 		{
-		JPopupMenu popup = new JPopupMenu();
+		final JPopupMenu popup = new JPopupMenu();
 
 		MenuPrefs.addMenuItems
 			( prefs, popup, menuPropertyName, listener );
@@ -29,11 +29,11 @@ extends		Object
 		}
 
 	static public void
-	addGenericItem( JComponent menu, JComponent item )
+	addGenericItem( final JComponent menu, final JComponent item )
 		{
 		if ( menu instanceof JMenu )
 			{
-			JMenu jm = (JMenu) menu;
+			final JMenu jm = (JMenu) menu;
 
 			if ( item == null )
 				jm.addSeparator();
@@ -42,7 +42,7 @@ extends		Object
 			}
 		else
 			{
-			JPopupMenu jp = (JPopupMenu) menu;
+			final JPopupMenu jp = (JPopupMenu) menu;
 
 			if ( item == null )
 				jp.addSeparator();
@@ -53,24 +53,24 @@ extends		Object
 
 	static public void
 	addMenuItems(
-			UserPrefs prefs, JComponent menu,
-			String menuPropertyName, ActionListener listener )
+			final UserPrefs prefs, final JComponent menu,
+			final String menuPropertyName, final ActionListener listener )
 		{
 		String[]	itemList;
 		String		itemString;
 		String		menuString;
-		String		itemNameStr; 
+		String		itemNameStr;
 		JMenuItem	mItem;
 
-		menuString = 
+		menuString =
 			prefs.getProperty
 				( "menu." + menuPropertyName, null );
 
 		if ( menuString == null )
 			{
-			(new Exception
+			new Exception
 				( "Menu definition property '"
-					+ menuPropertyName + "' is not defined." )).
+					+ menuPropertyName + "' is not defined." ).
 				printStackTrace( System.err );
 			return;
 			}
@@ -89,15 +89,15 @@ extends		Object
 
 				if ( itemString == null )
 					{
-					(new Exception
+					new Exception
 						( "Menu definition '" + menuPropertyName
 							+ "' is missing item definition property '"
-							+ itemNameStr + "'." )).
+							+ itemNameStr + "'." ).
 						printStackTrace( System.err );
 					}
 				else
 					{
-					int colonIdx = itemString.indexOf( ':' );
+					final int colonIdx = itemString.indexOf( ':' );
 
 					if ( itemString.equals( "-" ) )
 						{
@@ -105,25 +105,25 @@ extends		Object
 						}
 					else if ( colonIdx < 0 )
 						{
-						(new Exception
+						new Exception
 							( "Menu '" + menuPropertyName
 								+ "' Item '" + itemNameStr
-								+ "' has invalid definition." )).
+								+ "' has invalid definition." ).
 						printStackTrace( System.err );
 						}
 					 else
 						{
-						String title =
+						final String title =
 							itemString.substring( 0, colonIdx );
 
-						String command =
+						final String command =
 							itemString.substring( colonIdx + 1 );
 
 						if ( command.equals( "@" ) )
 							{
-							JMenu subMenu = new JMenu( title );
+							final JMenu subMenu = new JMenu( title );
 
-							String subMenuName =
+							final String subMenuName =
 								menuPropertyName + "." + itemList[iIdx];
 
 							MenuPrefs.addMenuItems

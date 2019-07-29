@@ -1,13 +1,30 @@
 
 package com.ice.config;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
-import javax.swing.*;
-import javax.swing.border.*;
 
-import com.ice.pref.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import com.ice.pref.PrefsTupleTable;
+import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
@@ -45,17 +62,17 @@ extends		JPanel
 
 
 	public
-	ConfigureEditor( String type )
+	ConfigureEditor( final String type )
 		{
 		super();
 		this.establishContents( type );
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String help = spec.getHelp();
-		String desc = spec.getDescription();
+		final String help = spec.getHelp();
+		final String desc = spec.getDescription();
 
 		if ( this.helpIsShowing )
 			{
@@ -90,7 +107,7 @@ extends		JPanel
 		}
 
 	public void
-	commit( ConfigureSpec spec, UserPrefs prefs, UserPrefs orig )
+	commit( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
 		if ( this.isModified( spec, prefs, orig ) )
 			{
@@ -107,13 +124,13 @@ extends		JPanel
 	 */
 
 	public void
-	commitChanges( ConfigureSpec spec, UserPrefs prefs, UserPrefs orig )
+	commitChanges( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
 		if ( this.isStringArray( spec ) )
 			{
-			String[] strAry =
+			final String[] strAry =
 				prefs.getStringArray( propName, null );
 
 			orig.removeStringArray( propName );
@@ -124,7 +141,7 @@ extends		JPanel
 			}
 		else if ( this.isTupleTable( spec ) )
 			{
-			PrefsTupleTable table =
+			final PrefsTupleTable table =
 				prefs.getTupleTable( propName, null );
 
 			orig.removeTupleTable( propName );
@@ -135,19 +152,19 @@ extends		JPanel
 			}
 		else
 			{
-			String value = prefs.getProperty( propName );
+			final String value = prefs.getProperty( propName );
 			orig.setProperty( propName, value );
 			}
 		}
 
 	public boolean
-	isTupleTable( ConfigureSpec spec )
+	isTupleTable( final ConfigureSpec spec )
 		{
 		return spec.isTupleTable();
 		}
 
 	public boolean
-	isStringArray( ConfigureSpec spec )
+	isStringArray( final ConfigureSpec spec )
 		{
 		return spec.isStringArray();
 		}
@@ -161,16 +178,16 @@ extends		JPanel
 	 */
 
 	public boolean
-	isModified( ConfigureSpec spec, UserPrefs prefs, UserPrefs orig )
+	isModified( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
 		if ( this.isTupleTable( spec ) )
 			{
-			PrefsTupleTable nt =
+			final PrefsTupleTable nt =
 				prefs.getTupleTable( propName, null );
 
-			PrefsTupleTable ot =
+			final PrefsTupleTable ot =
 				orig.getTupleTable( propName, null );
 
 			if ( nt != null && ot != null )
@@ -185,9 +202,9 @@ extends		JPanel
 			}
 		else if ( this.isStringArray( spec ) )
 			{
-			String[] na =
+			final String[] na =
 				prefs.getStringArray( propName, null );
-			String[] oa =
+			final String[] oa =
 				orig.getStringArray( propName, null );
 
 			if ( na != null && oa != null )
@@ -206,8 +223,8 @@ extends		JPanel
 			}
 		else
 			{
-			String ns = prefs.getProperty( propName );
-			String os = orig.getProperty( propName );
+			final String ns = prefs.getProperty( propName );
+			final String os = orig.getProperty( propName );
 
 			if ( ns != null && os != null )
 				{
@@ -235,9 +252,9 @@ extends		JPanel
 	protected JPanel
 	establishHelpPanel()
 		{
-		JLabel lbl;
+		final JLabel lbl;
 
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 
 		result.setLayout( new BorderLayout() );
 		result.setBorder( new EmptyBorder( 5, 3, 3, 3 ) );
@@ -277,12 +294,12 @@ extends		JPanel
 		}
 
 	private JPanel
-	establishEditPanel( String type )
+	establishEditPanel( final String type )
 		{
-		int col = 0;
+		final int col = 0;
 		int row = 0;
 
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 
 		this.editorPanel = this.createEditPanel();
@@ -319,7 +336,7 @@ extends		JPanel
 			0, row++, 1, 1, 1.0, 1.0,
 			new Insets( this.descOffset, 5, 5, 5 ) );
 
-		JPanel fillerPan = new JPanel();
+		final JPanel fillerPan = new JPanel();
 		AWTUtilities.constrain(
 			result, fillerPan,
 			GridBagConstraints.BOTH,
@@ -330,14 +347,14 @@ extends		JPanel
 		}
 
 	private void
-	establishContents( String type )
+	establishContents( final String type )
 		{
 		this.setLayout( new BorderLayout() );
 
-		JPanel typePan = new JPanel();
+		final JPanel typePan = new JPanel();
 		typePan.setLayout( new GridBagLayout() );
 
-		JLabel lbl = new JLabel( type );
+		final JLabel lbl = new JLabel( type );
 		lbl.setBorder( new EmptyBorder( 3, 3, 5, 3 ) );
 		AWTUtilities.constrain(
 			typePan, lbl,
@@ -346,17 +363,17 @@ extends		JPanel
 			0, 0, 1, 1, 1.0, 0.0 );
 
 		try {
-			Image iHelp =
+			final Image iHelp =
 				AWTUtilities.getImageResource
 					( "/com/ice/config/images/icons/confighelp.gif" );
-			Icon helpIcon = new ImageIcon( iHelp );
+			final Icon helpIcon = new ImageIcon( iHelp );
 			this.helpButton = new JButton( helpIcon )
 				{
 				public boolean isFocusTraversable() { return false; }
 				};
 			this.helpButton.setMargin( new Insets( 1,3,1,3 ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			this.helpButton = new JButton( "?" );
 			}
@@ -367,7 +384,7 @@ extends		JPanel
 			( new ActionListener()
 				{
 				public void
-				actionPerformed( ActionEvent evt )
+				actionPerformed( final ActionEvent evt )
 					{ toggleHelp(); }
 				}
 			);

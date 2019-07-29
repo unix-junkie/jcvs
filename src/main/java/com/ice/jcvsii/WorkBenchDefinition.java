@@ -6,12 +6,12 @@ public
 class		WorkBenchDefinition
 implements	java.io.Serializable
 	{
-	private boolean		leaf;
-	private String		name;
-	private String		path;
-	private String		displayName;
-	private String		description;
-	private String		localRoot;
+	private final boolean		leaf;
+	private final String		name;
+	private final String		path;
+	private final String		displayName;
+	private final String		description;
+	private final String		localRoot;
 
 	/**
 	 * Folder
@@ -19,8 +19,8 @@ implements	java.io.Serializable
 
 	public
 	WorkBenchDefinition
-			( String name, String path,
-				String display, String desc )
+			( final String name, final String path,
+				final String display, final String desc )
 		{
 		this.leaf = false;
 		this.name = name;
@@ -36,8 +36,8 @@ implements	java.io.Serializable
 
 	public
 	WorkBenchDefinition
-			( String name, String path,
-				String display, String desc, String root )
+			( final String name, final String path,
+				final String display, final String desc, final String root )
 		{
 		this.leaf = true;
 		this.name = name;

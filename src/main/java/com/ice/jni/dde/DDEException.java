@@ -24,7 +24,7 @@ DDEException extends Exception
 		}
 
 	public
-	DDEException( String msg )
+	DDEException( final String msg )
 		{
 		super( msg );
 		}

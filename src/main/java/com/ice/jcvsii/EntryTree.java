@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,24 +16,16 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.Font;
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.Font;
+
 import javax.swing.JTree;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
-import javax.swing.plaf.TreeUI;
-import javax.swing.plaf.basic.BasicTreeUI;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 
 public
@@ -43,20 +35,20 @@ extends		JTree
 	protected EntryTreeRenderer	renderer;
 
 	public
-	EntryTree( EntryTreeModel model )
+	EntryTree( final EntryTreeModel model )
 		{
 		this( model, new EntryColumnModel() );
 		}
 
 	public
-	EntryTree( EntryTreeModel model, EntryColumnModel columnModel )
+	EntryTree( final EntryTreeModel model, final EntryColumnModel columnModel )
 		{
 		super( model );
 
 		this.setRootVisible( false );
 		this.setShowsRootHandles( true );
 		this.setScrollsOnExpand( false );
-		
+
 		// REVIEW
 		// NODE DIMENSION CACHE HACK
 		//
@@ -113,7 +105,7 @@ extends		JTree
 	public Dimension
 	getPreferredSize()
 		{
-		Dimension sz = super.getPreferredSize();
+		final Dimension sz = super.getPreferredSize();
 		sz.width = this.renderer.getPreferredSize().width + 3; // REVIEW where should 3 come from?
 		return sz;
 		}
@@ -131,7 +123,7 @@ extends		JTree
 	public void
 	resetCachedSizes()
 		{
-		int h = this.getRowHeight();
+		final int h = this.getRowHeight();
 		this.setRowHeight( h - 1 );
 		this.setRowHeight( h );
 		}
@@ -142,7 +134,7 @@ extends		JTree
 	public void
 	resetDisplayCaches()
 		{
-		EntryTreeModel model = (EntryTreeModel) this.getModel();
+		final EntryTreeModel model = (EntryTreeModel) this.getModel();
 		model.getEntryRootNode().resetDisplayCaches();
 		}
 
@@ -150,7 +142,7 @@ extends		JTree
 	 * We override setFont() so we can set the row height to match.
 	 */
 	public void
-	setFont( Font f )
+	setFont( final Font f )
 		{
 		super.setFont( f );
 		int h = f.getSize() + 5; // UNDONE Wish I had font metrics here!!!
@@ -165,10 +157,10 @@ extends		JTree
 		}
 
 	public void
-	setNameWidth( int w )
+	setNameWidth( final int w )
 		{
 		this.renderer.setNameWidth( w );
-		Dimension sz = this.renderer.getPreferredSize();
+		final Dimension sz = this.renderer.getPreferredSize();
 		this.setSize( new Dimension( sz.width, this.getSize().height ) );
 		}
 
@@ -179,10 +171,10 @@ extends		JTree
 		}
 
 	public void
-	setVersionWidth( int w )
+	setVersionWidth( final int w )
 		{
 		this.renderer.setVersionWidth( w );
-		Dimension sz = this.renderer.getPreferredSize();
+		final Dimension sz = this.renderer.getPreferredSize();
 		this.setSize( new Dimension( sz.width, this.getSize().height ) );
 		}
 
@@ -193,10 +185,10 @@ extends		JTree
 		}
 
 	public void
-	setTagWidth( int w )
+	setTagWidth( final int w )
 		{
 		this.renderer.setTagWidth( w );
-		Dimension sz = this.renderer.getPreferredSize();
+		final Dimension sz = this.renderer.getPreferredSize();
 		this.setSize( new Dimension( sz.width, this.getSize().height ) );
 		}
 
@@ -207,10 +199,10 @@ extends		JTree
 		}
 
 	public void
-	setModifiedWidth( int w )
+	setModifiedWidth( final int w )
 		{
 		this.renderer.setModifiedWidth( w );
-		Dimension sz = this.renderer.getPreferredSize();
+		final Dimension sz = this.renderer.getPreferredSize();
 		this.setSize( new Dimension( sz.width, this.getSize().height ) );
 		}
 

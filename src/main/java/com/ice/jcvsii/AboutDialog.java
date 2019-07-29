@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,18 +16,34 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.lang.*;
-import javax.swing.*;
-import javax.swing.border.*;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
 import com.ice.util.AWTUtilities;
 
@@ -46,11 +62,11 @@ AboutDialog extends JDialog
 	static public final String		RCS_ID = "$Id: AboutDialog.java,v 1.2 1999/04/01 19:41:10 time Exp $";
 	static public final String		RCS_REV = "$Revision: 1.2 $";
 
-	private String		messageString;
+	private final String		messageString;
 	private JTextArea	messageText;
 
 	public
-	AboutDialog( Frame parent )
+	AboutDialog( final Frame parent )
 		{
 		super( parent, "jCVS II", true );
 
@@ -60,9 +76,9 @@ AboutDialog extends JDialog
 
 		this.pack();
 
-		Dimension sz = this.getPreferredSize();
+		final Dimension sz = this.getPreferredSize();
 
-		Point location =
+		final Point location =
 			AWTUtilities.computeDialogLocation
 				( this, sz.width, sz.height );
 
@@ -70,9 +86,9 @@ AboutDialog extends JDialog
 		}
 
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-	    String command = evt.getActionCommand();
+	    final String command = evt.getActionCommand();
 
 		if ( command.compareTo( "OK" ) == 0 )
 			{
@@ -81,7 +97,7 @@ AboutDialog extends JDialog
         }
 
 	public void
-	establishDialogContents() 
+	establishDialogContents()
 		{
 		JButton			button;
 
@@ -90,7 +106,7 @@ AboutDialog extends JDialog
 			img = AWTUtilities.getImageResource
 				( "/com/ice/jcvsii/images/splash.gif" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			ex.printStackTrace();
 			}
@@ -98,7 +114,7 @@ AboutDialog extends JDialog
 		JLabel logoLabel = new JLabel( "jCVS II" );
 		if ( img != null )
 			{
-			Icon icon = new ImageIcon( img );
+			final Icon icon = new ImageIcon( img );
 			logoLabel = new JLabel( icon );
 			}
 
@@ -113,19 +129,19 @@ AboutDialog extends JDialog
 		this.messageText.setMargin( new Insets( 5, 5, 5, 5 ) );
 		this.messageText.setFont( new Font( "Serif", Font.PLAIN, 12 ) );
 
-		String[] fmtArgs = { JCVS.getVersionString() };
+		final String[] fmtArgs = { JCVS.getVersionString() };
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		String msgStr =
+		final String msgStr =
 			rmgr.getUIFormat( "about.dialog.text", fmtArgs );
 
 		this.messageText.setText( msgStr );
 
-		JScrollPane scroller = new JScrollPane();
+		final JScrollPane scroller = new JScrollPane();
 		scroller.getViewport().add( this.messageText );
 
-		JPanel ctlPan = new JPanel();
+		final JPanel ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 
 		button = new JButton( rmgr.getUIString( "name.for.ok" ) );
@@ -133,7 +149,7 @@ AboutDialog extends JDialog
 		button.setActionCommand( "OK" );
 		ctlPan.add( BorderLayout.EAST, button );
 
-		JPanel content = new JPanel();
+		final JPanel content = new JPanel();
 		content.setLayout( new BorderLayout( 0, 8 ) );
 		content.setBorder( new EmptyBorder( 6, 6, 6, 6 ) );
 

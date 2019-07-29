@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,11 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
-																			
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
 
 /**
  * Encapsulates a 'Notify' request, resulting a an 'edit' or 'unedit'.
@@ -44,19 +39,19 @@ CVSNotifyItem extends Object
 	static public final String	RCS_ID = "$Id: CVSNotifyItem.java,v 2.2 2003/07/27 01:08:32 time Exp $";
 	static public final String	RCS_REV = "$Revision: 2.2 $";
 
-	private String			type;
-	private String			name;
-	private String			time;
-	private String			host;
-	private String			wdir;
-	private String			watches;
+	private final String			type;
+	private final String			name;
+	private final String			time;
+	private final String			host;
+	private final String			wdir;
+	private final String			watches;
 
-	private String			repository;
+	private final String			repository;
 
 
 	public CVSNotifyItem(
-			String type, String name, String time, String host,
-			String wdir, String watches, String repository )
+			final String type, final String name, final String time, final String host,
+			final String wdir, final String watches, final String repository )
 		{
 		super();
 
@@ -135,4 +130,4 @@ CVSNotifyItem extends Object
 			this.repository + "]";
 		}
 	}
-	   
+

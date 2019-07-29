@@ -1,22 +1,38 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import javax.swing.AbstractAction;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
+import com.ice.cvsc.CVSCUtilities;
 import com.ice.cvsc.CVSProject;
 import com.ice.cvsc.CVSProjectDef;
-import com.ice.cvsc.CVSCUtilities;
-import com.ice.pref.UserPrefs;
-import com.ice.util.AWTUtilities;
 import com.ice.event.TreePopupMouseAdapter;
+import com.ice.pref.UserPrefs;
 
 
 public
@@ -35,7 +51,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 
 
 	public
-	WorkBenchTreePanel( WorkBenchDetailPanel detailPan )
+	WorkBenchTreePanel( final WorkBenchDetailPanel detailPan )
 		{
 		super();
 		this.detailPan = detailPan;
@@ -54,9 +70,9 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equals( "OPEN" ) )
 			{
@@ -74,7 +90,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	public void
 	addNewFolder()
 		{
-		WorkBenchTreeNode parent = (WorkBenchTreeNode)
+		final WorkBenchTreeNode parent = (WorkBenchTreeNode)
 			this.tree.getLastSelectedPathComponent();
 
 		if ( parent == null )
@@ -83,21 +99,21 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		if ( parent.isLeaf() )
 			return;
 
-		String nodePath = parent.getPathString();
+		final String nodePath = parent.getPathString();
 
-		WorkBenchInfoDialog dlg =
+		final WorkBenchInfoDialog dlg =
 			new WorkBenchInfoDialog
 				( (Frame) this.getTopLevelAncestor(),
 					parent, true, null, nodePath, "" );
 
 		dlg.show();
 
-		WorkBenchDefinition wDef =
+		final WorkBenchDefinition wDef =
 			dlg.getWorkBenchDefinition();
 
 		if ( wDef != null )
 			{
-			WorkBenchTreeNode child =
+			final WorkBenchTreeNode child =
 				new WorkBenchTreeNode( wDef );
 
 			parent.add( child );
@@ -109,7 +125,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	public void
 	addNewProject()
 		{
-		WorkBenchTreeNode parent = (WorkBenchTreeNode)
+		final WorkBenchTreeNode parent = (WorkBenchTreeNode)
 			this.tree.getLastSelectedPathComponent();
 
 		if ( parent == null )
@@ -118,10 +134,10 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		if ( parent.isLeaf() )
 			return;
 
-		String prompt =
+		final String prompt =
 			ResourceMgr.getInstance().getUIString( "wb.add.project.prompt" );
 
-		String localRootDir =
+		final String localRootDir =
 			ProjectFrame.getUserSelectedProject
 				( (Frame)this.getTopLevelAncestor(),
 					prompt, null ); // UNDONE initial directory
@@ -133,32 +149,32 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		}
 
 	public void
-	addNewProject( WorkBenchTreeNode parent, String localRootDir )
+	addNewProject( final WorkBenchTreeNode parent, String localRootDir )
 		{
 		localRootDir = CVSCUtilities.importPath( localRootDir );
 
-		String rootFilePath =
+		final String rootFilePath =
 			CVSProject.getAdminRootPath
 				( CVSProject.rootPathToAdminPath( localRootDir ) );
 
-		String reposFilePath =
+		final String reposFilePath =
 			CVSProject.getAdminRepositoryPath
 				( CVSProject.rootPathToAdminPath( localRootDir ) );
 
-		File adminRootFile =
+		final File adminRootFile =
 			new File( CVSCUtilities.exportPath( rootFilePath ) );
 
-		File adminReposFile =
+		final File adminReposFile =
 			new File( CVSCUtilities.exportPath( reposFilePath ) );
 
 		try {
-			String rootStr =
+			final String rootStr =
 				CVSCUtilities.readStringFile( adminRootFile );
 
-			String reposStr =
+			final String reposStr =
 				CVSCUtilities.readStringFile( adminReposFile );
 
-			CVSProjectDef pDef =
+			final CVSProjectDef pDef =
 				new CVSProjectDef( rootStr, reposStr );
 
 			if ( ! pDef.isValid() )
@@ -166,26 +182,26 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 					( "ERROR parsing project specification, "
 						+ pDef.getReason() );
 
-			String nodePath = parent.getPathString();
+			final String nodePath = parent.getPathString();
 
 			String defName = pDef.getRepository();
-			int index = defName.lastIndexOf( "/" );
-			if ( index > 0 && index < (defName.length() - 1 ) )
+			final int index = defName.lastIndexOf( "/" );
+			if ( index > 0 && index < defName.length() - 1 )
 				defName = defName.substring( index + 1 );
 
-			WorkBenchInfoDialog dlg =
+			final WorkBenchInfoDialog dlg =
 				new WorkBenchInfoDialog
 					( (Frame) this.getTopLevelAncestor(),
 						parent, false, defName, nodePath, localRootDir );
 
 			dlg.show();
 
-			WorkBenchDefinition wDef =
+			final WorkBenchDefinition wDef =
 				dlg.getWorkBenchDefinition();
 
 			if ( wDef != null )
 				{
-				WorkBenchTreeNode child =
+				final WorkBenchTreeNode child =
 					new WorkBenchTreeNode( wDef );
 
 				parent.add( child );
@@ -193,16 +209,16 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 				this.model.fireTreeChanged();
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			ex.printStackTrace();
 			}
 		}
 
 	public void
-	addProjectToWorkBench( CVSProject project )
+	addProjectToWorkBench( final CVSProject project )
 		{
-		WorkBenchTreeNode parent = (WorkBenchTreeNode)
+		final WorkBenchTreeNode parent = (WorkBenchTreeNode)
 			this.tree.getLastSelectedPathComponent();
 
 		boolean showMessage = false;
@@ -217,9 +233,9 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 
 		if ( showMessage )
 			{
-			ResourceMgr rmgr = ResourceMgr.getInstance();
-			String msg = rmgr.getUIString( "wb.add.needs.folder.msg" );
-			String title = rmgr.getUIString( "wb.add.needs.folder.title" );
+			final ResourceMgr rmgr = ResourceMgr.getInstance();
+			final String msg = rmgr.getUIString( "wb.add.needs.folder.msg" );
+			final String title = rmgr.getUIString( "wb.add.needs.folder.title" );
 			JOptionPane.showMessageDialog
 				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.WARNING_MESSAGE );
@@ -232,17 +248,17 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	public void
 	deleteSelection()
 		{
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		WorkBenchTreeNode node = (WorkBenchTreeNode)
+		final WorkBenchTreeNode node = (WorkBenchTreeNode)
 			this.tree.getLastSelectedPathComponent();
 
 		if ( ! node.isLeaf() )
 			{
 			if ( node.getChildCount() > 0 )
 				{
-				String msg = rmgr.getUIString( "wb.folder.notempty.msg" );
-				String title = rmgr.getUIString( "wb.folder.notempty.title" );
+				final String msg = rmgr.getUIString( "wb.folder.notempty.msg" );
+				final String title = rmgr.getUIString( "wb.folder.notempty.title" );
 				JOptionPane.showMessageDialog
 					( this.getTopLevelAncestor(),
 						msg, title, JOptionPane.WARNING_MESSAGE );
@@ -252,7 +268,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 
 		if ( node != null )
 			{
-			String[] fmtArgs = new String[2];
+			final String[] fmtArgs = new String[2];
 
 			fmtArgs[0] = node.toString();
 			fmtArgs[1] =
@@ -260,8 +276,8 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 				? rmgr.getUIString( "name.for.project" )
 				: rmgr.getUIString( "name.for.folder" );
 
-			String title = rmgr.getUIString( "wb.confirm.delete.title" );
-			String msg = rmgr.getUIFormat( "wb.confirm.delete.msg", fmtArgs );
+			final String title = rmgr.getUIString( "wb.confirm.delete.title" );
+			final String msg = rmgr.getUIFormat( "wb.confirm.delete.msg", fmtArgs );
 			if ( JOptionPane.showConfirmDialog
 					( this.getTopLevelAncestor(), msg, title,
 						JOptionPane.YES_OPTION ) == JOptionPane.YES_OPTION )
@@ -275,7 +291,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	public void
 	openSelection()
 		{
-		WorkBenchTreeNode node = (WorkBenchTreeNode)
+		final WorkBenchTreeNode node = (WorkBenchTreeNode)
 			this.tree.getLastSelectedPathComponent();
 
 		if ( node != null && node.isLeaf() )
@@ -285,9 +301,9 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		}
 
 	private void
-	openDefinition( WorkBenchDefinition def )
+	openDefinition( final WorkBenchDefinition def )
 		{
-		String localRoot = def.getLocalDirectory();
+		final String localRoot = def.getLocalDirectory();
 
 		if ( ! ProjectFrameMgr.checkProjectOpen( localRoot ) )
 			{
@@ -302,15 +318,15 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 				}
 			else
 				{
-				ResourceMgr rmgr = ResourceMgr.getInstance();
-				String[] fmtArgs = { localRoot };
-				String title = rmgr.getUIString
+				final ResourceMgr rmgr = ResourceMgr.getInstance();
+				final String[] fmtArgs = { localRoot };
+				final String title = rmgr.getUIString
 					( "global.invalid.cvsadmin.title" );
-				String msg = rmgr.getUIFormat
+				final String msg = rmgr.getUIFormat
 					( "global.invalid.cvsadmin.msg", fmtArgs );
 
 				JOptionPane.showMessageDialog
-					( (Frame)this.getTopLevelAncestor(),
+					( this.getTopLevelAncestor(),
 						msg, title, JOptionPane.ERROR_MESSAGE );
 				}
 
@@ -320,21 +336,21 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		}
 
 	public void
-	focusGained( FocusEvent e )
+	focusGained( final FocusEvent e )
 		{
 		this.scroller.setBorder( this.actBorder );
 		}
 
 	public void
-	focusLost( FocusEvent e )
+	focusLost( final FocusEvent e )
 		{
 		this.scroller.setBorder( this.deActBorder );
 		}
 
 	public void
-	valueChanged( TreeSelectionEvent event )
+	valueChanged( final TreeSelectionEvent event )
 		{
-		WorkBenchTreeNode node = (WorkBenchTreeNode)
+		final WorkBenchTreeNode node = (WorkBenchTreeNode)
 			tree.getLastSelectedPathComponent();
 
 		if ( node == null )
@@ -344,20 +360,20 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 			}
 		else
 			{
-			WorkBenchDefinition def = node.getDefinition();
+			final WorkBenchDefinition def = node.getDefinition();
 			detailPan.showDefinition( def );
 			this.dblClickAction.setEnabled( true );
 			}
 		}
 
 	public void
-	addTreeSelectionListener( TreeSelectionListener l )
+	addTreeSelectionListener( final TreeSelectionListener l )
 		{
 		this.tree.addTreeSelectionListener( l );
 		}
 
 	public void
-	removeTreeSelectionListener( TreeSelectionListener l )
+	removeTreeSelectionListener( final TreeSelectionListener l )
 		{
 		this.tree.removeTreeSelectionListener( l );
 		}
@@ -365,18 +381,18 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	private void
 	establishContents()
 		{
-		JLabel lbl;
+		final JLabel lbl;
 
 		this.setLayout( new BorderLayout() );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
-		String display = rmgr.getUIString( "wb.rootnode.display" );
-		String desc = rmgr.getUIString( "wb.rootnode.desc" );
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
+		final String display = rmgr.getUIString( "wb.rootnode.display" );
+		final String desc = rmgr.getUIString( "wb.rootnode.desc" );
 
-		WorkBenchDefinition def =
+		final WorkBenchDefinition def =
 			new WorkBenchDefinition( "root", "", display, desc );
 
-		WorkBenchTreeNode rootNode = new WorkBenchTreeNode( def );
+		final WorkBenchTreeNode rootNode = new WorkBenchTreeNode( def );
 
 		this.model = new WorkBenchTreeModel( rootNode );
 
@@ -388,16 +404,16 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 
 		this.tree.putClientProperty( "JTree.lineStyle", "Angled" );
 
-		DefaultTreeCellRenderer defRend =
+		final DefaultTreeCellRenderer defRend =
 			new DefaultTreeCellRenderer()
 				{
-				/**  
+				/**
 				 * Overrides return slightly taller preferred size value.
 				 */
 				public Dimension
 				getPreferredSize()
 					{
-					Dimension result = super.getPreferredSize();
+					final Dimension result = super.getPreferredSize();
 					if ( result != null ) result.height += 2;
 					return result;
 					}
@@ -413,7 +429,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 			new AbstractAction()
 				{
 				public void
-				actionPerformed( ActionEvent event )
+				actionPerformed( final ActionEvent event )
 					{ openSelection(); }
 				};
 
@@ -423,7 +439,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 			( new TreePopupMouseAdapter
 				( this.tree, null, null, this.dblClickAction, "OPEN" ) );
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
 		this.model.loadWorkBench( prefs );
 
@@ -446,7 +462,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	private void
 	setWaitCursor()
 		{
-		Container frame = this.getTopLevelAncestor();
+		final Container frame = this.getTopLevelAncestor();
 		MainFrame.setWaitCursor( frame, true );
 	//	this.getTopLevelAncestor().setCursor
 	//		( Cursor.getPredefinedCursor( Cursor.WAIT_CURSOR ) );
@@ -455,7 +471,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 	private void
 	setDefaultCursor()
 		{
-		Container frame = this.getTopLevelAncestor();
+		final Container frame = this.getTopLevelAncestor();
 		MainFrame.setWaitCursor( frame, false );
 	//	this.getTopLevelAncestor().setCursor
 	//		( Cursor.getDefaultCursor() );

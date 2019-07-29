@@ -1,8 +1,8 @@
 /*
 ** Copyright (c) 1997 by Tim Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -15,17 +15,26 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.lang.reflect.*;
-import java.io.*;
-import java.awt.*;
-import java.util.*;
-import java.net.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Vector;
 
 
 /**
@@ -120,7 +129,7 @@ import java.net.*;
  *
  *		// Now app should process remaining arguments...
  *
- *		// LOAD PROPERTIES 
+ *		// LOAD PROPERTIES
  *		UserProperties.loadProperties( "com.ice.webtool", null );
  * </pre>
  *
@@ -276,43 +285,43 @@ UserProperties
 		}
 
 	static public void
-	setDebug( boolean debug )
+	setDebug( final boolean debug )
 		{
 		UserProperties.debug = debug;
 		}
 
 	static public void
-	setVerbose( boolean verbose )
+	setVerbose( final boolean verbose )
 		{
 		UserProperties.verbose = verbose;
 		}
 
 	static public void
-	setLocalPropertyFile( String fileName )
+	setLocalPropertyFile( final String fileName )
 		{
 		UserProperties.localPropertyFile = fileName;
 		}
 
 	static public void
-	setDefaultsResource( String rsrcName )
+	setDefaultsResource( final String rsrcName )
 		{
 		UserProperties.defaultsResource = rsrcName;
 		}
 
 	static public void
-	setOSSuffix( String suffix )
+	setOSSuffix( final String suffix )
 		{
 		UserProperties.osSuffix = suffix;
 		}
 
 	static public void
-	setUserSuffix( String suffix )
+	setUserSuffix( final String suffix )
 		{
 		UserProperties.userSuffix = suffix;
 		}
 
 	static public void
-	setPropertyPrefix( String prefix )
+	setPropertyPrefix( final String prefix )
 		{
 		if ( prefix.endsWith( "." ) )
 			UserProperties.prefix = prefix;
@@ -333,7 +342,7 @@ UserProperties
 		}
 
 	static public Font
-	getFont( String name, Font defaultFont )
+	getFont( final String name, final Font defaultFont )
 		{
 		return
 			Font.getFont
@@ -342,7 +351,7 @@ UserProperties
 		}
 
 	static public Color
-	getColor( String name, Color defaultColor )
+	getColor( final String name, final Color defaultColor )
 		{
 		return
 			Color.getColor
@@ -351,13 +360,13 @@ UserProperties
 		}
 
 	static public String
-	prefixedPropertyName( String name )
+	prefixedPropertyName( final String name )
 		{
 		return UserProperties.prefix + name;
 		}
 
 	public static String
-	normalizePropertyName( String name )
+	normalizePropertyName( final String name )
 		{
 		if ( name.startsWith( "." ) )
 			return name.substring(1);
@@ -376,7 +385,7 @@ UserProperties
 	 */
 
 	static private String
-	getOverridableProperty( String name, String defval )
+	getOverridableProperty( final String name, final String defval )
 		{
 		String		value = null;
 		String		overName = null;
@@ -466,9 +475,9 @@ UserProperties
 	 */
 
 	static public String
-	getProperty( String name, String defval )
+	getProperty( final String name, final String defval )
 		{
-		String result =
+		final String result =
 			UserProperties.getOverridableProperty
 				( name, defval );
 		return result;
@@ -485,16 +494,16 @@ UserProperties
 	 */
 
 	static public int
-	getProperty( String name, int defval )
+	getProperty( final String name, final int defval )
 		{
 		int result = defval;
 
-		String val = UserProperties.getProperty( name, null );
+		final String val = UserProperties.getProperty( name, null );
 
 		if ( val != null )
 			{
 			try { result = Integer.parseInt( val ); }
-				catch ( NumberFormatException ex )
+				catch ( final NumberFormatException ex )
 					{ result = defval; }
 			}
 
@@ -512,16 +521,16 @@ UserProperties
 	 */
 
 	static public long
-	getProperty( String name, long defval )
+	getProperty( final String name, final long defval )
 		{
 		long result = defval;
 
-		String val = UserProperties.getProperty( name, null );
+		final String val = UserProperties.getProperty( name, null );
 
 		if ( val != null )
 			{
 			try { result = Long.parseLong( val ); }
-				catch ( NumberFormatException ex )
+				catch ( final NumberFormatException ex )
 					{ result = defval; }
 			}
 
@@ -539,16 +548,16 @@ UserProperties
 	 */
 
 	static public double
-	getProperty( String name, double defval )
+	getProperty( final String name, final double defval )
 		{
 		double result = defval;
 
-		String val = UserProperties.getProperty( name, null );
+		final String val = UserProperties.getProperty( name, null );
 
 		if ( val != null )
 			{
 			try { result = Double.valueOf( val ).doubleValue(); }
-				catch ( NumberFormatException ex )
+				catch ( final NumberFormatException ex )
 					{ result = defval; }
 			}
 
@@ -566,11 +575,11 @@ UserProperties
 	 */
 
 	static public boolean
-	getProperty( String name, boolean defval )
+	getProperty( final String name, final boolean defval )
 		{
 		boolean result = defval;
 
-		String val = UserProperties.getProperty( name, null );
+		final String val = UserProperties.getProperty( name, null );
 
 		if ( val != null )
 			{
@@ -601,11 +610,11 @@ UserProperties
 	 */
 
 	static public String[]
-	getStringArray( String name, String[] defval )
+	getStringArray( final String name, final String[] defval )
 		{
 		String[] result = defval;
 
-		String val = UserProperties.getProperty( name, null );
+		final String val = UserProperties.getProperty( name, null );
 
 		if ( val != null )
 			{
@@ -616,11 +625,11 @@ UserProperties
 		}
 
 	static public Vector
-	getStringVector( String name, Vector defval )
+	getStringVector( final String name, final Vector defval )
 		{
 		Vector result = defval;
 
-		String[] sa =
+		final String[] sa =
 			UserProperties.getStringArray
 				( name, null );
 
@@ -643,26 +652,26 @@ UserProperties
 	 */
 
 	static public int
-	getClassConstant( String name, int defval )
+	getClassConstant( final String name, final int defval )
 		{
 		int result = defval;
 
-		String val = UserProperties.getProperty( name, null );
+		final String val = UserProperties.getProperty( name, null );
 
 		if ( val != null )
 			{
-			int index = val.lastIndexOf( "." );
+			final int index = val.lastIndexOf( "." );
 
 			if ( index > 0 )
 				{
 				try {
-					String className = val.substring( 0, index );
-					String constName = val.substring( index + 1);
-					Class cls = Class.forName( className );
-					Field fld = cls.getField( constName );
+					final String className = val.substring( 0, index );
+					final String constName = val.substring( index + 1);
+					final Class cls = Class.forName( className );
+					final Field fld = cls.getField( constName );
 					result = fld.getInt( null );
 					}
-				catch ( Exception ex )
+				catch ( final Exception ex )
 					{
 					result = defval;
 					ICETracer.traceWithStack
@@ -681,7 +690,7 @@ UserProperties
 	 */
 
 	static public void
-	defaultProperties( Properties props )
+	defaultProperties( final Properties props )
 		{
 		props.put( "com.ice.util.UserProperties.revision", "$Revision: 1.10 $" );
 		props.put( "copyright", "Copyright (c) by Tim Endres" );
@@ -698,18 +707,18 @@ UserProperties
 		}
 
 	static public void
-	includeProperties( Properties into, Properties from )
+	includeProperties( final Properties into, final Properties from )
 		{
-		Enumeration enum = from.keys();
+		final Enumeration enumeration = from.keys();
 
-		for ( ; enum.hasMoreElements() ; )
+		for ( ; enumeration.hasMoreElements() ; )
 			{
 			Object key = null;
 
-			try { key = (String)enum.nextElement(); }
-				catch ( NoSuchElementException ex )
+			try { key = enumeration.nextElement(); }
+				catch ( final NoSuchElementException ex )
 					{ key = null; }
-			
+
 			if ( key != null )
 				{
 				into.put( key, from.get( key ) );
@@ -718,7 +727,7 @@ UserProperties
 		}
 
 	static public void
-	addDefaultProperties( Properties props, Properties defaultProps )
+	addDefaultProperties( final Properties props, final Properties defaultProps )
 		{
 		UserProperties.includeProperties( props, defaultProps );
 		}
@@ -731,7 +740,7 @@ UserProperties
 	 */
 
 	static private boolean
-	loadPropertiesStream( InputStream in, Properties props )
+	loadPropertiesStream( final InputStream in, final Properties props )
 		throws IOException
 		{
 		props.load( in );
@@ -739,14 +748,14 @@ UserProperties
 		}
 
 	static private void
-	doLoadPropertiesFile( String path, Properties props, Properties loaded )
+	doLoadPropertiesFile( final String path, final Properties props, final Properties loaded )
 		throws IOException
 		{
 		FileInputStream	in;
-		boolean			result = true;
+		final boolean			result = true;
 
 		try { in = new FileInputStream( path ); }
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			throw new IOException
 				( "opening property file '" + path
@@ -764,7 +773,7 @@ UserProperties
 				UserProperties.loadPropertiesStream( in, props );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			throw new IOException
 				( "loading property file '" + path
@@ -772,7 +781,7 @@ UserProperties
 			}
 
 		try { in.close(); }
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			throw new IOException
 				( "closing property file '" + path
@@ -789,9 +798,9 @@ UserProperties
 	 */
 
 	static private boolean
-	loadPropertiesFile( String path, Properties props, Properties loaded )
+	loadPropertiesFile( final String path, final Properties props, final Properties loaded )
 		{
-		FileInputStream	in;
+		final FileInputStream	in;
 		boolean			result = true;
 
 		if ( UserProperties.debug )
@@ -801,7 +810,7 @@ UserProperties
 		try {
 			UserProperties.doLoadPropertiesFile( path, props, loaded );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "ERROR " + ex.getMessage() );
@@ -826,10 +835,10 @@ UserProperties
 	 */
 
 	static private void
-	loadDynamicProperties( String name, String path )
+	loadDynamicProperties( final String name, final String path )
 		{
-		Properties	dynProps = new Properties();
-		Properties	sysProps = System.getProperties();
+		final Properties	dynProps = new Properties();
+		final Properties	sysProps = System.getProperties();
 
 		if ( UserProperties.debug )
 			System.err.println
@@ -842,14 +851,14 @@ UserProperties
 			System.err.println
 				( "Loaded '" + name + "' properties from '" + path + "'." );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			// Silently fail on dynamic property files!
 			}
 		}
 
 	static private boolean
-	loadPropertiesResource( String name, Properties props )
+	loadPropertiesResource( final String name, final Properties props )
 		{
 		InputStream	in;
 		boolean		result = false;
@@ -864,7 +873,7 @@ UserProperties
 			in.close();
 			result = true;
 			}
-		catch ( java.io.IOException ex )
+		catch ( final java.io.IOException ex )
 			{
 			System.err.println
 				( "ERROR loading properties resource '"
@@ -876,28 +885,28 @@ UserProperties
 
 	private static void
 	loadPropertyResourceList(
-			String listPropName, String rsrcPrefix, Properties props )
+			final String listPropName, final String rsrcPrefix, final Properties props )
 		{
-		String rsrcListStr = 
+		final String rsrcListStr =
 			UserProperties.getProperty( listPropName, null );
 
 		if ( rsrcListStr != null )
 			{
-			String[] rsrcList =
+			final String[] rsrcList =
 				StringUtilities.splitString( rsrcListStr, ":" );
-			
+
 			for ( int rIdx = 0
 					; rsrcList != null && rIdx < rsrcList.length
 						; ++rIdx )
 				{
-				String rsrcTag = rsrcPrefix + rsrcList[rIdx];
+				final String rsrcTag = rsrcPrefix + rsrcList[rIdx];
 
-				String rsrcName =
+				final String rsrcName =
 					UserProperties.getProperty( rsrcTag, null );
 
 				if ( rsrcName != null )
 					{
-					boolean result =
+					final boolean result =
 						UserProperties.loadPropertiesResource
 							( rsrcName, props );
 
@@ -918,12 +927,12 @@ UserProperties
 	// which should in turn set the name of the local property file.
 	// JNDI should also set some 'critical' properties, such as
 	// the important OTA hostnames, service ports, etc.
-	
+
 	// REVIEW
 	// UNDONE
 	// This routine should have a 'filter' that filters out all
 	// global properties that do not start with prefix?
-	
+
 	/**
 	 * Load all related properties for this application.
 	 * This class method will look for a global properties
@@ -932,12 +941,12 @@ UserProperties
 	 */
 
 	static public void
-	loadProperties( String packageName, Properties appProps )
+	loadProperties( final String packageName, final Properties appProps )
 		{
 		boolean			result;
 		File			propFile;
 		String			propPath;
-		String			propName;
+		final String			propName;
 		String			rsrcName;
 
 		if ( UserProperties.debug )
@@ -945,7 +954,7 @@ UserProperties
 			UserProperties.printContext( System.err );
 			}
 
-		Properties sysProps =
+		final Properties sysProps =
 			System.getProperties();
 
 		if ( sysProps == null )
@@ -970,7 +979,7 @@ UserProperties
 
 		if ( rsrcName != null )
 			{
-			result = 
+			result =
 				UserProperties.loadPropertiesResource
 					( rsrcName, sysProps );
 
@@ -996,7 +1005,7 @@ UserProperties
 		//
 		// ---- PROCESS THE PREFIX PROPERTY
 		//
-		String newPrefix = UserProperties.prefix;
+		final String newPrefix = UserProperties.prefix;
 		if ( UserProperties.debug )
 			System.err.println
 				( "Prefix '" + newPrefix + "'" );
@@ -1081,21 +1090,21 @@ UserProperties
 		// First, register any dynamic property definitions
 		// defined by global properties.
 		//
-		Properties sysProps = System.getProperties();
+		final Properties sysProps = System.getProperties();
 
-		String dynPropList =
+		final String dynPropList =
 			sysProps.getProperty( "global.dynamicPropList", null );
 
 		if ( dynPropList != null )
 			{
-			String[] dynList =
+			final String[] dynList =
 				StringUtilities.splitString( dynPropList, ":" );
 
 			for ( int sIdx = 0 ; sIdx < dynList.length ; ++sIdx )
 				{
-				String dynName = dynList[sIdx];
+				final String dynName = dynList[sIdx];
 
-				String pathPropName =
+				final String pathPropName =
 					"global.dynamicPropFile." + dynName;
 
 				String dynPath =
@@ -1117,12 +1126,12 @@ UserProperties
 			}
 
 		// Now, we do the actual loading of dynamic properties.
-		Enumeration names = UserProperties.dynKeysTable.keys();
+		final Enumeration names = UserProperties.dynKeysTable.keys();
 		for ( ; names.hasMoreElements() ; )
 			{
-			String name = (String) names.nextElement();
+			final String name = (String) names.nextElement();
 
-			String path = (String)
+			final String path = (String)
 				UserProperties.dynPathTable.get( name );
 
 			UserProperties.loadDynamicProperties( name, path );
@@ -1130,14 +1139,14 @@ UserProperties
 		}
 
 	public static void
-	registerDynamicProperties( String name, String path, Properties props )
+	registerDynamicProperties( final String name, final String path, final Properties props )
 		{
 		UserProperties.dynPathTable.put( name, path );
 		UserProperties.addDynamicPropertyKeys( name, props );
 		}
 
 	private static void
-	addDynamicPropertyKeys( String name, Properties dynProps )
+	addDynamicPropertyKeys( final String name, final Properties dynProps )
 		{
 		Vector dynKeys = (Vector)
 			UserProperties.dynKeysTable.get( name );
@@ -1145,7 +1154,7 @@ UserProperties
 		if ( dynKeys == null )
 			{
 			dynKeys =
-				( dynProps == null )
+				dynProps == null
 					? new Vector( 0 )
 					: new Vector( dynProps.size() );
 
@@ -1154,11 +1163,11 @@ UserProperties
 
 		if ( dynProps != null )
 			{
-			// Ensure all key names are 
-			Enumeration keys = dynProps.keys();
+			// Ensure all key names are
+			final Enumeration keys = dynProps.keys();
 			for ( ; keys.hasMoreElements() ; )
 				{
-				String keyName = (String)keys.nextElement();
+				final String keyName = (String)keys.nextElement();
 				if ( ! dynKeys.contains( keyName ) )
 					dynKeys.addElement( keyName );
 				}
@@ -1172,26 +1181,26 @@ UserProperties
 	 */
 
 	private static void
-	copyDynamicProperties( String name, Properties props )
+	copyDynamicProperties( final String name, final Properties props )
 		{
-		String path = (String) UserProperties.dynPathTable.get( name );
-		Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
+		final String path = (String) UserProperties.dynPathTable.get( name );
+		final Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
 
 		if ( keys == null || path == null )
 			throw new NoSuchElementException
 				( "you have not registered the dynamic property "
 					+ "package named '" + name + "'" );
 
-		Properties sysProps = System.getProperties();
+		final Properties sysProps = System.getProperties();
 
 		try {
-			Enumeration enum = props.keys();
-			for ( ; enum.hasMoreElements() ; )
+			final Enumeration enumeration = props.keys();
+			for ( ; enumeration.hasMoreElements() ; )
 				{
-				String key = (String)enum.nextElement();
+				final String key = (String)enumeration.nextElement();
 				if ( key != null )
 					{
-					String normalKey =
+					final String normalKey =
 						UserProperties.normalizePropertyName( key );
 
 					sysProps.put( normalKey, props.get( key ) );
@@ -1201,12 +1210,12 @@ UserProperties
 					}
 				}
 			}
-		catch ( NoSuchElementException ex )
+		catch ( final NoSuchElementException ex )
 			{ }
 		}
 
 	public static void
-	setDynamicProperties( String name, Properties props )
+	setDynamicProperties( final String name, final Properties props )
 		{
 		UserProperties.copyDynamicProperties( name, props );
 		}
@@ -1218,7 +1227,7 @@ UserProperties
 	 */
 
 	public static void
-	setDynamicProperty( String name, String propName, String propValue )
+	setDynamicProperty( final String name, final String propName, final String propValue )
 		{
 		UserProperties.workingProps.clear();
 		UserProperties.workingProps.put( propName, propValue );
@@ -1231,17 +1240,17 @@ UserProperties
 	 */
 
 	public static void
-	removeDynamicProperty( String name, String propName )
+	removeDynamicProperty( final String name, final String propName )
 		{
-		String path = (String) UserProperties.dynPathTable.get( name );
-		Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
+		final String path = (String) UserProperties.dynPathTable.get( name );
+		final Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
 
 		if ( keys == null || path == null )
 			throw new NoSuchElementException
 				( "you have not registered the dynamic property "
 					+ "package named '" + name + "'" );
 
-		String normalKey =
+		final String normalKey =
 			UserProperties.normalizePropertyName( propName );
 
 		if ( keys.contains( normalKey ) )
@@ -1252,24 +1261,24 @@ UserProperties
 		}
 
 	public static void
-	saveDynamicProperties( String name )
+	saveDynamicProperties( final String name )
 		throws IOException
 		{
-		String path = (String) UserProperties.dynPathTable.get( name );
-		Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
+		final String path = (String) UserProperties.dynPathTable.get( name );
+		final Vector keys = (Vector) UserProperties.dynKeysTable.get( name );
 
 		if ( keys == null || path == null )
 			throw new NoSuchElementException
 				( "you have not registered the dynamic property "
 					+ "package named '" + name + "'" );
 
-		Properties dynProps = new Properties();
-		Properties sysProps = System.getProperties();
-		
-		int count = keys.size();
+		final Properties dynProps = new Properties();
+		final Properties sysProps = System.getProperties();
+
+		final int count = keys.size();
 		for ( int idx = 0 ; idx < count ; ++idx )
 			{
-			String pName = (String) keys.elementAt(idx);
+			final String pName = (String) keys.elementAt(idx);
 			dynProps.put( pName, sysProps.get( pName ) );
 			}
 
@@ -1282,18 +1291,18 @@ UserProperties
 	// would eliminate the file being trashed on an IOException.
 	//
 	private static void
-	saveDynamicPropFile( String name, String path, Properties dynProps )
+	saveDynamicPropFile( final String name, final String path, final Properties dynProps )
 		throws IOException
 		{
-		String eol = System.getProperty( "line.separator", "\n" );
-		String comment = eol +
+		final String eol = System.getProperty( "line.separator", "\n" );
+		final String comment = eol +
 			"## --------------------  W A R N I N G  -------------------- " + eol +
 			"#  This file is automatically generated." + eol +
 			"#  Any changes you make to this file will be overwritten." + eol +
 			"## ---------------------------------------------------------" + eol +
 			"#";
 
-		FileOutputStream out =
+		final FileOutputStream out =
 			new FileOutputStream( path );
 
 		dynProps.put(
@@ -1306,7 +1315,7 @@ UserProperties
 		}
 
 	public static void
-	printContext( PrintStream out )
+	printContext( final PrintStream out )
 		{
 		out.println
 			( "os.name    = '" + UserProperties.osname + "'" );
@@ -1330,7 +1339,7 @@ UserProperties
 		}
 
 	public static void
-	printUsage( PrintStream out )
+	printUsage( final PrintStream out )
 		{
 		out.println
 			( "Properties options:" );
@@ -1361,24 +1370,24 @@ UserProperties
 		}
 
 	static public String []
-	processOptions( String [] args )
+	processOptions( final String [] args )
 		{
-		Vector newArgs = new Vector( args.length );
+		final Vector newArgs = new Vector( args.length );
 
 		for ( int iArg = 0 ; iArg < args.length ; ++iArg )
 			{
 			if ( args[iArg].equals( "-propPrefix" )
-						&& (iArg + 1) < args.length )
+						&& iArg + 1 < args.length )
 				{
 				UserProperties.setPropertyPrefix( args[++iArg] );
 				}
 			else if ( args[iArg].equals( "-propFile" )
-						&& (iArg + 1) < args.length )
+						&& iArg + 1 < args.length )
 				{
 				UserProperties.setLocalPropertyFile( args[++iArg] );
 				}
 			else if ( args[iArg].equals( "-propDefaults" )
-						&& (iArg + 1) < args.length )
+						&& iArg + 1 < args.length )
 				{
 				UserProperties.setDefaultsResource( args[++iArg] );
 				}
@@ -1391,12 +1400,12 @@ UserProperties
 				UserProperties.setVerbose( true );
 				}
 			else if ( args[iArg].equals( "-propOS" )
-						&& (iArg + 1) < args.length )
+						&& iArg + 1 < args.length )
 				{
 				UserProperties.setOSSuffix( args[++iArg] );
 				}
 			else if ( args[iArg].equals( "-propUser" )
-						&& (iArg + 1) < args.length )
+						&& iArg + 1 < args.length )
 				{
 				UserProperties.setUserSuffix( args[++iArg] );
 				}
@@ -1406,7 +1415,7 @@ UserProperties
 				}
 			}
 
-		String[] result = new String[ newArgs.size() ];
+		final String[] result = new String[ newArgs.size() ];
 		for ( int i = 0 ; i < newArgs.size() ; ++i )
 			result[i] = (String) newArgs.elementAt(i);
 

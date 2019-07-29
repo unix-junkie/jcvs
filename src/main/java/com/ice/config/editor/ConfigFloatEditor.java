@@ -1,7 +1,7 @@
 
 package com.ice.config.editor;
 
-import com.ice.config.*;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 
 
@@ -23,20 +23,20 @@ extends		ConfigNumberEditor
 		}
 
 	public String
-	formatNumber( UserPrefs prefs, ConfigureSpec spec )
+	formatNumber( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		float num =
+		final float num =
 			prefs.getFloat( spec.getPropertyName(), 0.0F );
 
 		return Float.toString( num );
 		}
 
 	public boolean
-	isChanged( UserPrefs prefs, ConfigureSpec spec, String numText )
+	isChanged( final UserPrefs prefs, final ConfigureSpec spec, final String numText )
 		{
-		float cur = Float.valueOf( numText ).floatValue();
-		float old = prefs.getFloat( spec.getPropertyName(), 0 );
-		return ( cur != old );
+		final float cur = Float.valueOf( numText ).floatValue();
+		final float old = prefs.getFloat( spec.getPropertyName(), 0 );
+		return cur != old;
 		}
 
 	}

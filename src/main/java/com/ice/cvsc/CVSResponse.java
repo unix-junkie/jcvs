@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,13 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
-																			
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+
+import java.io.PrintStream;
 
 /**
  * The CVSResponse class encapsulates a CVS server's response to
@@ -63,10 +60,10 @@ extends		Object
 	private String			errorCode;
 	private String			errorText;
 
-	private StringBuffer	stdErrStr;
-	private StringBuffer	stdOutStr;
+	private final StringBuffer	stdErrStr;
+	private final StringBuffer	stdOutStr;
 
-	private CVSRespItemVector	itemList;
+	private final CVSRespItemVector	itemList;
 
 
 	public CVSResponse()
@@ -85,19 +82,19 @@ extends		Object
 		}
 
 	public void
-	appendStdOut( String text )
+	appendStdOut( final String text )
 		{
 		this.stdOutStr.append( text );
 		}
 
 	public void
-	appendStdErr( String text )
+	appendStdErr( final String text )
 		{
 		this.stdErrStr.append( text );
 		}
 
 	public void
-	addResponseItem( CVSResponseItem item )
+	addResponseItem( final CVSResponseItem item )
 		{
 		this.itemList.appendItem( item );
 		}
@@ -115,9 +112,9 @@ extends		Object
 		}
 
 	public void
-	setValid( boolean valid )
+	setValid( final boolean valid )
 		{
-		this.valid = valid;													
+		this.valid = valid;
 		}
 
 	public int
@@ -127,16 +124,16 @@ extends		Object
 		}
 
 	public void
-	setStatus( int status )
+	setStatus( final int status )
 		{
-		this.status = status;													
+		this.status = status;
 
 		this.errorCode = "";
 		this.errorText = "";
 		}
 
 	public void
-	setErrorStatus( String codeStr, String textStr )
+	setErrorStatus( final String codeStr, final String textStr )
 		{
 		this.status = CVSResponse.ERROR;
 
@@ -169,19 +166,19 @@ extends		Object
 		}
 
 	public void
-	appendStderr( String msg )
+	appendStderr( final String msg )
 		{
 		this.stdErrStr.append( msg );
 		}
 
 	public void
-	appendStdout( String msg )
+	appendStdout( final String msg )
 		{
 		this.stdOutStr.append( msg );
 		}
 
 	public int
-	itemTypeCount( int type )
+	itemTypeCount( final int type )
 		{
 		int				count = 0;
 		CVSResponseItem item;
@@ -197,7 +194,7 @@ extends		Object
 		}
 
 	public CVSResponseItem
-	getFirstItemByType( int type )
+	getFirstItemByType( final int type )
 		{
 		CVSResponseItem item;
 
@@ -212,7 +209,7 @@ extends		Object
 		}
 
 	public CVSResponseItem
-	getNextItemByType( int type, CVSResponseItem lastItem )
+	getNextItemByType( final int type, final CVSResponseItem lastItem )
 		{
 		int				i;
 		CVSResponseItem item;
@@ -238,18 +235,18 @@ extends		Object
 		}
 
 	public void
-	printResponse( PrintStream out )
+	printResponse( final PrintStream out )
 		{
 		out.println( "=============================================================" );
-		
+
 		out.println( "RESPONSE has " + this.itemList.size() + " items:" );
 		if ( this.itemList.size() > 0 )
 			{
 			this.itemList.printResponseItemList( out, "   " );
 			}
-		
+
 		out.println( "\n" + this.getStderr() + "\n" + this.getStdout() );
-		
+
 		out.println( "=============================================================" );
 		}
 
@@ -262,9 +259,9 @@ extends		Object
 		boolean	err;
 		boolean result = true;
 
-		for ( int i = 0 ; i < this.itemList.size() ; ++i ) 
+		for ( int i = 0 ; i < this.itemList.size() ; ++i )
 			{
-			CVSResponseItem item = this.itemList.itemAt( i );
+			final CVSResponseItem item = this.itemList.itemAt( i );
 
 			err = item.deleteFile();
 
@@ -278,7 +275,7 @@ extends		Object
 	public String
 	getDisplayResults()
 		{
-		StringBuffer finalResult = new StringBuffer( 1024 );
+		final StringBuffer finalResult = new StringBuffer( 1024 );
 
 		finalResult.append( this.getResultText() );
 		finalResult.append( this.getResultStatus() );
@@ -289,10 +286,10 @@ extends		Object
 	public String
 	getResultText()
 		{
-		StringBuffer resultBuf = new StringBuffer( 1024 );
+		final StringBuffer resultBuf = new StringBuffer( 1024 );
 
-		String stdout = this.getStdout();
-		String stderr = this.getStderr();
+		final String stdout = this.getStdout();
+		final String stderr = this.getStderr();
 
 		if ( stderr.length() > 0 || stdout.length() > 0 )
 			{
@@ -342,4 +339,4 @@ extends		Object
 			}
 		}
 	}
-	   
+

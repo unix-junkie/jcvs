@@ -1,20 +1,16 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.beans.*;
+import java.io.IOException;
 
-import javax.activation.*;
+import javax.activation.CommandObject;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.swing.JOptionPane;
 
-import com.ice.cvsc.CVSCUtilities;
-
-import com.ice.jni.dde.*;
-
-import com.ice.util.FileUtilities;
-import com.ice.util.TempFileManager;
+import com.ice.jni.dde.DDEException;
+import com.ice.jni.dde.JNIDDE;
 
 
 public
@@ -22,7 +18,7 @@ class		Win32Viewer
 extends		Object
 implements	CommandObject
 	{
-    private boolean			debug = false;
+    private final boolean			debug = false;
 
 
     public
@@ -32,13 +28,13 @@ implements	CommandObject
 	//		UserProperties.getProperty
 	//			( "Win32ShellViewer.debug", false );
 		}
-    
+
 	/**
 	 * the CommandObject method to accept our DataHandler
 	 * @param dh The datahandler used to get the content.
 	 */
 	public void
-	setCommandContext( String verb, DataHandler dh )
+	setCommandContext( final String verb, final DataHandler dh )
 		throws IOException
 		{
 		this.viewContent( verb, dh );
@@ -48,24 +44,24 @@ implements	CommandObject
 	 * sets the current message to be displayed in the viewer
 	 */
 	public void
-	viewContent( String verb, DataHandler dh )
+	viewContent( final String verb, final DataHandler dh )
 		{
-		DataSource ds = dh.getDataSource();
+		final DataSource ds = dh.getDataSource();
 
 		if ( ! (ds instanceof FileDataSource) )
 			{
 			return;
 			}
 
-		FileDataSource fds = (FileDataSource) ds;
+		final FileDataSource fds = (FileDataSource) ds;
 
 		try {
 			// We instantiate a JNIDDE just to check the dll
-			JNIDDE dde = new JNIDDE();
+			final JNIDDE dde = new JNIDDE();
 
-			String fileName = fds.getFile().getPath();
+			final String fileName = fds.getFile().getPath();
 
-			String execDir = System.getProperty( "user.dir", "" );
+			final String execDir = System.getProperty( "user.dir", "" );
 
 			if ( this.debug )
 				System.err.println
@@ -75,9 +71,9 @@ implements	CommandObject
 			JNIDDE.shellExecute
 				( verb, fileName, null, execDir, JNIDDE.SW_SHOWNORMAL );
 			}
-		catch ( UnsatisfiedLinkError er )
+		catch ( final UnsatisfiedLinkError er )
 			{
-			String msg =
+			final String msg =
 				"It appears that you have not installed the\n"
 				+ "Windows DDE native library, 'ICE_JNIDDE.dll'.\n"
 				+ "Consult the documentation about Win32 installation.\n"
@@ -88,9 +84,9 @@ implements	CommandObject
 			JOptionPane.showMessageDialog
 				( null, msg, "Error", JOptionPane.ERROR_MESSAGE );
 			}
-		catch ( DDEException ex )
+		catch ( final DDEException ex )
 			{
-			String msg =
+			final String msg =
 				"Win32Viewer had trouble with the DDE communications.\n"
 				+ "The most likely reason is that you have not defined an\n"
 				+ "action for the verb '" + verb + "'.\n"

@@ -1,11 +1,17 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 
-import com.ice.config.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -27,11 +33,11 @@ extends		ConfigureEditor
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		Rectangle rect =
+		final Rectangle rect =
 			prefs.getBounds( spec.getPropertyName(), null );
 
 		if ( rect != null )
@@ -51,18 +57,18 @@ extends		ConfigureEditor
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
 		try {
-			int x = Integer.parseInt( this.xField.getText() );
-			int y = Integer.parseInt( this.yField.getText() );
-			int w = Integer.parseInt( this.wField.getText() );
-			int h = Integer.parseInt( this.hField.getText() );
+			final int x = Integer.parseInt( this.xField.getText() );
+			final int y = Integer.parseInt( this.yField.getText() );
+			final int w = Integer.parseInt( this.wField.getText() );
+			final int h = Integer.parseInt( this.hField.getText() );
 
-			Rectangle newVal = new Rectangle( x, y, w, h );
-			Rectangle oldVal =
+			final Rectangle newVal = new Rectangle( x, y, w, h );
+			final Rectangle oldVal =
 				prefs.getBounds
 					( propName, new Rectangle( 0, 0, 0, 0 ) );
 
@@ -71,7 +77,7 @@ extends		ConfigureEditor
 				prefs.setBounds( propName, newVal );
 				}
 			}
-		catch ( NumberFormatException ex )
+		catch ( final NumberFormatException ex )
 			{
 			ex.printStackTrace();
 			}
@@ -87,7 +93,7 @@ extends		ConfigureEditor
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 		result.setBorder( new EmptyBorder( 5, 3, 3, 3 ) );
 

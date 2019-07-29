@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 /**
  * The CVSTracer class implements the a tracing mechanism for
@@ -49,7 +47,7 @@ CVSTracer extends Object
 	static public final String		RCS_REV = "$Revision: 2.4 $";
 
 	static private PrintWriter		out = null;
-									
+
 	static private boolean			on = false;
 	static private boolean			ifOverOn = true;
 
@@ -74,13 +72,13 @@ CVSTracer extends Object
 		}
 
 	static public void
-	setEchoAccumulation( boolean state )
+	setEchoAccumulation( final boolean state )
 		{
 		CVSTracer.echoAccum = state;
 		}
 
 	static public void
-	accumulateInBuffer( StringBuffer buffer )
+	accumulateInBuffer( final StringBuffer buffer )
 		{
 		CVSTracer.outBuffer = buffer;
 		}
@@ -98,7 +96,7 @@ CVSTracer extends Object
 		}
 
 	static public void
-	println( String line )
+	println( final String line )
 		{
 		if ( line == null )
 			return;
@@ -123,7 +121,7 @@ CVSTracer extends Object
 		}
 
 	static public void
-	trace( String line )
+	trace( final String line )
 		{
 		if ( line == null )
 			return;
@@ -135,9 +133,9 @@ CVSTracer extends Object
 		}
 
 	static public void
-	traceIf( boolean flag, String line )
+	traceIf( final boolean flag, final String line )
 		{
-		if ( (! flag) || (line == null) )
+		if ( ! flag || line == null )
 			return;
 
 		if ( CVSTracer.ifOverOn )
@@ -147,7 +145,7 @@ CVSTracer extends Object
 		}
 
 	static public void
-	traceException( String line, Exception ex )
+	traceException( final String line, final Exception ex )
 		{
 		if ( line == null )
 			return;
@@ -164,12 +162,12 @@ CVSTracer extends Object
 		}
 
 	static public void
-	traceWithStack( String line )
+	traceWithStack( final String line )
 		{
 		if ( line == null )
 			return;
 
-		Throwable thrower = new Throwable( line );
+		final Throwable thrower = new Throwable( line );
 
 		if ( CVSTracer.on )
 			{
@@ -206,7 +204,7 @@ CVSTracer extends Object
 	 */
 
 	static public void
-	setWriter( PrintWriter newOut )
+	setWriter( final PrintWriter newOut )
 		{
 		CVSTracer.checkClose();
 
@@ -219,7 +217,7 @@ CVSTracer extends Object
 	static public void
 	setWriterToStdout()
 		{
-		PrintWriter newOut =
+		final PrintWriter newOut =
 			new PrintWriter(
 				new OutputStreamWriter( System.out ) );
 
@@ -236,7 +234,7 @@ CVSTracer extends Object
 	static public void
 	setWriterToStderr()
 		{
-		PrintWriter newOut =
+		final PrintWriter newOut =
 			new PrintWriter(
 				new OutputStreamWriter( System.err ) );
 

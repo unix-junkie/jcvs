@@ -3,7 +3,22 @@ package com.ice.config;
 
 import java.util.Hashtable;
 
-import com.ice.config.editor.*;
+import com.ice.config.editor.ConfigBooleanEditor;
+import com.ice.config.editor.ConfigChoiceEditor;
+import com.ice.config.editor.ConfigColorEditor;
+import com.ice.config.editor.ConfigComboEditor;
+import com.ice.config.editor.ConfigDimensionEditor;
+import com.ice.config.editor.ConfigDoubleEditor;
+import com.ice.config.editor.ConfigFloatEditor;
+import com.ice.config.editor.ConfigFontEditor;
+import com.ice.config.editor.ConfigIntegerEditor;
+import com.ice.config.editor.ConfigLongEditor;
+import com.ice.config.editor.ConfigPointEditor;
+import com.ice.config.editor.ConfigRectangleEditor;
+import com.ice.config.editor.ConfigStringArrayEditor;
+import com.ice.config.editor.ConfigStringEditor;
+import com.ice.config.editor.ConfigTokenEditor;
+import com.ice.config.editor.ConfigTupleTableEditor;
 import com.ice.pref.UserPrefs;
 
 
@@ -17,7 +32,7 @@ implements	ConfigureEditorFactory, ConfigureConstants
 
 
 	public
-	DefaultConfigureEditorFactory( UserPrefs specs )
+	DefaultConfigureEditorFactory( final UserPrefs specs )
 		{
 		this.editSpecs = specs;
 
@@ -31,7 +46,7 @@ implements	ConfigureEditorFactory, ConfigureConstants
 		}
 
 	public ConfigureEditor
-	createEditor( String propertyType )
+	createEditor( final String propertyType )
 		{
 		ConfigureEditor result = (ConfigureEditor)
 			this.editors.get( propertyType );
@@ -50,19 +65,19 @@ implements	ConfigureEditorFactory, ConfigureConstants
 		}
 
 	public void
-	addEditor( String propertyType, ConfigureEditor editor )
+	addEditor( final String propertyType, final ConfigureEditor editor )
 		{
 		this.editors.put( propertyType, editor );
 		}
 
 	public void
-	removeEditor( String propertyType )
+	removeEditor( final String propertyType )
 		{
 		this.editors.remove( propertyType );
 		}
 
 	private ConfigureEditor
-	createDefaultEditor( String propertyType )
+	createDefaultEditor( final String propertyType )
 		{
 		if ( propertyType.equalsIgnoreCase( CFG_STRING ) )
 			return new ConfigStringEditor();

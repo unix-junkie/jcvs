@@ -1,8 +1,8 @@
 /*
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -15,16 +15,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 
 package com.ice.util;
 
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 
 public class
@@ -53,9 +52,9 @@ FileLog extends Object
 		}
 
 	static public FileLog
-	setDefaultLogger( FileLog logger )
+	setDefaultLogger( final FileLog logger )
 		{
-		FileLog	old = FileLog.defaultLogger;
+		final FileLog	old = FileLog.defaultLogger;
 		FileLog.defaultLogger = logger;
 		return old;
 		}
@@ -65,13 +64,13 @@ FileLog extends Object
 		{
 		if ( FileLog.defaultLogger == null )
 			{
-			FileLog.defaultLogger = 
+			FileLog.defaultLogger =
 				new FileLog( FileLog.DEFAULT_FILENAME );
 			}
 		}
 
 	public
-	FileLog( String filename )
+	FileLog( final String filename )
 		{
 		this.open = false;
 		this.echo = false;
@@ -82,13 +81,13 @@ FileLog extends Object
 		}
 
     public void
-    setLogFilename( String filename )
+    setLogFilename( final String filename )
         {
 		this.filename = filename;
         }
 
 	public void
-    setAutoFlush( boolean autoflush )
+    setAutoFlush( final boolean autoflush )
         {
         this.autoFlush = autoFlush;
         }
@@ -110,7 +109,7 @@ FileLog extends Object
 		try {
 			this.file = new FileWriter( this.filename );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			System.err.println
 				( "error opening log file '" + this.filename
@@ -144,13 +143,13 @@ FileLog extends Object
         }
 
     public void
-    setEcho( boolean setting )
+    setEcho( final boolean setting )
         {
         this.echo = setting;
         }
 
 	public void
-	traceMsg( Throwable thrown, String msg )
+	traceMsg( final Throwable thrown, final String msg )
 		{
 		this.logMsg( msg );
 		this.logMsg( thrown.getMessage() );
@@ -166,7 +165,7 @@ FileLog extends Object
 
 
 	static public void
-	defLogMsg( String msg )
+	defLogMsg( final String msg )
 		{
 		FileLog.checkDefaultLogger();
 		if ( FileLog.defaultLogger != null )
@@ -174,7 +173,7 @@ FileLog extends Object
 		}
 
 	public void
-	logMsg( String msg )
+	logMsg( final String msg )
 		{
 		this.checkLogOpen();
 
@@ -192,7 +191,7 @@ FileLog extends Object
 		}
 
 	static public void
-	defLogMsgStdout( String msg )
+	defLogMsgStdout( final String msg )
 		{
 		FileLog.checkDefaultLogger();
 		if ( FileLog.defaultLogger != null )
@@ -200,7 +199,7 @@ FileLog extends Object
 		}
 
 	public void
-	logMsgStdout( String msg )
+	logMsgStdout( final String msg )
 		{
 		this.checkLogOpen();
 
@@ -215,7 +214,7 @@ FileLog extends Object
 		}
 
 	static public void
-	defLogMsgStderr( String msg )
+	defLogMsgStderr( final String msg )
 		{
 		FileLog.checkDefaultLogger();
 		if ( FileLog.defaultLogger != null )
@@ -223,7 +222,7 @@ FileLog extends Object
 		}
 
 	public void
-	logMsgStderr( String msg )
+	logMsgStderr( final String msg )
 		{
 		this.checkLogOpen();
 

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,24 +16,38 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
-import com.ice.cvsc.CVSProjectDef;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -43,21 +57,21 @@ class		WorkBenchInfoDialog
 extends		JDialog
 implements	ActionListener
 	{
-	private String			path;
-	private String			localRoot;
+	private final String			path;
+	private final String			localRoot;
 	private JTextField		nameField;
 	private JTextField		displayField;
 	private JTextArea		descField;
 
-	private boolean					isFolder;
+	private final boolean					isFolder;
 	private WorkBenchDefinition		wDef;
-	private WorkBenchTreeNode		parentNode;
+	private final WorkBenchTreeNode		parentNode;
 
 
 	public
 	WorkBenchInfoDialog
-			( Frame parFrame, WorkBenchTreeNode parNode, boolean isFolder,
-				String defaultName, String path, String localRoot  )
+			( final Frame parFrame, final WorkBenchTreeNode parNode, final boolean isFolder,
+				String defaultName, final String path, final String localRoot  )
 		{
 		super( parFrame, "WorkBench Definition", true );
 
@@ -70,7 +84,7 @@ implements	ActionListener
 		// Attempt to compute a reasonable default token.
 		if ( defaultName == null )
 			{
-			long millis = System.currentTimeMillis();
+			final long millis = System.currentTimeMillis();
 			defaultName = (isFolder ? "F" : "P") + ( millis & 0x7FFFFF );
 			}
 
@@ -78,7 +92,7 @@ implements	ActionListener
 
 		this.pack();
 
-		Dimension sz = this.getSize();
+		final Dimension sz = this.getSize();
 		if ( sz.width < 480 ) sz.width = 480;
 		if ( sz.height < 360 ) sz.height = 360;
 
@@ -91,7 +105,7 @@ implements	ActionListener
 			new WindowAdapter()
 				{
 				public void
-				windowActivated( WindowEvent e )
+				windowActivated( final WindowEvent e )
 					{
 					nameField.requestFocus();
 					nameField.selectAll();
@@ -107,11 +121,11 @@ implements	ActionListener
 		}
 
 	private boolean
-	checkName( String name )
+	checkName( final String name )
 		{
 		for ( int i = 0, sz = name.length() ; i < sz ; ++i )
 			{
-			char ch = name.charAt(i);
+			final char ch = name.charAt(i);
 			if ( ! Character.isLetterOrDigit( ch ) )
 				return false;
 			}
@@ -120,13 +134,13 @@ implements	ActionListener
 		}
 
 	private boolean
-	checkUniqueness( String name )
+	checkUniqueness( final String name )
 		{
-		Enumeration enum = this.parentNode.children();
-		for ( ; enum.hasMoreElements() ; )
+		final Enumeration enumeration = this.parentNode.children();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			WorkBenchTreeNode node =
-				(WorkBenchTreeNode) enum.nextElement();
+			final WorkBenchTreeNode node =
+				(WorkBenchTreeNode) enumeration.nextElement();
 			if ( node.getDefinition().getName().equals( name ) )
 				return false;
 			}
@@ -135,12 +149,12 @@ implements	ActionListener
 		}
 
     public void
-    actionPerformed( ActionEvent event )
+    actionPerformed( final ActionEvent event )
         {
 		boolean doDispose = false;
 
-	    String command = event.getActionCommand();
-		
+	    final String command = event.getActionCommand();
+
 		if ( event.getSource() == this.nameField )
 			{
 			this.displayField.requestFocus();
@@ -151,26 +165,26 @@ implements	ActionListener
 			}
 		else if ( command.compareTo( "OK" ) == 0 )
 			{
-			ResourceMgr rmgr = ResourceMgr.getInstance();
-			String name = this.nameField.getText();
+			final ResourceMgr rmgr = ResourceMgr.getInstance();
+			final String name = this.nameField.getText();
 			if ( ! this.checkName( name ) )
 				{
-				String msg = rmgr.getUIString( "wb.infodlg.invalid.name.msg" );
-				String title = rmgr.getUIString( "wb.infodlg.invalid.name.title" );
+				final String msg = rmgr.getUIString( "wb.infodlg.invalid.name.msg" );
+				final String title = rmgr.getUIString( "wb.infodlg.invalid.name.title" );
 				JOptionPane.showMessageDialog
 					( this, msg, title, JOptionPane.WARNING_MESSAGE );
 				}
 			else if ( ! this.checkUniqueness( name ) )
 				{
-				String msg = rmgr.getUIString( "wb.infodlg.unique.name.msg" );
-				String title = rmgr.getUIString( "wb.infodlg.unique.name.title" );
+				final String msg = rmgr.getUIString( "wb.infodlg.unique.name.msg" );
+				final String title = rmgr.getUIString( "wb.infodlg.unique.name.title" );
 				JOptionPane.showMessageDialog
 					( this, msg, title, JOptionPane.WARNING_MESSAGE );
 				}
 			else
 				{
-				String display = this.displayField.getText();
-				String desc = this.descField.getText();
+				final String display = this.displayField.getText();
+				final String desc = this.descField.getText();
 
 				if ( this.isFolder )
 					{
@@ -202,22 +216,22 @@ implements	ActionListener
         }
 
 	public void
-	establishDialogContents( String toke ) 
+	establishDialogContents( final String toke )
 		{
 		JLabel		label;
-		JButton		button;
+		final JButton		button;
 
-		UserPrefs prefs = Config.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		//
 		// INFORMATION PANEL
 		//
-		JPanel infoPan = new JPanel();
+		final JPanel infoPan = new JPanel();
 		infoPan.setLayout( new GridBagLayout() );
 		infoPan.setBorder( new EmptyBorder( 4, 4, 4, 4 ) );
 
-		Font lblFont =
+		final Font lblFont =
 			prefs.getFont
 				( "workBenchInfoDialog.label.font",
 					new Font( "Dialog", Font.BOLD, 14 ) );
@@ -283,25 +297,25 @@ implements	ActionListener
 		//
 		// CONTROL BUTTONS
 		//
-		JPanel btnPan = new JPanel();
+		final JPanel btnPan = new JPanel();
 		btnPan.setLayout( new GridLayout( 1, 2, 5, 5 ) );
 
-		JButton okBtn = new JButton( rmgr.getUIString( "name.for.ok" ) );
+		final JButton okBtn = new JButton( rmgr.getUIString( "name.for.ok" ) );
 		okBtn.addActionListener( this );
 		okBtn.setActionCommand( "OK" );
 		btnPan.add( okBtn );
 
-		JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
+		final JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
 		canBtn.addActionListener( this );
 		canBtn.setActionCommand( "CANCEL" );
 		btnPan.add( canBtn );
-		
-		JPanel eastPan = new JPanel();
+
+		final JPanel eastPan = new JPanel();
 		eastPan.setLayout( new BorderLayout() );
 		eastPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 		eastPan.add( BorderLayout.EAST, btnPan );
 
-		JPanel ctlPan = new JPanel();
+		final JPanel ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 		ctlPan.add( BorderLayout.NORTH, new JSeparator( SwingConstants.HORIZONTAL ) );
 		ctlPan.add( BorderLayout.CENTER, eastPan );
@@ -310,7 +324,7 @@ implements	ActionListener
 		//
 		// CONTENT LAYOUT
 		//
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
 		content.add( BorderLayout.CENTER, infoPan );

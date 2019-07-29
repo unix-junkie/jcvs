@@ -1,8 +1,8 @@
 /*
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -15,16 +15,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * The ICETracer class implements the a stack tracing mechanism
@@ -46,7 +45,7 @@ ICETracer extends Object
 	static public final String		RCS_REV = "$Revision: 1.4 $";
 
 	static private PrintWriter		out = null;
-									
+
 	static private boolean			state = false;
 	static private boolean			ifOverOn = true;
 
@@ -59,19 +58,19 @@ ICETracer extends Object
 
 
 	static public void
-	setTraceState( boolean state )
+	setTraceState( final boolean state )
 		{
 		ICETracer.state = state;
 		}
 
 	static public void
-	setEchoAccumulation( boolean state )
+	setEchoAccumulation( final boolean state )
 		{
 		ICETracer.echoAccum = state;
 		}
 
 	static public void
-	accumulateInBuffer( StringBuffer buffer )
+	accumulateInBuffer( final StringBuffer buffer )
 		{
 		ICETracer.outBuffer = buffer;
 		}
@@ -89,7 +88,7 @@ ICETracer extends Object
 		}
 
 	static public void
-	println( String line )
+	println( final String line )
 		{
 		if ( line == null )
 			return;
@@ -114,7 +113,7 @@ ICETracer extends Object
 		}
 
 	static public void
-	trace( String line )
+	trace( final String line )
 		{
 		if ( line == null )
 			return;
@@ -126,9 +125,9 @@ ICETracer extends Object
 		}
 
 	static public void
-	traceIf( boolean flag, String line )
+	traceIf( final boolean flag, final String line )
 		{
-		if ( (! flag) || (line == null) )
+		if ( ! flag || line == null )
 			return;
 
 		if ( ICETracer.ifOverOn )
@@ -138,12 +137,12 @@ ICETracer extends Object
 		}
 
 	static public void
-	traceWithStack( String line )
+	traceWithStack( final String line )
 		{
 		if ( line == null )
 			return;
 
-		Throwable thrower = new Throwable( line );
+		final Throwable thrower = new Throwable( line );
 
 		if ( ICETracer.state )
 			{
@@ -157,34 +156,34 @@ ICETracer extends Object
 		}
 
 	static public String
-	getStackLines( Throwable thrower )
+	getStackLines( final Throwable thrower )
 		{
-		StringWriter sWrtr = new StringWriter();
-		PrintWriter pWrtr = new PrintWriter( sWrtr );
+		final StringWriter sWrtr = new StringWriter();
+		final PrintWriter pWrtr = new PrintWriter( sWrtr );
 		thrower.printStackTrace( pWrtr );
 		return sWrtr.toString();
 		}
 
 	static public String
-	getStackLines( Throwable thrower, int maxLines )
+	getStackLines( final Throwable thrower, final int maxLines )
 		{
 		if ( maxLines == 0 )
 			return ICETracer.getStackLines( thrower );
 
-		StringWriter sWrtr = new StringWriter();
-		PrintWriter pWrtr = new PrintWriter( sWrtr );
-		
+		final StringWriter sWrtr = new StringWriter();
+		final PrintWriter pWrtr = new PrintWriter( sWrtr );
+
 		thrower.printStackTrace( pWrtr );
 
-		String trcStr = sWrtr.getBuffer().toString();
+		final String trcStr = sWrtr.getBuffer().toString();
 
-		String sep = System.getProperty( "line.separator", "\n" );
+		final String sep = System.getProperty( "line.separator", "\n" );
 
 		int offset = 0;
 		int index = trcStr.length();
 		for ( int ln = 0 ; ln < maxLines ; ++ln )
 			{
-			int idx = trcStr.indexOf( sep, offset );
+			final int idx = trcStr.indexOf( sep, offset );
 			if ( idx == -1 )
 				break;
 
@@ -196,19 +195,19 @@ ICETracer extends Object
 		}
 
 	static public void
-	traceWithStack( int maxPrintLines, String line )
+	traceWithStack( final int maxPrintLines, final String line )
 		{
 		if ( line == null || maxPrintLines < 1 )
 			return;
 
-		Throwable thrower = new Throwable( line );
+		final Throwable thrower = new Throwable( line );
 
 		if ( ICETracer.state )
 			{
 			ICETracer.println( line );
 			}
 
-		String outStr =
+		final String outStr =
 			ICETracer.getStackLines( thrower, maxPrintLines );
 
 		if ( ICETracer.out == null )
@@ -218,7 +217,7 @@ ICETracer extends Object
 		}
 
 	static public void
-	traceWithStack( Throwable thrower, String line )
+	traceWithStack( final Throwable thrower, final String line )
 		{
 		if ( thrower == null && line == null )
 			return;
@@ -226,7 +225,7 @@ ICETracer extends Object
 		if ( line != null )
 			ICETracer.println( line );
 
-		String outStr = ICETracer.getStackLines( thrower, 0 );
+		final String outStr = ICETracer.getStackLines( thrower, 0 );
 
 		if ( ICETracer.out == null )
 			System.err.println( outStr );
@@ -235,7 +234,7 @@ ICETracer extends Object
 		}
 
 	static public void
-	traceWithStack( Throwable thrower, int lines, String line )
+	traceWithStack( final Throwable thrower, final int lines, final String line )
 		{
 		if ( thrower == null && line == null )
 			return;
@@ -243,7 +242,7 @@ ICETracer extends Object
 		if ( line != null )
 			ICETracer.println( line );
 
-		String outStr =
+		final String outStr =
 			ICETracer.getStackLines( thrower, lines );
 
 		if ( ICETracer.out == null )
@@ -276,7 +275,7 @@ ICETracer extends Object
 	 */
 
 	static public void
-	setWriter( PrintWriter newOut )
+	setWriter( final PrintWriter newOut )
 		{
 		ICETracer.checkClose();
 
@@ -289,7 +288,7 @@ ICETracer extends Object
 	static public void
 	setWriterToStdout()
 		{
-		PrintWriter newOut =
+		final PrintWriter newOut =
 			new PrintWriter(
 				new OutputStreamWriter( System.out ) );
 
@@ -306,7 +305,7 @@ ICETracer extends Object
 	static public void
 	setWriterToStderr()
 		{
-		PrintWriter newOut =
+		final PrintWriter newOut =
 			new PrintWriter(
 				new OutputStreamWriter( System.err ) );
 

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,17 +18,32 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.text.ParseException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 /**
  * The CVSProject class implements the concept of a local
@@ -65,7 +80,7 @@ import java.util.zip.*;
 // MTT-null-list  Matthias Tichy <mtt@uni-paderborn.de>
 //   Fixed to properly handle a null file file.
 //
-// GG-dot-rep  Gérard COLLIN <gcollin@netonomy.com>
+// GG-dot-rep  Gï¿½rard COLLIN <gcollin@netonomy.com>
 //   When we see a repository string of ".", it should be ignored.
 //
 
@@ -140,8 +155,8 @@ CVSProject extends Object
 			}
 
 		return
-			( dirName.endsWith( "/CVS" )
-				|| dirName.endsWith( "/CVS/" ) );
+			dirName.endsWith( "/CVS" )
+			|| dirName.endsWith( "/CVS/" );
 		}
 
 	/**
@@ -152,7 +167,7 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	rootPathToAdminPath( String dirName )
+	rootPathToAdminPath( final String dirName )
 		{
 		return
 			dirName
@@ -170,16 +185,16 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	adminPathToRootPath( String dirName )
+	adminPathToRootPath( final String dirName )
 		{
 		String path = dirName;
 
 		if ( path.endsWith( "/" ) )
 			{
-			path = path.substring( 0, (path.length() - 1) );
+			path = path.substring( 0, path.length() - 1 );
 			}
 
-		int index = path.lastIndexOf( '/' );
+		final int index = path.lastIndexOf( '/' );
 
 		if ( index < 0 )
 			{
@@ -201,9 +216,9 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	entriesPathToAdminPath( String entriesPath )
+	entriesPathToAdminPath( final String entriesPath )
 		{
-		int	index = entriesPath.lastIndexOf( '/' );
+		final int	index = entriesPath.lastIndexOf( '/' );
 
 		if ( index < 0 )
 			{
@@ -231,13 +246,13 @@ CVSProject extends Object
 		File	file;
 
 		CVSTracer.traceIf(
-			(CVSProject.deepDebug || CVSProject.debugEntryIO),
+			CVSProject.deepDebug || CVSProject.debugEntryIO,
 			"CVSProject.verifyAdminDirectory:\n"
 			+ "   dirName = '" + dirName + "'" );
 
 		if ( ! CVSProject.isValidAdminPath( dirName ) )
 			{
-			CVSTracer.traceIf( (CVSProject.deepDebug || CVSProject.debugEntryIO),
+			CVSTracer.traceIf( CVSProject.deepDebug || CVSProject.debugEntryIO,
 				"CVSProject.verifyAdminDirectory:\n"
 				+ "   IS NOT a valid admin directory." );
 			return false;
@@ -254,7 +269,7 @@ CVSProject extends Object
 		if ( ! file.exists() )
 			{
 			CVSTracer.traceIf(
-				(CVSProject.deepDebug || CVSProject.debugEntryIO),
+				CVSProject.deepDebug || CVSProject.debugEntryIO,
 				"CVSProject.verifyAdminDirectory:\n"
 				+ "   DOES NOT EXIST --> 'Entries'." );
 			return false;
@@ -264,7 +279,7 @@ CVSProject extends Object
 		if ( ! file.exists() )
 			{
 			CVSTracer.traceIf(
-				(CVSProject.deepDebug || CVSProject.debugEntryIO),
+				CVSProject.deepDebug || CVSProject.debugEntryIO,
 				"CVSProject.verifyAdminDirectory:\n"
 				+ "   DOES NOT EXIST --> 'Repository'." );
 			return false;
@@ -274,7 +289,7 @@ CVSProject extends Object
 		if ( ! file.exists() )
 			{
 			CVSTracer.traceIf(
-				(CVSProject.deepDebug || CVSProject.debugEntryIO),
+				CVSProject.deepDebug || CVSProject.debugEntryIO,
 				"CVSProject.verifyAdminDirectory:\n"
 				+ "   DOES NOT EXIST --> 'Root'." );
 			return false;
@@ -291,9 +306,9 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	getAdminEntriesPath( String adminDirPath )
+	getAdminEntriesPath( final String adminDirPath )
 		{
-		return ( adminDirPath + "/Entries" );
+		return adminDirPath + "/Entries";
 		}
 
 	/**
@@ -304,9 +319,9 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	getAdminRepositoryPath( String adminDirPath )
+	getAdminRepositoryPath( final String adminDirPath )
 		{
-		return ( adminDirPath + "/Repository" );
+		return adminDirPath + "/Repository";
 		}
 
 	/**
@@ -317,9 +332,9 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	getAdminRootPath( String adminDirPath )
+	getAdminRootPath( final String adminDirPath )
 		{
-		return ( adminDirPath + "/Root" );
+		return adminDirPath + "/Root";
 		}
 
 	/**
@@ -330,9 +345,9 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	getAdminNotifyPath( String adminDirPath )
+	getAdminNotifyPath( final String adminDirPath )
 		{
-		return ( adminDirPath + "/Notify" );
+		return adminDirPath + "/Notify";
 		}
 
 	/**
@@ -343,9 +358,9 @@ CVSProject extends Object
 	 */
 	// UNDONE separator
 	public static String
-	getAdminPrefsPath( String adminDirPath )
+	getAdminPrefsPath( final String adminDirPath )
 		{
-		return ( adminDirPath + "/jcvs.txt" );
+		return adminDirPath + "/jcvs.txt";
 		}
 
 	/**
@@ -385,7 +400,7 @@ CVSProject extends Object
 	 * project for all CVS server requests.
 	 */
 	public
-	CVSProject( CVSClient client )
+	CVSProject( final CVSClient client )
 		{
 		super();
 
@@ -438,11 +453,11 @@ CVSProject extends Object
 
 	/**
 	 * Returns the client this project is set to use.
-	 * 
+	 *
 	 * @return the project's client.
 	 * @see CVSClient
 	 */
-	
+
 	public CVSClient
 	getClient()
 		{
@@ -450,23 +465,23 @@ CVSProject extends Object
 		}
 
 	public void
-	setClient( CVSClient client )
+	setClient( final CVSClient client )
 		{
 		this.client = client;
 		}
-	
+
 	public String
 	getRepository()
 		{
 		return this.repository;
 		}
-	
+
 	public void
-	setRepository( String repository )
+	setRepository( final String repository )
 		{
 		this.repository = repository;
 		}
-	
+
 	public boolean
 	isPServer()
 		{
@@ -474,11 +489,11 @@ CVSProject extends Object
 		}
 
 	public void
-	setPServer( boolean isPServer )
+	setPServer( final boolean isPServer )
 		{
 		this.isPServer = isPServer;
 		}
-	
+
 	public boolean
 	allowsGzipFileMode()
 		{
@@ -486,11 +501,11 @@ CVSProject extends Object
 		}
 
 	public void
-	setAllowsGzipFileMode( boolean allow )
+	setAllowsGzipFileMode( final boolean allow )
 		{
 		this.allowGzipFileMode = allow;
 		}
-	
+
 	public int
 	getGzipStreamLevel()
 		{
@@ -498,7 +513,7 @@ CVSProject extends Object
 		}
 
 	public void
-	setGzipStreamLevel( int level )
+	setGzipStreamLevel( final int level )
 		{
 		this.gzipStreamLevel = level;
 		}
@@ -508,59 +523,59 @@ CVSProject extends Object
 		{
 		return this.userName;
 		}
-	
+
 	public void
-	setUserName( String name )
+	setUserName( final String name )
 		{
 		this.userName = name;
 		}
-	
+
 	public String
 	getPassword()
 		{
 		return this.password;
 		}
-	
+
 	public void
-	setPassword( String password )
+	setPassword( final String password )
 		{
 		this.password = password;
-		}		
-	
+		}
+
 	public String
 	getRootDirectory()
 		{
 		return this.rootDirectory;
 		}
-	
+
 	public void
-	setRootDirectory( String rootDirectory )
+	setRootDirectory( final String rootDirectory )
 		{
 		this.rootDirectory = rootDirectory;
 		}
-	
+
 	/**
 	 * Returns the <em>full</em> local pathname for the
 	 * root directory of this project.
 	 *
 	 * @return Full pathname of project's local root directory.
 	 */
-	
+
 	public String
 	getLocalRootPath()
 		{
 		return this.localRootDirectory;
 		//		+ "/" + this.rootEntry.getName();
 		}
-	
+
 	public String
 	getLocalRootDirectory()
 		{
 		return this.localRootDirectory;
 		}
-	
+
 	public void
-	setLocalRootDirectory( String dirName )
+	setLocalRootDirectory( final String dirName )
 		{
 		this.localRootDirectory = dirName;
 
@@ -575,9 +590,9 @@ CVSProject extends Object
 		{
 		return this.tempPath;
 		}
-	
+
 	public void
-	setTempDirectory( String dirName )
+	setTempDirectory( final String dirName )
 		{
 		this.tempPath = dirName;
 		if ( this.client != null )
@@ -593,7 +608,7 @@ CVSProject extends Object
 		}
 
 	public void
-	setConnectionPort( int port )
+	setConnectionPort( final int port )
 		{
 		this.connPort = port;
 		}
@@ -605,7 +620,7 @@ CVSProject extends Object
 		}
 
 	public void
-	setConnectionMethod( int method )
+	setConnectionMethod( final int method )
 		{
 		this.connMethod = method;
 		}
@@ -613,7 +628,7 @@ CVSProject extends Object
 	public boolean
 	isSSHServer()
 		{
-		return (this.connMethod == CVSRequest.METHOD_SSH);
+		return this.connMethod == CVSRequest.METHOD_SSH;
 		}
 
 	public String
@@ -623,7 +638,7 @@ CVSProject extends Object
 		}
 
 	public void
-	setServerCommand( String command )
+	setServerCommand( final String command )
 		{
 		this.serverCommand = command;
 		}
@@ -635,7 +650,7 @@ CVSProject extends Object
 		}
 
 	public void
-	setRshProcess( String rshProcess )
+	setRshProcess( final String rshProcess )
 		{
 		this.rshProcess = rshProcess;
 		}
@@ -657,7 +672,7 @@ CVSProject extends Object
 	 * @param vars The new user set variables.
 	 */
 	public void
-	setSetVariables( String[] vars )
+	setSetVariables( final String[] vars )
 		{
 		this.setVars = vars;
 		}
@@ -675,19 +690,19 @@ CVSProject extends Object
 		}
 
 	public void
-	setProjectDef( CVSProjectDef projectDef )
+	setProjectDef( final CVSProjectDef projectDef )
 		{
 		this.projectDef = projectDef;
 		}
 
 	public File
-	getEntryFile( CVSEntry entry )
+	getEntryFile( final CVSEntry entry )
 		{
 		String	relPath;
 
 		relPath = entry.getFullName();
 
-		File file = new
+		final File file = new
 			File( CVSCUtilities.exportPath
 						( this.localRootDirFile.getPath() ),
 					CVSCUtilities.exportPath
@@ -696,14 +711,14 @@ CVSProject extends Object
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( false,
 			"CVSProject.getEntryFile: relPath '" +relPath+
-				"' localRootDir '" +this.localRootDirFile.getPath()+ 
+				"' localRootDir '" +this.localRootDirFile.getPath()+
 				"' result '" +file.getPath()+ "'" );
 
 		return file;
 		}
 
 	public boolean
-	hasValidLogin( String userName )
+	hasValidLogin( final String userName )
 		{
 		if ( this.userName.equals( userName ) )
 			if ( this.password != null )
@@ -713,10 +728,10 @@ CVSProject extends Object
 		}
 
 	public void
-	addEntryNotify( CVSEntryVector entries, String type, String options )
+	addEntryNotify( final CVSEntryVector entries, final String type, final String options )
 		{
 		PrintWriter	out;
-		String		noteLine;
+		final String		noteLine;
 
 		// REVIEW
 		// UNDONE
@@ -726,8 +741,8 @@ CVSProject extends Object
 		// that the command line will get all of our notifies, ( will it
 		// choke on them?), but we will not get all of the command line's.
 		// Why?! Performance. Does it matter?
-		// 
-		String	fileName =
+		//
+		final String	fileName =
  			CVSProject.getAdminNotifyPath(
 				CVSProject.rootPathToAdminPath
 					( this.getLocalRootPath() ) );
@@ -737,7 +752,7 @@ CVSProject extends Object
 			out = new PrintWriter(
 					new FileWriter( fileName, true ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSTracer.traceWithStack(
 				"ERROR opening Notification file '"
@@ -745,16 +760,16 @@ CVSProject extends Object
 			return;
 			}
 
-		CVSTimestamp now = new CVSTimestamp();
-		CVSTimestampFormat	stamper =
+		final CVSTimestamp now = new CVSTimestamp();
+		final CVSTimestampFormat	stamper =
 			CVSTimestampFormat.getInstance();
 
-		String stampStr = stamper.format( now );
+		final String stampStr = stamper.format( now );
 
 		for ( int eIdx = 0 ; entries != null
 				&& eIdx < entries.size() ; ++eIdx )
 			{
-			CVSEntry entry = entries.entryAt(eIdx);
+			final CVSEntry entry = entries.entryAt(eIdx);
 			if ( entry != null )
 				{
 				out.println(
@@ -777,7 +792,7 @@ CVSProject extends Object
 		}
 
 	public void
-	includeNotifies( CVSRequest request )
+	includeNotifies( final CVSRequest request )
 		{
 		BufferedReader	in;
 		String			noteLine;
@@ -787,7 +802,7 @@ CVSProject extends Object
 		if ( this.rootEntry == null )
 			return;
 
-		File notFile = new File(
+		final File notFile = new File(
 			CVSProject.getAdminNotifyPath(
 				CVSProject.rootPathToAdminPath
 					( this.getLocalRootPath() ) ) );
@@ -799,7 +814,7 @@ CVSProject extends Object
 				in = new BufferedReader(
 						new FileReader( notFile ) );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSLog.logMsg
 					( "ERROR opening Notification file '"
@@ -810,14 +825,14 @@ CVSProject extends Object
 			for ( ; ; )
 				{
 				try { noteLine = in.readLine(); }
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					CVSLog.logMsg
 						( "ERROR reading Notification file '"
 							+ notFile.getPath() + "'" );
 					noteLine = null;
 					}
-				
+
 				if ( noteLine == null )
 					break;
 
@@ -826,7 +841,7 @@ CVSProject extends Object
 				// returns an eol.
 				noteLine = noteLine.trim();
 
-				CVSNotifyItem notifyItem =
+				final CVSNotifyItem notifyItem =
 					parseNotifyLine( noteLine );
 
 				if ( notifyItem != null )
@@ -842,12 +857,12 @@ CVSProject extends Object
 				}
 
 			try { in.close(); }
-				catch ( IOException ex ) { }
+				catch ( final IOException ex ) { }
 			}
 		}
 
 	public boolean
-	verifyPassword( CVSUserInterface ui, String userName, String password, boolean trace )
+	verifyPassword( final CVSUserInterface ui, final String userName, final String password, final boolean trace )
 		{
 		CVSRequest	request;
 		boolean		result = false;
@@ -858,7 +873,7 @@ CVSProject extends Object
 		if ( this.hasValidLogin( userName ) )
 			return true;
 
-		String scrambled =
+		final String scrambled =
 			CVSScramble.scramblePassword( password, 'A' );
 
 		request = new CVSRequest();
@@ -889,7 +904,7 @@ CVSProject extends Object
 
 		request.setUserInterface( ui );
 
-		CVSResponse response =
+		final CVSResponse response =
 			client.processCVSRequest( request );
 
 		if ( response.getStatus() == CVSResponse.OK )
@@ -907,7 +922,7 @@ CVSProject extends Object
 			response.appendStdout
 				( "Authentication of '" +userName+ "' failed.\n" );
 			}
-		
+
 		if ( ui != null && response != null )
 			ui.uiDisplayResponse( response );
 
@@ -927,14 +942,14 @@ CVSProject extends Object
 	 * @param subPath The path to check for in the table.
 	 * @return The CVSEntry representing the path's directory.
 	 */
-	CVSEntry 
-	getPathIgnoringCase( String subPath )
+	CVSEntry
+	getPathIgnoringCase( final String subPath )
 		{
-		Enumeration enum = this.pathTable.keys();
+		final Enumeration enumeration = this.pathTable.keys();
 
-		for ( ; enum.hasMoreElements() ; )
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			String key = (String) enum.nextElement();
+			final String key = (String) enumeration.nextElement();
 
 			if ( key.equalsIgnoreCase( subPath ) )
 				{
@@ -954,13 +969,13 @@ CVSProject extends Object
 	 */
 
 	public CVSEntry
-	getDirEntryForLocalDir( String localDir )
+	getDirEntryForLocalDir( final String localDir )
 		{
 		return this.getPathTableEntry( localDir );
 		}
 
 	private CVSEntry
-	getPathTableEntry( String path )
+	getPathTableEntry( final String path )
 		{
 		CVSEntry result = null;
 
@@ -984,15 +999,15 @@ CVSProject extends Object
 		}
 
 	private CVSEntry
-	reversePathTableEntry( String repository )
+	reversePathTableEntry( final String repository )
 		{
 		CVSEntry result = null;
 
-		Enumeration enum = this.pathTable.keys();
-		for ( boolean match = false ; !match && enum.hasMoreElements() ; )
+		final Enumeration enumeration = this.pathTable.keys();
+		for ( boolean match = false ; !match && enumeration.hasMoreElements() ; )
 			{
-			String localDir = (String) enum.nextElement();
-			CVSEntry tblEntry = (CVSEntry) this.pathTable.get( localDir );
+			final String localDir = (String) enumeration.nextElement();
+			final CVSEntry tblEntry = (CVSEntry) this.pathTable.get( localDir );
 
 			if ( CVSCUtilities.caseSensitivePathNames() )
 				match = repository.equals( tblEntry.getRepository() );
@@ -1026,18 +1041,18 @@ CVSProject extends Object
 	 */
 	public CVSResponse
 	ensureRepositoryPath
-			( CVSUserInterface ui, String localDirectory, CVSResponse resultResp )
+			( final CVSUserInterface ui, final String localDirectory, final CVSResponse resultResp )
 		{
 		int			index;
 		CVSEntry	dirEntry;
 		CVSRequest	request;
-		boolean		result;
+		final boolean		result;
 
 		CVSTracer.traceIf( CVSProject.deepDebug,
 			"CVSProject.ensureRepositoryPath: \n"
 				+ "   localDirectory '" + localDirectory + "'" );
-		
-		CVSEntryVector entries = new CVSEntryVector();
+
+		final CVSEntryVector entries = new CVSEntryVector();
 
 		// Since we will be re-using this vector possibly many times,
 		// we can't keep appending. Thus, we append once here to fill
@@ -1076,7 +1091,7 @@ CVSProject extends Object
 				}
 
 			offset = index + 1;
-			String localDir = localDirectory.substring( 0, index + 1 );
+			final String localDir = localDirectory.substring( 0, index + 1 );
 			dirEntry = this.getPathTableEntry( localDir );
 
 			CVSTracer.traceIf( CVSProject.deepDebug,
@@ -1093,7 +1108,7 @@ CVSProject extends Object
 				parentEntry = dirEntry;
 				continue;
 				}
-			
+
 			CVSTracer.traceIf( CVSProject.deepDebug,
 				"ensureRepositoryPath: NEW CVS DIRECTORY '" + localDir + "'\n"
 				+ "   Parent LocalDirectory '" + parentEntry.getLocalDirectory() + "'\n"
@@ -1103,12 +1118,12 @@ CVSProject extends Object
 
 			String name = localDir.substring( 0, localDir.length() - 1 );
 			index = name.lastIndexOf( '/' );
-			if ( index >= 0 && index < (name.length() - 1) )
+			if ( index >= 0 && index < name.length() - 1 )
 				{
 				name = name.substring( index + 1 );
 				}
 
-			String rootDir =
+			final String rootDir =
 				CVSCUtilities.ensureFinalSlash( this.getRootDirectory() );
 
 			dirEntry = new CVSEntry();
@@ -1178,26 +1193,26 @@ CVSProject extends Object
 			this.establishStatics( request );
 
 			request.setCommand( "add" );
-			
+
 			request.setUserInterface
-				( (ui == null) ? (CVSUserInterface)this : ui );
+				( ui == null ? (CVSUserInterface)this : ui );
 			request.includeNotifies = false;
 			request.queueResponse = true;
 
-			CVSArgumentVector arguments = new CVSArgumentVector();
+			final CVSArgumentVector arguments = new CVSArgumentVector();
 			arguments.appendArgument( name );
 			request.setArguments( arguments );
 
-			CVSResponse response =
+			final CVSResponse response =
 				client.processCVSRequest( request );
 
 			response.deleteTempFiles(); // There shouldn't be any...
 
-			String err = response.getStderr();
+			final String err = response.getStderr();
 			if ( err != null && err.length() > 0 )
 				resultResp.appendStderr( err );
 
-			String out = response.getStdout();
+			final String out = response.getStdout();
 			if ( out != null && out.length() > 0 )
 				resultResp.appendStdout( out );
 
@@ -1242,7 +1257,7 @@ CVSProject extends Object
 
 				break;
 				}
-			
+
 			repository = repository + "/" + name;
 			}
 
@@ -1250,22 +1265,22 @@ CVSProject extends Object
 		}
 
 	private String
-	getStickyTagspec( CVSEntry entry )
+	getStickyTagspec( final CVSEntry entry )
 		{
 		String result = "";
 
-		String rootPath =
+		final String rootPath =
 			CVSProject.rootPathToAdminPath
 				( this.getLocalRootDirectory()
 					+ "/" + entry.getLocalPathName() );
 
-		File stickyFile = new File( rootPath, "Tag" );
+		final File stickyFile = new File( rootPath, "Tag" );
 		if ( stickyFile.exists() )
 			{
 			try {
 				result = CVSCUtilities.readStringFile( stickyFile );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				result = "";
 				}
@@ -1290,14 +1305,14 @@ CVSProject extends Object
 	 */
 
 	public void
-	establishNewDirSticky( CVSRequest request, CVSEntry entry )
+	establishNewDirSticky( final CVSRequest request, final CVSEntry entry )
 		{
 		Hashtable stickys = request.getStickys();
 		if ( stickys == null )
 			stickys = new Hashtable();
 
-		String localDir = entry.getLocalDirectory();
-		String parentDir = CVSCUtilities.getLocalParent( localDir );
+		final String localDir = entry.getLocalDirectory();
+		final String parentDir = CVSCUtilities.getLocalParent( localDir );
 
 		String rootPath =
 			CVSProject.rootPathToAdminPath
@@ -1308,7 +1323,7 @@ CVSProject extends Object
 		if ( stickyFile.exists() )
 			{
 			try { tagSpec = CVSCUtilities.readStringFile( stickyFile ); }
-				catch ( IOException ex ) { ex.printStackTrace(); }
+				catch ( final IOException ex ) { ex.printStackTrace(); }
 			}
 
 		if ( tagSpec.length() > 0 )
@@ -1317,7 +1332,7 @@ CVSProject extends Object
 				CVSProject.rootPathToAdminPath
 					( this.getLocalRootDirectory() + "/" + localDir );
 
-			File adminDir = new File( rootPath );
+			final File adminDir = new File( rootPath );
 			adminDir.mkdirs();
 			stickyFile = new File( rootPath, "Tag" );
 			try {
@@ -1326,7 +1341,7 @@ CVSProject extends Object
 					CVSCUtilities.writeStringFile( stickyFile, tagSpec );
 					}
 				}
-			catch ( IOException ex ) { ex.printStackTrace(); }
+			catch ( final IOException ex ) { ex.printStackTrace(); }
 			}
 
 		stickys.put( localDir, tagSpec );
@@ -1335,18 +1350,18 @@ CVSProject extends Object
 		}
 
 	public void
-	establishStickys( CVSRequest request )
+	establishStickys( final CVSRequest request )
 		{
-		Hashtable stickys = new Hashtable();
+		final Hashtable stickys = new Hashtable();
 
-		CVSEntryVector entries = request.getEntries();
+		final CVSEntryVector entries = request.getEntries();
 		for ( int i = 0, sz = entries.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = (CVSEntry) entries.elementAt(i);
-			String localDir = entry.getLocalDirectory();
+			final CVSEntry entry = (CVSEntry) entries.elementAt(i);
+			final String localDir = entry.getLocalDirectory();
 			if ( stickys.get( localDir ) == null )
 				{
-				String tagSpec = this.getStickyTagspec( entry );
+				final String tagSpec = this.getStickyTagspec( entry );
 				stickys.put( localDir, tagSpec );
 				}
 			}
@@ -1356,28 +1371,28 @@ CVSProject extends Object
 		}
 
 	private boolean
-	isStaticDirectory( CVSEntry entry )
+	isStaticDirectory( final CVSEntry entry )
 		{
-		String rootPath =
+		final String rootPath =
 			CVSProject.rootPathToAdminPath
 				( this.getLocalRootDirectory()
 					+ "/" + entry.getLocalPathName() );
 
-		File staticFile = new File( rootPath, "Entries.static" );
+		final File staticFile = new File( rootPath, "Entries.static" );
 
 		return staticFile.exists();
 		}
 
 	public void
-	establishStatics( CVSRequest request )
+	establishStatics( final CVSRequest request )
 		{
-		Hashtable statics = new Hashtable();
+		final Hashtable statics = new Hashtable();
 
-		CVSEntryVector entries = request.getEntries();
+		final CVSEntryVector entries = request.getEntries();
 		for ( int i = 0, sz = entries.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = (CVSEntry) entries.elementAt(i);
-			String localDir = entry.getLocalDirectory();
+			final CVSEntry entry = (CVSEntry) entries.elementAt(i);
+			final String localDir = entry.getLocalDirectory();
 			if ( statics.get( localDir ) == null )
 				{
 				if ( this.isStaticDirectory( entry ) )
@@ -1390,15 +1405,15 @@ CVSProject extends Object
 		}
 
 	public boolean
-	performCVSRequest( CVSRequest request )
+	performCVSRequest( final CVSRequest request )
 		{
 		return this.performCVSRequest( request, new CVSResponse() );
 		}
 
 	public boolean
-	performCVSRequest( CVSRequest request, CVSResponse response )
+	performCVSRequest( final CVSRequest request, final CVSResponse response )
 		{
-		boolean result = true;
+		final boolean result = true;
 
 		request.setUserName( this.userName );
 		request.setPServer( this.isPServer() );
@@ -1461,9 +1476,9 @@ CVSProject extends Object
 		request.setConnectionMethod( this.getConnectionMethod() );
 		request.setServerCommand( this.getServerCommand() );
 		request.setRshProcess( this.getRshProcess() );
-		
+
 		request.setSetVariables( this.setVars );
-		
+
 		this.establishStickys( request );
 
 		this.establishStatics( request );
@@ -1516,33 +1531,33 @@ CVSProject extends Object
 			if ( response != null && ! request.saveTempFiles )
 				response.deleteTempFiles();
 
-			return ( response.getStatus() == CVSResponse.OK );
+			return response.getStatus() == CVSResponse.OK;
 			}
 		}
 
 	public CVSEntry
-	entryLineToEntry( String entryLine )
+	entryLineToEntry( final String entryLine )
 		{
 		CVSEntry entry = new CVSEntry();
 
 		try {
 			entry.parseEntryLine( entryLine, true );
 			}
-		catch ( ParseException ex )
+		catch ( final ParseException ex )
 			{
 			entry = null;
 			CVSLog.traceMsg
 				( ex, "CVSProject.entryFromEntryLine: ERROR "
 					+ "could not process entry line '" + entryLine );
 			}
-		
+
 		return entry;
 		}
 
 	public File
-	getLocalEntryFile( CVSEntry entry )
+	getLocalEntryFile( final CVSEntry entry )
 		{
-		File result = new File
+		final File result = new File
 			( CVSCUtilities.exportPath( this.localRootDirectory ),
 				CVSCUtilities.exportPath( entry.getFullPathName() ) );
 
@@ -1562,13 +1577,13 @@ CVSProject extends Object
 	 */
 
 	public String
-	normalizeLocalDirectory( String pathName, String repository )
+	normalizeLocalDirectory( final String pathName, final String repository )
 		{
 		String result = pathName;
 
 		if ( pathName.equals( "./" ) )
 			{
-			CVSTracer.traceIf( this.deepDebug,
+			CVSTracer.traceIf( CVSProject.deepDebug,
 				"normalizeLocalDirectory: SPECIAL './' CASE.\n"
 				+ "    pathName '" + pathName + "'\n"
 				+ "  repository '" + repository + "'" );
@@ -1580,7 +1595,7 @@ CVSProject extends Object
 			// We need to take the repository and reverse lookup
 			// the local-directory.
 
-			CVSEntry revEntry =
+			final CVSEntry revEntry =
 				this.reversePathTableEntry( repository );
 
 			if ( revEntry != null )
@@ -1599,7 +1614,7 @@ CVSProject extends Object
 				}
 			}
 
-		CVSTracer.traceIf( this.deepDebug,
+		CVSTracer.traceIf( CVSProject.deepDebug,
 			"normalizeLocalDirectory: RESULT '"
 			+ pathName + "' ---> '" + result + "'" );
 
@@ -1607,12 +1622,12 @@ CVSProject extends Object
 		}
 
 	public CVSEntry
-	createItemEntry( CVSResponseItem item )
+	createItemEntry( final CVSResponseItem item )
 		{
 		CVSEntry	entry;
-		String		entryLine = item.getEntriesLine();
+		final String		entryLine = item.getEntriesLine();
 
-		CVSTracer.traceIf( this.deepDebug,
+		CVSTracer.traceIf( CVSProject.deepDebug,
 			"createItemEntry:\n"
 			+ "   item.getPathName    '" + item.getPathName() + "'\n"
 			+ "   item.repositoryName '" + item.getRepositoryName() + "'\n"
@@ -1629,8 +1644,8 @@ CVSProject extends Object
 
 		if ( entry != null )
 			{
-			String repos = item.getRepositoryName();
-			int index = repos.lastIndexOf( '/' );
+			final String repos = item.getRepositoryName();
+			final int index = repos.lastIndexOf( '/' );
 
 			if ( index < 0 )
 				{
@@ -1646,7 +1661,7 @@ CVSProject extends Object
 				entry.setRepository( repos.substring( 0, index ) );
 				}
 
-			String localDir =
+			final String localDir =
 				this.normalizeLocalDirectory
 					( item.getPathName(), entry.getRepository() );
 
@@ -1658,7 +1673,7 @@ CVSProject extends Object
 
 	public boolean
 	handleResponseItem(
-			CVSRequest request, CVSResponse response, CVSResponseItem item )
+			final CVSRequest request, final CVSResponse response, final CVSResponseItem item )
 		{
 		boolean result;
 
@@ -1676,13 +1691,13 @@ CVSProject extends Object
 		}
 
 	public boolean
-	processCVSResponse( CVSRequest request, CVSResponse response )
+	processCVSResponse( final CVSRequest request, final CVSResponse response )
 		{
 		int			idx;
-		boolean		ok;
-		CVSEntry	entry = null;
+		final boolean		ok;
+		final CVSEntry	entry = null;
 		boolean		result = true;
-		File		localFile = null;
+		final File		localFile = null;
 		CVSResponseItem	item = null;
 
 		if ( response == null )
@@ -1693,7 +1708,7 @@ CVSProject extends Object
 		// since the responseHandler may have queued some of the
 		// response items for processing here!!!
 		//
-		CVSRespItemVector items = response.getItemList();
+		final CVSRespItemVector items = response.getItemList();
 
 		for ( idx = 0 ; result && idx < items.size() ; ++idx )
 			{
@@ -1748,16 +1763,16 @@ CVSProject extends Object
 			{
 			response.setStatus( CVSResponse.OK );
 			}
-		
+
 		return result;
 		}
 
 
 	private boolean
 	processResponseItem(
-			CVSRequest request, CVSResponse response, CVSResponseItem item )
+			final CVSRequest request, final CVSResponse response, final CVSResponseItem item )
 		{
-		int			idx;
+		final int			idx;
 		boolean		ok;
 		CVSEntry	entry = null;
 		boolean		result = true;
@@ -1790,7 +1805,7 @@ CVSProject extends Object
 				( item.getPathName().substring
 					( 0, item.getPathName().length() - 2 ) );
 
-			CVSTracer.traceIf( this.deepDebug,
+			CVSTracer.traceIf( CVSProject.deepDebug,
 				"\nPROCESSResponseItem: STRIPPED FINAL './' CASE\n"
 				+ "   item.pathName = '" + item.getPathName() + "'" );
 			}
@@ -1798,16 +1813,16 @@ CVSProject extends Object
 		if ( ! item.getPathName().startsWith( "./" ) )
 			{
 			String itemRepos = item.getRepositoryName();
-			int slashIdx = itemRepos.lastIndexOf( "/" );
+			final int slashIdx = itemRepos.lastIndexOf( "/" );
 			if ( slashIdx != -1 )
 				{
 				itemRepos = itemRepos.substring( 0, slashIdx );
 				}
 
-			CVSEntry hackEntry =
+			final CVSEntry hackEntry =
 				this.reversePathTableEntry( itemRepos );
 
-			CVSTracer.traceIf( this.deepDebug,
+			CVSTracer.traceIf( CVSProject.deepDebug,
 				"\nPROCESSResponseItem: APPLY ITEM PATHNAME HACK\n"
 				+ "   item.pathName = '" + item.getPathName() + "'\n"
 				+ "   item.repos    = '" + item.getRepositoryName() + "'\n"
@@ -1818,7 +1833,7 @@ CVSProject extends Object
 			if ( hackEntry != null )
 				{
 				item.setPathName( hackEntry.getLocalDirectory() );
-				CVSTracer.traceIf( this.deepDebug,
+				CVSTracer.traceIf( CVSProject.deepDebug,
 					"\nPROCESSResponseItem: ITEM PATH set to '"
 					+ hackEntry.getLocalDirectory() + "'\n" );
 				}
@@ -1833,13 +1848,13 @@ CVSProject extends Object
 				// directory appears to be the correct answer.
 				//
 				item.setPathName( "./" + item.getPathName() );
-				CVSTracer.traceIf( this.deepDebug,
+				CVSTracer.traceIf( CVSProject.deepDebug,
 					"\nPROCESSResponseItem: NO PATH TABLE ENTRY, PREFIX w/ './'\n"
 					+ "   ITEM PATH set to '" + item.getPathName() + "'" );
 				}
 			}
 
-		CVSTracer.traceIf( this.deepDebug,
+		CVSTracer.traceIf( CVSProject.deepDebug,
 			"PROCESSResponseItem:\n"
 			+ "   item.getType        '" + item.getType() + "'\n"
 			+ "   item.getPathName    '" + item.getPathName() + "'\n"
@@ -1864,7 +1879,7 @@ CVSProject extends Object
 						CVSTracer.traceIf( request.traceProcessing,
 							"CHECKED_IN: entry '"
 							+ entry.getFullName() + "'" );
-						
+
 						localFile = this.getEntryFile( entry );
 
 						entry.setTimestamp( localFile );
@@ -2015,13 +2030,13 @@ CVSProject extends Object
 			case CVSResponseItem.UPDATE_EXISTING:
 				if ( request.handleUpdated )
 					{
-					String cmdName =
-						( item.getType() == CVSResponseItem.CREATED
-						? "Created"
-						: ( item.getType() == CVSResponseItem.MERGED
-						? "Merged"
-						: ( item.getType() == CVSResponseItem.UPDATED
-						? "Updated" : "Updated existing" ) ) );
+					final String cmdName =
+						item.getType() == CVSResponseItem.CREATED
+					? "Created"
+					: item.getType() == CVSResponseItem.MERGED
+					? "Merged"
+					: item.getType() == CVSResponseItem.UPDATED
+					? "Updated" : "Updated existing";
 
 					entry = this.createItemEntry( item );
 					if ( entry != null )
@@ -2029,7 +2044,7 @@ CVSProject extends Object
 						// We have to save this state, since the set
 						// of the timestamp from the local file will
 						// clear it in the entry.
-						boolean isInConflict = entry.isInConflict();
+						final boolean isInConflict = entry.isInConflict();
 
 						ok = this.ensureEntryHierarchy
 								( item.getPathName(),
@@ -2108,19 +2123,19 @@ CVSProject extends Object
 		}
 
 	public boolean
-	performCopyFile( CVSResponseItem item )
+	performCopyFile( final CVSResponseItem item )
 		{
 		boolean result = true;
 
-		CVSEntry entry = this.createItemEntry( item );
-		
+		final CVSEntry entry = this.createItemEntry( item );
+
 		if ( entry != null )
 			{
-			File fromFile = this.getEntryFile( entry );
+			final File fromFile = this.getEntryFile( entry );
 
 			entry.setName( item.getNewName() );
 
-			File toFile = this.getEntryFile( entry );
+			final File toFile = this.getEntryFile( entry );
 
 			if ( fromFile.exists() )
 				{
@@ -2156,11 +2171,11 @@ CVSProject extends Object
 		}
 
 	public boolean
-	setSticky( CVSResponseItem item, boolean isSet, boolean writeFile )
+	setSticky( final CVSResponseItem item, final boolean isSet, final boolean writeFile )
 		{
 		boolean		result;
 
-		String localDir =
+		final String localDir =
 			this.normalizeLocalDirectory
 				( item.getPathName(), item.getRepositoryPath() );
 
@@ -2177,11 +2192,11 @@ CVSProject extends Object
 
 		if ( result && writeFile )
 			{
-			CVSEntry entry = this.createItemEntry( item );
+			final CVSEntry entry = this.createItemEntry( item );
 			if ( entry != null )
 				{
 				entry.setName( "CVS/Tag" );
-				File file = this.getEntryFile( entry );
+				final File file = this.getEntryFile( entry );
 
 				if ( isSet )
 					{
@@ -2191,7 +2206,7 @@ CVSProject extends Object
 							CVSCUtilities.writeStringFile
 								( file, item.getTagSpec() );
 							}
-						catch ( IOException ex )
+						catch ( final IOException ex )
 							{
 							CVSTracer.traceWithStack
 								( "ERROR writing sticky tag file '"
@@ -2219,7 +2234,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	setStaticDirectory( CVSResponseItem item, boolean isSet, boolean writeFile )
+	setStaticDirectory( final CVSResponseItem item, final boolean isSet, final boolean writeFile )
 		{
 		boolean		result;
 
@@ -2239,11 +2254,11 @@ CVSProject extends Object
 
 		if ( result && writeFile )
 			{
-			CVSEntry entry = this.createItemEntry( item );
+			final CVSEntry entry = this.createItemEntry( item );
 			if ( entry != null )
 				{
 				entry.setName( "CVS/Entries.static" );
-				File file = this.getEntryFile( entry );
+				final File file = this.getEntryFile( entry );
 
 				if ( isSet )
 					{
@@ -2271,18 +2286,18 @@ CVSProject extends Object
 		return result;
 		}
 
-	public CVSNotifyItem 
+	public CVSNotifyItem
 	parseNotifyLine( String notifyLine )
 		{
 		CVSNotifyItem	result = null;
 
-		String notType = notifyLine.substring( 0, 1 );
+		final String notType = notifyLine.substring( 0, 1 );
 		notifyLine = notifyLine.substring( 1 );
 
-		StringTokenizer toker =
+		final StringTokenizer toker =
 			new StringTokenizer( notifyLine, "\t" );
 
-		int count = toker.countTokens();
+		final int count = toker.countTokens();
 
 		if ( count > 3 )
 			{
@@ -2298,25 +2313,25 @@ CVSProject extends Object
 				host = toker.nextToken();
 				wdir = toker.nextToken();
 				}
-			catch ( NoSuchElementException ex )
+			catch ( final NoSuchElementException ex )
 				{
 				name = null;
 				}
 
 			try { watches = toker.nextToken(); }
-				catch ( NoSuchElementException ex )
+				catch ( final NoSuchElementException ex )
 					{ watches = null; }
 
 			if ( name != null && time != null && host != null && wdir != null )
 				{
-				CVSEntry entry =
+				final CVSEntry entry =
 					(CVSEntry) this.pathTable.get( wdir );
 
 				if ( entry != null )
 					{
 					result = new CVSNotifyItem
 						( notType, name, time, host, wdir,
-							( watches == null ? "" : watches ),
+							watches == null ? "" : watches,
 							entry.getRepository() );
 					}
 				}
@@ -2326,33 +2341,33 @@ CVSProject extends Object
 		}
 
 	protected boolean
-	processNotified( CVSResponseItem item )
+	processNotified( final CVSResponseItem item )
 		{
 		boolean			result = true;
 		BufferedReader	read;
 		PrintWriter		write;
 		String			inline;
 
-		CVSEntry entry = this.createItemEntry( item );
+		final CVSEntry entry = this.createItemEntry( item );
 
-		String itemPath = entry.getFullName();
+		final String itemPath = entry.getFullName();
 
-		String	fileName =
+		final String	fileName =
  			CVSProject.getAdminNotifyPath(
 				CVSProject.rootPathToAdminPath
 					( this.getLocalRootPath() ) );
 
-		File notFile = new File( fileName );
-		File tmpFile = new File( fileName + ".tmp" );
+		final File notFile = new File( fileName );
+		final File tmpFile = new File( fileName + ".tmp" );
 
 		try
 			{
 			read = new BufferedReader( new FileReader( notFile ) );
 			write = new PrintWriter( new FileWriter( tmpFile ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
-			String msg =
+			final String msg =
 				"ERROR opening Notification file '"
 				+ fileName + "' for Notified response.";
 			CVSLog.logMsg( msg );
@@ -2364,9 +2379,9 @@ CVSProject extends Object
 		for ( boolean chk = true ; ; )
 			{
 			try { inline = read.readLine(); }
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
-				String msg =
+				final String msg =
 					"ERROR reading Notification file "
 						+ "during Notified response.";
 				CVSLog.logMsg( msg );
@@ -2384,12 +2399,12 @@ CVSProject extends Object
 				}
 			else
 				{
-				CVSNotifyItem notifyItem = 
+				final CVSNotifyItem notifyItem =
 					this.parseNotifyLine( inline );
 
 				if ( notifyItem != null )
 					{
-					String fullName =
+					final String fullName =
 						notifyItem.getWorkingDirectory() + notifyItem.getName();
 
 					if ( ! itemPath.equals( fullName ) )
@@ -2410,8 +2425,8 @@ CVSProject extends Object
 			}
 
 		try { read.close(); }
-			catch ( IOException ex ) { }
-		
+			catch ( final IOException ex ) { }
+
 		write.flush();
 		write.close();
 
@@ -2431,14 +2446,14 @@ CVSProject extends Object
 		}
 
 	public String
-	readRootDirectory( File rootFile )
+	readRootDirectory( final File rootFile )
 		{
 		String result = null;
 		try {
 			result =
 				CVSCUtilities.readStringFile( rootFile );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = null;
 			}
@@ -2447,14 +2462,14 @@ CVSProject extends Object
 		}
 
 	public String
-	readRepository( File reposFile )
+	readRepository( final File reposFile )
 		{
 		String result = null;
 		try {
 			result =
 				CVSCUtilities.readStringFile( reposFile );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = null;
 			}
@@ -2467,15 +2482,15 @@ CVSProject extends Object
 	 * @param repository The server's repository pathname for the root.
 	 */
 	public void
-	establishRootEntry( String repository )
+	establishRootEntry( final String repository )
 		{
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
-			"CVSProject.establishRootEntry: " 
+			"CVSProject.establishRootEntry: "
 			+ "repository  '" + repository + "'" );
 
-		CVSEntry rootEntry = new CVSEntry();
-		
+		final CVSEntry rootEntry = new CVSEntry();
+
 		rootEntry.setDirty( true );
 		rootEntry.setName( "." );
 		rootEntry.setRepository( repository );
@@ -2488,28 +2503,28 @@ CVSProject extends Object
 
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
-			"CVSProject.establishRootEntry: ROOT ESTABLISHED:\n" 
+			"CVSProject.establishRootEntry: ROOT ESTABLISHED:\n"
 			+ rootEntry.dumpString( "   " ) );
 
 		this.rootEntry = rootEntry;
 		}
 
 	public void
-	openProject( File localRootFile )
+	openProject( final File localRootFile )
 		throws IOException
 		{
 		String	repositoryStr;
 		String	rootDirectoryStr;
 
-		if ( this.deepDebug )
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: OPEN PROJECT '"
 			+ localRootFile.getPath() + "'" );
 
-		File adminDirFile =
+		final File adminDirFile =
 			new File( localRootFile.getPath(), "CVS" );
 
-		if ( this.deepDebug )
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: adminDirFile '"
 			+ adminDirFile.getPath() + "'" );
@@ -2519,14 +2534,14 @@ CVSProject extends Object
 				( "admin directory '"
 					+ adminDirFile.getPath() + "' does not exist" );
 
-		String rootPath =
+		final String rootPath =
 			CVSProject.getAdminRootPath
 				( CVSCUtilities.importPath( adminDirFile.getPath() ) );
 
-		File adminRootFile =
+		final File adminRootFile =
 			new File( CVSCUtilities.exportPath( rootPath ) );
 
-		if ( this.deepDebug )
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: adminRootFile '"
 			+ adminRootFile.getPath() + "'" );
@@ -2536,12 +2551,12 @@ CVSProject extends Object
 				( "admin Root file '" + adminRootFile.getPath()
 					+ "' does not exist" );
 
-		String reposPath =
+		final String reposPath =
 			CVSProject.getAdminRepositoryPath( adminDirFile.getPath() );
 
-		File adminRepositoryFile = new File( reposPath );
+		final File adminRepositoryFile = new File( reposPath );
 
-		if ( this.deepDebug )
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: adminRepositoryFile '"
 			+ adminRepositoryFile.getPath() + "'" );
@@ -2565,7 +2580,7 @@ CVSProject extends Object
 					+ adminRepositoryFile.getPath()
 					+ "'" );
 
-		if ( this.deepDebug )
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: Read Admin directory\n"
 			+ "   rootPath   '" + rootPath + "'\n"
@@ -2655,17 +2670,17 @@ CVSProject extends Object
 		//
 		// Should really just get the module name from the local dir name.?
 		//
-		String localRootStr =
+		final String localRootStr =
 			CVSCUtilities.importPath( localRootFile.getPath() );
 
-		int index = localRootStr.lastIndexOf( '/' );
+		final int index = localRootStr.lastIndexOf( '/' );
 
 		// This will include the beginning slash is there is any string at all...
 		String repos =
 			repositoryStr.substring
 				( rootDirectoryStr.length() );
-	
-		if ( this.deepDebug )
+
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: LOCAL ROOT CHECK\n"
 			+ "   localRootStr  '" + localRootStr + "'\n"
@@ -2681,7 +2696,7 @@ CVSProject extends Object
 			}
 **
 */
-		if ( this.deepDebug )
+		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.openProject: Establish ROOT\n"
 			+ "   localRootStr  '" + localRootStr + "'\n"
@@ -2713,7 +2728,7 @@ CVSProject extends Object
 		if ( repos.length() > 0 )
 			{
 			CVSEntry childEntry = new CVSEntry();
-			
+
 			int slashIdx = repos.lastIndexOf( "/" );
 
 			if ( slashIdx == -1 )
@@ -2758,7 +2773,7 @@ CVSProject extends Object
 
 		if ( CVSProject.deepDebug )
 			{
-			StringBuffer buf = new StringBuffer();
+			final StringBuffer buf = new StringBuffer();
 
 			this.dumpCVSProject( buf, "Project Open" );
 
@@ -2773,7 +2788,7 @@ CVSProject extends Object
 		}
 
 	public void
-	addNewEntry( CVSEntry entry )
+	addNewEntry( final CVSEntry entry )
 		{
 		if ( this.rootEntry == null )
 			{
@@ -2781,15 +2796,15 @@ CVSProject extends Object
 				( "CVSProject.addNewEntry: NULL ROOT ENTRY!!!!" );
 			}
 
-		String name = entry.getName();
-		String localDirectory = entry.getLocalDirectory();
-		String repository = entry.getRepository();
+		final String name = entry.getName();
+		final String localDirectory = entry.getLocalDirectory();
+		final String repository = entry.getRepository();
 
 		this.ensureEntryHierarchy( localDirectory, repository );
 
-		CVSEntry parentEntry =
-			(CVSEntry) this.getPathTableEntry( localDirectory );
-		
+		final CVSEntry parentEntry =
+			this.getPathTableEntry( localDirectory );
+
 		if ( parentEntry == null )
 			{
 			CVSTracer.traceWithStack
@@ -2797,13 +2812,13 @@ CVSProject extends Object
 			return;
 			}
 
-		parentEntry.appendEntry( entry );		 
+		parentEntry.appendEntry( entry );
 		}
 
 	public String
-	reposNameToRepository( String fullRepos )
+	reposNameToRepository( final String fullRepos )
 		{
-		int index = fullRepos.lastIndexOf( '/' );
+		final int index = fullRepos.lastIndexOf( '/' );
 
 		if ( index < 0 )
 			{
@@ -2819,9 +2834,9 @@ CVSProject extends Object
 		}
 
 	public String
-	reposNameToFileName( String fullRepos )
+	reposNameToFileName( final String fullRepos )
 		{
-		int index = fullRepos.lastIndexOf( '/' );
+		final int index = fullRepos.lastIndexOf( '/' );
 
 		if ( index < 0 )
 			{
@@ -2837,9 +2852,9 @@ CVSProject extends Object
 		}
 
 	public boolean
-	removeEntriesItem( CVSResponseItem item )
+	removeEntriesItem( final CVSResponseItem item )
 		{
-		CVSEntryVector	entries;
+		final CVSEntryVector	entries;
 		boolean			result = true;
 
 		if ( CVSProject.deepDebug )
@@ -2847,14 +2862,14 @@ CVSProject extends Object
 			"CVSProject.removeEntriesItem: pathName '"
 			+ item.getPathName() + "'" );
 
-		String localDirectory =
+		final String localDirectory =
 			this.normalizeLocalDirectory
 				( item.getPathName(),
 					this.reposNameToRepository
 						( item.getRepositoryName() ) );
 
-		CVSEntry parentEntry =
-			(CVSEntry) this.getPathTableEntry( localDirectory );
+		final CVSEntry parentEntry =
+			this.getPathTableEntry( localDirectory );
 
 		if ( parentEntry == null )
 			{
@@ -2866,7 +2881,7 @@ CVSProject extends Object
 			}
 		else
 			{
-			String entryName =
+			final String entryName =
 				this.reposNameToFileName
 					( item.getRepositoryName() );
 
@@ -2882,10 +2897,10 @@ CVSProject extends Object
 				if ( pathName.startsWith( "./" ) )
 					pathName = pathName.substring (2);
 
-				String fileName =
+				final String fileName =
 					this.localRootDirectory + File.separator + pathName + entryName;
 
-				File file = new File( fileName.replace( '/', File.separatorChar ) );
+				final File file = new File( fileName.replace( '/', File.separatorChar ) );
 				if ( ! file.delete() )
 					{
 					CVSTracer.traceWithStack
@@ -2906,11 +2921,11 @@ CVSProject extends Object
 	 */
 
 	public void
-	updateEntriesItem( CVSEntry newEntry )
+	updateEntriesItem( final CVSEntry newEntry )
 		{
 		CVSEntry	entry;
-		boolean		result;
-		
+		final boolean		result;
+
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.UPDATEEntriesItem: newEntry\n"
@@ -2923,7 +2938,7 @@ CVSProject extends Object
 		//
 		// When we get these from the server, typically they
 		// have only the first two fields filled in.
-		// 
+		//
 		// Therefore, I think it is correct to simply bother
 		// with the possible effects that these two first
 		// fields can have on our local Entries.
@@ -2939,10 +2954,10 @@ CVSProject extends Object
 		//       '/name/-version///'. We have to be smart enough
 		//       here to pickup the "marked for removal" aspect
 		//       only if our version match. God only knows why
-		//       we would ever get one that did not match our Entry... 
+		//       we would ever get one that did not match our Entry...
 
-		String name = newEntry.getName();
-		String localDirectory = newEntry.getLocalDirectory();
+		final String name = newEntry.getName();
+		final String localDirectory = newEntry.getLocalDirectory();
 
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
@@ -2950,15 +2965,15 @@ CVSProject extends Object
 			+ localDirectory + "' name '" + name + "'  ENTRY '"
 			+ newEntry + "'" );
 
-		CVSEntry parentEntry =
-			(CVSEntry) this.getPathTableEntry( localDirectory );
-		
+		final CVSEntry parentEntry =
+			this.getPathTableEntry( localDirectory );
+
 		entry = null;
 		if ( parentEntry != null )
 			{
 			entry = parentEntry.locateEntry( name );
 			}
-		
+
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSProject.updateEntriesItem: Parent '"
@@ -3012,7 +3027,7 @@ CVSProject extends Object
 			if ( newEntry.getOptions() != null
 					&& newEntry.getOptions().length() > 0 )
 				entry.setOptions( newEntry.getOptions() );
-			
+
 			if ( newEntry.getTag() != null )
 				{
 				entry.setTag( newEntry.getTag() );
@@ -3026,7 +3041,7 @@ CVSProject extends Object
 				// This one call nulls both tag and date.
 				entry.setTag( null );
 				}
-			
+
 			entry.setDirty( true );
 
 			if ( CVSProject.deepDebug )
@@ -3055,7 +3070,7 @@ CVSProject extends Object
 	public boolean
 	readEntries()
 		{
-		boolean ok = true;
+		final boolean ok = true;
 
 		if ( CVSProject.debugEntryIO )
 		CVSTracer.traceIf( true,
@@ -3063,17 +3078,17 @@ CVSProject extends Object
 			+ "   locaRootPath '" +  this.getLocalRootPath() + "'\n"
 			+ "   ROOT ENTRY   '" +  this.rootEntry.dumpString() + "'" );
 
-		String rootStr =
+		final String rootStr =
 			CVSCUtilities.exportPath( this.getLocalRootPath() );
 
-		File workingDirectory = new File( rootStr );
+		final File workingDirectory = new File( rootStr );
 
 		if ( CVSProject.debugEntryIO )
 		CVSTracer.traceIf( true,
 			"CVSProject.readEntries:\n"
 			+ "   WkgDirPath '" +  workingDirectory.getPath() + "'" );
 
-		CVSEntryVector entries =
+		final CVSEntryVector entries =
 			this.readEntriesFile( this.rootEntry, workingDirectory );
 
 		if ( entries != null )
@@ -3090,15 +3105,15 @@ CVSProject extends Object
 	 */
 
 	public CVSEntryVector
-	readEntriesFile( CVSEntry dirEntry, File workingDirectory )
+	readEntriesFile( final CVSEntry dirEntry, final File workingDirectory )
 		{
 		int			linenum = 0;
 		String		line = null;
 		boolean		ok = true;
 		boolean		isDir = false;
 		BufferedReader in = null;
-		
-		CVSEntryVector entries = new CVSEntryVector();
+
+		final CVSEntryVector entries = new CVSEntryVector();
 
 		// Compute the 'local directory' that this Entry will exchange
 		// with the server during the protocol...
@@ -3123,11 +3138,11 @@ CVSProject extends Object
 
 
 		// ===============  ROOT  ======================
-		String adminRootPath =
+		final String adminRootPath =
 			CVSProject.rootPathToAdminPath
 				( CVSCUtilities.importPath( workingDirectory.getPath() ) );
 
-		File adminRootFile = new File
+		final File adminRootFile = new File
 			( CVSCUtilities.exportPath
 				( CVSProject.getAdminRootPath( adminRootPath ) ) );
 
@@ -3169,7 +3184,7 @@ CVSProject extends Object
 		//
 		// REVIEW This patch was submitted, but I do not understand
 		//        in what context it ever occurs to be fixed. TGE
-		// GG-NT-no-server  Gérard COLLIN <gcollin@netonomy.com>
+		// GG-NT-no-server  Gï¿½rard COLLIN <gcollin@netonomy.com>
 		//    Changed to searching first : after @ because of
 		//    "user@host.domain:C:/src/cvs" specifications
 		//
@@ -3216,7 +3231,7 @@ CVSProject extends Object
 
 
 		// ============  REPOSITORY  ===================
-		File adminRepositoryFile = new File
+		final File adminRepositoryFile = new File
 			( CVSCUtilities.exportPath
 				( CVSProject.getAdminRepositoryPath( adminRootPath ) ) );
 
@@ -3272,7 +3287,7 @@ CVSProject extends Object
 			CVSCUtilities.integrateEntriesLog
 				( new File( CVSCUtilities.exportPath( adminRootPath ) ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg
 				( "ERROR integrating 'Entries.Log' file in Admin Path '"
@@ -3280,7 +3295,7 @@ CVSProject extends Object
 			ex.printStackTrace();
 			}
 
-		File entriesFile = new File
+		final File entriesFile = new File
 			( CVSCUtilities.exportPath
 				( CVSProject.getAdminEntriesPath( adminRootPath ) ) );
 
@@ -3293,7 +3308,7 @@ CVSProject extends Object
 			in = new BufferedReader
 						( new FileReader( entriesFile ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			in = null;
 			ok = false;
@@ -3302,7 +3317,7 @@ CVSProject extends Object
 		for ( linenum = 1 ; ok ; ++linenum )
 			{
 			try { line = in.readLine();	}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				line = null;
 				break;
@@ -3323,12 +3338,12 @@ CVSProject extends Object
 
 			if ( line.startsWith( "/" ) )
 				{
-				CVSEntry entry = new CVSEntry();
+				final CVSEntry entry = new CVSEntry();
 
 				try {
 					entry.parseEntryLine( line, false );
 					}
-				catch ( ParseException ex )
+				catch ( final ParseException ex )
 					{
 					// UNDONE
 					CVSLog.logMsg
@@ -3353,28 +3368,28 @@ CVSProject extends Object
 
 					if ( isDir )
 						{
-						String newLocal =
+						final String newLocal =
 							localDirectory + entry.getName() + "/";
 
-						String newRepos =
+						final String newRepos =
 							repositoryStr + "/" + entry.getName();
 
 						entry.setRepository( newRepos );
 						entry.setLocalDirectory( newLocal );
 
-						String newWkgPath =
+						final String newWkgPath =
 							workingDirectory.getPath()
 								+ File.separator + entry.getName()
 								+ File.separator;
 
-						String adminPath = newLocal + "CVS";
+						final String adminPath = newLocal + "CVS";
 
-						File newWorking =
+						final File newWorking =
 							new File( workingDirectory, entry.getName() );
 							//	this.localRootDirectory + "/"
 							//	+ localDirectory + entry.getName()
 							//	);
-						
+
 						if ( CVSProject.debugEntryIO )
 						CVSTracer.traceIf ( true,
 							"readEntriesFile: IS DIRECTORY:\n"
@@ -3385,16 +3400,16 @@ CVSProject extends Object
 
 						CVSEntryVector newEntries =
 							readEntriesFile( entry, newWorking );
-						
+
 						if ( newEntries == null )
 							{
 							CVSLog.logMsg
 								( "ERROR failed reading Entries file from '"
 									+ newWorking.getPath() + "'" );
-							
+
 							newEntries = new CVSEntryVector();
 							}
-							
+
 						entry.setDirectoryEntryList( newEntries );
 						}
 					}
@@ -3406,7 +3421,7 @@ CVSProject extends Object
 		if ( in != null )
 			{
 			try { in.close(); }
-				catch ( IOException ex ) {}
+				catch ( final IOException ex ) {}
 			}
 
 		return entries;
@@ -3417,7 +3432,7 @@ CVSProject extends Object
 		{
 		boolean		result = false;
 
-		String localPath = this.getLocalRootDirectory();
+		final String localPath = this.getLocalRootDirectory();
 
 		if ( CVSProject.debugEntryIO )
 		CVSTracer.traceIf( true,
@@ -3441,12 +3456,12 @@ CVSProject extends Object
 		}
 
 	private boolean
-	writeAdminAndDescend( String localRoot, CVSEntry dirEntry )
+	writeAdminAndDescend( final String localRoot, final CVSEntry dirEntry )
 		{
 		int			i;
 		boolean		result = true;
 
-		String localDir = dirEntry.getLocalDirectory();
+		final String localDir = dirEntry.getLocalDirectory();
 
 		String localPath = localRoot;
 		if ( localDir.length() > 2 )
@@ -3459,25 +3474,25 @@ CVSProject extends Object
 			"CVSProject.writeAdminFiles: WRITE AND DESCEND LOCAL PATH\n"
 				+ "   localPath   '" + localPath + "'" );
 
-		String adminRootPath =
+		final String adminRootPath =
 			CVSProject.rootPathToAdminPath( localPath );
 
-		File adminFile = new File
+		final File adminFile = new File
 			( CVSCUtilities.exportPath( adminRootPath ) );
 
-		File rootFile = new File
+		final File rootFile = new File
 			( CVSCUtilities.exportPath
 				( CVSProject.getAdminRootPath( adminRootPath ) ) );
 
-		File reposFile = new File
+		final File reposFile = new File
 			( CVSCUtilities.exportPath
 				( CVSProject.getAdminRepositoryPath( adminRootPath ) ) );
 
-		File entriesFile = new File
+		final File entriesFile = new File
 			( CVSCUtilities.exportPath
 				( CVSProject.getAdminEntriesPath( adminRootPath ) ) );
 
-		CVSEntryVector entries = dirEntry.getEntryList();
+		final CVSEntryVector entries = dirEntry.getEntryList();
 
 		if ( CVSProject.debugEntryIO )
 		{
@@ -3524,7 +3539,7 @@ CVSProject extends Object
 			if ( result )
 				{
 				// ==============    ROOT   ==================
-				String rootDirStr = this.projectDef.getRootDirectorySpec();
+				final String rootDirStr = this.projectDef.getRootDirectorySpec();
 
 				if ( CVSProject.debugEntryIO )
 				CVSTracer.traceIf( true,
@@ -3564,13 +3579,13 @@ CVSProject extends Object
 			CVSTracer.traceIf( CVSProject.debugEntryIO,
 				"CVSProject.writeAdminAndDescend: LOOP i = " + i );
 
-			CVSEntry entry = entries.entryAt(i);
+			final CVSEntry entry = entries.entryAt(i);
 
 			CVSTracer.traceIf( CVSProject.debugEntryIO,
 				"CVSProject.writeAdminAndDescend: "
 					+ "LOOP["+ i +"] repository '"+	repository
 					+ "' entry '" + entry.getName() + "'" );
-			
+
 			if ( entry.isDirectory() )
 				{
 				// REVIEW I know this is gonna fail on subtrees!!!
@@ -3586,7 +3601,7 @@ CVSProject extends Object
 					+ "RETURNED from '" + entry.getFullName()
 					+ "' with '" + result + "'" );
 				}
-			} 
+			}
 
 		if ( result )
 			{
@@ -3600,9 +3615,9 @@ CVSProject extends Object
 		}
 
 	public boolean
-	writeAdminEntriesFile( File entriesFile, CVSEntryVector entries )
+	writeAdminEntriesFile( final File entriesFile, final CVSEntryVector entries )
 		{
-		boolean		ok = true;
+		final boolean		ok = true;
 		boolean		result = true;
 		CVSEntry	entry = null;
 		BufferedWriter	out = null;
@@ -3611,7 +3626,7 @@ CVSProject extends Object
 			out = new BufferedWriter(
 					new FileWriter( entriesFile ) );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			CVSLog.logMsg
 				( "CVSProject.writeAdminEntriesFile: "
@@ -3630,7 +3645,7 @@ CVSProject extends Object
 				out.write( entry.getAdminEntryLine() );
 				out.newLine();
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSLog.logMsg
 					( "CVSProject.writeAdminEntriesFile: "
@@ -3645,7 +3660,7 @@ CVSProject extends Object
 		try {
 			out.close();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg
 				( "CVSProject.writeAdminEntriesFile: "
@@ -3660,7 +3675,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	writeAdminRootFile( File rootFile, String rootDirectoryStr )
+	writeAdminRootFile( final File rootFile, final String rootDirectoryStr )
 		{
 		boolean			result = true;
 		BufferedWriter	out = null;
@@ -3669,7 +3684,7 @@ CVSProject extends Object
 			out = new BufferedWriter(
 					new FileWriter( rootFile ) );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			CVSLog.logMsg
 				( "CVSProject.writeAdminRootFile: "
@@ -3685,7 +3700,7 @@ CVSProject extends Object
 				out.newLine();
 				out.close();
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSLog.logMsg
 					( "CVSProject.writeAdminRootFile: "
@@ -3699,7 +3714,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	writeAdminRepositoryFile( File repFile, String repository )
+	writeAdminRepositoryFile( final File repFile, final String repository )
 		{
 		boolean			result = true;
 		BufferedWriter	out = null;
@@ -3714,7 +3729,7 @@ CVSProject extends Object
 			out = new BufferedWriter(
 						new FileWriter( repFile ) );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			CVSLog.logMsg
 				( "CVSProject.writeAdminRepositoryFile: "
@@ -3730,7 +3745,7 @@ CVSProject extends Object
 				out.newLine();
 				out.close();
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSLog.logMsg
 					( "CVSProject.writeAdminRepositoryFile: "
@@ -3744,9 +3759,9 @@ CVSProject extends Object
 		}
 
 	public boolean
-	isLocalFileModified( CVSEntry entry )
+	isLocalFileModified( final CVSEntry entry )
 		{
-		File entryFile = this.getEntryFile( entry );
+		final File entryFile = this.getEntryFile( entry );
 		return entry.isLocalFileModified( entryFile );
 		}
 
@@ -3760,13 +3775,13 @@ CVSProject extends Object
 
 	public boolean
 	checkReleaseStatus(
-			CVSIgnore ignore,
-			Vector mods, Vector adds, Vector rems, Vector unks )
+			final CVSIgnore ignore,
+			final Vector mods, final Vector adds, final Vector rems, final Vector unks )
 		{
 		//
 		// NOTE
 		// WARNING !!!
-		// 
+		//
 		// THESE METHODS that operate on the localRootDirectory
 		// MUST BE VERY CAREFUL!
 		//
@@ -3781,7 +3796,7 @@ CVSProject extends Object
 		// release based on both the localRootDirectory and the
 		// local directory of one of the root level entries.
 		//
-		CVSEntryVector rootEntries = this.getRootEntry().getEntryList();
+		final CVSEntryVector rootEntries = this.getRootEntry().getEntryList();
 		if ( rootEntries == null || rootEntries.size() == 0 )
 			{
 			CVSTracer.traceWithStack( "THIS SHOULD NEVER HAPPEN!!" );
@@ -3791,21 +3806,21 @@ CVSProject extends Object
 		this.checkReleaseAndDescend
 			( this.getRootEntry(), ignore, mods, adds, rems, unks );
 
-		return ( mods.size() > 0 || adds.size() > 0
-					|| rems.size() > 0 || unks.size() > 0 );
+		return mods.size() > 0 || adds.size() > 0
+					|| rems.size() > 0 || unks.size() > 0;
 		}
 
 	private void
 	checkReleaseAndDescend(
-			CVSEntry parent, CVSIgnore ignore,
-			Vector mods, Vector adds, Vector rems, Vector unks )
+			final CVSEntry parent, final CVSIgnore ignore,
+			final Vector mods, final Vector adds, final Vector rems, final Vector unks )
 		{
-		CVSEntryVector entries = parent.getEntryList();
+		final CVSEntryVector entries = parent.getEntryList();
 
-		File dirF = this.getLocalEntryFile( parent );
-		String[] list = dirF.list();
-		Vector fileV =
-			new Vector( (list == null) ? 0 : list.length );
+		final File dirF = this.getLocalEntryFile( parent );
+		final String[] list = dirF.list();
+		final Vector fileV =
+			new Vector( list == null ? 0 : list.length );
 
 		if ( list != null )
 			{
@@ -3815,7 +3830,7 @@ CVSProject extends Object
 
 		for ( int i = 0 ; i < entries.size() ; ++i )
 			{
-			CVSEntry entry = entries.entryAt(i);
+			final CVSEntry entry = entries.entryAt(i);
 
 			// Anything we have an entry for is not unknown
 			fileV.removeElement( entry.getName() );
@@ -3843,7 +3858,7 @@ CVSProject extends Object
 
 		for ( int i = 0, sz = fileV.size() ; i < sz ; ++i )
 			{
-			String fileName = (String) fileV.elementAt( i );
+			final String fileName = (String) fileV.elementAt( i );
 			if ( ! ignore.isFileToBeIgnored( fileName ) )
 				{
 				// parent is a dir entry, which always has a '/'
@@ -3854,7 +3869,7 @@ CVSProject extends Object
 		}
 
 	public void
-	pruneEmptySubDirs( boolean saveAdminFiles )
+	pruneEmptySubDirs( final boolean saveAdminFiles )
 		{
 		this.pruneEmptySubDirs( this.getRootEntry() );
 
@@ -3865,16 +3880,16 @@ CVSProject extends Object
 		}
 
 	public void
-	pruneEmptySubDirs( CVSEntry parent )
+	pruneEmptySubDirs( final CVSEntry parent )
 		{
-		CVSEntryVector entries = parent.getEntryList();
+		final CVSEntryVector entries = parent.getEntryList();
 		for ( int i = entries.size() - 1 ; i >= 0  ; --i )
 			{
-			CVSEntry entry = entries.getEntryAt( i );
+			final CVSEntry entry = entries.getEntryAt( i );
 			if ( entry.isDirectory() )
 				{
-				File dirF = this.getEntryFile( entry );
-				String[] list = dirF.list();
+				final File dirF = this.getEntryFile( entry );
+				final String[] list = dirF.list();
 				// MTT-null-list
 				if ( list == null || list.length == 0 )
 					{
@@ -3883,8 +3898,8 @@ CVSProject extends Object
 					}
 				else if ( list.length == 1 && list[0].equals( "CVS" ) )
 					{
-					File cvsF = new File( dirF, "CVS" );
-					if ( ( ! cvsF.exists() ) || cvsF.isDirectory() )
+					final File cvsF = new File( dirF, "CVS" );
+					if ( ! cvsF.exists() || cvsF.isDirectory() )
 						{
 						this.descendAndDelete( dirF );
 						parent.removeEntry( entry );
@@ -3904,7 +3919,7 @@ CVSProject extends Object
 		//
 		// NOTE
 		// WARNING !!!
-		// 
+		//
 		// THESE METHODS that operate on the localRootDirectory
 		// MUST BE VERY CAREFUL!
 		//
@@ -3919,7 +3934,7 @@ CVSProject extends Object
 		// release based on both the localRootDirectory and the
 		// local directory of one of the root level entries.
 		//
-		CVSEntryVector rootEntries = this.getRootEntry().getEntryList();
+		final CVSEntryVector rootEntries = this.getRootEntry().getEntryList();
 		if ( rootEntries == null || rootEntries.size() == 0 )
 			{
 			CVSTracer.traceWithStack( "THIS SHOULD NEVER HAPPEN!!" );
@@ -3928,9 +3943,9 @@ CVSProject extends Object
 
 		for ( int i = rootEntries.size() - 1 ; i >= 0  ; --i )
 			{
-			CVSEntry entry = rootEntries.getEntryAt( i );
+			final CVSEntry entry = rootEntries.getEntryAt( i );
 
-			File eFile = this.getEntryFile( entry );
+			final File eFile = this.getEntryFile( entry );
 
 			//
 			// SANITY CHECK
@@ -3941,7 +3956,7 @@ CVSProject extends Object
 			if ( ! CVSCUtilities.isSubpathInPath
 					( this.getLocalRootPath(), eFile.getPath() ) )
 				{
-				String msg =
+				final String msg =
 					"ROOT '" + this.getLocalRootPath()
 					+ "' NOT parent of '" + eFile.getPath() + "'";
 				CVSTracer.traceWithStack( msg );
@@ -3953,7 +3968,7 @@ CVSProject extends Object
 
 		// UNDONE We need to adjust the "top level Entries" here...
 
-		File rootDir = new File( this.getLocalRootDirectory() );
+		final File rootDir = new File( this.getLocalRootDirectory() );
 		if ( rootDir.exists() )
 			{
 			String[] files = rootDir.list();
@@ -3962,7 +3977,7 @@ CVSProject extends Object
 				// NOTE
 				// This is very important! As long as we have
 				// the top level CVS admin directory, it is critical
-				// that we only delete it if it is the ONLY file 
+				// that we only delete it if it is the ONLY file
 				// left at the top level!
 				//
 				// UNTIL, that is, we fix the above UNDONE wrt Entries.
@@ -3972,12 +3987,12 @@ CVSProject extends Object
 					{
 					if ( files[0].equals( "CVS" ) )
 						{
-						File cvsDir = new File( rootDir, "CVS" );
+						final File cvsDir = new File( rootDir, "CVS" );
 
 						files = cvsDir.list();
 						for ( int c = 0 ; c < files.length ; ++c )
 							{
-							File dFile = new File( cvsDir, files[c] );
+							final File dFile = new File( cvsDir, files[c] );
 							dFile.delete();
 							}
 
@@ -3998,17 +4013,17 @@ CVSProject extends Object
 		}
 
 	private void
-	descendAndDelete( File eFile )
+	descendAndDelete( final File eFile )
 		{
 		if ( eFile.isDirectory() )
 			{
-			String[] files = eFile.list();
+			final String[] files = eFile.list();
 
 			if ( files != null )
 				{
 				for ( int i = 0 ; i < files.length ; ++i )
 					{
-					File f = new File( eFile, files[i] );
+					final File f = new File( eFile, files[i] );
 					if ( f.exists() )
 						{
 						this.descendAndDelete( f );
@@ -4020,14 +4035,14 @@ CVSProject extends Object
 		eFile.delete();
 		}
 
-	// 
+	//
 	// This is tricky.
 	// We have to go back to the project's entries list
 	// to make the check, since the entry sent from the
 	// server will not reflect the local timestamp!
 	//
 	public boolean
-	checkOverwrite( CVSEntry entry, File file )
+	checkOverwrite( final CVSEntry entry, final File file )
 		{
 		// UNDONE
 		// The current algorithm is very weak.
@@ -4048,12 +4063,12 @@ CVSProject extends Object
 			return true;
 			}
 
-		CVSEntry checkEntry =
+		final CVSEntry checkEntry =
 			this.locateEntry( entry.getFullName() );
 
 		if ( checkEntry == null )
 			{
-			NullPointerException ex =
+			final NullPointerException ex =
 				new NullPointerException
 					( "locateEntry(" + entry.getFullName() + ") returns null!" );
 			CVSLog.traceMsg( ex, "CVSProject.checkOverWrite:" );
@@ -4070,7 +4085,7 @@ CVSProject extends Object
 		}
 
 	public CVSEntry
-	locateEntry( String fullPath )
+	locateEntry( final String fullPath )
 		{
 		CVSEntry	entry = null;
 
@@ -4078,7 +4093,7 @@ CVSProject extends Object
 		CVSTracer.traceIf( true,
 			"CVSProject.locateEntry( " + fullPath + " )" );
 
-		int index = fullPath.lastIndexOf( '/' );
+		final int index = fullPath.lastIndexOf( '/' );
 		if ( index < 0 )
 			{
 			CVSTracer.traceWithStack
@@ -4087,11 +4102,11 @@ CVSProject extends Object
 			}
 		else
 			{
-			String name = fullPath.substring( index + 1 );
-			String localDirectory =
+			final String name = fullPath.substring( index + 1 );
+			final String localDirectory =
 				fullPath.substring( 0, index + 1 );
 
-			CVSEntry parentEntry =
+			final CVSEntry parentEntry =
 				this.getPathTableEntry( localDirectory );
 
 			if ( parentEntry == null )
@@ -4121,7 +4136,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	ensureEntryHierarchy( String localDirectory, String repository )
+	ensureEntryHierarchy( final String localDirectory, final String repository )
 		{
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
@@ -4158,7 +4173,7 @@ CVSProject extends Object
 				}
 			}
 
-		CVSEntry lookupEntry =
+		final CVSEntry lookupEntry =
 			this.getPathTableEntry( localDirectory );
 
 		// The local directory is the Path Table.
@@ -4218,8 +4233,8 @@ CVSProject extends Object
 		//
 		for ( ; ; )
 			{
-			int length = curEntry.getLocalDirectory().length();
-			int slashIdx = localDirectory.indexOf( "/", length );
+			final int length = curEntry.getLocalDirectory().length();
+			final int slashIdx = localDirectory.indexOf( "/", length );
 
 			if ( CVSProject.deepDebug )
 			CVSTracer.traceIf( true,
@@ -4230,8 +4245,8 @@ CVSProject extends Object
 			if ( slashIdx == -1 )
 				break;
 
-			String subLocal = localDirectory.substring( 0, slashIdx + 1 );
-			CVSEntry pathEntry = this.getPathTableEntry( subLocal );
+			final String subLocal = localDirectory.substring( 0, slashIdx + 1 );
+			final CVSEntry pathEntry = this.getPathTableEntry( subLocal );
 
 			if ( CVSProject.deepDebug )
 			CVSTracer.traceIf( true,
@@ -4292,9 +4307,9 @@ CVSProject extends Object
 		// into a Vector. Then, we will roll then out forwards.
 		//
 
-		Vector elements = new Vector();
+		final Vector elements = new Vector();
 
-		String workingRepos =
+		final String workingRepos =
 			CVSCUtilities.ensureFinalSlash( repository );
 
 		int reposIdx = workingRepos.length() - 1;
@@ -4311,8 +4326,8 @@ CVSProject extends Object
 
 		for ( ; ; )
 			{
-			int newRepIdx = workingRepos.lastIndexOf( "/", reposIdx - 1 );
-			int newLocIdx = localDirectory.lastIndexOf( "/", localIdx - 1 );
+			final int newRepIdx = workingRepos.lastIndexOf( "/", reposIdx - 1 );
+			final int newLocIdx = localDirectory.lastIndexOf( "/", localIdx - 1 );
 
 			if ( CVSProject.deepDebug )
 			CVSTracer.traceIf( true,
@@ -4322,9 +4337,9 @@ CVSProject extends Object
 				+ "   newRepIdx =  " + newRepIdx
 				+ "   newLocIdx =  " + newLocIdx );
 
-			String name = localDirectory.substring( newLocIdx + 1, localIdx );
-			String subRepos = workingRepos.substring( 0, reposIdx );		// drop final slash
-			String subLocal = localDirectory.substring( 0, localIdx + 1 );	// include final slash
+			final String name = localDirectory.substring( newLocIdx + 1, localIdx );
+			final String subRepos = workingRepos.substring( 0, reposIdx );		// drop final slash
+			final String subLocal = localDirectory.substring( 0, localIdx + 1 );	// include final slash
 
 			if ( CVSProject.deepDebug )
 			CVSTracer.traceIf( true,
@@ -4345,7 +4360,7 @@ CVSProject extends Object
 			CVSTracer.traceIf( true,
 				"CVSProject.ensureEntryHierarchy: ADDED PATH!" );
 
-			String[] parms = { name, subRepos, subLocal };
+			final String[] parms = { name, subRepos, subLocal };
 			elements.addElement( parms );
 
 			reposIdx = newRepIdx;
@@ -4354,9 +4369,9 @@ CVSProject extends Object
 
 		for ( int i = elements.size() - 1 ; i >= 0 ; --i )
 			{
-			String[] parms = (String[]) elements.elementAt(i);
+			final String[] parms = (String[]) elements.elementAt(i);
 
-			CVSEntry newEntry = new CVSEntry();
+			final CVSEntry newEntry = new CVSEntry();
 			newEntry.setDirty( true );
 			newEntry.setName( parms[0] );
 			newEntry.setRepository( parms[1] );
@@ -4391,7 +4406,7 @@ CVSProject extends Object
 			workingDirF = new File
 				( workingDirF, CVSCUtilities.exportPath( newEntry.getFullPathName() ) );
 
-			CVSEntryVector entries =
+			final CVSEntryVector entries =
 				this.readEntriesFile( newEntry, workingDirF );
 
 			if ( CVSProject.deepDebug )
@@ -4425,11 +4440,11 @@ CVSProject extends Object
 	// subpath is the local path up to the name.
 	public boolean
 	ensureProperWorkingDirectory
-			( String localRoot, String subPath, boolean ensureAdmin )
+			( String localRoot, String subPath, final boolean ensureAdmin )
 		{
 		int		index;
 		boolean result = true;
-		
+
 		if ( CVSProject.deepDebug )
 		CVSTracer.traceIf( true,
 			"CVSClient.ENSURE Proper WORKING Directory:\n"
@@ -4440,7 +4455,7 @@ CVSProject extends Object
 		subPath = CVSCUtilities.stripFinalSlash( subPath );
 		if ( subPath.startsWith( "./" ) )
 			subPath = subPath.substring(2);
-		
+
 		String remainder = subPath;
 
 		for ( ; result && remainder.length() > 0 ; )
@@ -4458,8 +4473,8 @@ CVSProject extends Object
 				}
 
 			// UNDONE separator
-			File dir = new File( localRoot + "/" + subPath );
-			
+			final File dir = new File( localRoot + "/" + subPath );
+
 			if ( ! dir.exists() )
 				dir.mkdir();
 
@@ -4479,7 +4494,7 @@ CVSProject extends Object
 				}
 			else if ( result && ensureAdmin )
 				{
-				File adminDir = // UNDONE separator
+				final File adminDir = // UNDONE separator
 					new File( dir.getPath() + "/CVS" );
 
 				if ( CVSProject.deepDebug )
@@ -4489,7 +4504,7 @@ CVSProject extends Object
 
 				if ( ! adminDir.exists() )
 					adminDir.mkdir();
-				
+
 				if ( ! adminDir.exists() )
 					{
 					result = false;
@@ -4507,14 +4522,14 @@ CVSProject extends Object
 		}
 
 	public boolean
-	ensureLocalTree( File localFile, boolean ensureAdmin )
-		{ 
+	ensureLocalTree( final File localFile, final boolean ensureAdmin )
+		{
 		int		index;
 		boolean result = true;
 
-		String	localPath = localFile.getPath();
+		final String	localPath = localFile.getPath();
 
-		String	localRoot =
+		final String	localRoot =
 			CVSCUtilities.exportPath( this.localRootDirectory );
 
 		index = localPath.lastIndexOf( File.separatorChar );
@@ -4522,7 +4537,7 @@ CVSProject extends Object
 			{
 			return true;
 			}
-		
+
 		String localSub = localPath.substring( 0, index );
 
 		if ( ! CVSCUtilities.isSubpathInPath( localRoot, localSub ) )
@@ -4565,7 +4580,7 @@ CVSProject extends Object
 		}
 
 	public void
-	moveLocalFile( File localFile, String versionStr )
+	moveLocalFile( final File localFile, final String versionStr )
 			throws CVSFileException
 		{
 		//
@@ -4575,26 +4590,26 @@ CVSProject extends Object
 		// of '.#name.version' (e.g., '.#main.c.1.4')? I prefer
 		// this naming scheme (e.g., '#main.c.1.4').
 		//
-		String localPath = localFile.getPath();
+		final String localPath = localFile.getPath();
 
 		String base = "";
 		String name = localPath;
-		int index = localPath.lastIndexOf( '/' );
+		final int index = localPath.lastIndexOf( '/' );
 		if ( index >= 0 )
 			{
 			base = localPath.substring( 0, index );
 			name = localPath.substring( index + 1 );
 			}
 
-		String newPath = base + "/" + "#" + name + "." + versionStr;
+		final String newPath = base + "/" + "#" + name + "." + versionStr;
 
 		CVSTracer.traceIf( CVSProject.overTraceProcessing,
 			"CVSProject.moveLocalFile: move '" +localFile.getPath()
 			+ "' to '" +newPath+ "'" );
 
-		File toFile = new File( newPath );
+		final File toFile = new File( newPath );
 
-		boolean result = localFile.renameTo( toFile );
+		final boolean result = localFile.renameTo( toFile );
 
 		CVSTracer.traceIf( false,
 			"CVSProject.moveLocalFile: rename returns '" +result+ "'" );
@@ -4606,12 +4621,12 @@ CVSProject extends Object
 		}
 
 	public boolean
-	updateLocalFile( CVSResponseItem item, CVSEntry entry, File localFile )
+	updateLocalFile( final CVSResponseItem item, final CVSEntry entry, final File localFile )
 		{
 		boolean result = true;
 
-		int trans = CVSCUtilities.computeTranslation( entry );
-		
+		final int trans = CVSCUtilities.computeTranslation( entry );
+
 		result = this.copyFile
 			( item.getFile(), localFile, trans, item.isGZIPed() );
 
@@ -4619,7 +4634,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	copyFile( File from, File to, int translation, boolean isGZIPed )
+	copyFile( final File from, final File to, final int translation, final boolean isGZIPed )
 		{
 		boolean result = false;
 
@@ -4645,7 +4660,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	copyFileAscii( File from, File to, boolean isGZIPed )
+	copyFileAscii( final File from, final File to, final boolean isGZIPed )
 		{
 		boolean	ok = true;
 
@@ -4667,7 +4682,7 @@ CVSProject extends Object
 				in = new NewLineReader( new FileReader( from ) );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			in = null;
 			ok = false;
@@ -4680,7 +4695,7 @@ CVSProject extends Object
 		try {
 			out = new BufferedWriter( new FileWriter( to ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			out = null;
 			ok = false;
@@ -4715,7 +4730,7 @@ CVSProject extends Object
 					//
 					// out.newLine();
 					}
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					CVSLog.logMsg
 						( "CVSProject.copyFileAscii: failed during copy: "
@@ -4726,7 +4741,7 @@ CVSProject extends Object
 				}
 
 			try { out.flush(); }
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSLog.logMsg
 					( "CVSProject.copyFileAscii: failed flushing output: "
@@ -4739,7 +4754,7 @@ CVSProject extends Object
 			if ( in != null ) in.close();
 			if ( out != null ) out.close();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg
 				( "CVSProject.copyFileAscii: failed closing files: "
@@ -4751,7 +4766,7 @@ CVSProject extends Object
 		}
 
 	public boolean
-	copyFileRaw( File from, File to, boolean isGZIPed )
+	copyFileRaw( final File from, final File to, final boolean isGZIPed )
 		{
 		int		bytes;
 		long	fileSize;
@@ -4760,7 +4775,7 @@ CVSProject extends Object
 		BufferedInputStream		in = null;
 		BufferedOutputStream	out = null;
 
-		String line = null;
+		final String line = null;
 
 		try {
 			if ( isGZIPed )
@@ -4775,7 +4790,7 @@ CVSProject extends Object
 						new FileInputStream( from ) );
 				}
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			in = null;
 			ok = false;
@@ -4790,7 +4805,7 @@ CVSProject extends Object
 				out = new BufferedOutputStream(
 						new FileOutputStream( to ) );
 				}
-			catch ( Exception ex )
+			catch ( final Exception ex )
 				{
 				out = null;
 				ok = false;
@@ -4819,7 +4834,7 @@ CVSProject extends Object
 				try {
 					bytes = in.read( buffer, 0, 8192 );
 					}
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					ok = false;
 					CVSLog.logMsg
@@ -4833,7 +4848,7 @@ CVSProject extends Object
 					break;
 
 				try { out.write( buffer, 0, bytes ); }
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					ok = false;
 					CVSLog.logMsg
@@ -4849,7 +4864,7 @@ CVSProject extends Object
 			if ( in != null ) in.close();
 			if ( out != null ) out.close();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg
 				( "CVSProject.copyFileRaw: failed closing files: "
@@ -4865,7 +4880,7 @@ CVSProject extends Object
 	extends		BufferedReader
 		{
 		public
-		NewLineReader( Reader in )
+		NewLineReader( final Reader in )
 			{
 			super( in );
 			}
@@ -4880,7 +4895,7 @@ CVSProject extends Object
 			try {
 				for ( ; ; )
 					{
-					int inByte = this.read();
+					final int inByte = this.read();
 					if ( inByte == -1 )
 						{
 						if ( line.length() == 0 )
@@ -4891,7 +4906,7 @@ CVSProject extends Object
 					ch = (char) inByte;
 					if ( ch == 0x0A )
 						{
-						// mtt - 21.02.02 
+						// mtt - 21.02.02
 						// we need to append the correct line end
 						// for the platform we are running under.
 						//
@@ -4906,12 +4921,12 @@ CVSProject extends Object
 					line.append( ch );
 					}
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				line = null;
 				}
 
-			return ( line != null ? line.toString() : null );
+			return line != null ? line.toString() : null;
 			}
 		}
 
@@ -4921,17 +4936,17 @@ CVSProject extends Object
 
 	// Currently, we stub these out.
 	public void
-	uiDisplayProgressMsg( String message )
+	uiDisplayProgressMsg( final String message )
 		{
 		}
 
 	public void
-	uiDisplayProgramError( String error )
+	uiDisplayProgramError( final String error )
 		{
 		}
 
 	public void
-	uiDisplayResponse( CVSResponse response )
+	uiDisplayResponse( final CVSResponse response )
 		{
 		}
 
@@ -4947,7 +4962,7 @@ CVSProject extends Object
 		}
 
 	public StringBuffer
-	dumpCVSProject( StringBuffer buf, String description )
+	dumpCVSProject( final StringBuffer buf, final String description )
 		{
 		buf.append( "##############################################################\n" );
 		buf.append( "#\n" );
@@ -4978,11 +4993,11 @@ CVSProject extends Object
 
 		buf.append( "\n" );
 
-		Enumeration enum = this.pathTable.keys();
-		for ( ; enum.hasMoreElements() ; )
+		final Enumeration enumeration = this.pathTable.keys();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			String key = (String) enum.nextElement();
-			CVSEntry val = (CVSEntry) this.pathTable.get( key );
+			final String key = (String) enumeration.nextElement();
+			final CVSEntry val = (CVSEntry) this.pathTable.get( key );
 			buf.append( key ).append( " =\n\n   " );
 			buf.append( val.dumpString() ).append( "\n\n" );
 			}
@@ -5005,7 +5020,7 @@ CVSProject extends Object
 		buf.append( "------- ENTRY TREE -------\n" );
 
 		buf.append( "\n" );
-		
+
 		buf.append( "" ).append( "./" ).append( "\n" );
 		this.dumpEntry( buf, "   ", this.rootEntry );
 
@@ -5022,13 +5037,13 @@ CVSProject extends Object
 
 
 	public StringBuffer
-	dumpEntry( StringBuffer buf, String prefix, CVSEntry dirEntry )
+	dumpEntry( final StringBuffer buf, final String prefix, final CVSEntry dirEntry )
 		{
-		CVSEntryVector entries = dirEntry.getEntryList();
+		final CVSEntryVector entries = dirEntry.getEntryList();
 
 		for ( int i = 0, sz = entries.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = entries.getEntryAt(i);
+			final CVSEntry entry = entries.getEntryAt(i);
 
 			buf.append( prefix ).append( entry.getFullName() ).append( "\n" );
 

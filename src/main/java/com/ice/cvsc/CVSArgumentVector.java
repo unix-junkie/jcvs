@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,14 +18,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.lang.*;
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * Implements a Vector subclass that handles CVS Arguments used
@@ -47,37 +48,37 @@ public class CVSArgumentVector extends Vector
 		super();
 		}
 
-	public CVSArgumentVector( int initCap )
+	public CVSArgumentVector( final int initCap )
 		{
 		super( initCap );
 		}
 
-	public CVSArgumentVector( int initCap, int capIncr )
+	public CVSArgumentVector( final int initCap, final int capIncr )
 		{
 		super( initCap, capIncr );
 		}
 
 	public String
-	argumentAt( int index )
+	argumentAt( final int index )
 		{
 		return (String) this.elementAt( index );
 		}
 
 	public void
-	appendArgument( String argument )
+	appendArgument( final String argument )
 		{
 		this.addElement( argument );
 		}
 
 	public void
-	appendArguments( Vector args )
+	appendArguments( final Vector args )
 		{
 		for ( int i = 0, sz = args.size() ; i < sz ; ++i )
 			this.addElement( args.elementAt(i) );
 		}
 
 	public boolean
-	containsArgument( String argument )
+	containsArgument( final String argument )
 		{
 		int		i;
 		String	argStr;
@@ -99,7 +100,7 @@ public class CVSArgumentVector extends Vector
 		}
 
 	public boolean
-	containsString( String string )
+	containsString( final String string )
 		{
 		int		i;
 		String	argStr;
@@ -116,32 +117,32 @@ public class CVSArgumentVector extends Vector
 		}
 
 	public static CVSArgumentVector
-	parseArgumentString( String argStr )
+	parseArgumentString( final String argStr )
 		{
 		String	token;
 		String	newDelim = null;
 		boolean	matchQuote = false;
 
-		CVSArgumentVector result =
+		final CVSArgumentVector result =
 			new CVSArgumentVector();
 
-		StringTokenizer toker =
+		final StringTokenizer toker =
 			new StringTokenizer( argStr, " '\"", true );
 
 		boolean startArg = true;
-		StringBuffer argBuf = new StringBuffer( argStr.length() );
+		final StringBuffer argBuf = new StringBuffer( argStr.length() );
 
 		for ( ; toker.hasMoreTokens() ; )
 			{
 			try {
 				token =
-					( newDelim == null
+					newDelim == null
 						? toker.nextToken()
-						: toker.nextToken( newDelim ) );
-				
+						: toker.nextToken( newDelim );
+
 				newDelim = null;
 				}
-			catch ( NoSuchElementException ex )
+			catch ( final NoSuchElementException ex )
 				{
 				break;
 				}

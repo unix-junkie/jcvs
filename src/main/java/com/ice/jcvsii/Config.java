@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,27 +16,41 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import javax.activation.*;
+import javax.activation.CommandMap;
+import javax.activation.FileTypeMap;
+import javax.activation.MailcapCommandMap;
+import javax.activation.MimetypesFileTypeMap;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.ice.pref.*;
-import com.ice.cvsc.CVSProject;
 import com.ice.cvsc.CVSCUtilities;
+import com.ice.cvsc.CVSProject;
+import com.ice.pref.PrefsTuple;
+import com.ice.pref.PrefsTupleTable;
+import com.ice.pref.UserPrefs;
+import com.ice.pref.UserPrefsConstants;
+import com.ice.pref.UserPrefsFileLoader;
+import com.ice.pref.UserPrefsLoader;
+import com.ice.pref.UserPrefsStreamLoader;
 import com.ice.util.AWTUtilities;
 import com.ice.util.ResourceUtilities;
 import com.ice.util.TempFileManager;
@@ -101,8 +115,8 @@ implements	ConfigConstants, PropertyChangeListener
 	/**
 	 * The vector of server definitions parsed from the preferences.
 	 */
-	private String					mimeFileName = null;
-	private String					mailcapFileName = null;
+	private final String					mimeFileName = null;
+	private final String					mailcapFileName = null;
 
 	/**
 	 * The cached table of exec commands from the preferences.
@@ -170,7 +184,7 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	setDebug( boolean debug )
+	setDebug( final boolean debug )
 		{
 		this.debug = debug;
 		}
@@ -276,7 +290,7 @@ implements	ConfigConstants, PropertyChangeListener
 	// This is nearly the very first thing that is done at runtime.
 	//
 	public void
-	initializePreferences( String prefix )
+	initializePreferences( final String prefix )
 		{
 		this.establishOSDistinctions();
 
@@ -304,8 +318,8 @@ implements	ConfigConstants, PropertyChangeListener
 		// (apparently) messes up the activation class loader.
 		//
 
-		MailcapCommandMap cMap = new MailcapCommandMap();
-		MimetypesFileTypeMap fMap = new MimetypesFileTypeMap();
+		final MailcapCommandMap cMap = new MailcapCommandMap();
+		final MimetypesFileTypeMap fMap = new MimetypesFileTypeMap();
 
 		// This creates a new UserPrefs with System.getProperties()
 		// as its default properties.
@@ -347,11 +361,11 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	checkCriticalProperties( Frame parent )
+	checkCriticalProperties( final Frame parent )
 		{
-		Vector need = new Vector();
+		final Vector need = new Vector();
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		String tempDir =
 			this.userPrefs.getProperty( GLOBAL_TEMP_DIR, null );
@@ -362,14 +376,14 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 		else
 			{
-			File tempDirF = new File( tempDir );
+			final File tempDirF = new File( tempDir );
 
 			if ( ! tempDirF.exists() )
 				{
-				String[] fmtArgs = { tempDirF.getPath() };
-				String msg =
+				final String[] fmtArgs = { tempDirF.getPath() };
+				final String msg =
 					rmgr.getUIFormat( "misc.tempdir.needs.config.msg", fmtArgs );
-				String title =
+				final String title =
 					rmgr.getUIFormat( "misc.tempdir.needs.config.title", fmtArgs );
 				JOptionPane.showMessageDialog
 					( parent, msg, title, JOptionPane.WARNING_MESSAGE );
@@ -378,10 +392,10 @@ implements	ConfigConstants, PropertyChangeListener
 				}
 			else if ( ! tempDirF.canWrite() )
 				{
-				String[] fmtArgs = { tempDirF.getPath() };
-				String msg =
+				final String[] fmtArgs = { tempDirF.getPath() };
+				final String msg =
 					rmgr.getUIFormat( "misc.tempdir.cannot.write.msg", fmtArgs );
-				String title =
+				final String title =
 					rmgr.getUIFormat( "misc.tempdir.cannot.write.title", fmtArgs );
 				JOptionPane.showMessageDialog
 					( parent, msg, title, JOptionPane.WARNING_MESSAGE );
@@ -392,7 +406,7 @@ implements	ConfigConstants, PropertyChangeListener
 
 		if ( need.size() > 0 )
 			{
-			String[] editProps = new String[ need.size() ];
+			final String[] editProps = new String[ need.size() ];
 			need.copyInto( editProps );
 			this.editConfiguration( parent, editProps );
 			}
@@ -411,7 +425,7 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	initializeGlobalProperties()
 		{
-		String format =
+		final String format =
 			this.userPrefs.getProperty
 				( PROJECT_MODIFIED_FORMAT, "EEE MMM dd HH:mm:ss yyyy" );
 
@@ -435,7 +449,7 @@ implements	ConfigConstants, PropertyChangeListener
 
 		CVSProject.debugEntryIO = debugSetting;
 
-		boolean traceAll =
+		final boolean traceAll =
 			this.userPrefs.getBoolean( GLOBAL_CVS_TRACE_ALL, false );
 
 		CVSProject.overTraceTCP = traceAll;
@@ -444,7 +458,7 @@ implements	ConfigConstants, PropertyChangeListener
 		CVSProject.overTraceProcessing = traceAll;
 
 		// Subscribe to property changes.
-		String[] subs =
+		final String[] subs =
 			{
 			GLOBAL_TEMP_DIR,
 			GLOBAL_CVS_TRACE_ALL,
@@ -461,13 +475,13 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	propertyChange( PropertyChangeEvent evt )
+	propertyChange( final PropertyChangeEvent evt )
 		{
-		String propName = evt.getPropertyName();
+		final String propName = evt.getPropertyName();
 
 		if ( propName.equals( GLOBAL_CVS_TRACE_ALL ) )
 			{
-			boolean newSetting =
+			final boolean newSetting =
 				this.userPrefs.getBoolean
 					( GLOBAL_CVS_TRACE_ALL, false );
 
@@ -478,7 +492,7 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 		else if ( propName.equals( GLOBAL_PROJECT_DEEP_DEBUG ) )
 			{
-			boolean newSetting =
+			final boolean newSetting =
 				this.userPrefs.getBoolean
 					( GLOBAL_PROJECT_DEEP_DEBUG, false );
 
@@ -486,7 +500,7 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 		else if ( propName.equals( GLOBAL_PROJECT_DEBUG_ENTRYIO ) )
 			{
-			boolean newSetting =
+			final boolean newSetting =
 				this.userPrefs.getBoolean
 					( GLOBAL_PROJECT_DEBUG_ENTRYIO, false );
 
@@ -494,7 +508,7 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 		else if ( propName.equals( GLOBAL_TEMP_DIR ) )
 			{
-			String tempDir =
+			final String tempDir =
 				this.userPrefs.getProperty( GLOBAL_TEMP_DIR, "" );
 
 			TempFileManager.clearTemporaryFiles();
@@ -503,7 +517,7 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 		else if ( propName.equals( PROJECT_MODIFIED_FORMAT ) )
 			{
-			String format =
+			final String format =
 				this.userPrefs.getProperty
 					( PROJECT_MODIFIED_FORMAT, "EEE MMM dd HH:mm:ss yyyy" );
 
@@ -513,7 +527,7 @@ implements	ConfigConstants, PropertyChangeListener
 			{
 			String plafClassName =
 				this.userPrefs.getProperty
-					( Config.PLAF_LOOK_AND_FEEL_CLASSNAME, null );
+					( ConfigConstants.PLAF_LOOK_AND_FEEL_CLASSNAME, null );
 
 			if ( plafClassName == null
 					|| plafClassName.equals( "DEFAULT" ) )
@@ -523,16 +537,16 @@ implements	ConfigConstants, PropertyChangeListener
 				}
 
 			try { UIManager.setLookAndFeel( plafClassName ); }
-				catch ( Exception ex ) { }
+				catch ( final Exception ex ) { }
 
-			MainFrame frm = JCVS.getMainFrame();
+			final MainFrame frm = JCVS.getMainFrame();
 			SwingUtilities.updateComponentTreeUI( frm );
 
-			Enumeration enum = ProjectFrameMgr.enumerateProjectFrames();
-			for ( ; enum.hasMoreElements() ; )
+			final Enumeration enumeration = ProjectFrameMgr.enumerateProjectFrames();
+			for ( ; enumeration.hasMoreElements() ; )
 				{
 				SwingUtilities.updateComponentTreeUI
-					( (ProjectFrame) enum.nextElement() );
+					( (ProjectFrame) enumeration.nextElement() );
 				}
 			}
 		}
@@ -544,42 +558,42 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public String
-	getExecCommandKey( String verb, String extension )
+	getExecCommandKey( final String verb, final String extension )
 		{
 		return extension + "." + verb;
 		}
 
 	public String
-	getExecCommandArgs( String verb, String extension )
+	getExecCommandArgs( final String verb, final String extension )
 		{
 		String result = null;
 
-		String key = this.getExecCommandKey( verb, extension );
+		final String key = this.getExecCommandKey( verb, extension );
 
-		PrefsTuple tup = this.execCmdTable.getTuple( key );
+		final PrefsTuple tup = this.execCmdTable.getTuple( key );
 
 		if ( tup != null )
 			{
 			result = tup.getValueAt( EXEC_DEF_CMD_IDX );
 			}
-		
+
 		return result;
 		}
 
 	public String
-	getExecCommandEnv( String verb, String extension )
+	getExecCommandEnv( final String verb, final String extension )
 		{
 		String result = null;
 
-		String key = this.getExecCommandKey( verb, extension );
+		final String key = this.getExecCommandKey( verb, extension );
 
-		PrefsTuple tup = this.execCmdTable.getTuple( key );
+		final PrefsTuple tup = this.execCmdTable.getTuple( key );
 
 		if ( tup != null )
 			{
 			result = tup.getValueAt( EXEC_DEF_ENV_IDX );
 			}
-		
+
 		return result;
 		}
 
@@ -620,16 +634,16 @@ implements	ConfigConstants, PropertyChangeListener
 	 * @author Urban Widmark <urban@svenskatest.se>
 	 */
 	private void
-	sortServerVector( Vector v )
+	sortServerVector( final Vector v )
 		{
 	    for ( int i = 1 ; i < v.size() ; ++i )
 			{
-			ServerDef B = (ServerDef) v.elementAt( i );
+			final ServerDef B = (ServerDef) v.elementAt( i );
 
 			int j = i;
 			for ( ; j > 0 ; --j )
 				{
-				ServerDef A = (ServerDef) v.elementAt( j - 1 );
+				final ServerDef A = (ServerDef) v.elementAt( j - 1 );
 				if ( A.compareTo( B ) <= 0 )
 					break;
 				v.setElementAt( A, j );
@@ -640,11 +654,11 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	enumerateServerDefinitions( Enumeration enum )
+	enumerateServerDefinitions( final Enumeration enumeration )
 		{
-		for ( ; enum.hasMoreElements() ; )
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			String key = (String) enum.nextElement();
+			final String key = (String) enumeration.nextElement();
 
 			if ( ! key.startsWith( "server." ) )
 				continue;
@@ -652,23 +666,23 @@ implements	ConfigConstants, PropertyChangeListener
 			if ( ! this.userServers.getBoolean( key, false ) )
 				continue;
 
-			String token = key.substring( "server.".length() );
+			final String token = key.substring( "server.".length() );
 
-			String method =
+			final String method =
 				this.userServers.getProperty
 					( "param." + token + ".method", "pserver" );
 
-			String name =
+			final String name =
 				this.userServers.getProperty( "param." + token + ".name", null );
-			String module =
+			final String module =
 				this.userServers.getProperty( "param." + token + ".module", "" );
-			String host =
+			final String host =
 				this.userServers.getProperty( "param." + token + ".host", "" );
-			String user =
+			final String user =
 				this.userServers.getProperty( "param." + token + ".user", "" );
-			String repos =
+			final String repos =
 				this.userServers.getProperty( "param." + token + ".repos", "" );
-			String desc =
+			final String desc =
 				this.userServers.getProperty( "param." + token + ".desc", "" );
 
 			if ( name != null )
@@ -684,21 +698,21 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	loadProjectPreferences( CVSProject project, UserPrefs prefs )
+	loadProjectPreferences( final CVSProject project, final UserPrefs prefs )
 		{
-		String propFilename = this.getUserPrefsFilename();
+		final String propFilename = this.getUserPrefsFilename();
 
-		String prefsPath =
+		final String prefsPath =
 			CVSCUtilities.exportPath(
 				CVSProject.getAdminPrefsPath
 					( CVSProject.rootPathToAdminPath
 						( project.getLocalRootPath() ) ) );
 
-		File prefsF = new File( prefsPath );
+		final File prefsF = new File( prefsPath );
 
 		try {
-			UserPrefsFileLoader loader = (UserPrefsFileLoader)
-				UserPrefsLoader.getLoader( UserPrefsLoader.FILE_LOADER );
+			final UserPrefsFileLoader loader = (UserPrefsFileLoader)
+				UserPrefsLoader.getLoader( UserPrefsConstants.FILE_LOADER );
 
 			loader.setFile( prefsF );
 			loader.loadPreferences( prefs );
@@ -708,7 +722,7 @@ implements	ConfigConstants, PropertyChangeListener
 				( "Loaded project preferences from '"
 					+ prefsF.getPath() + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			if ( this.debug )
 			System.err.println
@@ -718,21 +732,21 @@ implements	ConfigConstants, PropertyChangeListener
 		}
 
 	public void
-	saveProjectPreferences( CVSProject project, UserPrefs prefs )
+	saveProjectPreferences( final CVSProject project, final UserPrefs prefs )
 		{
-		String propFilename = this.getUserPrefsFilename();
+		final String propFilename = this.getUserPrefsFilename();
 
-		String prefsPath =
+		final String prefsPath =
 			CVSCUtilities.exportPath(
 				CVSProject.getAdminPrefsPath
 					( CVSProject.rootPathToAdminPath
 						( project.getLocalRootPath() ) ) );
 
-		File prefsF = new File( prefsPath );
+		final File prefsF = new File( prefsPath );
 
 		try {
-			UserPrefsFileLoader loader = (UserPrefsFileLoader)
-				UserPrefsLoader.getLoader( UserPrefsLoader.FILE_LOADER );
+			final UserPrefsFileLoader loader = (UserPrefsFileLoader)
+				UserPrefsLoader.getLoader( UserPrefsConstants.FILE_LOADER );
 
 			loader.setFile( prefsF );
 			loader.storePreferences( prefs );
@@ -742,7 +756,7 @@ implements	ConfigConstants, PropertyChangeListener
 				( "Saved project preferences into '"
 					+ prefsF.getPath() + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "Failed storing project preferences into '"
@@ -753,9 +767,9 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	loadUserPreferences()
 		{
-		String propFilename = this.getUserPrefsFilename();
+		final String propFilename = this.getUserPrefsFilename();
 
-		File prefsF =
+		final File prefsF =
 			new File( this.userPrefs.getUserHome(), propFilename );
 
 		if ( ! prefsF.exists() )
@@ -775,10 +789,10 @@ implements	ConfigConstants, PropertyChangeListener
 			}
 
 		try {
-			UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
+			final UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
 				UserPrefsLoader.getLoader( UserPrefsConstants.STREAM_LOADER );
 
-			InputStream in = new FileInputStream( prefsF );
+			final InputStream in = new FileInputStream( prefsF );
 
 			loader.setInputStream( in );
 			loader.loadPreferences( this.userPrefs );
@@ -788,7 +802,7 @@ implements	ConfigConstants, PropertyChangeListener
 				( "Loaded user preferences from '"
 					+ prefsF.getPath() + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			ex.printStackTrace();
 			}
@@ -797,14 +811,14 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	loadConfigEditorSpecification()
 		{
-		String specURL = "/com/ice/jcvsii/configspec.properties";
+		final String specURL = "/com/ice/jcvsii/configspec.properties";
 
 		InputStream in = null;
 
 		try {
 			in = ResourceUtilities.openNamedResource( specURL );
 
-			UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
+			final UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
 				UserPrefsLoader.getLoader( UserPrefsConstants.STREAM_LOADER );
 
 			loader.setInputStream( in );
@@ -814,7 +828,7 @@ implements	ConfigConstants, PropertyChangeListener
 				( "Loaded config editor specification from '"
 					+ specURL + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "ERROR loading editor specification from '"
@@ -825,7 +839,7 @@ implements	ConfigConstants, PropertyChangeListener
 			if ( in != null )
 				{
 				try { in.close(); }
-				catch ( IOException ex ) { }
+				catch ( final IOException ex ) { }
 				}
 			}
 		}
@@ -833,9 +847,9 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	loadDefaultPreferences()
 		{
-		String defURL = "/com/ice/jcvsii/defaults.properties";
+		final String defURL = "/com/ice/jcvsii/defaults.properties";
 
-		UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
+		final UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
 			UserPrefsLoader.getLoader( UserPrefsConstants.STREAM_LOADER );
 
 		InputStream in = null;
@@ -849,7 +863,7 @@ implements	ConfigConstants, PropertyChangeListener
 			System.err.println
 				( "Loaded default preferences from '" + defURL + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "ERROR loading default preferences from '"
@@ -860,7 +874,7 @@ implements	ConfigConstants, PropertyChangeListener
 			if ( in != null )
 				{
 				try { in.close(); }
-				catch ( IOException ex ) { }
+				catch ( final IOException ex ) { }
 				}
 			}
 		}
@@ -868,9 +882,9 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	loadDefaultServerDefinitions()
 		{
-		String defURL = "/com/ice/jcvsii/servers.properties";
+		final String defURL = "/com/ice/jcvsii/servers.properties";
 
-		UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
+		final UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
 			UserPrefsLoader.getLoader( UserPrefsConstants.STREAM_LOADER );
 
 		InputStream in = null;
@@ -884,7 +898,7 @@ implements	ConfigConstants, PropertyChangeListener
 			System.err.println
 				( "Loaded default server definitions from '" + defURL + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "ERROR loading default server definitions from '"
@@ -895,7 +909,7 @@ implements	ConfigConstants, PropertyChangeListener
 			if ( in != null )
 				{
 				try { in.close(); }
-				catch ( IOException ex ) { }
+				catch ( final IOException ex ) { }
 				}
 			}
 		}
@@ -903,15 +917,15 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	loadUserServerDefinitions()
 		{
-		String propFilename = this.getUserServersFilename();
+		final String propFilename = this.getUserServersFilename();
 
-		File prefsF =
+		final File prefsF =
 			new File( this.userPrefs.getUserHome(), propFilename );
 
 		try {
-			InputStream in = new FileInputStream( prefsF );
+			final InputStream in = new FileInputStream( prefsF );
 
-			UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
+			final UserPrefsStreamLoader loader = (UserPrefsStreamLoader)
 				UserPrefsLoader.getLoader( UserPrefsConstants.STREAM_LOADER );
 
 			loader.setInputStream( in );
@@ -922,7 +936,7 @@ implements	ConfigConstants, PropertyChangeListener
 				( "Loaded user server definitions from '"
 					+ prefsF.getPath() + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "No user server definitions found at '"
@@ -933,14 +947,14 @@ implements	ConfigConstants, PropertyChangeListener
 	public void
 	savePreferences()
 		{
-		String propFilename = this.getUserPrefsFilename();
+		final String propFilename = this.getUserPrefsFilename();
 
-		File prefsF =
+		final File prefsF =
 			new File( this.userPrefs.getUserHome(), propFilename );
 
 		try {
-			UserPrefsFileLoader loader = (UserPrefsFileLoader)
-				UserPrefsLoader.getLoader( UserPrefsLoader.FILE_LOADER );
+			final UserPrefsFileLoader loader = (UserPrefsFileLoader)
+				UserPrefsLoader.getLoader( UserPrefsConstants.FILE_LOADER );
 
 			loader.setFile( prefsF );
 
@@ -949,7 +963,7 @@ implements	ConfigConstants, PropertyChangeListener
 			System.err.println
 				( "Stored user preferences to '" + prefsF.getPath() + "'" );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			System.err.println
 				( "ERROR storing user preferences to '"
@@ -971,10 +985,10 @@ implements	ConfigConstants, PropertyChangeListener
 		else
 			{
 			// REVIEW We are using a questionable algorithm here.
-			String defMailcapFilename =
+			final String defMailcapFilename =
 				this.getDefaultMailcapFilename();
 
-			String mailcapFileName =
+			final String mailcapFileName =
 				this.userPrefs.getProperty
 					( GLOBAL_MAILCAP_FILE, defMailcapFilename );
 
@@ -1004,7 +1018,7 @@ implements	ConfigConstants, PropertyChangeListener
 					( "Loaded mailcap from '" + where + "'" );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CommandMap.setDefaultCommandMap
 				( new MailcapCommandMap() );
@@ -1016,7 +1030,7 @@ implements	ConfigConstants, PropertyChangeListener
 			if ( in != null )
 				{
 				try { in.close(); }
-				catch ( IOException ex ) {}
+				catch ( final IOException ex ) {}
 				}
 			}
 		}
@@ -1035,10 +1049,10 @@ implements	ConfigConstants, PropertyChangeListener
 		else
 			{
 			// REVIEW We are using a questionable algorithm here.
-			String defMimeFilename =
+			final String defMimeFilename =
 				this.getDefaultMimetypesFilename();
 
-			String mimeFileName =
+			final String mimeFileName =
 				this.userPrefs.getProperty
 					( GLOBAL_MIMETYPES_FILE, defMimeFilename );
 
@@ -1066,7 +1080,7 @@ implements	ConfigConstants, PropertyChangeListener
 					( "Loaded mime types from '" + where + "'" );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			FileTypeMap.setDefaultFileTypeMap
 				( new MimetypesFileTypeMap() );
@@ -1078,26 +1092,26 @@ implements	ConfigConstants, PropertyChangeListener
 			if ( in != null )
 				{
 				try { in.close(); }
-				catch ( IOException ex ) {}
+				catch ( final IOException ex ) {}
 				}
 			}
 		}
 
 	public void
-	editConfiguration( Frame parent )
+	editConfiguration( final Frame parent )
 		{
 		this.editConfiguration( parent, null );
 		}
 
 	public void
-	editConfiguration( Frame parent, String[] editProps )
+	editConfiguration( final Frame parent, final String[] editProps )
 		{
-		ConfigDialog dlg = new ConfigDialog
+		final ConfigDialog dlg = new ConfigDialog
 			( parent, "jCVS II", this.userPrefs, this.editSpec );
 
 		dlg.setSize( new Dimension( 500, 440 ) );
 
-		Point location = AWTUtilities.computeDialogLocation( dlg );
+		final Point location = AWTUtilities.computeDialogLocation( dlg );
 
 		dlg.setLocation( location.x, location.y );
 

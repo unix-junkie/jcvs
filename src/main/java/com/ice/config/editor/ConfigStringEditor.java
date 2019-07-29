@@ -1,11 +1,16 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
-import com.ice.config.*;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -33,11 +38,11 @@ extends		ConfigureEditor
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 		result.setBorder( new EmptyBorder( 5, 3, 3, 3 ) );
 
-		int col = 0;
+		final int col = 0;
 		int row = 0;
 
 		this.strField = new JTextField( "" );
@@ -52,11 +57,11 @@ extends		ConfigureEditor
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		String val =
+		final String val =
 			prefs.getProperty( spec.getPropertyName(), null );
 
 		if ( val != null )
@@ -70,12 +75,12 @@ extends		ConfigureEditor
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		String oldVal = prefs.getProperty( propName, "" );
-		String newVal = this.strField.getText();
+		final String oldVal = prefs.getProperty( propName, "" );
+		final String newVal = this.strField.getText();
 
 		if ( ! newVal.equals( oldVal ) )
 			{

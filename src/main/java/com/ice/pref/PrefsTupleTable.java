@@ -1,9 +1,9 @@
 /*
 ** User Preferences Package.
 ** Copyright (c) 1999 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,22 +16,22 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.pref;
 
-import java.util.Vector;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 
 public
 class		PrefsTupleTable
 extends		Hashtable
 	{
-	private Vector		keyOrder = new Vector();
+	private final Vector		keyOrder = new Vector();
 
 	public
 	PrefsTupleTable()
@@ -40,18 +40,18 @@ extends		Hashtable
 		}
 
 	public boolean
-	equals( PrefsTupleTable that )
+	equals( final PrefsTupleTable that )
 		{
 		if ( this.size() != that.size() )
 			return false;
 
 		for ( int i = 0 ; i < this.keyOrder.size() ; ++i )
 			{
-			String key =
+			final String key =
 				(String) this.keyOrder.elementAt(i);
 
-			PrefsTuple thisTup = this.getTuple( key );
-			PrefsTuple thatTup = that.getTuple( key );
+			final PrefsTuple thisTup = this.getTuple( key );
+			final PrefsTuple thatTup = that.getTuple( key );
 
 			if ( thisTup == null || thatTup == null )
 				return false;
@@ -70,14 +70,14 @@ extends		Hashtable
 		}
 
 	public PrefsTuple
-	getTuple( String key )
+	getTuple( final String key )
 		{
-		Object o = this.get( key );
+		final Object o = this.get( key );
 		return (PrefsTuple) this.get( key );
 		}
 
 	public PrefsTuple
-	getTupleAt( int idx )
+	getTupleAt( final int idx )
 		{
 		if ( idx < 0 || idx >= this.keyOrder.size() )
 			return null;
@@ -87,11 +87,11 @@ extends		Hashtable
 		}
 
 	public PrefsTuple
-	setTupleAt( PrefsTuple tup, int idx )
+	setTupleAt( final PrefsTuple tup, final int idx )
 		{
-		String key = (String) this.keyOrder.elementAt( idx );
+		final String key = (String) this.keyOrder.elementAt( idx );
 
-		PrefsTuple remTup = (PrefsTuple) this.remove( key );
+		final PrefsTuple remTup = (PrefsTuple) this.remove( key );
 
 		this.keyOrder.setElementAt( tup.getKey(), idx );
 
@@ -101,14 +101,14 @@ extends		Hashtable
 		}
 
 	public void
-	removeTuple( PrefsTuple tup )
+	removeTuple( final PrefsTuple tup )
 		{
 		this.keyOrder.removeElement( tup );
 		this.remove( tup );
 		}
 
 	public void
-	removeTupleAt( int idx )
+	removeTupleAt( final int idx )
 		{
 		if ( idx < 0 || idx >= this.keyOrder.size() )
 			return;
@@ -118,7 +118,7 @@ extends		Hashtable
 		}
 
 	public void
-	insertTupleAt( PrefsTuple tup, int idx )
+	insertTupleAt( final PrefsTuple tup, final int idx )
 		{
 		if ( idx < 0 || idx >= this.keyOrder.size() )
 			return;
@@ -128,14 +128,14 @@ extends		Hashtable
 		}
 
 	public void
-	appendTuple( PrefsTuple tup )
+	appendTuple( final PrefsTuple tup )
 		{
 		this.put( tup.getKey(), tup );
 		this.keyOrder.addElement( tup.getKey() );
 		}
 
 	public void
-	putTuple( PrefsTuple tuple )
+	putTuple( final PrefsTuple tuple )
 		{
 		if ( this.get( tuple.getKey() ) == null )
 			this.keyOrder.addElement( tuple.getKey() );
@@ -147,10 +147,10 @@ extends		Hashtable
 		{
 		int max = 0;
 
-		Enumeration enum = this.elements();
-		for ( ; enum.hasMoreElements() ; )
+		final Enumeration enumeration = this.elements();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			PrefsTuple tup = (PrefsTuple) enum.nextElement();
+			final PrefsTuple tup = (PrefsTuple) enumeration.nextElement();
 			if ( tup.length() > max )
 				max = tup.length();
 			}

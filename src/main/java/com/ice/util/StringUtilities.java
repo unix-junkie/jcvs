@@ -1,9 +1,9 @@
 /*
 ** Tim Endres' utilities package.
 ** Copyright (c) 1997 by Tim Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,23 +16,26 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 
 public class
 StringUtilities
 	{
 	static public String[]
-	vectorToStringArray( Vector sV )
+	vectorToStringArray( final Vector sV )
 		{
-		int			sz = sV.size();
-		String[]	result = new String[ sz ];
+		final int			sz = sV.size();
+		final String[]	result = new String[ sz ];
 
 		for ( int i = 0 ; i < sz ; ++i )
 			{
@@ -54,7 +57,7 @@ StringUtilities
 	 */
 
 	static public String[]
-	splitString( String splitStr, String delim )
+	splitString( final String splitStr, final String delim )
 		{
 		int				i, count;
 		String[]		result;
@@ -69,7 +72,7 @@ StringUtilities
 		for ( i = 0 ; i < count ; ++i )
 			{
 			try { result[i] = toker.nextToken(); }
-			catch ( NoSuchElementException ex )
+			catch ( final NoSuchElementException ex )
 				{
 				result = null;
 				break;
@@ -89,13 +92,13 @@ StringUtilities
 	 */
 
 	static public Vector
-	vectorString( String splitStr, String delim )
+	vectorString( final String splitStr, final String delim )
 		{
 		boolean		tokeWasDelim = false;
 		int			i, count;
 		StringTokenizer toker;
 
-		Vector			result = new Vector();
+		final Vector			result = new Vector();
 
 		toker = new StringTokenizer( splitStr, delim, true );
 		count = toker.countTokens();
@@ -105,7 +108,7 @@ StringUtilities
 			String toke;
 
 			try { toke = toker.nextToken(); }
-			catch ( NoSuchElementException ex )
+			catch ( final NoSuchElementException ex )
 				{ break; }
 
 			if ( toke.equals( delim ) )
@@ -128,9 +131,9 @@ StringUtilities
 		}
 
 	public static String
-	join( String[] strings, String sep )
+	join( final String[] strings, final String sep )
 		{
-		StringBuffer result = new StringBuffer();
+		final StringBuffer result = new StringBuffer();
 
 		for ( int i = 0 ; strings != null && i < strings.length ; ++i )
 			{
@@ -142,17 +145,17 @@ StringUtilities
 		}
 
 	public static String[]
-	argumentSubstitution( String[] args, Hashtable vars )
+	argumentSubstitution( final String[] args, final Hashtable vars )
 		{
-		StringBuffer argBuf = new StringBuffer();
+		final StringBuffer argBuf = new StringBuffer();
 
-		String[] result = new String[ args.length ];
+		final String[] result = new String[ args.length ];
 
 		for ( int aIdx = 0 ; aIdx < args.length ; ++aIdx )
 			{
-			String argStr = args[ aIdx ];
+			final String argStr = args[ aIdx ];
 
-			int index = argStr.indexOf( '$' );
+			final int index = argStr.indexOf( '$' );
 
 			if ( index < 0 )
 				{
@@ -170,9 +173,9 @@ StringUtilities
 		}
 
 	public static String
-	stringSubstitution( String argStr, Hashtable vars )
+	stringSubstitution( final String argStr, final Hashtable vars )
 		{
-		StringBuffer argBuf = new StringBuffer();
+		final StringBuffer argBuf = new StringBuffer();
 
 		for ( int cIdx = 0 ; cIdx < argStr.length() ; )
 			{
@@ -181,7 +184,7 @@ StringUtilities
 			switch ( ch )
 				{
 				case '$':
-					StringBuffer nameBuf = new StringBuffer();
+					final StringBuffer nameBuf = new StringBuffer();
 					for ( ++cIdx ; cIdx < argStr.length() ; ++cIdx )
 						{
 						ch = argStr.charAt( cIdx );
@@ -193,7 +196,7 @@ StringUtilities
 
 					if ( nameBuf.length() > 0 )
 						{
-						String value = (String)
+						final String value = (String)
 							vars.get( nameBuf.toString() );
 
 						if ( value != null )
@@ -202,7 +205,7 @@ StringUtilities
 							}
 						}
 					break;
-				
+
 				default:
 					argBuf.append( ch );
 					++cIdx;
@@ -214,11 +217,11 @@ StringUtilities
 		}
 
 	public static String[]
-	parseArgumentString( String argStr )
+	parseArgumentString( final String argStr )
 		{
 		String[] result = null;
 
-		Vector vector = StringUtilities.parseArgumentVector( argStr );
+		final Vector vector = StringUtilities.parseArgumentVector( argStr );
 
 		if ( vector != null && vector.size() > 0 )
 			{
@@ -230,10 +233,10 @@ StringUtilities
 		}
 
 	public static Vector
-	parseArgumentVector( String argStr )
+	parseArgumentVector( final String argStr )
 		{
-		Vector			result = new Vector();
-		StringBuffer	argBuf = new StringBuffer();
+		final Vector			result = new Vector();
+		final StringBuffer	argBuf = new StringBuffer();
 
 		boolean backSlash = false;
 		boolean matchSglQuote = false;
@@ -241,7 +244,7 @@ StringUtilities
 
 		for ( int cIdx = 0 ; cIdx < argStr.length() ; ++cIdx )
 			{
-			char ch = argStr.charAt( cIdx );
+			final char ch = argStr.charAt( cIdx );
 
 			switch ( ch )
 				{
@@ -255,7 +258,7 @@ StringUtilities
 					if ( backSlash )
 						{
 						argBuf.append( ch );
-						backSlash = false; 
+						backSlash = false;
 						}
 					else if ( matchSglQuote || matchDblQuote )
 						{
@@ -280,7 +283,7 @@ StringUtilities
 					if ( backSlash )
 						{
 						argBuf.append( "'" );
-						backSlash = false; 
+						backSlash = false;
 						}
 					else if ( matchSglQuote )
 						{
@@ -298,7 +301,7 @@ StringUtilities
 					if ( backSlash )
 						{
 						argBuf.append( "\"" );
-						backSlash = false; 
+						backSlash = false;
 						}
 					else if ( matchDblQuote )
 						{
@@ -324,16 +327,16 @@ StringUtilities
 							case 't': argBuf.append( '\t' ); break;
 
 							default:
-								char ch2 = argStr.charAt( cIdx+1 );
-								char ch3 = argStr.charAt( cIdx+2 );
-								if ( (ch >= '0' && ch <= '7')
-										&& (ch2 >= '0' && ch2 <= '7')
-										&& (ch3 >= '0' && ch3 <= '7') )
+								final char ch2 = argStr.charAt( cIdx+1 );
+								final char ch3 = argStr.charAt( cIdx+2 );
+								if ( ch >= '0' && ch <= '7'
+										&& ch2 >= '0' && ch2 <= '7'
+										&& ch3 >= '0' && ch3 <= '7' )
 									{
-									int octal =
-										( ( (ch - '0') * 64 )
-											+ ( (ch2 - '0') * 8 )
-												+ (ch3 - '0') );
+									final int octal =
+										(ch - '0') * 64
+										+ (ch2 - '0') * 8
+											+ ch3 - '0';
 									argBuf.append( (char) octal );
 									cIdx += 2;
 									}
@@ -365,6 +368,6 @@ StringUtilities
 
 		return result;
 		}
-	
+
 	}
 

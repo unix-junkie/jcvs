@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,15 +16,17 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
-import com.ice.util.UserProperties;
 
 
 public class
@@ -40,7 +42,7 @@ TempFileManager extends Object
 
 
 	public static void
-	initialize( String dirName, String prefix, String suffix )
+	initialize( final String dirName, final String prefix, final String suffix )
 		{
 		TempFileManager.temnpDirName = dirName;
 		TempFileManager.tempFilePrefix = prefix;
@@ -48,25 +50,25 @@ TempFileManager extends Object
 		}
 
 	public static void
-	setTemporaryDirectory( String dirName )
+	setTemporaryDirectory( final String dirName )
 		{
 		TempFileManager.temnpDirName = dirName;
 		}
 
 	public static void
-	setFilenamePrefix( String prefix )
+	setFilenamePrefix( final String prefix )
 		{
 		TempFileManager.tempFilePrefix = prefix;
 		}
 
 	public static void
-	setFilenameSuffix( String suffix )
+	setFilenameSuffix( final String suffix )
 		{
 		TempFileManager.tempFileSuffix = suffix;
 		}
 
 	public static void
-	addTemporaryFile( String filename )
+	addTemporaryFile( final String filename )
 		{
 		TempFileManager.tempFiles.addElement( filename );
 		}
@@ -82,17 +84,17 @@ TempFileManager extends Object
 		{
 		TempFileManager.tempDocCounter++;
 
-		return 
+		return
 			TempFileManager.getTemporaryFilename
 				( TempFileManager.tempFileSuffix );
 		}
 
 	public static String
-	getTemporaryFilename( String suffix )
+	getTemporaryFilename( final String suffix )
 		{
 		TempFileManager.tempDocCounter++;
 
-		String tempFileName =
+		final String tempFileName =
 			TempFileManager.temnpDirName
 			+ File.separator
 			+ TempFileManager.tempFilePrefix
@@ -106,14 +108,14 @@ TempFileManager extends Object
 	clearTemporaryFiles()
 		{
 		int count = 0;
-		int numFiles = TempFileManager.tempFiles.size();
+		final int numFiles = TempFileManager.tempFiles.size();
 
 		for ( int idx = 0 ; idx < numFiles ; ++idx )
 			{
-			String fileName =
+			final String fileName =
 				(String) TempFileManager.tempFiles.elementAt( idx );
 
-			File f = new File( fileName );
+			final File f = new File( fileName );
 
 			if ( f.exists() && f.isFile() )
 				{
@@ -127,16 +129,16 @@ TempFileManager extends Object
 		}
 
 	public static void
-	writeTemporaryFile( InputStream source, String tempFileName )
+	writeTemporaryFile( final InputStream source, final String tempFileName )
 		throws IOException
 		{
-		FileOutputStream out =
+		final FileOutputStream out =
 			new FileOutputStream( tempFileName );
 
-		byte[] buf = new byte[ 32 * 1024 ];
+		final byte[] buf = new byte[ 32 * 1024 ];
 		for ( ; ; )
 			{
-			int cnt = source.read( buf, 0, buf.length );
+			final int cnt = source.read( buf, 0, buf.length );
 			if ( cnt == -1 )
 				break;
 

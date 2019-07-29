@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * CVSEntry implements the concept of a CVS Entry. Traditionally,
@@ -102,15 +100,15 @@ extends		Object
 
 
 	public
-	CVSProjectDef( String rootStr, String reposStr )
+	CVSProjectDef( final String rootStr, final String reposStr )
 		{
 		this.parseRootDirectory( rootStr, reposStr );
 		}
 
 	public
 	CVSProjectDef(
-			int connMeth, boolean isPServ, boolean noMode,
-			String host, String user, String rootDir, String repos )
+			final int connMeth, final boolean isPServ, final boolean noMode,
+			final String host, final String user, final String rootDir, final String repos )
 		{
 		this.isValid = true; // UNDONE
 		this.isPServer = isPServ;
@@ -156,7 +154,7 @@ extends		Object
 	public synchronized boolean
 	isSSHServer()
 		{
-		return (this.connectMethod == CVSRequest.METHOD_SSH);
+		return this.connectMethod == CVSRequest.METHOD_SSH;
 		}
 
 	public synchronized int
@@ -223,7 +221,7 @@ extends		Object
 			connMethod = "direct";
 			}
 
-		StringBuffer rootDirStr = new StringBuffer( 128 );
+		final StringBuffer rootDirStr = new StringBuffer( 128 );
 
 		if ( ! this.noModeRoot )
 			{
@@ -263,14 +261,14 @@ extends		Object
 		}
 
 	public synchronized boolean
-	parseRootDirectory( String specification, String repos )
+	parseRootDirectory( final String specification, final String repos )
 		{
 		String		tempStr;
 		String		methodStr;
-		String		userNameStr = "";
-		String		hostNameStr = "";
+		final String		userNameStr = "";
+		final String		hostNameStr = "";
 		int			index, subidx;
-		int			connMethod;
+		final int			connMethod;
 		boolean		isOk = true;
 
 		this.isValid = false;
@@ -285,13 +283,13 @@ extends		Object
 		if ( rootDirSpec.startsWith( ":" ) )
 			{
 			rootDirSpec = rootDirSpec.substring( 1 );
-			
+
 			index = rootDirSpec.indexOf( ':' );
 			if ( index > 0 )
 				{
 				methodStr = rootDirSpec.substring( 0, index );
 				rootDirSpec = rootDirSpec.substring( index + 1 );
-			
+
 				if ( methodStr.equalsIgnoreCase( "ext" )
 						|| methodStr.equalsIgnoreCase( "pserver" )
 						|| methodStr.equalsIgnoreCase( "direct" )
@@ -422,30 +420,30 @@ extends		Object
 	 * @param adminPath The path to the 'CVS/' admin directory.
 	 */
 	public static CVSProjectDef
-	readDef( String adminPath )
+	readDef( final String adminPath )
 		throws IOException
 		{
-		String rootPath =
+		final String rootPath =
 			CVSProject.getAdminRootPath( adminPath );
 
-		File adminRootFile = new File( rootPath );
+		final File adminRootFile = new File( rootPath );
 
 		if ( ! adminRootFile.exists() )
 			throw new IOException
 				( "admin Root file '" + adminRootFile.getPath()
 					+ "' does not exist" );
 
-		String reposPath =
+		final String reposPath =
 			CVSProject.getAdminRepositoryPath( adminPath );
 
-		File adminReposFile = new File( reposPath );
+		final File adminReposFile = new File( reposPath );
 
 		if ( ! adminReposFile.exists() )
 			throw new IOException
 				( "admin Repository file '" + adminReposFile.getPath()
 					+ "' does not exist" );
 
-		String rootDirectoryStr =
+		final String rootDirectoryStr =
 			CVSCUtilities.readStringFile( adminRootFile );
 
 		if ( rootDirectoryStr == null )
@@ -453,7 +451,7 @@ extends		Object
 				( "reading admin Root file '"
 					+ adminRootFile.getPath() );
 
-		String repositoryStr =
+		final String repositoryStr =
 			CVSCUtilities.readStringFile( adminReposFile );
 
 		if ( repositoryStr == null )
@@ -461,7 +459,7 @@ extends		Object
 				( "reading admin Repository file '"
 					+ adminReposFile.getPath() );
 
-		CVSProjectDef def =
+		final CVSProjectDef def =
 			new CVSProjectDef( rootDirectoryStr, repositoryStr );
 
 		if ( ! def.isValid() )
@@ -470,7 +468,7 @@ extends		Object
 				( "CVS admin defintion is not valid, "
 					+ def.getReason() );
 			}
-		
+
 		return def;
 		}
 

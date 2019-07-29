@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2003 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,27 +18,42 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.net.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.zip.*;
-import java.applet.*;
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import com.sshtools.j2ssh.SshClient;
-import com.sshtools.j2ssh.session.SessionChannelClient;
 import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
 import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
 import com.sshtools.j2ssh.configuration.SshConnectionProperties;
+import com.sshtools.j2ssh.session.SessionChannelClient;
 import com.sshtools.j2ssh.transport.HostKeyVerification;
 import com.sshtools.j2ssh.transport.TransportProtocolException;
 import com.sshtools.j2ssh.transport.publickey.SshPublicKey;
@@ -104,7 +119,7 @@ implements	HostKeyVerification
 	 * Used to indicate that a binary file is being transferred.
 	 */
 	public static final int			TRANSLATE_ASCII = 1;
-	
+
 	/**
 	 * The minimum size before a file is gzip-ed in 'gzip-file-contents' mode.
 	 */
@@ -174,7 +189,7 @@ implements	HostKeyVerification
 	 * @param hostName The hostname of the cvs server.
 	 * @param port The port number of the cvs server (typically 2401).
 	 */
-	public CVSClient( String hostName, int port )
+	public CVSClient( final String hostName, final int port )
 		{
 		super();
 
@@ -200,7 +215,7 @@ implements	HostKeyVerification
 		this.tempPath = CVSClient.DEFAULT_TEMP_PATH;
 
 		this.tempCounter =
-			(int)( System.currentTimeMillis() % (long)0x0FFFFFFF ); 
+			(int)( System.currentTimeMillis() % 0x0FFFFFFF );
 
 		this.serverIsOpen = false;
 		this.tracingTCPData = false;
@@ -212,7 +227,7 @@ implements	HostKeyVerification
 		this.reason = "";
 		this.recentEntryRepository = "";
 		}
-	
+
 	/**
 	 * Returns the hostname of the cvs server.
 	 */
@@ -221,18 +236,18 @@ implements	HostKeyVerification
 		{
 		return this.hostName;
 		}
-	
+
 	/**
 	 * Sets the hostname of the cvs server.
 	 *
 	 * @param hostName The hostname of the cvs server.
 	 */
 	public void
-	setHostName( String hostName )
+	setHostName( final String hostName )
 		{
 		this.hostName = hostName;
 		}
-	
+
 	/**
 	 * Returns the port number of the cvs server.
 	 */
@@ -248,7 +263,7 @@ implements	HostKeyVerification
 	 * @param port The port number of the cvs server (typically 2401).
 	 */
 	public void
-	setPort( int port )
+	setPort( final int port )
 		{
 		this.port = port;
 		}
@@ -268,7 +283,7 @@ implements	HostKeyVerification
 	 * @param port The port number of the cvs server (typically 2401).
 	 */
 	public void
-	setMultipleInterfaceSupport( boolean flag )
+	setMultipleInterfaceSupport( final boolean flag )
 		{
 		this.supportMultipleInterfaces = flag;
 		CVSTracer.traceIf( flag, "Supporting multiple interfaces." );
@@ -282,14 +297,14 @@ implements	HostKeyVerification
 		{
 		return this.tempPath;
 		}
-	
+
 	/**
 	 * Sets the pathname of the directory in which temporary files are created.
 	 *
 	 * @param tempPath The full pathname of the temporary directory.
 	 */
 	public void
-	setTempDirectory( String tempPath )
+	setTempDirectory( final String tempPath )
 		{
 		this.tempPath = tempPath;
 		}
@@ -316,7 +331,7 @@ implements	HostKeyVerification
 	 * @param reason The string describing the reason.
 	 */
 	public void
-	setReason( String reason )
+	setReason( final String reason )
 		{
 		this.reason = reason;
 		}
@@ -331,7 +346,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendCVSRootDirectory( CVSRequest request )
+	sendCVSRootDirectory( final CVSRequest request )
 		{
 		boolean result = true;
 
@@ -351,7 +366,7 @@ implements	HostKeyVerification
 	 */
 
 	public boolean
-	sendRootRepository( CVSRequest request )
+	sendRootRepository( final CVSRequest request )
 		{
 		boolean result = true;
 
@@ -384,14 +399,14 @@ implements	HostKeyVerification
 	 */
 
 	public boolean
-	sendEntryRepository( CVSRequest request, CVSEntry entry )
+	sendEntryRepository( final CVSRequest request, final CVSEntry entry )
 		{
 		boolean result = true;
 
 		CVSTracer.traceIf( request.traceRequest,
 			"sendEntryRepository: " + entry.dumpString() );
 
-		String localDir =
+		final String localDir =
 			CVSCUtilities.stripFinalSlash( entry.getLocalDirectory() );
 
 		CVSTracer.traceIf( request.traceRequest,
@@ -408,7 +423,7 @@ implements	HostKeyVerification
 				"  dirStr = '" + dirStr + "'\n" +
 				"  repStr = '" + repStr + "'" );
 
-			Vector v = new Vector();
+			final Vector v = new Vector();
 			stickyStr = this.getStickTag( request, dirStr );
 			if ( stickyStr.length() > 0 )
 				v.addElement( stickyStr );
@@ -418,8 +433,8 @@ implements	HostKeyVerification
 
 			for ( int pi = 0 ; ; ++pi )
 				{
-				int idxD = dirStr.lastIndexOf( "/" );
-				int idxR = repStr.lastIndexOf( "/" );
+				final int idxD = dirStr.lastIndexOf( "/" );
+				final int idxR = repStr.lastIndexOf( "/" );
 
 				if ( idxD < 0 || idxR < 0 )
 					{
@@ -462,7 +477,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendCVSArgument( String argument )
+	sendCVSArgument( final String argument )
 		{
 		boolean result = true;
 
@@ -476,7 +491,7 @@ implements	HostKeyVerification
 	// rootDirectory?
 	//
 	public boolean
-	sendCVSModule( CVSRequest request )
+	sendCVSModule( final CVSRequest request )
 		{
 		boolean result = true;
 
@@ -486,11 +501,11 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendSetVariables( CVSRequest request )
+	sendSetVariables( final CVSRequest request )
 		{
 		boolean result = true;
 
-		String[] vars = request.getSetVariables();
+		final String[] vars = request.getSetVariables();
 
 		if ( vars != null )
 			for ( int i = 0 ; result && i < vars.length ; ++i )
@@ -501,8 +516,8 @@ implements	HostKeyVerification
 
 	public boolean
 	sendModified(
-			CVSRequest request, CVSEntry entry,
-			File entryFile, boolean empty, int trans )
+			final CVSRequest request, final CVSEntry entry,
+			final File entryFile, final boolean empty, final int trans )
 		{
 		boolean		result = true;
 
@@ -546,10 +561,10 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendLostEntry( CVSRequest request, CVSEntry entry, boolean useUnchanged )
+	sendLostEntry( final CVSRequest request, final CVSEntry entry, final boolean useUnchanged )
 		{
 		boolean result = true;
-		
+
 		CVSTracer.trace(
 			 "sendLostEntry: '" + entry.getName() + "'" );
 		//
@@ -570,15 +585,15 @@ implements	HostKeyVerification
 					( "Lost " + entry.getName() );
 				}
 			}
-		
+
 		return result;
 		}
 
 	public boolean
-	sendUnchangedEntry( CVSRequest request, CVSEntry entry, boolean useUnchanged )
+	sendUnchangedEntry( final CVSRequest request, final CVSEntry entry, final boolean useUnchanged )
 		{
 		boolean result = true;
-		
+
 		CVSTracer.trace(
 			"sendUnchangedEntry: '" + entry.getName() + "'" );
 
@@ -599,12 +614,12 @@ implements	HostKeyVerification
 				result = this.sendLine
 					( "Unchanged " + entry.getName() );
 			}
-		
+
 		return result;
 		}
 
 	public boolean
-	sendCVSEntry( CVSRequest request, CVSEntry entry, File entryFile )
+	sendCVSEntry( final CVSRequest request, final CVSEntry entry, final File entryFile )
 		{
 		boolean		result = true;
 		boolean		fileExists = false;
@@ -615,7 +630,7 @@ implements	HostKeyVerification
 
 		// SPECIAL CASE for directories. This is currently only used when we
 		// are adding directories, usually to support adding new files.
-		
+
 		if ( entry.isDirectory() )
 			{
 			result = this.sendEntryRepository( request, entry );
@@ -635,7 +650,7 @@ implements	HostKeyVerification
 
 				if ( result )
 					{
-					String localDir =
+					final String localDir =
 						CVSCUtilities.stripFinalSlash
 							( entry.getLocalDirectory() );
 
@@ -655,7 +670,7 @@ implements	HostKeyVerification
 			fileIsModified = entry.isLocalFileModified( entryFile );
 			}
 
-		int trans = CVSCUtilities.computeTranslation( entry );
+		final int trans = CVSCUtilities.computeTranslation( entry );
 
 		// SPECIAL CASE when no 'Entry' lines go up...
 
@@ -687,7 +702,7 @@ implements	HostKeyVerification
 
 		// Normal case...
 
-		String entryStr =
+		final String entryStr =
 			entry.getServerEntryLine
 				( entryFile.exists(), fileIsModified );
 
@@ -752,9 +767,9 @@ implements	HostKeyVerification
 
 		return result;
 		}
-   
+
 	public boolean
-	sendCVSEntries( CVSRequest request )
+	sendCVSEntries( final CVSRequest request )
 		{
 		int			i, count;
 		File		entryFile;
@@ -764,7 +779,7 @@ implements	HostKeyVerification
 
 		count = request.getEntries().size();
 		entries = request.getEntries();
-		
+
 		for ( i = 0 ; result && i < count ; ++i )
 			{
 			entry = (CVSEntry) entries.elementAt( i );
@@ -781,31 +796,31 @@ implements	HostKeyVerification
 		}
 
 	public String
-	getStickTag( CVSRequest request, String localDir )
+	getStickTag( final CVSRequest request, final String localDir )
 		{
 		String	result = "";
-		Hashtable stickys = request.getStickys();
+		final Hashtable stickys = request.getStickys();
 		if ( stickys != null )
 			result = (String) stickys.get( localDir );
-		return ( result == null ? "" : result );
+		return result == null ? "" : result;
 		}
 
 	public boolean
-	sendSticky( CVSRequest request, CVSEntry entry )
+	sendSticky( final CVSRequest request, final CVSEntry entry )
 		{
 		return this.sendSticky( request, entry.getLocalDirectory() );
 		}
 
 	public boolean
-	sendSticky( CVSRequest request, String localDir )
+	sendSticky( final CVSRequest request, final String localDir )
 		{
 		boolean	result = true;
 
-		Hashtable stickys = request.getStickys();
+		final Hashtable stickys = request.getStickys();
 
 		if ( stickys != null )
 			{
-			String tagSpec = (String) stickys.get( localDir );
+			final String tagSpec = (String) stickys.get( localDir );
 			if ( tagSpec != null && tagSpec.length() > 1 )
 				{
 				result = this.sendLine( "Sticky " + tagSpec );
@@ -816,14 +831,14 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendStatic( CVSRequest request, CVSEntry entry )
+	sendStatic( final CVSRequest request, final CVSEntry entry )
 		{
 		boolean	result = true;
 
-		Hashtable statics = request.getStatics();
+		final Hashtable statics = request.getStatics();
 		if ( statics != null )
 			{
-			String isStatic = (String)
+			final String isStatic = (String)
 				statics.get( entry.getLocalDirectory() );
 
 			if ( isStatic != null )
@@ -836,14 +851,14 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendGlobalArguments( CVSArgumentVector arguments )
+	sendGlobalArguments( final CVSArgumentVector arguments )
 		{
 		int		i;
 		boolean	result = true;
 
 		for ( i = 0 ; i < arguments.size() ; ++i )
 			{
-			String argStr = arguments.argumentAt(i);
+			final String argStr = arguments.argumentAt(i);
 			result = this.sendLine( "Global_option " + argStr );
 			}
 
@@ -851,7 +866,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendArguments( CVSArgumentVector arguments )
+	sendArguments( final CVSArgumentVector arguments )
 		{
 		int		i;
 		String	argLine;
@@ -860,7 +875,7 @@ implements	HostKeyVerification
 
 		for ( i = 0 ; i < arguments.size() ; ++i )
 			{
-			String argStr = arguments.argumentAt(i);
+			final String argStr = arguments.argumentAt(i);
 
 			if ( argStr.indexOf( '\n' ) < 0 )
 				{
@@ -870,19 +885,19 @@ implements	HostKeyVerification
 				{
 				xArg = false;
 
-				StringTokenizer toker =
+				final StringTokenizer toker =
 					new StringTokenizer( argStr, "\n" );
 
 				for ( ; result ; )
 					{
 					try { argLine = toker.nextToken(); }
-					catch ( NoSuchElementException ex )
+					catch ( final NoSuchElementException ex )
 						{
 						break;
 						}
 
-					String prefix =
-						( xArg ? "Argumentx " : "Argument ");
+					final String prefix =
+						xArg ? "Argumentx " : "Argument ";
 
 					result = this.sendLine( prefix + argLine );
 					xArg = true;
@@ -894,15 +909,15 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendEntriesArguments( CVSRequest request )
+	sendEntriesArguments( final CVSRequest request )
 		{
 		int			i;
 		CVSEntry	entry;
 		boolean		result = true;
 
 		CVSArgumentVector	args;
-		CVSEntryVector		entries = request.getEntries();
-		
+		final CVSEntryVector		entries = request.getEntries();
+
 		if ( entries.size() < 1 )
 			return true;
 
@@ -933,15 +948,15 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendNotifies( CVSRequest request )
+	sendNotifies( final CVSRequest request )
 		{
 		String		lastWDir = "";
 		boolean		result = true;
-		int			num = request.notifies.size();
+		final int			num = request.notifies.size();
 
 		for ( int i = 0 ; result && i < num ; ++i )
 			{
-			CVSNotifyItem notify =
+			final CVSNotifyItem notify =
 				(CVSNotifyItem) request.notifies.elementAt(i);
 
 			String dir = notify.getWorkingDirectory();
@@ -957,7 +972,7 @@ implements	HostKeyVerification
 
 			result = this.sendLine( "Notify " + notify.getName() );
 
-			if ( result ) 
+			if ( result )
 				result = this.sendLine( notify.getServerExtra() );
 			}
 
@@ -965,7 +980,7 @@ implements	HostKeyVerification
 		}
 
 	public CVSResponse
-	buildErrorResponse( CVSRequest request, CVSResponse response, String message )
+	buildErrorResponse( final CVSRequest request, final CVSResponse response, final String message )
 		{
 		response.setStatus( CVSResponse.ERROR );
 
@@ -984,12 +999,12 @@ implements	HostKeyVerification
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.buildErrorReponse: " + response.getStderr() );
-		
+
 		return response;
 		}
 
 	public boolean
-	performLogin( CVSRequest request )
+	performLogin( final CVSRequest request )
 		{
 		CVSTracer.traceIf( request.traceRequest,
 			"AUTHENTICATE: verifyOnly? '"
@@ -1011,7 +1026,7 @@ implements	HostKeyVerification
 			+ ( request.verificationOnly ? "VERIFICATION" : "AUTH" )
 			+ " REQUEST" );
 
-		String reply = this.readLine();
+		final String reply = this.readLine();
 
 		CVSTracer.traceIf( request.traceRequest,
 			"AUTHENTICATE: REPLY: '" + reply + "'" );
@@ -1029,7 +1044,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	requestValidRequests( CVSRequest request )
+	requestValidRequests( final CVSRequest request )
 		{
 		boolean result = true;
 
@@ -1042,10 +1057,10 @@ implements	HostKeyVerification
 		// REVIEW
 		// Should we clone the request and work with a copy?!
 		//
-		boolean saveQueue = request.queueResponse;
+		final boolean saveQueue = request.queueResponse;
 		request.queueResponse = true;
 
-		CVSResponse validResponse = new CVSResponse();
+		final CVSResponse validResponse = new CVSResponse();
 
 		this.readAndParseResponse( request, validResponse );
 
@@ -1053,7 +1068,7 @@ implements	HostKeyVerification
 
 		if ( validResponse.getStatus() == CVSResponse.OK )
 			{
-			CVSResponseItem item =
+			final CVSResponseItem item =
 				validResponse.getFirstItemByType
 					( CVSResponseItem.VALID_REQUESTS );
 
@@ -1064,7 +1079,7 @@ implements	HostKeyVerification
 				}
 			else
 				{
-				String valids = item.getValidRequests();
+				final String valids = item.getValidRequests();
 				request.validRequests = valids;
 
 				int index;
@@ -1120,7 +1135,7 @@ implements	HostKeyVerification
 	 * @param request The CVSRequest describing our request.
 	 */
 	public CVSResponse
-	processCVSRequest( CVSRequest request )
+	processCVSRequest( final CVSRequest request )
 		{
 		return this.processCVSRequest( request, new CVSResponse() );
 		}
@@ -1135,7 +1150,7 @@ implements	HostKeyVerification
 		}
 
 	public void
-	setCanceled( boolean can )
+	setCanceled( final boolean can )
 		{
 		synchronized ( this.canLock )
 			{
@@ -1144,7 +1159,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	checkForCancel( CVSResponse response )
+	checkForCancel( final CVSResponse response )
 		{
 		if ( this.isCanceled() )
 			{
@@ -1162,7 +1177,7 @@ implements	HostKeyVerification
 		}
 
 	public CVSResponse
-	processCVSRequest( CVSRequest request, CVSResponse response )
+	processCVSRequest( final CVSRequest request, final CVSResponse response )
 		{
 		this.setCanceled( false );
 
@@ -1171,7 +1186,7 @@ implements	HostKeyVerification
 		CVSArgumentVector	arguments;
 		CVSArgumentVector	globalargs;
 
-		String[] vars = request.getSetVariables();
+		final String[] vars = request.getSetVariables();
 
 		this.usingGZIP = false;
 		this.setReason( "" );
@@ -1215,9 +1230,9 @@ implements	HostKeyVerification
 				"   Connect Method: " +
 					( request.getConnectionMethod()==CVSRequest.METHOD_RSH
 						? "RSH"
-						: ( request.getConnectionMethod()==CVSRequest.METHOD_SSH
+						: request.getConnectionMethod()==CVSRequest.METHOD_SSH
 							? "SSH"
-							: "INETD" ) ) );
+							: "INETD" ) );
 		CVSTracer.traceIf( true,
 				"   Rsh Command:    " + request.getRshProcess() );
 		CVSTracer.traceIf( true,
@@ -1229,7 +1244,7 @@ implements	HostKeyVerification
 				+ "   pass '" + request.getPassword() + "'" );
 		CVSTracer.traceIf( true,
 				"   There are "
-				+ (vars==null ? "no" : (""+vars.length))
+				+ (vars==null ? "no" : ""+vars.length)
 				+ " user set variables." );
 		CVSTracer.traceIf( true,
 				"   NumEntries:      "
@@ -1292,7 +1307,7 @@ implements	HostKeyVerification
 				+ (request.includeNotifies?"true ":"false") + "'"
 				+ "   notifiesSize    '"
 				+ (request.notifies == null
-					? "null" : (""+request.notifies.size()) ) + "'" );
+					? "null" : ""+request.notifies.size() ) + "'" );
 
 		CVSTracer.traceIf( request.traceRequest,
 				"***************************************"
@@ -1344,7 +1359,7 @@ implements	HostKeyVerification
 
 		if ( ! isok )
 			{
-			String why = this.getReason();
+			final String why = this.getReason();
 
 			this.buildErrorResponse
 				( request, response,
@@ -1373,7 +1388,7 @@ implements	HostKeyVerification
 					( request, response,
 						"Attempted to connect to a password"
 						+ " cvs server without a "
-						+ ( (request.getUserName() == null)
+						+ ( request.getUserName() == null
 							? "username" : "password" )
 						+ ".\n" );
 
@@ -1405,12 +1420,12 @@ implements	HostKeyVerification
 
 		if ( request.verificationOnly )
 			{
-			String authResultStr = 
+			final String authResultStr =
 				"Authentication of '" + request.getUserName()
 				+ "@" + request.getHostName() + "' succeeded.";
-		
+
 			ui.uiDisplayProgressMsg( authResultStr );
-		
+
 			response.setStatus( CVSResponse.OK );
 			response.appendStderr( authResultStr );
 
@@ -1484,7 +1499,7 @@ implements	HostKeyVerification
 			( "Sending command request, '" +request.getCommand()+ "'..." );
 
 		if ( isok && request.allowGzipFileMode
-				&& ( ! this.usingGZIP )
+				&& ! this.usingGZIP
 				&& request.validRequests != null
 				&& request.validRequests.indexOf
 					( "gzip-file-contents" ) >= 0 )
@@ -1501,7 +1516,7 @@ implements	HostKeyVerification
 			return response;
 			}
 
-		CVSArgumentVector globalArgs = request.getGlobalArguments();
+		final CVSArgumentVector globalArgs = request.getGlobalArguments();
 		if ( isok & globalArgs != null && globalArgs.size() > 0 )
 			{
 			isok = this.sendGlobalArguments( globalArgs );
@@ -1612,7 +1627,7 @@ implements	HostKeyVerification
 				outstream.flush();
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{ ex.printStackTrace(); }
 
 		if ( isok )
@@ -1636,9 +1651,9 @@ implements	HostKeyVerification
 			this.buildErrorResponse
 					( request,  response,
 						"during processing of cvs request" +
-						( (this.getReason().length() < 1)
+						( this.getReason().length() < 1
 							? ""
-							: ( ": {" + this.getReason() + "}" ) ) );
+							: ": {" + this.getReason() + "}" ) );
 			}
 
 		ui.uiDisplayProgressMsg
@@ -1677,7 +1692,7 @@ implements	HostKeyVerification
 			randStr = randStr.substring( randStr.length() - 7 );
 			}
 
-		String result = "T" + randStr + ".cvs";
+		final String result = "T" + randStr + ".cvs";
 
 		CVSTracer.traceIf( false,
 			"TEMPFILE: counter '" + this.tempCounter
@@ -1696,11 +1711,11 @@ implements	HostKeyVerification
 			path = this.tempPath + "/"
 					+ this.generateTempName();
 
-			File tFile = new File( path );
+			final File tFile = new File( path );
 
 			if ( ! tFile.exists() )
 				break;
-			
+
 			if ( true )
 			CVSTracer.traceWithStack(
 				"CVSClient.generateTempPath: ERROR '"
@@ -1711,15 +1726,15 @@ implements	HostKeyVerification
 		}
 
 	private boolean
-	requestIsQueued( CVSRequest request )
+	requestIsQueued( final CVSRequest request )
 		{
-		return ( request.queueResponse ||
-					request.responseHandler == null );
+		return request.queueResponse ||
+					request.responseHandler == null;
 		}
 
 	private boolean
 	processResponseItem(
-			CVSRequest request, CVSResponse response, CVSResponseItem item )
+			final CVSRequest request, final CVSResponse response, final CVSResponseItem item )
 		{
 		boolean result = true;
 
@@ -1734,7 +1749,7 @@ implements	HostKeyVerification
 				&& request.getDirEntry() != null )
 			{
 			String itemPath = item.getPathName();
-			String pfxPath = request.getDirEntry().getLocalPathName();
+			final String pfxPath = request.getDirEntry().getLocalPathName();
 
 			if ( itemPath != null )
 				{
@@ -1762,12 +1777,12 @@ implements	HostKeyVerification
 		}
 
 	public CVSResponse
-	readAndParseResponse( CVSRequest request, CVSResponse response )
+	readAndParseResponse( final CVSRequest request, final CVSResponse response )
 		{
 		boolean		isok;
 		int			status = CVSResponse.OK;
 		boolean		gotStatus = false;
-		int			fileSize;
+		final int			fileSize;
 		int			index;
 		String		line = null;
 
@@ -1779,10 +1794,10 @@ implements	HostKeyVerification
 				break;
 
 			line = this.readLine();
-			
+
 			if ( line == null )
 				{
-				CVSTracer.traceIf( request.traceResponse, 
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: End of file on input stream." );
 				break;
 				}
@@ -1795,7 +1810,7 @@ implements	HostKeyVerification
 
 			if ( currItem != null )
 				{
-				int itemType = currItem.getType();
+				final int itemType = currItem.getType();
 
 				if ( currItem.getAddState() == CVSResponseItem.GET_FULL_PATH )
 					{
@@ -1843,14 +1858,14 @@ implements	HostKeyVerification
 					CVSTracer.traceIf( request.traceResponse,
 						"PARSE: Program Name '" +line+ "'" );
 					currItem.setProgram( line );
-					}			   
+					}
 				else
 				if ( currItem.getAddState() == CVSResponseItem.GET_NEW_NAME )
 					{
 					CVSTracer.traceIf( request.traceResponse,
 						"PARSE: New Name '" +line+ "'" );
 					currItem.setNewName( line );
-					}			   
+					}
 
 				switch ( itemType )
 					{
@@ -1859,17 +1874,17 @@ implements	HostKeyVerification
 					case CVSResponseItem.PATCHED:
 					case CVSResponseItem.UPDATED:
 					case CVSResponseItem.UPDATE_EXISTING:
-						String itemCmdName =
-							( itemType == CVSResponseItem.CREATED
-							? "Created"
-							: ( itemType == CVSResponseItem.MERGED
-							? "Merged"
-							: ( itemType == CVSResponseItem.PATCHED
-							? "Patched"
-							: ( itemType == CVSResponseItem.UPDATED
-							? "Updated"
-							: "Update-existing" ) ) ) );
-						 
+						final String itemCmdName =
+							itemType == CVSResponseItem.CREATED
+						? "Created"
+						: itemType == CVSResponseItem.MERGED
+						? "Merged"
+						: itemType == CVSResponseItem.PATCHED
+						? "Patched"
+						: itemType == CVSResponseItem.UPDATED
+						? "Updated"
+						: "Update-existing";
+
 						switch ( currItem.getAddState() )
 							{
 							case CVSResponseItem.GET_FULL_PATH:
@@ -1886,15 +1901,15 @@ implements	HostKeyVerification
 								currItem.setAddState
 									( CVSResponseItem.GET_FILE );
 
-								File file = new
+								final File file = new
 									File( this.generateTempPath() );
-								
+
 								String name = currItem.getRepositoryName();
 								index = name.lastIndexOf( '/' );
 								if ( index >= 0 )
 									name = name.substring( index + 1 );
 								name = currItem.getPathName() + name;
-								
+
 								// Only display this when queue-ing, since
 								// the processing typically follows immediately
 								// with its own message...
@@ -2007,7 +2022,7 @@ implements	HostKeyVerification
 				{
 				CVSTracer.traceIf
 					( request.traceResponse, "PARSE: error '" +line+ "'" );
-				
+
 				gotStatus = true;
 
 				String errCodeStr = "";
@@ -2063,16 +2078,16 @@ implements	HostKeyVerification
 				response.setErrorStatus
 					( "-1", "INVALID LOGIN" );
 
-				// We SHOULD break, since there may never be more data... 
+				// We SHOULD break, since there may never be more data...
 				break;
 				}
 			else if ( line.startsWith( "Updated " ) )
 				{
-				String pathName = line.substring( 8 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 8 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Update '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.UPDATED );
 
 				newItem.setPathName( pathName );
@@ -2087,11 +2102,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Merged " ) )
 				{
-				String pathName = line.substring( 7 );
+				final String pathName = line.substring( 7 );
 				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Merged '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.MERGED );
 
 				newItem.setPathName( pathName );
@@ -2105,11 +2120,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Update-existing " ) )
 				{
-				String pathName = line.substring( 16 );
+				final String pathName = line.substring( 16 );
 				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Update-existing '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.UPDATE_EXISTING );
 
 				newItem.setPathName( pathName );
@@ -2123,11 +2138,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Created " ) )
 				{
-				String pathName = line.substring( 8 );
+				final String pathName = line.substring( 8 );
 				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Created '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.CREATED );
 
 				newItem.setPathName( pathName );
@@ -2141,11 +2156,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Patched " ) )
 				{
-				String pathName = line.substring( 8 );
+				final String pathName = line.substring( 8 );
 				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Patched '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.PATCHED );
 
 				newItem.setPathName( pathName );
@@ -2159,11 +2174,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Checksum " ) )
 				{
-				String sumStr = line.substring( 9 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String sumStr = line.substring( 9 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Checksum '" +sumStr+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.CHECKSUM );
 
 				newItem.setChecksum( sumStr );
@@ -2173,11 +2188,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Module-expansion " ) )
 				{
-				String pathName = line.substring( 17 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 17 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Module-expansion '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.MODULE_EXPANSION );
 
 				newItem.setPathName( pathName );
@@ -2192,11 +2207,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Notified " ) )
 				{
-				String pathName = line.substring( 9 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 9 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Notified '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.NOTIFIED );
 
 				newItem.setPathName( pathName );
@@ -2214,11 +2229,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Removed " ) )
 				{
-				String pathName = line.substring( 8 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 8 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Removed '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.REMOVED );
 
 				newItem.setPathName( pathName );
@@ -2236,11 +2251,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Remove-entry " ) )
 				{
-				String pathName = line.substring( 13 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 13 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Remove-entry '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.REMOVE_ENTRY );
 
 				newItem.setPathName( pathName );
@@ -2258,11 +2273,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Checked-in " ) )
 				{
-				String pathName = line.substring( 11 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 11 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Checked-in '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.CHECKED_IN );
 
 				newItem.setPathName( pathName );
@@ -2276,11 +2291,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "New-entry " ) )
 				{
-				String pathName = line.substring( 10 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 10 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: New-entry '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.NEW_ENTRY );
 
 				newItem.setPathName( pathName );
@@ -2294,11 +2309,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Copy-file " ) )
 				{
-				String pathName = line.substring( 10 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 10 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Copy-file '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.COPY_FILE );
 
 				newItem.setPathName( pathName );
@@ -2312,11 +2327,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Set-sticky " ) )
 				{
-				String pathName = line.substring( 11 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 11 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Set-sticky '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.SET_STICKY );
 
 				newItem.setPathName( pathName );
@@ -2330,11 +2345,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Clear-sticky " ) )
 				{
-				String pathName = line.substring( 13 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 13 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Clear-sticky '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.CLEAR_STICKY );
 
 				newItem.setPathName( pathName );
@@ -2352,11 +2367,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Set-static-directory " ) )
 				{
-				String pathName = line.substring( 21 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 21 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Set-static-directory '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.SET_STATIC_DIR );
 
 				newItem.setPathName( pathName );
@@ -2374,11 +2389,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Clear-static-directory " ) )
 				{
-				String pathName = line.substring( 23 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 23 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Clear-static-directory '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.CLEAR_STATIC_DIR );
 
 				newItem.setPathName( pathName );
@@ -2396,11 +2411,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Set-checkin-prog " ) )
 				{
-				String pathName = line.substring( 17 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 17 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Set-checkin-prog '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.SET_CHECKIN_PROG );
 
 				newItem.setPathName( pathName );
@@ -2411,11 +2426,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Set-update-prog " ) )
 				{
-				String pathName = line.substring( 16 );
-				CVSTracer.traceIf( request.traceResponse, 
+				final String pathName = line.substring( 16 );
+				CVSTracer.traceIf( request.traceResponse,
 					"PARSE: Set-update-prog '" +pathName+ "'" );
 
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.SET_UPDATE_PROG );
 
 				newItem.setPathName( pathName );
@@ -2450,11 +2465,11 @@ implements	HostKeyVerification
 				}
 			else if ( line.startsWith( "Valid-requests " ) )
 				{
-				CVSResponseItem newItem = new
+				final CVSResponseItem newItem = new
 					CVSResponseItem( CVSResponseItem.VALID_REQUESTS );
 
 				newItem.setValidRequests( line.substring(15) );
-				
+
 				isok = this.processResponseItem
 					( request, response, newItem );
 				}
@@ -2488,10 +2503,10 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	retrieveFile( CVSResponseItem item, File file )
+	retrieveFile( final CVSResponseItem item, final File file )
 		{
 		boolean	ok = true;
-		boolean	use_gzip = false;
+		final boolean	use_gzip = false;
 
 		FileOutputStream	out = null;
 
@@ -2510,7 +2525,7 @@ implements	HostKeyVerification
 			CVSLog.logMsg( this.getReason() );
 			ok = false;
 			}
-		
+
 		if ( ok )
 			{
 			if ( line.startsWith( "z" ) )
@@ -2522,7 +2537,7 @@ implements	HostKeyVerification
 			try {
 				fileSize = Integer.valueOf( line ).intValue();
 				}
-			catch ( NumberFormatException ex )
+			catch ( final NumberFormatException ex )
 				{
 				this.setReason
 					( "CVSClient.retrieveFile: ERROR size line is invalid '"
@@ -2553,13 +2568,13 @@ implements	HostKeyVerification
 			try {
 				out = new FileOutputStream( file );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				this.setReason
 					( "CVSClient.retrieveFile: ERROR opening output file '"
 						+ file.getPath() + "'\n    " + ex.getMessage() );
 				CVSLog.logMsg( this.getReason() );
-				
+
 				// NOTE we do not set 'ok = false;' here, as we need
 				// to process the downcoming data!!! So, we will have
 				// to overload with 'out == null' for closure.
@@ -2568,18 +2583,18 @@ implements	HostKeyVerification
 
 		if ( ok )
 			{
-			int i;
+			final int i;
 			byte[]	buffer;
 			buffer = new byte[8192];
 
 			for ( length = fileSize ; length > 0 ; )
 				{
-				bytes = (length > 8192 ? 8192 : length);
+				bytes = length > 8192 ? 8192 : length;
 
 				try {
 					bytes = this.instream.read( buffer, 0, bytes );
 					}
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					ok = false;
 					this.setReason
@@ -2598,7 +2613,7 @@ implements	HostKeyVerification
 				if ( out != null )
 					{
 					try { out.write( buffer, 0, bytes ); }
-					catch ( IOException ex )
+					catch ( final IOException ex )
 						{
 						ok = false;
 						this.setReason
@@ -2608,7 +2623,7 @@ implements	HostKeyVerification
 						CVSLog.logMsg( this.getReason() );
 
 						try { out.close(); }
-							catch ( IOException ex2 ) { }
+							catch ( final IOException ex2 ) { }
 
 						out = null;
 
@@ -2624,7 +2639,7 @@ implements	HostKeyVerification
 				{
 				// Do NOT set out to null here! See NOTE above.
 				try { out.close(); }
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					this.setReason
 						( "CVSClient.retrieveFile: "
@@ -2634,25 +2649,25 @@ implements	HostKeyVerification
 					ok = false;
 					}
 				}
-			}	
+			}
 
 		// If out is null, an error occurred!
-		return ( ( ok && (out != null) ) ? true : false );
+		return ok && out != null ? true : false;
 		}
 
 	public boolean
-	sendFileContents( InputStream in )
+	sendFileContents( final InputStream in )
 		{
 		int			bytes;
 		boolean		result = true;
-		byte[]		buffer = new byte[ 16 * 1024 ];
+		final byte[]		buffer = new byte[ 16 * 1024 ];
 
 		for ( ; result ; )
 			{
 			try {
 				bytes = in.read( buffer, 0, buffer.length );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				result = false;
 				this.setReason
@@ -2668,7 +2683,7 @@ implements	HostKeyVerification
 			try {
 				this.outstream.write( buffer, 0, bytes );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				result = false;
 				this.setReason
@@ -2683,7 +2698,7 @@ implements	HostKeyVerification
 			}
 
 		try { this.outstream.flush(); }
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = false;
 			this.setReason
@@ -2693,7 +2708,7 @@ implements	HostKeyVerification
 			}
 
 		try { in.close(); }
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = false;
 			this.setReason
@@ -2706,37 +2721,38 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendFileRaw( CVSEntry entry, File entryFile, boolean useGzipFile )
+	sendFileRaw( final CVSEntry entry, final File entryFile, final boolean useGzipFile )
 		{
 		int			bytes;
 		Long		sizeLong;
-		long		fileSize, length;
+		long		fileSize;
+		final long length;
 		boolean		result = true;
 		boolean		usingGzip = false;
 		File		gzipFile = null;
 		BufferedInputStream	in = null;
-		byte[]		buffer = new byte[ 16 * 1024 ];
+		final byte[]		buffer = new byte[ 16 * 1024 ];
 
 		fileSize = entryFile.length();
-		long beginMillis = System.currentTimeMillis();
+		final long beginMillis = System.currentTimeMillis();
 
 		try {
 			in = new BufferedInputStream(
 					new FileInputStream( entryFile ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = false;
 			}
 
-		usingGzip = (useGzipFile && (fileSize > MIN_GZIP_SIZE));
+		usingGzip = useGzipFile && fileSize > MIN_GZIP_SIZE;
 
 		if ( result && usingGzip )
 			{
 			try {
 				gzipFile = new File( this.generateTempPath() );
-				
-				BufferedOutputStream out =
+
+				final BufferedOutputStream out =
 					new BufferedOutputStream
 						( new GZIPOutputStream
 							( new FileOutputStream( gzipFile ) ) );
@@ -2746,7 +2762,7 @@ implements	HostKeyVerification
 					bytes = in.read( buffer, 0, buffer.length );
 					if ( bytes < 0 )
 						break;
-					
+
 					out.write( buffer, 0, bytes );
 
 					if ( this.isCanceled() )
@@ -2761,14 +2777,14 @@ implements	HostKeyVerification
 
 				fileSize = gzipFile.length();
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				ex.printStackTrace( System.err );
 				result = false;
 				}
 			}
 
-		long endMillis = System.currentTimeMillis();
+		final long endMillis = System.currentTimeMillis();
 
 		if ( false )
 			System.err.println
@@ -2797,11 +2813,11 @@ implements	HostKeyVerification
 				}
 			}
 
-			
+
 		if ( usingGzip && gzipFile != null && gzipFile.exists() )
 			{
 			try { gzipFile.delete(); }
-			catch ( SecurityException ex )
+			catch ( final SecurityException ex )
 				{
 				// we will leave result, since upload has succeeded...
 				CVSLog.logMsg
@@ -2814,7 +2830,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendFileAscii( CVSEntry entry, File entryFile, boolean gzipFileMode )
+	sendFileAscii( final CVSEntry entry, final File entryFile, final boolean gzipFileMode )
 		{
 		String			inLine;
 		File			tempFile;
@@ -2823,13 +2839,13 @@ implements	HostKeyVerification
 		boolean			usingGzip = false;
 		boolean			result = true;
 
-		long beginMillis = System.currentTimeMillis();
+		final long beginMillis = System.currentTimeMillis();
 
 		try {
 			in = new BufferedReader(
 					new FileReader( entryFile ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			this.setReason
 				( "sendFileAscii: can not open input file '"
@@ -2840,7 +2856,7 @@ implements	HostKeyVerification
 		tempFile = new File( this.generateTempPath() );
 
 		try {
-			if ( gzipFileMode && (entryFile.length() > MIN_GZIP_SIZE) )
+			if ( gzipFileMode && entryFile.length() > MIN_GZIP_SIZE )
 				{
 				usingGzip = true;
 				out = new BufferedOutputStream
@@ -2853,7 +2869,7 @@ implements	HostKeyVerification
 						( new FileOutputStream( tempFile ) );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = false;
 			this.setReason
@@ -2875,7 +2891,7 @@ implements	HostKeyVerification
 					out.write( inLine.getBytes() );
 					out.write( '\012' );
 					}
-				catch ( IOException ex )
+				catch ( final IOException ex )
 					{
 					result = false;
 					this.setReason
@@ -2889,7 +2905,7 @@ implements	HostKeyVerification
 				}
 
 			try { in.close(); }
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				result = false;
 				this.setReason
@@ -2898,7 +2914,7 @@ implements	HostKeyVerification
 				CVSLog.logMsg( this.getReason() );
 				}
 			try { out.close(); }
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				result = false;
 				this.setReason
@@ -2907,7 +2923,7 @@ implements	HostKeyVerification
 				CVSLog.logMsg( this.getReason() );
 				}
 
-			long endMillis = System.currentTimeMillis();
+			final long endMillis = System.currentTimeMillis();
 
 			if ( false )
 				System.err.println
@@ -2916,7 +2932,7 @@ implements	HostKeyVerification
 
 			if ( result )
 				{
-				Long sizeLong = new Long( tempFile.length() );
+				final Long sizeLong = new Long( tempFile.length() );
 				String sizeStr = sizeLong.toString();
 
 				if ( usingGzip )
@@ -2926,13 +2942,13 @@ implements	HostKeyVerification
 				if ( result )
 					{
 					try {
-						BufferedInputStream content =
+						final BufferedInputStream content =
 							new BufferedInputStream(
 								new FileInputStream( tempFile ) );
 
 						result = this.sendFileContents( content );
 						}
-					catch ( FileNotFoundException ex )
+					catch ( final FileNotFoundException ex )
 						{
 						result = false;
 						this.setReason
@@ -2950,7 +2966,7 @@ implements	HostKeyVerification
 					}
 
 				try { tempFile.delete(); }
-				catch ( SecurityException ex )
+				catch ( final SecurityException ex )
 					{
 					// we will leave result, since upload has succeeded...
 					CVSLog.logMsg
@@ -2964,14 +2980,14 @@ implements	HostKeyVerification
 		}
 
 	public String
-	readAsciiLine( Reader in )
+	readAsciiLine( final Reader in )
 		{
-		String ls = System.getProperty( "line.separator" );
+		final String ls = System.getProperty( "line.separator" );
 
 		int lineSepIdx = 0;
-		int lineSepLen = ls.length();
+		final int lineSepLen = ls.length();
 
-		char[] lineSep = new char[ lineSepLen ];
+		final char[] lineSep = new char[ lineSepLen ];
 		ls.getChars( 0, lineSepLen, lineSep, 0 );
 
 		char ch;
@@ -2981,7 +2997,7 @@ implements	HostKeyVerification
 		try {
 			for ( ; ; )
 				{
-				int inByte = in.read();
+				final int inByte = in.read();
 				if ( inByte == -1 )
 					{
 					// Be sure to grab anything in the lineSep buf...
@@ -3024,16 +3040,16 @@ implements	HostKeyVerification
 					}
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			line = null;
 			}
 
-		return ( line != null ? line.toString() : null );
+		return line != null ? line.toString() : null;
 		}
 
 	public boolean
-	sendValidResponses( CVSRequest request, String additional )
+	sendValidResponses( final CVSRequest request, final String additional )
 		{
 		boolean result = true;
 
@@ -3057,7 +3073,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	sendString( String string )
+	sendString( final String string )
 		{
 		boolean result = true;
 
@@ -3068,16 +3084,16 @@ implements	HostKeyVerification
 			this.outstream.write( string.getBytes() );
 			this.outstream.flush();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = false;
 			}
 
 		return result;
 		}
-	
+
 	public boolean
-	sendLine( String line )
+	sendLine( final String line )
 		{
 		boolean result = true;
 
@@ -3088,7 +3104,7 @@ implements	HostKeyVerification
 			this.outstream.write( (line + "\012").getBytes() );
 			this.outstream.flush();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSTracer.traceException( "SENDLINE: " + line, ex );
 			result = false;
@@ -3096,7 +3112,7 @@ implements	HostKeyVerification
 
 		return result;
 		}
-	
+
 	public String
 	readLine()
 		{
@@ -3106,7 +3122,7 @@ implements	HostKeyVerification
 		try {
 			for ( ; ; )
 				{
-				int inByte = this.instream.read();
+				final int inByte = this.instream.read();
 				if ( inByte == -1 )
 					{
 					if ( line.length() == 0 )
@@ -3123,23 +3139,23 @@ implements	HostKeyVerification
 				line.append( ch	);
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			line = null;
 			}
 
 		CVSTracer.traceIf( this.tracingTCPData,
 			"CVSClient.READLine: '"
-			+ ((line==null) ? "(null)" : line.toString()) + "'" );
+			+ (line==null ? "(null)" : line.toString()) + "'" );
 
-		return ( line != null ? line.toString() : null );
+		return line != null ? line.toString() : null;
 		}
 
 	public String
 	readResponse()
 		{
 		String			line;
-		StringBuffer	result = new StringBuffer( "" );
+		final StringBuffer	result = new StringBuffer( "" );
 
 		for ( ; ; )
 			{
@@ -3169,7 +3185,7 @@ implements	HostKeyVerification
 
 
 	private InetAddress
-	getInterfaceAddress( String host, int port )
+	getInterfaceAddress( final String host, final int port )
 		throws IOException
 		{
 		InetAddress interfaceAddress = null;
@@ -3195,11 +3211,11 @@ implements	HostKeyVerification
 		//
 
 		try {
-			Socket probe = new Socket( host, port );
+			final Socket probe = new Socket( host, port );
 			interfaceAddress = probe.getLocalAddress();
 			probe.close();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			// Didn't work! Use the "default" instead.
 			interfaceAddress = InetAddress.getLocalHost();
@@ -3209,7 +3225,7 @@ implements	HostKeyVerification
 		}
 
 	private Socket
-	bindLocalSocket( CVSRequest request, InetAddress localhost, String host, int port )
+	bindLocalSocket( final CVSRequest request, final InetAddress localhost, final String host, final int port )
 		throws IOException
 		{
 		Socket sock = null;
@@ -3226,7 +3242,7 @@ implements	HostKeyVerification
 			try {
 				sock = new Socket( host, port, localhost, local );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				socket = null;
 				CVSTracer.traceIf( request.traceRequest,
@@ -3264,7 +3280,7 @@ implements	HostKeyVerification
 	// There *is* a .ssh_known_hosts file, especially w/ cygwin.
 	//
 	public boolean
-	verifyHost( String host, SshPublicKey pk )
+	verifyHost( final String host, final SshPublicKey pk )
 		throws TransportProtocolException
 		{
 		CVSTracer.traceIf( false,
@@ -3274,15 +3290,15 @@ implements	HostKeyVerification
 		}
 
 	private void
-	establishSSHConnection( CVSRequest request )
+	establishSSHConnection( final CVSRequest request )
 		throws IOException
 		{
-		SshConnectionProperties properties = new SshConnectionProperties();
+		final SshConnectionProperties properties = new SshConnectionProperties();
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: creating connection..." );
 
-		InetAddress localhost =
+		final InetAddress localhost =
 			this.getInterfaceAddress
 				( request.getHostName(), request.getPort() );
 
@@ -3302,13 +3318,13 @@ implements	HostKeyVerification
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: connected" );
 
-		PasswordAuthenticationClient pwdAuth =
+		final PasswordAuthenticationClient pwdAuth =
 			new PasswordAuthenticationClient();
 
 		pwdAuth.setUsername( request.getUserName() );
 		pwdAuth.setPassword( request.getPassword() );
 
-		int result = sshClient.authenticate( pwdAuth );
+		final int result = sshClient.authenticate( pwdAuth );
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.authenticate: result=" + result );
@@ -3342,7 +3358,7 @@ implements	HostKeyVerification
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: sshSession=" + this.sshSession );
 
-		boolean ok = this.sshSession.executeCommand( request.getServerCommand() );
+		final boolean ok = this.sshSession.executeCommand( request.getServerCommand() );
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: command("
@@ -3366,12 +3382,12 @@ implements	HostKeyVerification
 		}
 
 	private Socket
-	establishRSHSocket( CVSRequest request )
+	establishRSHSocket( final CVSRequest request )
 		throws IOException
 		{
 		Socket sock = null;
 
-		InetAddress localhost =
+		final InetAddress localhost =
 			this.getInterfaceAddress
 				( request.getHostName(), request.getPort() );
 
@@ -3382,7 +3398,7 @@ implements	HostKeyVerification
 					( request.getHostName(),
 						request.getPort(), localhost, local );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				socket = null;
 				}
@@ -3398,7 +3414,7 @@ implements	HostKeyVerification
 		}
 
 	private boolean
-	openServer( CVSRequest request )
+	openServer( final CVSRequest request )
 		{
 		boolean result;
 
@@ -3427,10 +3443,10 @@ implements	HostKeyVerification
 				case CVSRequest.METHOD_RSH:
 					if ( request.getRshProcess() != null )
 						{
-						int index =
+						final int index =
 							request.getServerCommand().indexOf( ' ' );
 
-						String[] argv = new String[6];
+						final String[] argv = new String[6];
 
 						argv[0] = request.getRshProcess();
 						argv[1] = request.getHostName();
@@ -3446,7 +3462,7 @@ implements	HostKeyVerification
 							argv[4] =
 								request.getServerCommand().substring
 									( 0, index );
-							argv[5] = 
+							argv[5] =
 								request.getServerCommand().substring
 									( index + 1 );
 							}
@@ -3462,7 +3478,7 @@ implements	HostKeyVerification
 						this.process = Runtime.getRuntime().exec( argv );
 						}
 					else
-						{ 
+						{
 						this.socket = this.establishRSHSocket( request );
 						}
 					break;
@@ -3515,28 +3531,28 @@ implements	HostKeyVerification
 				this.serverIsOpen = true;
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			this.serverIsOpen = false;
-			int meth = request.getConnectionMethod();
+			final int meth = request.getConnectionMethod();
 
 			this.setReason
 				( "could not create "
 					+ ( meth == CVSRequest.METHOD_INETD
 						? "INETD"
-						: ( meth == CVSRequest.METHOD_RSH
-							? "RSH" : "SSH" ) )
+						: meth == CVSRequest.METHOD_RSH
+							? "RSH" : "SSH" )
 					+ " connection for '" + port
 					+ "@" + request.getHostName()
 					+ "' --> " + ex.getMessage() );
-			
+
 			CVSLog.logMsg( this.getReason() );
 			}
 
 		if ( this.serverIsOpen
 				&& this.socket != null
-				&& ( request.getConnectionMethod()
-						== CVSRequest.METHOD_RSH) )
+				&& request.getConnectionMethod()
+						== CVSRequest.METHOD_RSH )
 			{
 			CVSTracer.traceIf( request.traceRequest,
 				"CVSClient.openServer: performing rsh protocol initialization." );
@@ -3556,7 +3572,7 @@ implements	HostKeyVerification
 		}
 
 	public boolean
-	performRSHProtocol( String remoteUserName, String serverCommand )
+	performRSHProtocol( final String remoteUserName, final String serverCommand )
 		{
 		int		status;
 
@@ -3565,7 +3581,7 @@ implements	HostKeyVerification
 			this.outstream.write( 48 ); // 48 = "0"
 			this.outstream.write( 0 );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg( "RSH: FAIL-ed writing stderr port" );
 			return false;
@@ -3574,7 +3590,7 @@ implements	HostKeyVerification
 		// ------------- LOCAL USER NAME ---------------
 		// Use the Java system property "user.name" for the local
 		// name, but default to remoteUserName is not set.
-		String localUserName =
+		final String localUserName =
 			System.getProperty
 				( "user.name", remoteUserName );
 
@@ -3582,7 +3598,7 @@ implements	HostKeyVerification
 			this.outstream.write( localUserName.getBytes() );
 			this.outstream.write( 0 );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg( "RSH: FAIL-ed writing local user" );
 			return false;
@@ -3593,7 +3609,7 @@ implements	HostKeyVerification
 			this.outstream.write( remoteUserName.getBytes() );
 			this.outstream.write( 0 );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg( "RSH: FAIL-ed writing remote user" );
 			return false;
@@ -3605,17 +3621,17 @@ implements	HostKeyVerification
 			this.outstream.write( 0 );
 			this.outstream.flush();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg( "RSH: FAIL-ed writing command" );
 			return false;
 			}
-		
+
 		// ------------- READ STATUS BYTE ---------------
 		try {
 			status = this.instream.read();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			CVSLog.logMsg( "RSH: FAIL-ed reading status" );
 			return false;
@@ -3656,7 +3672,7 @@ implements	HostKeyVerification
 					this.process.destroy();
 					}
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				result = false;
 				this.setReason
@@ -3672,7 +3688,7 @@ implements	HostKeyVerification
 			this.serverIsOpen = false;
 			}
 
-		return result; 
+		return result;
 		}
 
 	// EH-null-ui  Etienne-Hugues Fortin <ehfortin@sympatico.ca>
@@ -3680,9 +3696,9 @@ implements	HostKeyVerification
 	class	NullCVSUI
 		implements CVSUserInterface
 		{
-		public void uiDisplayProgressMsg( String message ) { }
-		public void uiDisplayProgramError( String error ) { }
-		public void uiDisplayResponse( CVSResponse response ) { }
+		public void uiDisplayProgressMsg( final String message ) { }
+		public void uiDisplayProgramError( final String error ) { }
+		public void uiDisplayResponse( final CVSResponse response ) { }
 		}
 
 	}

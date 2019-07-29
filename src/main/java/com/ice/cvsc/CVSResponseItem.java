@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,13 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
-																			
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+
+import java.io.File;
 
 /**
  * Encapsulates a single CVS server response item.
@@ -69,7 +66,7 @@ CVSResponseItem extends Object
 	static public final int		SET_UPDATE_PROG		= 20;
 
 	// These are temporaries use in the
-	static public final int		GET_FULL_PATH		= 1; 
+	static public final int		GET_FULL_PATH		= 1;
 	static public final int		GET_ENTRIES_LINE	= 2;
 	static public final int		GET_MODE_LINE		= 3;
 	static public final int		GET_NEW_NAME		= 4;
@@ -80,7 +77,7 @@ CVSResponseItem extends Object
 
 	private boolean			valid;
 
-	private int				type;
+	private final int				type;
 	private int				addState;
 	private boolean			isGZIPed;
 
@@ -96,7 +93,7 @@ CVSResponseItem extends Object
 	private String			useProgram;
 
 
-	public CVSResponseItem( int type )
+	public CVSResponseItem( final int type )
 		{
 		super();
 
@@ -129,7 +126,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setAddState( int state )
+	setAddState( final int state )
 		{
 		this.addState = state;
 		}
@@ -141,7 +138,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setGZIPed( boolean isGZIPed )
+	setGZIPed( final boolean isGZIPed )
 		{
 		this.isGZIPed = isGZIPed;
 		}
@@ -153,7 +150,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setValid( boolean valid )
+	setValid( final boolean valid )
 		{
 		this.valid = valid;
 		}
@@ -165,7 +162,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setEntriesLine( String line )
+	setEntriesLine( final String line )
 		{
 		this.entriesLine = line;
 		}
@@ -177,7 +174,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setModeLine( String line )
+	setModeLine( final String line )
 		{
 		this.modeLine = line;
 		}
@@ -189,7 +186,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setFile( File file )
+	setFile( final File file )
 		{
 		this.file = file;
 		}
@@ -206,7 +203,7 @@ CVSResponseItem extends Object
 				try {
 					this.file.delete();
 					}
-				catch ( SecurityException ex )
+				catch ( final SecurityException ex )
 					{
 					result = false;
 					CVSLog.logMsg
@@ -226,7 +223,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setPathName( String pathName )
+	setPathName( final String pathName )
 		{
 		this.pathName = pathName;
 		}
@@ -234,7 +231,7 @@ CVSResponseItem extends Object
 	public String
 	getRepositoryPath()
 		{
-		int index = this.reposName.lastIndexOf( '/' );
+		final int index = this.reposName.lastIndexOf( '/' );
 
 		if ( index < 0 )
 			return ".";	// REVIEW
@@ -249,7 +246,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setRepositoryName( String reposName )
+	setRepositoryName( final String reposName )
 		{
 		this.reposName = reposName;
 		}
@@ -261,7 +258,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setNewName( String name )
+	setNewName( final String name )
 		{
 		this.newName = name;
 		}
@@ -273,7 +270,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setProgram( String program )
+	setProgram( final String program )
 		{
 		this.useProgram = program;
 		}
@@ -285,7 +282,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setTagSpec( String tagspec )
+	setTagSpec( final String tagspec )
 		{
 		this.tagSpec = tagspec;
 		}
@@ -300,7 +297,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setChecksum( String sumStr )
+	setChecksum( final String sumStr )
 		{
 		if ( this.type == CVSResponseItem.CHECKSUM )
 			{
@@ -318,7 +315,7 @@ CVSResponseItem extends Object
 		}
 
 	public void
-	setValidRequests( String requests )
+	setValidRequests( final String requests )
 		{
 		if ( this.type == CVSResponseItem.VALID_REQUESTS )
 			{
@@ -342,4 +339,4 @@ CVSResponseItem extends Object
 			+ " ]";
 		}
 	}
-	   
+

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1999 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,16 +16,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.util.Vector;
-import com.ice.pref.*;
-import com.ice.config.*;
-import com.ice.config.editor.*;
+import com.ice.config.editor.ConfigTupleTableEditor;
+import com.ice.pref.PrefsTuple;
+import com.ice.pref.PrefsTupleTable;
 
 
 public
@@ -50,9 +49,9 @@ extends		ConfigTupleTableEditor
 	private void
 	createTable()
 		{
-		String[] val = { "cvs server" };
-		PrefsTuple tup = new PrefsTuple( this.getNewName(), val );
-		PrefsTupleTable table = new PrefsTupleTable();
+		final String[] val = { "cvs server" };
+		final PrefsTuple tup = new PrefsTuple( this.getNewName(), val );
+		final PrefsTupleTable table = new PrefsTupleTable();
 		table.appendTuple( tup );
 		this.model.setData( table );
 		}
@@ -67,9 +66,9 @@ extends		ConfigTupleTableEditor
 			}
 		else
 			{
-			String[] vals = { "" };
-			int row = this.table.getSelectedRow();
-			PrefsTuple tup = new PrefsTuple( this.getNewName(), vals );
+			final String[] vals = { "" };
+			final int row = this.table.getSelectedRow();
+			final PrefsTuple tup = new PrefsTuple( this.getNewName(), vals );
 			this.model.insertElement( tup, row );
 			this.table.setRowSelectionInterval( row, row );
 			}
@@ -87,10 +86,10 @@ extends		ConfigTupleTableEditor
 			}
 		else
 			{
-			String[] vals = { "" };
-			PrefsTuple tup = new PrefsTuple( this.getNewName(), vals );
+			final String[] vals = { "" };
+			final PrefsTuple tup = new PrefsTuple( this.getNewName(), vals );
 			this.model.appendElement( tup );
-			int row = this.model.getRowCount() - 1;
+			final int row = this.model.getRowCount() - 1;
 			this.table.setRowSelectionInterval( row, row );
 			}
 

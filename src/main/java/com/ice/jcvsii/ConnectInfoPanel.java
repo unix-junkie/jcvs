@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,18 +16,34 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import com.ice.cvsc.CVSRequest;
 import com.ice.pref.UserPrefs;
@@ -57,20 +73,20 @@ implements	ItemListener, ActionListener
 
 
 	public
-	ConnectInfoPanel( String operation )
+	ConnectInfoPanel( final String operation )
 		{
 		super();
 		this.establishContents( operation );
 		}
 
 	public void
-	loadPreferences( String panName )
+	loadPreferences( final String panName )
 		{
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
-		String connMethod =
-			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_METHOD, "" ) );
+		final String connMethod =
+			prefs.getProperty
+			( panName + "." + ConfigConstants.INFOPAN_METHOD, "" );
 
 		if ( connMethod != null )
 			{
@@ -81,57 +97,57 @@ implements	ItemListener, ActionListener
 
 		this.setUserName
 			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_USER_NAME, "" ) );
+				( panName + "." + ConfigConstants.INFOPAN_USER_NAME, "" ) );
 		this.setServer
 			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_SERVER_NAME, "" ) );
+				( panName + "." + ConfigConstants.INFOPAN_SERVER_NAME, "" ) );
 		this.setModule
 			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_MODULE_NAME, "" ) );
+				( panName + "." + ConfigConstants.INFOPAN_MODULE_NAME, "" ) );
 		this.setRepository
 			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_REPOS_NAME, "" ) );
+				( panName + "." + ConfigConstants.INFOPAN_REPOS_NAME, "" ) );
 		this.setExportDirectory
 			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_EXPDIR_NAME, "" ) );
+				( panName + "." + ConfigConstants.INFOPAN_EXPDIR_NAME, "" ) );
 		this.setArguments
 			( prefs.getProperty
-				( panName + "." + Config.INFOPAN_ARGS_NAME, "" ) );
+				( panName + "." + ConfigConstants.INFOPAN_ARGS_NAME, "" ) );
 		}
 
 	public void
-	savePreferences( String panName )
+	savePreferences( final String panName )
 		{
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_METHOD,
-				  (this.inetdRadio.isSelected() ? "INET"
-				: (this.sshRadio.isSelected() ? "SSH"
-				: "RSH")) );
+			( panName + "." + ConfigConstants.INFOPAN_METHOD,
+				  this.inetdRadio.isSelected() ? "INET"
+				: this.sshRadio.isSelected() ? "SSH"
+				: "RSH" );
 
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_USER_NAME,
+			( panName + "." + ConfigConstants.INFOPAN_USER_NAME,
 				this.getUserName() );
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_SERVER_NAME,
+			( panName + "." + ConfigConstants.INFOPAN_SERVER_NAME,
 				this.getServer() );
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_MODULE_NAME,
+			( panName + "." + ConfigConstants.INFOPAN_MODULE_NAME,
 				this.getModule() );
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_REPOS_NAME,
+			( panName + "." + ConfigConstants.INFOPAN_REPOS_NAME,
 				this.getRepository() );
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_EXPDIR_NAME,
+			( panName + "." + ConfigConstants.INFOPAN_EXPDIR_NAME,
 				this.getExportDirectory() );
 		prefs.setProperty
-			( panName + "." + Config.INFOPAN_ARGS_NAME,
+			( panName + "." + ConfigConstants.INFOPAN_ARGS_NAME,
 				this.getArguments() );
 		}
 
 	public void
-	setServerMode( boolean state )
+	setServerMode( final boolean state )
 		{
 		this.rshRadio.setSelected( state );
 		this.sshRadio.setSelected( ! state );
@@ -139,7 +155,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	setSecureServerMode( boolean state )
+	setSecureServerMode( final boolean state )
 		{
 		this.rshRadio.setSelected( ! state );
 		this.sshRadio.setSelected( state );
@@ -147,7 +163,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	setPServerMode( boolean state )
+	setPServerMode( final boolean state )
 		{
 		this.rshRadio.setSelected( ! state );
 		this.sshRadio.setSelected( ! state );
@@ -155,7 +171,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	setUsePassword( boolean state )
+	setUsePassword( final boolean state )
 		{
 		this.passwordCheck.setSelected( state );
 		}
@@ -164,18 +180,18 @@ implements	ItemListener, ActionListener
 	getConnectionMethod()
 		{
 		return
-			( this.inetdRadio.isSelected()
-				? CVSRequest.METHOD_INETD
-				: ( this.sshRadio.isSelected()
-					? CVSRequest.METHOD_SSH
-					: CVSRequest.METHOD_RSH ) );
+			this.inetdRadio.isSelected()
+			? CVSRequest.METHOD_INETD
+			: this.sshRadio.isSelected()
+				? CVSRequest.METHOD_SSH
+				: CVSRequest.METHOD_RSH;
 		}
 
 	public boolean
 	isPServer()
 		{
-		return ( this.passwordCheck.isSelected()
-					&& this.inetdRadio.isSelected() );
+		return this.passwordCheck.isSelected()
+					&& this.inetdRadio.isSelected();
 		}
 
 	public boolean
@@ -191,7 +207,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	setUserName( String name )
+	setUserName( final String name )
 		{
 		this.userNameText.setText( name );
 		}
@@ -205,12 +221,12 @@ implements	ItemListener, ActionListener
 	public String
 	getModule()
 		{
-		return ( this.moduleText == null
-					? "" : this.moduleText.getText() );
+		return this.moduleText == null
+					? "" : this.moduleText.getText();
 		}
 
 	public void
-	setModule( String name )
+	setModule( final String name )
 		{
 		if ( this.moduleText != null )
 			this.moduleText.setText( name );
@@ -223,7 +239,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	setServer( String name )
+	setServer( final String name )
 		{
 		this.hostNameText.setText( name );
 		}
@@ -244,7 +260,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	setRepository( String name )
+	setRepository( final String name )
 		{
 		if ( repositoryText != null )
 			this.repositoryText.setText( name );
@@ -253,12 +269,12 @@ implements	ItemListener, ActionListener
 	public String
 	getArguments()
 		{
-		return ( this.argumentsText == null
-					? "" : this.argumentsText.getText() );
+		return this.argumentsText == null
+					? "" : this.argumentsText.getText();
 		}
 
 	public void
-	setArguments( String args )
+	setArguments( final String args )
 		{
 		if ( argumentsText != null )
 			this.argumentsText.setText( args );
@@ -267,12 +283,12 @@ implements	ItemListener, ActionListener
 	public String
 	getExportDirectory()
 		{
-		return ( this.exportDirText == null
-					? "" : this.exportDirText.getText() );
+		return this.exportDirText == null
+					? "" : this.exportDirText.getText();
 		}
 
 	public void
-	setExportDirectory( String dir )
+	setExportDirectory( final String dir )
 		{
 		if ( exportDirText != null )
 			this.exportDirText.setText( dir );
@@ -281,12 +297,12 @@ implements	ItemListener, ActionListener
 	public String
 	getImportDirectory()
 		{
-		return ( this.exportDirText == null
-					? "" : this.exportDirText.getText() );
+		return this.exportDirText == null
+					? "" : this.exportDirText.getText();
 		}
 
 	public void
-	setImportDirectory( String dir )
+	setImportDirectory( final String dir )
 		{
 		if ( exportDirText != null )
 			this.exportDirText.setText( dir );
@@ -295,12 +311,12 @@ implements	ItemListener, ActionListener
 	public String
 	getLocalDirectory()
 		{
-		return ( this.exportDirText == null
-					? "" : this.exportDirText.getText() );
+		return this.exportDirText == null
+					? "" : this.exportDirText.getText();
 		}
 
 	public void
-	setLocalDirectory( String dir )
+	setLocalDirectory( final String dir )
 		{
 		if ( exportDirText != null )
 			this.exportDirText.setText( dir );
@@ -313,7 +329,7 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	actionPerformed( ActionEvent evt )
+	actionPerformed( final ActionEvent evt )
 		{
 		if ( evt.getSource() == this.userNameText )
 			{
@@ -322,14 +338,14 @@ implements	ItemListener, ActionListener
 		}
 
 	public void
-	itemStateChanged( ItemEvent event )
+	itemStateChanged( final ItemEvent event )
 		{
 		boolean relay = false;
-		Object item = event.getItemSelectable();
+		final Object item = event.getItemSelectable();
 
 		if ( item == this.inetdRadio )
 			{
-			if ( this.inetdRadio.isSelected() )		   
+			if ( this.inetdRadio.isSelected() )
 				{
 				this.passwordCheck.setEnabled( true );
 				this.passwordCheck.setSelected( true );
@@ -352,7 +368,7 @@ implements	ItemListener, ActionListener
 				this.userNameText.setEnabled( true );
 				this.userNameText.requestFocus();
 				}
-			
+
 			relay = true;
 			}
 		else if ( item == this.sshRadio )
@@ -366,7 +382,7 @@ implements	ItemListener, ActionListener
 				this.userNameText.setEnabled( true );
 				this.userNameText.requestFocus();
 				}
-			
+
 			relay = true;
 			}
 		else if ( item == this.passwordCheck )
@@ -384,7 +400,7 @@ implements	ItemListener, ActionListener
 				this.userNameText.setEnabled( false );
 				this.passwordText.setEnabled( false );
 				}
-			
+
 			relay = true;
 			}
 
@@ -397,18 +413,18 @@ implements	ItemListener, ActionListener
 		}
 
 	private void
-	establishContents( String operation )
+	establishContents( final String operation )
 		{
 		JLabel lbl;
 		int row = 0;
 
 		this.setLayout( new GridBagLayout() );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		// ============== INPUT FIELDS PANEL ================
 
-		JPanel fldPan = new JPanel();
+		final JPanel fldPan = new JPanel();
 		fldPan.setLayout( new GridBagLayout() );
 
 		// ------------------- Module -------------------
@@ -516,22 +532,22 @@ implements	ItemListener, ActionListener
 
 		// ============== SERVER DEFINES DIALOG BUTTON ================
 
-		JButton defBtn =
+		final JButton defBtn =
 			new JButton( rmgr.getUIString( "name.for.servers.button" ) );
 		defBtn.addActionListener(
 			new ActionListener()
 				{
 				public void
-				actionPerformed( ActionEvent evt )
+				actionPerformed( final ActionEvent evt )
 					{
-					ServersDialog dlg =
+					final ServersDialog dlg =
 						new ServersDialog
 							( (Frame) getTopLevelAncestor(),
 								Config.getPreferences(),
 									ConnectInfoPanel.this );
 					dlg.show();
 
-					ServerDef def = dlg.getServerDefinition();
+					final ServerDef def = dlg.getServerDefinition();
 
 					if ( def != null )
 						{
@@ -577,10 +593,10 @@ implements	ItemListener, ActionListener
 
 		// ============== USER LOGIN INFO PANEL ================
 
-		JPanel infoPan = new JPanel();
+		final JPanel infoPan = new JPanel();
 		infoPan.setLayout( new GridBagLayout() );
 
-		JPanel buttonPan = new JPanel();
+		final JPanel buttonPan = new JPanel();
 		buttonPan.setLayout( new GridBagLayout() );
 		AWTUtilities.constrain(
 			infoPan, buttonPan,
@@ -588,7 +604,7 @@ implements	ItemListener, ActionListener
 			GridBagConstraints.WEST,
 			0, 0, 1, 1, 0.0, 0.0 );
 
-		JPanel inputPan = new JPanel();
+		final JPanel inputPan = new JPanel();
 		inputPan.setLayout( new GridBagLayout() );
 		AWTUtilities.constrain(
 			infoPan, inputPan,
@@ -670,14 +686,14 @@ implements	ItemListener, ActionListener
 			1, row++, 1, 1, 1.0, 0.0 );
 
 
-		ButtonGroup btnGrp = new ButtonGroup();
+		final ButtonGroup btnGrp = new ButtonGroup();
 		btnGrp.add( this.rshRadio );
 		btnGrp.add( this.sshRadio );
 		btnGrp.add( this.inetdRadio );
 
 		row = 0;
 
-		JPanel topPan = new JPanel();
+		final JPanel topPan = new JPanel();
 		topPan.setLayout( new GridBagLayout() );
 
 		defBtn.setMargin( new Insets( 4, 8, 4, 8 ) ) ;
@@ -709,7 +725,7 @@ implements	ItemListener, ActionListener
 			GridBagConstraints.CENTER,
 			0, row++, 1, 1, 1.0, 0.0 );
 
-		JSeparator sep = new JSeparator( SwingConstants.HORIZONTAL );
+		final JSeparator sep = new JSeparator( SwingConstants.HORIZONTAL );
 
 		AWTUtilities.constrain(
 			this, sep,
@@ -730,7 +746,7 @@ implements	ItemListener, ActionListener
 	extends		JLabel
 		{
 		public
-		MyLabel( String text )
+		MyLabel( final String text )
 			{
 			super( text );
 			this.setBorder( new EmptyBorder( 0, 3, 0, 5 ) );

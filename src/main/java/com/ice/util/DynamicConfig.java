@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,21 +16,17 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.Dimension;
-import java.util.TimeZone;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Vector;
-
-import com.ice.util.UserProperties;
-import com.ice.util.ResourceUtilities;
 
 
 public abstract class
@@ -42,7 +38,7 @@ DynamicConfig
 
 
 	public
-	DynamicConfig( String name )
+	DynamicConfig( final String name )
 		{
 		this.name = name;
 		this.workingProps = new Properties();
@@ -63,41 +59,41 @@ DynamicConfig
 		}
 
 	public void
-	setProperty( String propName, boolean value )
+	setProperty( final String propName, final boolean value )
 		{
 		UserProperties.setDynamicProperty
 			( this.name, propName,
-				( value ? "true" : "false" ) );
+				value ? "true" : "false" );
 		}
 
 	public void
-	setProperty( String propName, int value )
+	setProperty( final String propName, final int value )
 		{
 		UserProperties.setDynamicProperty
 			( this.name, propName, ""+value );
 		}
 
 	public void
-	setProperty( String propName, String value )
+	setProperty( final String propName, final String value )
 		{
 		UserProperties.setDynamicProperty
 			( this.name, propName, value );
 		}
 
 	public void
-	removeProperty( String propName )
+	removeProperty( final String propName )
 		{
 		UserProperties.removeDynamicProperty( this.name, propName );
 		}
 
 	public void
-	setStringArray( String propName, String[] strArray )
+	setStringArray( final String propName, final String[] strArray )
 		{
-		StringBuffer buf = new StringBuffer();
+		final StringBuffer buf = new StringBuffer();
 		for ( int idx = 0 ; idx < strArray.length ; ++idx )
 			{
 			buf.append( strArray[idx] );
-			if ( idx < (strArray.length - 1) )
+			if ( idx < strArray.length - 1 )
 				buf.append( ":" );
 			}
 
@@ -106,14 +102,14 @@ DynamicConfig
 		}
 
 	public void
-	setStringArray( String propName, Vector strArray )
+	setStringArray( final String propName, final Vector strArray )
 		{
-		int size = strArray.size();
-		StringBuffer buf = new StringBuffer();
+		final int size = strArray.size();
+		final StringBuffer buf = new StringBuffer();
 		for ( int idx = 0 ; idx < size ; ++idx )
 			{
 			buf.append( (String) strArray.elementAt(idx) );
-			if ( idx < (size - 1) )
+			if ( idx < size - 1 )
 				buf.append( ":" );
 			}
 
@@ -128,11 +124,11 @@ DynamicConfig
 		}
 
 	public Rectangle
-	getBounds( String propName, Rectangle defBounds )
+	getBounds( final String propName, final Rectangle defBounds )
 		{
 		this.workingProps.clear();
 
-		Rectangle result = new Rectangle();
+		final Rectangle result = new Rectangle();
 		defBounds.x =
 			UserProperties.getProperty
 				( propName + ".x", defBounds.x );
@@ -150,7 +146,7 @@ DynamicConfig
 		}
 
 	public void
-	saveBounds( String propName, Rectangle bounds )
+	saveBounds( final String propName, final Rectangle bounds )
 		{
 		this.saveBounds
 			( propName, bounds.x, bounds.y,
@@ -158,7 +154,7 @@ DynamicConfig
 		}
 
 	public void
-	saveBounds( String propName, int x, int y, int w, int h )
+	saveBounds( final String propName, final int x, final int y, final int w, final int h )
 		{
 		this.workingProps.clear();
 
@@ -171,7 +167,7 @@ DynamicConfig
 		}
 
 	public void
-	saveLocation( String propName, int x, int y )
+	saveLocation( final String propName, final int x, final int y )
 		{
 		this.workingProps.clear();
 
@@ -182,7 +178,7 @@ DynamicConfig
 		}
 
 	public void
-	saveSize( String propName, int w, int h )
+	saveSize( final String propName, final int w, final int h )
 		{
 		this.workingProps.clear();
 
@@ -193,11 +189,11 @@ DynamicConfig
 		}
 
 	protected boolean
-	isPropertySet( String propName )
+	isPropertySet( final String propName )
 		{
 		boolean result = true;
 
-		String propValue =
+		final String propValue =
 			UserProperties.getProperty( propName, null );
 
 		if ( propValue == null )
@@ -220,7 +216,7 @@ DynamicConfig
 			{
 			// REVIEW We are using a questionable algorithm here.
 			this.homeDir =
-				new File( (File.separatorChar == ':')
+				new File( File.separatorChar == ':'
 							? ":" : "." );
 			}
 		else

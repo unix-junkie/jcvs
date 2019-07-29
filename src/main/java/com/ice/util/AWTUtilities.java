@@ -1,9 +1,9 @@
 /*
 ** Tim Endres' utilities package.
 ** Copyright (c) 1997 by Tim Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,18 +16,26 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.image.ImageProducer;
 import java.net.URL;
-import java.io.IOException;
-import java.util.*;
+import java.util.StringTokenizer;
 
 /**
  * This is a class that contains useful utility functions related
@@ -39,61 +47,61 @@ public class
 AWTUtilities
 	{
 	static public Point
-	centerDialogInParent( Dialog dialog, Component parent )
+	centerDialogInParent( final Dialog dialog, final Component parent )
 		{
-		Point parLoc = parent.getLocationOnScreen();
+		final Point parLoc = parent.getLocationOnScreen();
 
-		Dimension parSz = parent.getSize();
-		Dimension dlgSz = dialog.getSize();
+		final Dimension parSz = parent.getSize();
+		final Dimension dlgSz = dialog.getSize();
 
-		int x = parLoc.x + (parSz.width - dlgSz.width) / 2;
-		int y = parLoc.y + (parSz.height - dlgSz.height) / 3;
-		
+		final int x = parLoc.x + (parSz.width - dlgSz.width) / 2;
+		final int y = parLoc.y + (parSz.height - dlgSz.height) / 3;
+
 		return new Point( x, y );
 		}
 
 	static public Point
-	computeDialogLocation( Dialog dialog, int w, int h )
+	computeDialogLocation( final Dialog dialog, final int w, final int h )
 		{
-		Dimension scrnSz =
+		final Dimension scrnSz =
 			dialog.getToolkit().getScreenSize();
 
-		int x = (scrnSz.width - w) / 2;
-		int y = (scrnSz.height - h) / 3;
-		
+		final int x = (scrnSz.width - w) / 2;
+		final int y = (scrnSz.height - h) / 3;
+
 		return new Point( x, y );
 		}
 
 	static public Point
-	computeDialogLocation( Dialog dialog )
+	computeDialogLocation( final Dialog dialog )
 		{
-		Dimension dlgSz = dialog.getSize();
-		Dimension scrnSz =
+		final Dimension dlgSz = dialog.getSize();
+		final Dimension scrnSz =
 			dialog.getToolkit().getScreenSize();
+
+		final int x = (scrnSz.width - dlgSz.width) / 2;
+		final int y = (scrnSz.height - dlgSz.height) / 3;
+
+		return new Point( x, y );
+		}
+
+	static public Point
+	computeDialogLocation( final Dialog dialog, final Component rel )
+		{
+		final Dimension dlgSz = dialog.getSize();
+		final Dimension scrnSz = dialog.getToolkit().getScreenSize();
 
 		int x = (scrnSz.width - dlgSz.width) / 2;
 		int y = (scrnSz.height - dlgSz.height) / 3;
-		
-		return new Point( x, y );
-		}
 
-	static public Point
-	computeDialogLocation( Dialog dialog, Component rel )
-		{
-		Dimension dlgSz = dialog.getSize();
-		Dimension scrnSz = dialog.getToolkit().getScreenSize();
-
-		int x = (scrnSz.width - dlgSz.width) / 2;
-		int y = (scrnSz.height - dlgSz.height) / 3;
-		
 		if ( rel != null )
 			{
-			Dimension relSz = rel.getSize();
-			Point loc = rel.getLocationOnScreen();
+			final Dimension relSz = rel.getSize();
+			final Point loc = rel.getLocationOnScreen();
 
-			x = loc.x + ((relSz.width - dlgSz.width) / 2);
+			x = loc.x + (relSz.width - dlgSz.width) / 2;
 
-			y = loc.y + ((relSz.height - dlgSz.height) / 2);
+			y = loc.y + (relSz.height - dlgSz.height) / 2;
 			}
 
 		if ( x < 0 ) x = 0;
@@ -104,11 +112,11 @@ AWTUtilities
 
 	static public void
 	constrain(
-			Container container, Component component,  
-			int fill, int anchor,
-			int gx, int gy, int gw, int gh, double wx, double wy )
+			final Container container, final Component component,
+			final int fill, final int anchor,
+			final int gx, final int gy, final int gw, final int gh, final double wx, final double wy )
 		{
-		GridBagConstraints	c =
+		final GridBagConstraints	c =
 			new GridBagConstraints();
 
 		c.fill = fill;
@@ -128,12 +136,12 @@ AWTUtilities
 
 	static public void
 	constrain(
-			Container container, Component component,  
-			int fill, int anchor,
-			int gx, int gy, int gw, int gh,
-			double wx, double wy, Insets inset )
+			final Container container, final Component component,
+			final int fill, final int anchor,
+			final int gx, final int gy, final int gw, final int gh,
+			final double wx, final double wy, final Insets inset )
 		{
-		GridBagConstraints	c =
+		final GridBagConstraints	c =
 			new GridBagConstraints();
 
 		c.fill = fill;
@@ -154,13 +162,13 @@ AWTUtilities
 
 	static public void
 	constrain(
-			Container container, Component component,  
-			int fill, int anchor,
-			int gx, int gy, int gw, int gh,
-			double wx, double wy,
-			int ipadx, int ipady )
+			final Container container, final Component component,
+			final int fill, final int anchor,
+			final int gx, final int gy, final int gw, final int gh,
+			final double wx, final double wy,
+			final int ipadx, final int ipady )
 		{
-		GridBagConstraints	c =
+		final GridBagConstraints	c =
 			new GridBagConstraints();
 
 		c.fill = fill;
@@ -181,17 +189,17 @@ AWTUtilities
 		}
 
 	static public Font
-	getFont( String fontName )
+	getFont( final String fontName )
 		{
-		StringTokenizer toker =
+		final StringTokenizer toker =
 			new StringTokenizer( fontName, "-", false );
 
 		String sName = "Helvetica";
 		String sStyle = "plain";
 		String sSize = "12";
 
-		int numTokes = toker.countTokens();
-		boolean isok = true;
+		final int numTokes = toker.countTokens();
+		final boolean isok = true;
 
 		try {
 			if ( numTokes > 0 )
@@ -209,7 +217,7 @@ AWTUtilities
 					}
 				}
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			System.err.println
 				( "Bad font specification '" + fontName + "' - "
@@ -217,15 +225,15 @@ AWTUtilities
 			return null;
 			}
 
-		int style =
-				  (sStyle.equalsIgnoreCase( "plain" ) )
+		final int style =
+				  sStyle.equalsIgnoreCase( "plain" )
 					? Font.PLAIN :
-				( (sStyle.equalsIgnoreCase( "bold" ) )
+				sStyle.equalsIgnoreCase( "bold" )
 					? Font.BOLD :
-				( (sStyle.equalsIgnoreCase( "italic" ) )
-					? Font.ITALIC : (Font.BOLD + Font.ITALIC) ) );
+				sStyle.equalsIgnoreCase( "italic" )
+					? Font.ITALIC : Font.BOLD + Font.ITALIC;
 
-		int size = Integer.parseInt( sSize );
+		final int size = Integer.parseInt( sSize );
 
 		return new Font( sName, style, size );
 		}
@@ -237,7 +245,7 @@ AWTUtilities
 	// JAR file.
 
 	public static Image
-	getImageResource( String name )
+	getImageResource( final String name )
 		throws java.io.IOException
 		{
 		return
@@ -246,39 +254,39 @@ AWTUtilities
 		}
 
 	public static Image
-	getImageResource( Class base, String name )
+	getImageResource( final Class base, final String name )
 		throws java.io.IOException
 		{
 		Image	result = null;
 
-		URL imageURL = base.getResource( name );
+		final URL imageURL = base.getResource( name );
 
 		if ( imageURL != null )
 			{
-			Toolkit	tk = Toolkit.getDefaultToolkit();
+			final Toolkit	tk = Toolkit.getDefaultToolkit();
 
 			result = tk.createImage
 				( (ImageProducer) imageURL.getContent() );
 			}
-		
+
 		return result;
 		}
 
 	public static Image
-	getSystemImageResource( String name )
+	getSystemImageResource( final String name )
 		throws java.io.IOException
 		{
 		Image	result = null;
 
-		URL imageURL = ClassLoader.getSystemResource( name );
+		final URL imageURL = ClassLoader.getSystemResource( name );
 		if ( imageURL != null )
 			{
-			Toolkit	tk = Toolkit.getDefaultToolkit();
+			final Toolkit	tk = Toolkit.getDefaultToolkit();
 
 			result = tk.createImage
 				( (ImageProducer) imageURL.getContent() );
 			}
-		
+
 		return result;
 		}
 

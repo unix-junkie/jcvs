@@ -1,13 +1,14 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import com.ice.cvsc.CVSProject;
-import com.ice.util.AWTUtilities;
 
 
 public
@@ -28,10 +29,10 @@ implements	ActionListener
 
 
 	public
-	MainPanel( MainFrame mainFrame )
+	MainPanel( final MainFrame mainFrame )
 		{
 		super();
-		
+
 		this.mainFrame = mainFrame;
 
 		this.setLayout( new BorderLayout() );
@@ -40,7 +41,7 @@ implements	ActionListener
 		this.tabbedPane = new JTabbedPane();
 		this.add( tabbedPane );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		String tabName = rmgr.getUIString( "mainpan.workbench.tab.name" );
 		this.wbPanel = new WorkBenchPanel( this );
@@ -104,7 +105,7 @@ implements	ActionListener
 		}
 
 	public void
-	setAllTabsEnabled( boolean enabled )
+	setAllTabsEnabled( final boolean enabled )
 		{
 		for ( int i = 0, cnt = this.tabbedPane.getTabCount()
 				; i < cnt ; ++i )
@@ -114,15 +115,15 @@ implements	ActionListener
 		}
 
 	public void
-	addProjectToWorkBench( CVSProject project )
+	addProjectToWorkBench( final CVSProject project )
 		{
 		this.wbPanel.addProjectToWorkBench( project );
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		System.err.println
 			( "UNKNOWN Command '" + command + "'" );

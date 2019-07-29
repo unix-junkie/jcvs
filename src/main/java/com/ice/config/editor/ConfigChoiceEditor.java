@@ -1,12 +1,14 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.util.Vector;
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.EmptyBorder;
 
-import com.ice.config.*;
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 
 
@@ -26,23 +28,23 @@ extends		ConfigureEditor
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
 		this.radioPanel.removeAll();
 
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		String choice = prefs.getProperty( propName, null );
+		final String choice = prefs.getProperty( propName, null );
 
 		this.group = new ButtonGroup();
 
-		String[] choices = spec.getChoices();
+		final String[] choices = spec.getChoices();
 		this.choiceButtons = new JRadioButton[ choices.length ];
 		for ( int i = 0 ; i < choices.length ; ++i )
 			{
-			JRadioButton radio = new JRadioButton( choices[i] );
+			final JRadioButton radio = new JRadioButton( choices[i] );
 			this.choiceButtons[i] = radio;
 			this.group.add( radio );
 			this.radioPanel.add( radio );
@@ -63,17 +65,17 @@ extends		ConfigureEditor
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		String oldChoice = prefs.getProperty( propName, null );
+		final String oldChoice = prefs.getProperty( propName, null );
 
 		for ( int i = 0 ; i < this.choiceButtons.length ; ++i )
 			{
 			if ( this.choiceButtons[i].isSelected() )
 				{
-				String newChoice = this.choiceButtons[i].getText();
+				final String newChoice = this.choiceButtons[i].getText();
 				prefs.setProperty( propName, newChoice );
 				break;
 				}
@@ -88,7 +90,7 @@ extends		ConfigureEditor
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 
 		result.setLayout( new BoxLayout( result, BoxLayout.Y_AXIS ) );
 		result.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );

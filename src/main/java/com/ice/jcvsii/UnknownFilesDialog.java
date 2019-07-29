@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997-2002 by Sherali Karimov, Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,19 +16,38 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.border.TitledBorder;
 
 import com.ice.cvsc.CVSIgnore;
 
@@ -64,7 +83,7 @@ extends		JDialog
 
 
 	public
-	UnknownFilesDialog( Frame owner, Vector vct, String title, boolean dirs )
+	UnknownFilesDialog( final Frame owner, final Vector vct, final String title, final boolean dirs )
 		{
 		super( owner, title, true );
 		try {
@@ -72,21 +91,21 @@ extends		JDialog
 			this.setData( vct );
 			super.setDefaultCloseOperation( super.DO_NOTHING_ON_CLOSE );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			ex.printStackTrace();
 			}
 		}
 
 	public void
-	setData( Vector data )
+	setData( final Vector data )
 		{
 		this.selectedList.clear();
 		this.mdlList.setData( data );
 		}
 
 	private void
-	jbInit( boolean dirs )
+	jbInit( final boolean dirs )
 		throws Exception
 		{
 		this.titledBorder1 = new TitledBorder
@@ -99,7 +118,7 @@ extends		JDialog
 			new java.awt.event.ActionListener()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{
 					btnCancelActionPerformed(e);
 					}
@@ -115,7 +134,7 @@ extends		JDialog
 				new java.awt.event.ActionListener()
 					{
 					public void
-					actionPerformed( ActionEvent e )
+					actionPerformed( final ActionEvent e )
 						{
 						btnDeleteActionPerformed(e);
 						}
@@ -130,7 +149,7 @@ extends		JDialog
 			new java.awt.event.ActionListener()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{
 						btnSelectAllActionPerformed(e);
 					}
@@ -145,7 +164,7 @@ extends		JDialog
 			new java.awt.event.ActionListener()
 				{
 				public void
-				actionPerformed(ActionEvent e)
+				actionPerformed(final ActionEvent e)
 					{
 						btnAddActionPerformed(e);
 					}
@@ -192,7 +211,7 @@ extends		JDialog
 	extends		MouseAdapter
 		{
 		public void
-		mouseReleased( MouseEvent e )
+		mouseReleased( final MouseEvent e )
 			{
 			mdlList.toggleItemAt
 				( lstFiles.locationToIndex( e.getPoint() ) );
@@ -217,19 +236,19 @@ extends		JDialog
 
 		public Component
 		getListCellRendererComponent(
-				JList list, Object value, int index,
-				boolean isSelected, boolean cellHasFocus )
+				final JList list, final Object value, final int index,
+				final boolean isSelected, final boolean cellHasFocus )
 			{
 			if ( value instanceof MyItem )
 				{
-				boolean sel = ((MyItem) value).isSelected;
+				final boolean sel = ((MyItem) value).isSelected;
 				this.setSelected( sel );
 				this.setText( ((MyItem) value).label );
 				this.setBackground( sel ? this.selColor : Color.white );
 				this.setForeground( Color.black );
 				return this;
 				}
-			
+
 			return null;
 			}
 		}
@@ -269,21 +288,21 @@ extends		JDialog
 			{
 			this.ignore.addIgnoreSpec
 				( Config.getPreferences().getProperty
-					( Config.GLOBAL_USER_IGNORES, null ) );
+					( ConfigConstants.GLOBAL_USER_IGNORES, null ) );
 			}
 
 		public void
-		setData( Vector ukns )
+		setData( final Vector ukns )
 			{
 			this.listItems.clear();
 			if ( ukns != null && ukns.size() > 0 )
 				{
 				for( int i=0 ; i < ukns.size() ; i++ )
 					{
-					Object obj = ukns.elementAt( i );
+					final Object obj = ukns.elementAt( i );
 					if ( obj != null && obj instanceof File )
 						{
-						File f = (File) obj;
+						final File f = (File) obj;
 
 						if ( this.ignore.isFileToBeIgnored( f.getName() ) )
 							continue;
@@ -303,11 +322,11 @@ extends		JDialog
 			}
 
 		public void
-		toggleItemAt( int index )
+		toggleItemAt( final int index )
 			{
 			if ( index > -1 && index < this.listItems.size() )
 				{
-				MyItem item = (MyItem) this.listItems.elementAt( index );
+				final MyItem item = (MyItem) this.listItems.elementAt( index );
 				item.isSelected = ! item.isSelected;
 				this.fireContentsChanged( this, index, index );
 				}
@@ -316,7 +335,7 @@ extends		JDialog
 		public void
 		selectAllItems()
 			{
-			int size = this.listItems.size();
+			final int size = this.listItems.size();
 			for ( int i = 0 ; i < size ; i++ )
 				{
 				((MyItem) this.listItems.elementAt(i)).isSelected = true;
@@ -326,10 +345,10 @@ extends		JDialog
 			}
 
 		public Object
-		getElementAt( int i )
+		getElementAt( final int i )
 			{
-			int size = getSize();
-			if ( (i < 0) || (i >= size) )
+			final int size = getSize();
+			if ( i < 0 || i >= size )
 				{
 				return null;
 				}
@@ -338,14 +357,14 @@ extends		JDialog
 			}
 
 		public boolean
-		addElement( Object o )
+		addElement( final Object o )
 			{
 			this.addElementAt( o, this.listItems.size() );
 			return true;
 			}
 
 		public void
-		addElementAt( Object obj, int pos )
+		addElementAt( final Object obj, final int pos )
 			{
 			if ( obj != null && obj instanceof File )
 				{
@@ -355,19 +374,19 @@ extends		JDialog
 			}
 
 		public Object
-		deleteElementAt( int i )
+		deleteElementAt( final int i )
 			{
 			if ( this.listItems.size() == 0 )
 				return null;
-			Object ret = this.listItems.remove(i);
+			final Object ret = this.listItems.remove(i);
 			this.fireContentsChanged( this, i, i + 1 );
 			return ret;
 			}
 
 		public boolean
-		containsElement( Object obj )
+		containsElement( final Object obj )
 			{
-			int i = this.listItems.indexOf(obj);
+			final int i = this.listItems.indexOf(obj);
 			if ( i >= 0 )
 				return true;
 			else
@@ -375,7 +394,7 @@ extends		JDialog
 			}
 
 		public Object
-		deleteElement( Object obj )
+		deleteElement( final Object obj )
 			{
 			if ( this.listItems.size() == 0 )
 				return null;
@@ -399,7 +418,7 @@ extends		JDialog
 		File		file = null;
 
 		public
-		MyItem( File newFile )
+		MyItem( final File newFile )
 			{
 			this.label = newFile.getAbsolutePath();
 			this.file = newFile;
@@ -407,7 +426,7 @@ extends		JDialog
 		}
 
 	private void
-	btnCancelActionPerformed( ActionEvent e )
+	btnCancelActionPerformed( final ActionEvent e )
 		{
 		this.cancelled = true;
 		this.selectedList.clear();
@@ -415,20 +434,20 @@ extends		JDialog
 		}
 
 	private void
-	btnSelectAllActionPerformed( ActionEvent e )
+	btnSelectAllActionPerformed( final ActionEvent e )
 		{
 		this.mdlList.selectAllItems();
 		}
 
 	private void
-	btnDeleteActionPerformed( ActionEvent e )
+	btnDeleteActionPerformed( final ActionEvent e )
 		{
 		this.deleted = true;
 		dispose();
 		}
 
 	private void
-	btnAddActionPerformed( ActionEvent e )
+	btnAddActionPerformed( final ActionEvent e )
 		{
 		this.deleted = false;
 		dispose();
@@ -456,10 +475,10 @@ extends		JDialog
 	dispose()
 		{
 		this.selectedList.clear();
-		for ( Enumeration enum = this.mdlList.elements()
-				; enum.hasMoreElements() ; )
+		for ( final Enumeration enumeration = this.mdlList.elements()
+				; enumeration.hasMoreElements() ; )
 			{
-			MyItem item = (MyItem) enum.nextElement();
+			final MyItem item = (MyItem) enumeration.nextElement();
 			if ( item.isSelected )
 				this.selectedList.add( item.file );
 			}
@@ -474,8 +493,8 @@ extends		JDialog
 		cancelled = false;
 
 		super.pack();
-		Dimension s = this.getSize();
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension s = this.getSize();
+		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
 		if ( s.height > d.height )
 			s.height = d.height;
@@ -494,7 +513,7 @@ extends		JDialog
 		show();
 
 		// sort the results out after dispose has been called
-		File[] array = new File[ selectedList.size() ];
+		final File[] array = new File[ selectedList.size() ];
 		for ( int i = 0 ; i < array.length ; i++ )
 			{
 			array[i] = (File) this.selectedList.elementAt( i );

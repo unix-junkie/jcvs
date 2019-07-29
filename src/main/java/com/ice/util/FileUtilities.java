@@ -1,9 +1,9 @@
 /*
 ** Tim Endres' utilities package.
 ** Copyright (c) 1997 by Tim Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,13 +16,18 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 public class
@@ -33,7 +38,7 @@ FileUtilities
 	static public final String		RCS_NAME = "$Name:  $";
 
 	public static void
-	copyFile( File from, File to )
+	copyFile( final File from, final File to )
 		throws IOException
 		{
 		int		bytes;
@@ -47,7 +52,7 @@ FileUtilities
 			in = new BufferedInputStream(
 					new FileInputStream( from ) );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			throw new IOException
 				( "FileUtilities.copyFile: opening input stream '"
@@ -58,10 +63,10 @@ FileUtilities
 			out = new BufferedOutputStream(
 					new FileOutputStream( to ) );
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			try { in.close(); }
-				catch ( IOException ex1 ) { }
+				catch ( final IOException ex1 ) { }
 			throw new IOException
 				( "FileUtilities.copyFile: opening output stream '"
 					+ to.getPath() + "', " + ex.getMessage() );
@@ -78,10 +83,10 @@ FileUtilities
 			try {
 				bytes = in.read( buffer, 0, bytes );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				try { in.close(); out.close(); }
-					catch ( IOException ex1 ) { }
+					catch ( final IOException ex1 ) { }
 				throw new IOException
 					( "FileUtilities.copyFile: reading input stream, "
 						+ ex.getMessage() );
@@ -93,10 +98,10 @@ FileUtilities
 			length -= bytes;
 
 			try { out.write( buffer, 0, bytes ); }
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				try { in.close(); out.close(); }
-					catch ( IOException ex1 ) { }
+					catch ( final IOException ex1 ) { }
 				throw new IOException
 					( "FileUtilities.copyFile: writing output stream, "
 						+ ex.getMessage() );
@@ -104,7 +109,7 @@ FileUtilities
 			}
 
 		try { in.close(); out.close(); }
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			throw new IOException
 				( "FileUtilities.copyFile: closing file streams, "
@@ -113,16 +118,16 @@ FileUtilities
 		}
 
 	public static boolean
-	fileEqualsExtension( String fileName, String extension )
+	fileEqualsExtension( final String fileName, final String extension )
 		{
 		boolean result = false;
 
-		int fnLen = fileName.length();
-		int exLen = extension.length();
+		final int fnLen = fileName.length();
+		final int exLen = extension.length();
 
 		if ( fnLen > exLen )
 			{
-			String fileSuffix =
+			final String fileSuffix =
 				fileName.substring( fnLen - exLen );
 
 			if ( FileUtilities.caseSensitivePathNames() )
@@ -143,8 +148,8 @@ FileUtilities
 		{
 		boolean result = true;
 
-		String osname = System.getProperty( "os.name" );
-		
+		final String osname = System.getProperty( "os.name" );
+
 		if ( osname != null )
 			{
 			if ( osname.startsWith( "macos" ) )
@@ -164,26 +169,26 @@ FileUtilities
 	 * <li> ? - Matches exactly one of any character
 	 * <li> [...] - Matches one of any character in the list or range
 	 * </ul>
-	 * 
+	 *
 	 * @param fileName The name of the file to check.
 	 * @param matchExpr The expression to check against.
 	 * @return If the file name matches the expression, true, else false.
 	 */
 	public static boolean
-	isPatternString( String pattern )
+	isPatternString( final String pattern )
 		{
 		if ( pattern.indexOf( "*" ) >= 0 ) return true;
 		if ( pattern.indexOf( "?" ) >= 0 ) return true;
 
-		int index = pattern.indexOf( "[" );
-		if ( (index >= 0) && (pattern.indexOf( "]" ) > index + 1) )
+		final int index = pattern.indexOf( "[" );
+		if ( index >= 0 && pattern.indexOf( "]" ) > index + 1 )
 			return true;
 
 		return false;
 		}
 
 	public static boolean
-	matchPattern( String fileName, String pattern )
+	matchPattern( final String fileName, final String pattern )
 		{
 		return
 			FileUtilities.recurseMatchPattern
@@ -193,7 +198,7 @@ FileUtilities
 	/**
 	 * An internal routine to implement expression matching.
 	 * This routine is based on a self-recursive algorithm.
-	 * 
+	 *
 	 * @param string The string to be compared.
 	 * @param pattern The expression to compare <em>string</em> to.
 	 * @param sIdx The index of where we are in <em>string</em>.
@@ -201,10 +206,10 @@ FileUtilities
 	 * @return True if <em>string</em> matched pattern, else false.
 	 */
 	private static boolean
-	recurseMatchPattern( String string, String pattern, int sIdx, int pIdx )
+	recurseMatchPattern( final String string, final String pattern, int sIdx, int pIdx )
 		{
-		int		pLen = pattern.length();
-		int		sLen = string.length();
+		final int		pLen = pattern.length();
+		final int		sLen = string.length();
 
 		for ( ; ; )
 			{
@@ -264,20 +269,20 @@ FileUtilities
 					if ( pattern.charAt(pIdx) == string.charAt(sIdx) )
 						break;
 
-					if ( pIdx < (pLen - 1)
+					if ( pIdx < pLen - 1
 							&& pattern.charAt(pIdx + 1) == '-' )
 						{
-						if ( pIdx >= (pLen - 2) )
+						if ( pIdx >= pLen - 2 )
 							return false;
 
-						char chStr = string.charAt(sIdx);
-						char chPtn = pattern.charAt(pIdx);
-						char chPtn2 = pattern.charAt(pIdx+2);
+						final char chStr = string.charAt(sIdx);
+						final char chPtn = pattern.charAt(pIdx);
+						final char chPtn2 = pattern.charAt(pIdx+2);
 
-						if ( ( chPtn <= chStr ) && ( chPtn2 >= chStr ) )
+						if ( chPtn <= chStr && chPtn2 >= chStr )
 							break;
 
-						if ( ( chPtn >= chStr ) && ( chPtn2 <= chStr ) )
+						if ( chPtn >= chStr && chPtn2 <= chStr )
 							break;
 
 						pIdx += 2;

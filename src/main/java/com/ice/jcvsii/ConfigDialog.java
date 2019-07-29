@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,28 +16,31 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
-import java.util.*;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
-import com.ice.cvsc.CVSLog;
 import com.ice.config.ConfigurePanel;
 import com.ice.config.DefaultConfigureEditorFactory;
 import com.ice.pref.UserPrefs;
-import com.ice.util.ResourceUtilities;
 
 
 /**
@@ -57,21 +60,21 @@ implements	ActionListener
 	static public final String		RCS_REV = "$Revision: 1.4 $";
 
 	private boolean				okClicked;
-	private ConfigurePanel		configPan;
+	private final ConfigurePanel		configPan;
 
-	
+
 	public
-	ConfigDialog( Frame parent, String title, UserPrefs prefs, UserPrefs specs )
+	ConfigDialog( final Frame parent, final String title, final UserPrefs prefs, final UserPrefs specs )
 		{
 		super( parent, title, true );
 
 		this.okClicked = false;
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 
 		content.setLayout( new BorderLayout() );
 
-		DefaultConfigureEditorFactory factory =
+		final DefaultConfigureEditorFactory factory =
 			new DefaultConfigureEditorFactory( specs );
 
 		factory.addEditor( "cmdexec", new ExecCommandEditor() );
@@ -81,27 +84,27 @@ implements	ActionListener
 		this.configPan = new ConfigurePanel( prefs, specs, factory );
 
 		content.add( BorderLayout.CENTER, this.configPan );
-		
-		JPanel buttons = new JPanel();
+
+		final JPanel buttons = new JPanel();
 		buttons.setLayout( new GridLayout( 1, 2 ) );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		JButton okBtn = new JButton( rmgr.getUIString( "name.for.save" ) );
+		final JButton okBtn = new JButton( rmgr.getUIString( "name.for.save" ) );
 		okBtn.addActionListener( this );
 		okBtn.setActionCommand( "SAVE" );
 		buttons.add( buttonPanel( okBtn ) );
 
-		JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
+		final JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
 		canBtn.addActionListener( this );
 		canBtn.setActionCommand( "CANCEL" );
 		buttons.add( buttonPanel( canBtn ) );
-		
-		JPanel butPan = new JPanel();
+
+		final JPanel butPan = new JPanel();
 		butPan.setLayout( new BorderLayout() );
 		butPan.add( "East", buttons );
 
-		JPanel southPan = new JPanel();
+		final JPanel southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.NORTH, new JSeparator( SwingConstants.HORIZONTAL ) );
 		southPan.add( BorderLayout.CENTER, butPan );
@@ -113,7 +116,7 @@ implements	ActionListener
 		this.addWindowListener(
 			new WindowAdapter()
 			{
-			public void windowActivated( WindowEvent evt )
+			public void windowActivated( final WindowEvent evt )
 				{
 				configPan.setDividerLocation( 0.3 ); // UNDONE property this.
 				}
@@ -122,9 +125,9 @@ implements	ActionListener
 		}
 
 	private JPanel
-	buttonPanel( JButton button )
+	buttonPanel( final JButton button )
 		{
-		JPanel panel = new JPanel();
+		final JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(4, 4, 4, 4));
 		panel.setLayout(new BorderLayout());
 		panel.add("Center", button);
@@ -132,34 +135,34 @@ implements	ActionListener
 		}
 
 	public void
-	editProperty( String prop )
+	editProperty( final String prop )
 		{
 		this.configPan.editProperty( prop );
 		}
 
 	public void
-	editProperties( String[] props )
+	editProperties( final String[] props )
 		{
 		this.configPan.editProperties( props );
 		}
 
 	public void
-	editPath( String path )
+	editPath( final String path )
 		{
 		this.configPan.editPath( path );
 		}
 
 	public void
-	editPaths( String[] paths )
+	editPaths( final String[] paths )
 		{
 		this.configPan.editPaths( paths );
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
 		boolean doExit = false;
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equals( "SAVE" ) )
 			{

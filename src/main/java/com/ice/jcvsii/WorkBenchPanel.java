@@ -1,12 +1,20 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.*;
-import javax.swing.border.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
@@ -20,7 +28,7 @@ class		WorkBenchPanel
 extends		MainTabPanel
 implements	TreeSelectionListener
 	{
-	private JToolBar					toolBar;
+	private final JToolBar					toolBar;
 	protected JSplitPane				splitter;
 	protected WorkBenchTreePanel		treePanel;
 	protected WorkBenchDetailPanel		detailPanel;
@@ -33,7 +41,7 @@ implements	TreeSelectionListener
 
 
 	public
-	WorkBenchPanel( MainPanel parent )
+	WorkBenchPanel( final MainPanel parent )
 		{
 		super( parent );
 
@@ -69,11 +77,11 @@ implements	TreeSelectionListener
 	public void
 	loadPreferences()
 		{
-		int divLoc =
+		final int divLoc =
 			Config.getPreferences().getInteger
-				( Config.MAIN_PANEL_DIVIDER, -1 );
+				( ConfigConstants.MAIN_PANEL_DIVIDER, -1 );
 
-		if ( divLoc > 15 && divLoc < (this.getSize().width - 15) )
+		if ( divLoc > 15 && divLoc < this.getSize().width - 15 )
 			this.splitter.setDividerLocation( divLoc );
 		else
 			this.splitter.setDividerLocation( 175 );
@@ -85,7 +93,7 @@ implements	TreeSelectionListener
 	savePreferences()
 		{
 		Config.getPreferences().setInteger
-			( Config.MAIN_PANEL_DIVIDER,
+			( ConfigConstants.MAIN_PANEL_DIVIDER,
 				this.splitter.getDividerLocation() );
 
 		this.treePanel.savePreferences();
@@ -94,13 +102,13 @@ implements	TreeSelectionListener
 	private void
 	browseProject()
 		{
-		Config cfg = Config.getInstance();
-		UserPrefs prefs = cfg.getPreferences();
+		final Config cfg = Config.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
 
-		String prompt =
+		final String prompt =
 			ResourceMgr.getInstance().getUIString( "open.project.prompt" );
 
-		String localRootDirName =
+		final String localRootDirName =
 			ProjectFrame.getUserSelectedProject
 				( (Frame)this.getTopLevelAncestor(), prompt, null );
 
@@ -108,27 +116,27 @@ implements	TreeSelectionListener
 			{
 			if ( ! ProjectFrameMgr.checkProjectOpen( localRootDirName ) )
 				{
-				String entriesPath = CVSProject.getAdminEntriesPath
+				final String entriesPath = CVSProject.getAdminEntriesPath
 					( CVSProject.rootPathToAdminPath( localRootDirName ) );
 
-				File entriesFile = new File( entriesPath );
-				File rootDirFile = new File( localRootDirName );
-				
+				final File entriesFile = new File( entriesPath );
+				final File rootDirFile = new File( localRootDirName );
+
 				ProjectFrame.openProject( rootDirFile, null );
 				}
 			}
 		}
 
 	public void
-	addProjectToWorkBench( CVSProject project )
+	addProjectToWorkBench( final CVSProject project )
 		{
 		this.treePanel.addProjectToWorkBench( project );
 		}
 
 	public void
-	valueChanged( TreeSelectionEvent event )
+	valueChanged( final TreeSelectionEvent event )
 		{
-		WorkBenchTreeNode node = this.treePanel.getSelectedNode();
+		final WorkBenchTreeNode node = this.treePanel.getSelectedNode();
 
 		if ( node == null )
 			{
@@ -171,7 +179,7 @@ implements	TreeSelectionListener
 					new AbstractAction()
 						{
 						public void
-						actionPerformed( ActionEvent event )
+						actionPerformed( final ActionEvent event )
 							{ browseProject(); }
 						};
 
@@ -194,7 +202,7 @@ implements	TreeSelectionListener
 					new AbstractAction()
 						{
 						public void
-						actionPerformed( ActionEvent event )
+						actionPerformed( final ActionEvent event )
 							{ treePanel.openSelection(); }
 						};
 
@@ -212,7 +220,7 @@ implements	TreeSelectionListener
 					new AbstractAction()
 						{
 						public void
-						actionPerformed( ActionEvent event )
+						actionPerformed( final ActionEvent event )
 							{ treePanel.addNewFolder(); }
 						};
 
@@ -230,7 +238,7 @@ implements	TreeSelectionListener
 					new AbstractAction()
 						{
 						public void
-						actionPerformed( ActionEvent event )
+						actionPerformed( final ActionEvent event )
 							{ treePanel.addNewProject(); }
 						};
 
@@ -248,7 +256,7 @@ implements	TreeSelectionListener
 					new AbstractAction()
 						{
 						public void
-						actionPerformed( ActionEvent event )
+						actionPerformed( final ActionEvent event )
 							{ treePanel.deleteSelection(); }
 						};
 
@@ -257,19 +265,19 @@ implements	TreeSelectionListener
 					( Action.SMALL_ICON, new ImageIcon( img ) );
 				}
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
-			(new Throwable
-				( "could not load icon image: " + ex.getMessage() )).
+			new Throwable
+				( "could not load icon image: " + ex.getMessage() ).
 					printStackTrace();
 			}
 		}
 
 	private void
-	populateToolbar( JToolBar toolBar )
+	populateToolbar( final JToolBar toolBar )
 		{
 		String tipText;
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		if ( this.browseAction != null )
 			{

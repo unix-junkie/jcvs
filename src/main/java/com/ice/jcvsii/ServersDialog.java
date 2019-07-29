@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,22 +16,45 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import com.ice.cvsc.CVSRequest;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -52,15 +75,15 @@ implements	ActionListener, ListSelectionListener
 	private JLabel				moduleLbl;
 	private JLabel				connMethodLbl;
 
-	private UserPrefs			prefs;
-	private ConnectInfoPanel	info;
+	private final UserPrefs			prefs;
+	private final ConnectInfoPanel	info;
 	private ServerDef			definition;
 
-	private int					descOffset = 15;
+	private final int					descOffset = 15;
 
 
 	public
-	ServersDialog( Frame parent, UserPrefs prefs, ConnectInfoPanel info )
+	ServersDialog( final Frame parent, final UserPrefs prefs, final ConnectInfoPanel info )
 		{
 		super( parent, "CVS Servers", true );
 
@@ -71,12 +94,12 @@ implements	ActionListener, ListSelectionListener
 		this.establishDialogContents
 			( Config.getInstance().getServerDefinitions() );
 
-		Dimension sz = this.getPreferredSize();
+		final Dimension sz = this.getPreferredSize();
 		if ( sz.width < 480 ) sz.width = 480;
 		if ( sz.height < 400 ) sz.height = 400;
 		this.setSize( sz );
 
-		Point location =
+		final Point location =
 			AWTUtilities.centerDialogInParent( this, parent );
 
 		this.setLocation( location.x, location.y );
@@ -85,7 +108,7 @@ implements	ActionListener, ListSelectionListener
 			new WindowAdapter()
 				{
 				public void
-				windowActivated(WindowEvent e)
+				windowActivated(final WindowEvent e)
 					{
 					}
 				}
@@ -99,9 +122,9 @@ implements	ActionListener, ListSelectionListener
 		}
 
 	public Vector
-	loadServerDefs( UserPrefs prefs )
+	loadServerDefs( final UserPrefs prefs )
 		{
-		Vector result = new Vector();
+		final Vector result = new Vector();
 
 		result.addElement
 			( new ServerDef
@@ -110,12 +133,12 @@ implements	ActionListener, ListSelectionListener
 					"This is the anonymous Giant Java Tree server.\n\n"
 					+ "This definition allows anyone to checkout the "
 					+ "Giant Java Tree, but not commit changes." ) );
-		
+
 		return result;
 		}
 
 	public void
-	valueChanged( ListSelectionEvent evt )
+	valueChanged( final ListSelectionEvent evt )
 		{
 		if ( ! evt.getValueIsAdjusting() )
 			{
@@ -152,12 +175,12 @@ implements	ActionListener, ListSelectionListener
 		}
 
     public void
-    actionPerformed( ActionEvent event )
+    actionPerformed( final ActionEvent event )
         {
 		boolean doDispose = false;
 
-	    String command = event.getActionCommand();
-		
+	    final String command = event.getActionCommand();
+
 		if ( command.compareTo( "OK" ) == 0 )
 			{
 			doDispose = true;
@@ -175,26 +198,26 @@ implements	ActionListener, ListSelectionListener
         }
 
 	public void
-	establishDialogContents( Vector defs ) 
+	establishDialogContents( final Vector defs )
 		{
 		JLabel		lbl;
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		JPanel mainPan = new JPanel();
+		final JPanel mainPan = new JPanel();
 		mainPan.setLayout( new BorderLayout() );
 		mainPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 
 		this.serverList = new JList( defs );
 		this.serverList.addListSelectionListener( this );
 
-		JScrollPane scroller = new JScrollPane( this.serverList );
+		final JScrollPane scroller = new JScrollPane( this.serverList );
 		scroller.setPreferredSize( new Dimension( 150, 75 ) );
 
-		JPanel scrollerPanel = new JPanel();
+		final JPanel scrollerPanel = new JPanel();
 		scrollerPanel.setLayout( new BorderLayout() );
 		scrollerPanel.add( scroller );
 		scrollerPanel.setBorder
@@ -317,24 +340,24 @@ implements	ActionListener, ListSelectionListener
 
 		mainPan.add( BorderLayout.CENTER, this.infoPanel );
 
-		JPanel ctlPan = new JPanel();
+		final JPanel ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 
-		JPanel btnPan = new JPanel();
+		final JPanel btnPan = new JPanel();
 		btnPan.setLayout( new GridLayout( 1, 2, 20, 5 ) );
 		btnPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 
-		JButton okBtn = new JButton( rmgr.getUIString( "name.for.ok" ) );
+		final JButton okBtn = new JButton( rmgr.getUIString( "name.for.ok" ) );
 		okBtn.addActionListener( this );
 		okBtn.setActionCommand( "OK" );
 		btnPan.add( okBtn );
 
-		JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
+		final JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
 		canBtn.addActionListener( this );
 		canBtn.setActionCommand( "CANCEL" );
 		btnPan.add( canBtn );
 
-		JSeparator sep = new JSeparator( SwingConstants.HORIZONTAL );
+		final JSeparator sep = new JSeparator( SwingConstants.HORIZONTAL );
 
 		ctlPan.add( BorderLayout.NORTH, sep );
 		ctlPan.add( BorderLayout.EAST, btnPan );
@@ -351,7 +374,7 @@ implements	ActionListener, ListSelectionListener
 	extends		JLabel
 		{
 		public
-		DetailLabel( String text )
+		DetailLabel( final String text )
 			{
 			super( text );
 

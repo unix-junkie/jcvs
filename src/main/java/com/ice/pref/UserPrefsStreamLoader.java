@@ -1,9 +1,9 @@
 /*
 ** User Preferences Package.
 ** Copyright (c) 1999 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,17 +16,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.pref;
 
-import java.io.*;
-import java.net.*;
-import java.lang.System;
-import java.lang.Throwable;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 /**
@@ -54,7 +52,7 @@ extends		UserPrefsLoader
 		}
 
 	public
-	UserPrefsStreamLoader( InputStream in, OutputStream out )
+	UserPrefsStreamLoader( final InputStream in, final OutputStream out )
 		{
 		super();
 		this.inStream = in;
@@ -62,7 +60,7 @@ extends		UserPrefsLoader
 		}
 
 	public
-	UserPrefsStreamLoader( String appName, String userName, String prefsName )
+	UserPrefsStreamLoader( final String appName, final String userName, final String prefsName )
 		{
 		super( appName, userName, prefsName );
 		}
@@ -74,7 +72,7 @@ extends		UserPrefsLoader
 		}
 
 	public void
-	setInputStream( InputStream in )
+	setInputStream( final InputStream in )
 		{
 		this.inStream = in;
 		}
@@ -86,13 +84,13 @@ extends		UserPrefsLoader
 		}
 
 	public void
-	setOutputStream( OutputStream out )
+	setOutputStream( final OutputStream out )
 		{
 		this.outStream = out;
 		}
 
 	public void
-	loadPreferences( UserPrefs prefs )
+	loadPreferences( final UserPrefs prefs )
 		throws IOException
 		{
 		if ( this.inStream == null )
@@ -103,14 +101,14 @@ extends		UserPrefsLoader
 		}
 
 	public void
-	storePreferences( UserPrefs prefs )
+	storePreferences( final UserPrefs prefs )
 		throws IOException
 		{
 		if ( this.outStream == null )
 			throw new IOException
 				( "you have not yet called setOutputStream()" );
 
-		String headerStr = "UserPrefsStreamLoader $Revision: 1.2 $";
+		final String headerStr = "UserPrefsStreamLoader $Revision: 1.2 $";
 		prefs.storeProperties( this.outStream, headerStr );
 		}
 

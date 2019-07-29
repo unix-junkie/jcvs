@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2004 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,14 +18,11 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
-
-import com.ice.cvsc.CVSResponse;
-import com.ice.cvsc.CVSUserInterface;
 
 public
 class		CVSBufferedUI
@@ -34,19 +31,19 @@ implements	CVSUserInterface
 	StringBuffer buf = new StringBuffer();
 
 	public void
-	uiDisplayProgressMsg( String message )
+	uiDisplayProgressMsg( final String message )
 		{
 		buf.append( message ).append( "\r\n" );
 		}
 
 	public void
-	uiDisplayProgramError( String error )
+	uiDisplayProgramError( final String error )
 		{
 		buf.append( error ).append( "\r\n" );
 		}
 
 	public void
-	uiDisplayResponse( CVSResponse response )
+	uiDisplayResponse( final CVSResponse response )
 		{
 		buf.append( response.getResultText() ).
 			append( response.getResultStatus() ).append( "\r\n" );

@@ -1,13 +1,36 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import com.ice.cvsc.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+import com.ice.cvsc.CVSArgumentVector;
+import com.ice.cvsc.CVSClient;
+import com.ice.cvsc.CVSEntryVector;
+import com.ice.cvsc.CVSProject;
+import com.ice.cvsc.CVSRequest;
+import com.ice.cvsc.CVSResponse;
+import com.ice.cvsc.CVSScramble;
+import com.ice.cvsc.CVSTracer;
+import com.ice.cvsc.CVSUserInterface;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -28,7 +51,7 @@ implements	ActionListener, CVSUserInterface
 
 
 	public
-	TestConnectPanel( MainPanel parent )
+	TestConnectPanel( final MainPanel parent )
 		{
 		super( parent );
 		this.establishContents();
@@ -47,9 +70,9 @@ implements	ActionListener, CVSUserInterface
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equalsIgnoreCase( "TESTCONN" ) )
 			{
@@ -70,24 +93,24 @@ implements	ActionListener, CVSUserInterface
 	private void
 	performTest()
 		{
-		Config cfg = Config.getInstance();
-		UserPrefs prefs = cfg.getPreferences();
+		final Config cfg = Config.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
 
-		CVSProject		project;
+		final CVSProject		project;
 		Point			location;
 
 		location = this.getLocationOnScreen();
 
-		String userName = this.info.getUserName();
-		String passWord = this.info.getPassword();
-		String hostname = this.info.getServer();
-		String rootDirectory = this.info.getRepository();
+		final String userName = this.info.getUserName();
+		final String passWord = this.info.getPassword();
+		final String hostname = this.info.getServer();
+		final String rootDirectory = this.info.getRepository();
 
-		boolean isPServer = this.info.isPServer();
+		final boolean isPServer = this.info.isPServer();
 
-		int connMethod = this.info.getConnectionMethod();
+		final int connMethod = this.info.getConnectionMethod();
 
-		int cvsPort =
+		final int cvsPort =
 			CVSUtilities.computePortNum
 				( hostname, connMethod, isPServer );
 
@@ -98,7 +121,7 @@ implements	ActionListener, CVSUserInterface
 				|| rootDirectory.length() < 1 )
 			{
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					"The connection test requires that the " +
 						( hostname.length() < 1
 							? "cvs server hostname"
@@ -112,7 +135,7 @@ implements	ActionListener, CVSUserInterface
 					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 				"You must enter a user name for 'rsh' connections.",
 					"Error", JOptionPane.ERROR_MESSAGE );
 			return;
@@ -133,10 +156,10 @@ implements	ActionListener, CVSUserInterface
 
 		if ( isPServer )
 			{
-			String scrambled =
+			final String scrambled =
 				CVSScramble.scramblePassword
 					( new String( passWord ), 'A' );
-			 
+
 			request.setPassword( scrambled );
 			}
 		else if ( connMethod == CVSRequest.METHOD_SSH )
@@ -176,10 +199,10 @@ implements	ActionListener, CVSUserInterface
 		request.traceTCPData = true;
 
 		request.allowGzipFileMode =
-			( prefs.getBoolean( Config.GLOBAL_ALLOWS_FILE_GZIP, true ) );
+			prefs.getBoolean( ConfigConstants.GLOBAL_ALLOWS_FILE_GZIP, true );
 
 		request.setGzipStreamLevel
-			( prefs.getInteger( Config.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
+			( prefs.getInteger( ConfigConstants.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
 
 		if ( connMethod == CVSRequest.METHOD_SSH )
 			{
@@ -196,15 +219,15 @@ implements	ActionListener, CVSUserInterface
 
 		this.setWaitCursor();
 
-		StringBuffer outputBuf = new StringBuffer();
+		final StringBuffer outputBuf = new StringBuffer();
 
 		CVSTracer.accumulateInBuffer( outputBuf );
 
 		CVSTracer.setEchoAccumulation( true );
 
-		CVSResponse response = new CVSResponse();
+		final CVSResponse response = new CVSResponse();
 
-		CVSThread thread =
+		final CVSThread thread =
 			new CVSThread( "TestConnect",
 				this.new MyRunner( client, request, response ),
 					this.new MyMonitor( request, response, outputBuf ) );
@@ -216,12 +239,12 @@ implements	ActionListener, CVSUserInterface
 	class		MyRunner
 	implements	Runnable
 		{
-		private CVSClient client;
-		private CVSRequest request;
-		private CVSResponse response;
+		private final CVSClient client;
+		private final CVSRequest request;
+		private final CVSResponse response;
 
 		public
-		MyRunner( CVSClient client, CVSRequest request, CVSResponse response )
+		MyRunner( final CVSClient client, final CVSRequest request, final CVSResponse response )
 			{
 			this.client = client;
 			this.request = request;
@@ -239,12 +262,12 @@ implements	ActionListener, CVSUserInterface
 	class		MyMonitor
 	implements	CVSThread.Monitor
 		{
-		private StringBuffer buf;
-		private CVSRequest request;
-		private CVSResponse response;
+		private final StringBuffer buf;
+		private final CVSRequest request;
+		private final CVSResponse response;
 
 		public
-		MyMonitor( CVSRequest request, CVSResponse response, StringBuffer buf )
+		MyMonitor( final CVSRequest request, final CVSResponse response, final StringBuffer buf )
 			{
 			this.buf = buf;
 			this.request = request;
@@ -306,19 +329,19 @@ implements	ActionListener, CVSUserInterface
 	//
 
 	public void
-	uiDisplayProgressMsg( String message )
+	uiDisplayProgressMsg( final String message )
 		{
 		this.feedback.setText( message );
 		this.feedback.repaint( 0 );
 		}
 
 	public void
-	uiDisplayProgramError( String error )
+	uiDisplayProgramError( final String error )
 		{
 		}
 
 	public void
-	uiDisplayResponse( CVSResponse response )
+	uiDisplayResponse( final CVSResponse response )
 		{
 		}
 
@@ -329,9 +352,9 @@ implements	ActionListener, CVSUserInterface
 	private void
 	establishContents()
 		{
-		JLabel		lbl;
-		JPanel		panel;
-		JButton		button;
+		final JLabel		lbl;
+		final JPanel		panel;
+		final JButton		button;
 
 		this.setLayout( new GridBagLayout() );
 
@@ -343,7 +366,7 @@ implements	ActionListener, CVSUserInterface
 
 		int row = 0;
 
-		JSeparator sep;
+		final JSeparator sep;
 
 		AWTUtilities.constrain(
 			this, info,
@@ -383,10 +406,10 @@ implements	ActionListener, CVSUserInterface
 				};
 		this.outputText.setEditable( false );
 
-		JScrollPane scroller =
+		final JScrollPane scroller =
 			new JScrollPane( this.outputText );
 		scroller.setVerticalScrollBarPolicy
-			( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
+			( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 
 		AWTUtilities.constrain(
 			this, scroller,

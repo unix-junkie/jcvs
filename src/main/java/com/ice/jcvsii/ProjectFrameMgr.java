@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,18 +16,16 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import com.ice.cvsc.CVSLog;
-import com.ice.pref.UserPrefs;
-import com.ice.util.AWTUtilities;
 
 
 public
@@ -38,7 +36,7 @@ class		ProjectFrameMgr
 
 
 	public static void
-	addProject( ProjectFrame frame, String localRootPath )
+	addProject( final ProjectFrame frame, final String localRootPath )
 		{
 		if ( ProjectFrameMgr.debug )
 			{
@@ -50,7 +48,7 @@ class		ProjectFrameMgr
 		}
 
 	public static void
-	removeProject( ProjectFrame frame, String localRootPath )
+	removeProject( final ProjectFrame frame, final String localRootPath )
 		{
 		if ( ProjectFrameMgr.debug )
 			{
@@ -65,12 +63,12 @@ class		ProjectFrameMgr
 		// at the root of the module. Ergo, we must remove by direct
 		// comparison over the entire Hashtable.
 		//
-		Enumeration keys = ProjectFrameMgr.frames.keys();
+		final Enumeration keys = ProjectFrameMgr.frames.keys();
 		for ( ; keys.hasMoreElements() ; )
 			{
-			String key = (String) keys.nextElement();
+			final String key = (String) keys.nextElement();
 
-			ProjectFrame frm = (ProjectFrame)
+			final ProjectFrame frm = (ProjectFrame)
 				ProjectFrameMgr.frames.get( key );
 
 			if ( frm == frame )
@@ -87,7 +85,7 @@ class		ProjectFrameMgr
 		}
 
 	public static boolean
-	checkProjectOpen( String localRootPath )
+	checkProjectOpen( final String localRootPath )
 		{
 		if ( ProjectFrameMgr.debug )
 			{
@@ -95,9 +93,9 @@ class		ProjectFrameMgr
 				( "PROJECT_FRAME_MGR: CHECK: " + localRootPath );
 			}
 
-		ProjectFrame frame = (ProjectFrame)
+		final ProjectFrame frame = (ProjectFrame)
 			ProjectFrameMgr.frames.get( localRootPath );
-			
+
 		if ( frame != null )
 			{
 			if ( frame.isShowing() )
@@ -107,7 +105,7 @@ class		ProjectFrameMgr
 				}
 			}
 
-		return (frame != null);
+		return frame != null;
 		}
 
 	public static Enumeration
@@ -119,19 +117,19 @@ class		ProjectFrameMgr
 	public static void
 	closeAllProjects()
 		{
-		Enumeration enum =
+		final Enumeration enumeration =
 			ProjectFrameMgr.frames.keys();
 
-		for ( ; enum.hasMoreElements() ; )
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			String key = (String) enum.nextElement();
+			final String key = (String) enumeration.nextElement();
 			if ( ProjectFrameMgr.debug )
 				{
 				CVSLog.logMsgStderr
 					( "PROJECT_FRAME_MGR: CLOSE: " + key );
 				}
 
-			ProjectFrame frame =
+			final ProjectFrame frame =
 				(ProjectFrame) ProjectFrameMgr.frames.get( key );
 
 			frame.dispose();

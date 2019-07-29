@@ -1,9 +1,9 @@
 /*
 ** User Preferences Package.
 ** Copyright (c) 1999 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,16 +16,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.pref;
 
-import java.io.*;
-import java.lang.System;
-import java.lang.Throwable;
-import java.util.*;
+import java.io.IOException;
+import java.util.Properties;
 
 
 
@@ -52,13 +50,13 @@ implements	UserPrefsConstants
 	public static UserPrefsLoader
 	getDefaultLoader()
 		{
-		return getLoader( UserPrefsLoader.STREAM_LOADER );
+		return getLoader( UserPrefsConstants.STREAM_LOADER );
 		}
 
 	public static UserPrefsLoader
-	getDefaultLoader( String appName, String userName, String prefsName )
+	getDefaultLoader( final String appName, final String userName, final String prefsName )
 		{
-		UserPrefsLoader result =
+		final UserPrefsLoader result =
 			UserPrefsLoader.getDefaultLoader();
 
 		result.setAppName( appName );
@@ -69,15 +67,15 @@ implements	UserPrefsConstants
 		}
 
 	public static UserPrefsLoader
-	getLoader( String loaderName )
+	getLoader( final String loaderName )
 		{
 		if ( loaderName.equalsIgnoreCase
-				( UserPrefsLoader.FILE_LOADER ) )
+				( UserPrefsConstants.FILE_LOADER ) )
 			{
 			return new UserPrefsFileLoader();
 			}
 		else if ( loaderName.equalsIgnoreCase
-				( UserPrefsLoader.STREAM_LOADER ) )
+				( UserPrefsConstants.STREAM_LOADER ) )
 			{
 			return new UserPrefsStreamLoader();
 			}
@@ -87,10 +85,10 @@ implements	UserPrefsConstants
 
 	public static UserPrefsLoader
 	getLoader(
-			String loaderName, String appName,
-			String userName, String prefsName )
+			final String loaderName, final String appName,
+			final String userName, final String prefsName )
 		{
-		UserPrefsLoader result =
+		final UserPrefsLoader result =
 			UserPrefsLoader.getLoader( loaderName );
 
 		if ( result != null )
@@ -109,7 +107,7 @@ implements	UserPrefsConstants
 		}
 
 	public
-	UserPrefsLoader( String appName, String userName, String prefsName )
+	UserPrefsLoader( final String appName, final String userName, final String prefsName )
 		{
 		this.appName = appName;
 		this.userName = userName;
@@ -123,7 +121,7 @@ implements	UserPrefsConstants
 		}
 
 	public void
-	setAppName( String name )
+	setAppName( final String name )
 		{
 		this.appName = name;
 		}
@@ -135,7 +133,7 @@ implements	UserPrefsConstants
 		}
 
 	public void
-	setUserName( String name )
+	setUserName( final String name )
 		{
 		this.userName = name;
 		}
@@ -147,7 +145,7 @@ implements	UserPrefsConstants
 		}
 
 	public void
-	setPrefsName( String prefsName )
+	setPrefsName( final String prefsName )
 		{
 		this.prefsName = prefsName;
 		}

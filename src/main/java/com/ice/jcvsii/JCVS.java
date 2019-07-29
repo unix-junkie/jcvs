@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997-2003 by Timothy Gerard Endres, <time@jcvs.org>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,24 +16,26 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import java.util.logging.*;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.BoundedRangeModel;
+import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.UIManager;
 
-import com.ice.pref.*;
 import com.ice.cvsc.CVSLog;
 import com.ice.cvsc.CVSTimestampFormat;
-import com.ice.util.ResourceUtilities;
+import com.ice.pref.UserPrefs;
 
 
 /**
@@ -52,14 +54,14 @@ class		JCVS
 	static public final String		VERSION_STR = "5.4.2";
 
 	static private JCVS		instance;
-	
+
 	private MainFrame		mainFrame;
 
 
 	static public void
-	main( String[] argv )
+	main( final String[] argv )
 		{
-		JCVS app = new JCVS();
+		final JCVS app = new JCVS();
 		JCVS.instance = app;
 		app.instanceMain( argv );
 		}
@@ -77,7 +79,7 @@ class		JCVS
 		}
 
 	private void
-	instanceMain( String[] argv )
+	instanceMain( final String[] argv )
 		{
 		this.processArguments( argv );
 
@@ -89,19 +91,19 @@ class		JCVS
 		// all jCVS logging. But that is another issue. For now, we set the
 		// level to ERROR.
 		//
-		LogManager logMgr = LogManager.getLogManager();
-		Enumeration loggers = logMgr.getLoggerNames();
+		final LogManager logMgr = LogManager.getLogManager();
+		final Enumeration loggers = logMgr.getLoggerNames();
 		for ( ; loggers.hasMoreElements() ; )
 			{
-			String nm = (String) loggers.nextElement();
-			Logger l = (Logger) logMgr.getLogger( nm );
+			final String nm = (String) loggers.nextElement();
+			final Logger l = logMgr.getLogger( nm );
 			l.setLevel( Level.WARNING  );
 			}
 
-		DefaultBoundedRangeModel model =
+		final DefaultBoundedRangeModel model =
 			new DefaultBoundedRangeModel( 0, 0, 0, 100 );
 
-		JCVSSplash splash = new JCVSSplash( "jCVS II", model );
+		final JCVSSplash splash = new JCVSSplash( "jCVS II", model );
 
 		splash.show();
 
@@ -109,7 +111,7 @@ class		JCVS
 		//      showing the parent to get keystrokes properly.
 		splash.requestFocus();
 
-		(this.new Initiator( splash, model )).start();
+		this.new Initiator( splash, model ).start();
 		}
 
 	public void
@@ -125,9 +127,9 @@ class		JCVS
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equals( "QUIT" ) )
 			{
@@ -136,9 +138,9 @@ class		JCVS
 		}
 
 	private void
-	processArguments( String[] argv )
+	processArguments( final String[] argv )
 		{
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
 		for ( int i = 0 ; i < argv.length ; ++i )
 			{
@@ -170,7 +172,7 @@ class		JCVS
 		BoundedRangeModel model;
 
 		public
-		Initiator( JCVSSplash s, BoundedRangeModel m )
+		Initiator( final JCVSSplash s, final BoundedRangeModel m )
 			{
 			super( "Model" );
 			this.splash = s;
@@ -185,20 +187,20 @@ class		JCVS
 			// along and finish initializing before the progress bar
 			// can even begin to track out operation.
 			//
-			try { this.sleep( 100 ); }
-				catch ( InterruptedException ex ) { }
+			try { Thread.sleep( 100 ); }
+				catch ( final InterruptedException ex ) { }
 
 			int proval = 0;
-			int procnt = 13;
-			int proincr = ( this.model.getMaximum() / procnt );
+			final int procnt = 13;
+			final int proincr = this.model.getMaximum() / procnt;
 
 			this.model.setValue( proval += proincr );
 
-			Config cfg = Config.getInstance();
+			final Config cfg = Config.getInstance();
 
 			cfg.initializePreferences( "jcvsii." );
 
-			UserPrefs prefs = Config.getPreferences();
+			final UserPrefs prefs = Config.getPreferences();
 
 			this.model.setValue( proval += proincr );
 
@@ -227,7 +229,7 @@ class		JCVS
 
 			this.model.setValue( proval += proincr );
 
-			if ( prefs.getBoolean( Config.GLOBAL_LOAD_SERVERS, false ) )
+			if ( prefs.getBoolean( ConfigConstants.GLOBAL_LOAD_SERVERS, false ) )
 				{
 				cfg.loadDefaultServerDefinitions();
 				}
@@ -253,7 +255,7 @@ class		JCVS
 			// NOTE Make sure that there is no CVSLog-ing before this point!
 			CVSLog.setLogFilename
 				( prefs.getProperty
-					( Config.GLOBAL_CVS_LOG_FILE,
+					( ConfigConstants.GLOBAL_CVS_LOG_FILE,
 						CVSLog.DEFAULT_FILENAME ) );
 
 			this.model.setValue( proval += proincr );
@@ -276,8 +278,8 @@ class		JCVS
 				( "Property 'user.dir' = '" + prefs.getCurrentDirectory() + "'" );
 
 			// Establish the CVSTimestamp Formatting Timezone
-			String tzPropStr =
-				prefs.getProperty( Config.GLOBAL_CVS_TIMEZONE, null );
+			final String tzPropStr =
+				prefs.getProperty( ConfigConstants.GLOBAL_CVS_TIMEZONE, null );
 
 			if ( tzPropStr != null )
 				{
@@ -290,7 +292,7 @@ class		JCVS
 
 			String plafClassName =
 				prefs.getProperty
-					( Config.PLAF_LOOK_AND_FEEL_CLASSNAME, null );
+					( ConfigConstants.PLAF_LOOK_AND_FEEL_CLASSNAME, null );
 
 			if ( plafClassName == null
 					|| plafClassName.equals( "DEFAULT" ) )
@@ -300,19 +302,19 @@ class		JCVS
 				}
 
 			try { UIManager.setLookAndFeel( plafClassName ); }
-				catch ( Exception ex ) { }
+				catch ( final Exception ex ) { }
 
-			Rectangle bounds =
+			final Rectangle bounds =
 				prefs.getBounds
-					( Config.MAIN_WINDOW_BOUNDS,
+					( ConfigConstants.MAIN_WINDOW_BOUNDS,
 						new Rectangle( 20, 20, 540, 360 ) );
 
 			mainFrame = new MainFrame( JCVS.this, "jCVS II", bounds );
 
 			this.model.setValue( this.model.getMaximum() );
 
-			try { this.sleep( 500 ); }
-				catch ( InterruptedException ex ) {}
+			try { Thread.sleep( 500 ); }
+				catch ( final InterruptedException ex ) {}
 
 			this.splash.dispose();
 

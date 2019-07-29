@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,15 +18,13 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import java.util.Vector;
 
 /**
  * The CVSEntryVector class subclasses Vector to specifically
@@ -66,18 +64,18 @@ CVSEntryVector extends Vector
 		this.isDirty = false;
 		}
 
-	public CVSEntryVector( int initCap )
+	public CVSEntryVector( final int initCap )
 		{
 		super( initCap );
 		this.isDirty = false;
 		}
 
-	public CVSEntryVector( int initCap, int capIncr )
+	public CVSEntryVector( final int initCap, final int capIncr )
 		{
 		super( initCap, capIncr );
 		this.isDirty = false;
 		}
-	
+
 	// UNDONE - finalize should removeAllEntries!!!
 
 	public void
@@ -88,7 +86,7 @@ CVSEntryVector extends Vector
 		//
 		for ( int i = 0 ; i < this.size() ; ++i )
 			{
-			CVSEntry entry = this.entryAt(i);
+			final CVSEntry entry = this.entryAt(i);
 			if ( entry.isDirectory() )
 				{
 				entry.removeAllEntries();
@@ -99,26 +97,26 @@ CVSEntryVector extends Vector
 		}
 
 	public CVSEntry
-	entryAt( int index )
+	entryAt( final int index )
 		{
 		return (CVSEntry) this.elementAt( index );
 		}
 
 	public CVSEntry
-	getEntryAt( int index )
+	getEntryAt( final int index )
 		{
 		return (CVSEntry) this.elementAt( index );
 		}
 
 	public void
-	appendEntry( CVSEntry entry )
+	appendEntry( final CVSEntry entry )
 		{
 		this.addElement( entry );
 		this.isDirty = true;
 		}
 
 	private boolean
-	removeEntry( CVSEntry entry )
+	removeEntry( final CVSEntry entry )
 		{
 		boolean result;
 
@@ -132,11 +130,11 @@ CVSEntryVector extends Vector
 		}
 
 	private boolean
-	removeEntry( String entryName )
+	removeEntry( final String entryName )
 		{
 		for ( int i = 0 ; i < this.size() ; ++i )
 			{
-			CVSEntry entry = this.entryAt(i);
+			final CVSEntry entry = this.entryAt(i);
 
 			if ( entryName.equals( entry.getName() ) )
 				{
@@ -163,7 +161,7 @@ CVSEntryVector extends Vector
 
 		for ( int i = 0 ; i < this.size() ; ++i )
 			{
-			CVSEntry entry = (CVSEntry)this.elementAt(i);
+			final CVSEntry entry = (CVSEntry)this.elementAt(i);
 			if ( entry.isDirty() )
 				return true;
 			}
@@ -178,13 +176,13 @@ CVSEntryVector extends Vector
 	 */
 
 	public void
-	setDirty( boolean dirty )
+	setDirty( final boolean dirty )
 		{
 		this.isDirty = dirty;
 
 		for ( int i = 0 ; i < this.size() ; ++i )
 			{
-			CVSEntry entry = (CVSEntry)this.elementAt(i);
+			final CVSEntry entry = (CVSEntry)this.elementAt(i);
 			entry.setDirty( dirty );
 			}
 		}
@@ -197,15 +195,15 @@ CVSEntryVector extends Vector
 	 */
 
 	public CVSEntry
-	locateEntry( String name )
+	locateEntry( final String name )
 		{
 		CVSTracer.traceIf( CVSEntryVector.traceLocate,
 			"===== CVSEntryVector.locateEntry: "
-			+ "name '" + name + "' =====" );		
+			+ "name '" + name + "' =====" );
 
 		for ( int i = 0 ; i < this.size() ; ++i )
 			{
-			CVSEntry entry = (CVSEntry)this.elementAt(i);
+			final CVSEntry entry = (CVSEntry)this.elementAt(i);
 
 			CVSTracer.traceIf( CVSEntryVector.traceLocate,
 				"CVSEntryVector.locateEntry: ENTRY '"

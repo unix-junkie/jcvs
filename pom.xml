@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ice</groupId>
 	<artifactId>jcvs</artifactId>
-	<version>5.4.2</version>
+	<version>5.4.3-SNAPSHOT</version>
 
 	<licenses>
 		<license>

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,13 +18,11 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
-
-import java.lang.*;
 
 /**
  * CVSMode implements the concept of file permissions. In other words,
@@ -77,23 +75,23 @@ CVSMode extends Object
 	public String
 	getModeLine()
 		{
-		StringBuffer	result =
+		final StringBuffer	result =
 			new StringBuffer( "" );
-		
+
 		result.append( "u=" );
 		if ( this.userRead ) result.append( "r" );
 		if ( this.userWrite ) result.append( "w" );
 		if ( this.userExecute ) result.append( "x" );
 
 		result.append( "," );
-		
+
 		result.append( "g=" );
 		if ( this.groupRead ) result.append( "r" );
 		if ( this.groupWrite ) result.append( "w" );
 		if ( this.groupExecute ) result.append( "x" );
 
 		result.append( "," );
-		
+
 		result.append( "o=" );
 		if ( this.otherRead ) result.append( "r" );
 		if ( this.otherWrite ) result.append( "w" );
@@ -111,4 +109,4 @@ CVSMode extends Object
 
 
 
-	   
+

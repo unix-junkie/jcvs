@@ -1,9 +1,9 @@
 /*
 ** User Preferences Package.
 ** Copyright (c) 1999 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,17 +16,17 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.pref;
 
-import java.io.*;
-import java.net.*;
-import java.lang.System;
-import java.lang.Throwable;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 /**
@@ -53,14 +53,14 @@ extends		UserPrefsLoader
 		}
 
 	public
-	UserPrefsFileLoader( File f )
+	UserPrefsFileLoader( final File f )
 		{
 		super();
 		this.prefsFile = f;
 		}
 
 	public
-	UserPrefsFileLoader( String appName, String userName, String prefsName )
+	UserPrefsFileLoader( final String appName, final String userName, final String prefsName )
 		{
 		super( appName, userName, prefsName );
 		}
@@ -72,13 +72,13 @@ extends		UserPrefsLoader
 		}
 
 	public void
-	setFile( File f )
+	setFile( final File f )
 		{
 		this.prefsFile = f;
 		}
 
 	public void
-	loadPreferences( UserPrefs prefs )
+	loadPreferences( final UserPrefs prefs )
 		throws IOException
 		{
 		FileInputStream fin = null;
@@ -86,7 +86,7 @@ extends		UserPrefsLoader
 		try {
 			fin = new FileInputStream( this.prefsFile );
 			}
-		catch ( FileNotFoundException ex )
+		catch ( final FileNotFoundException ex )
 			{
 			throw new IOException
 				( "could not locate file '"
@@ -100,14 +100,14 @@ extends		UserPrefsLoader
 		}
 
 	public void
-	storePreferences( UserPrefs prefs )
+	storePreferences( final UserPrefs prefs )
 		throws IOException
 		{
 		FileOutputStream fout = null;
 
 		fout = new FileOutputStream( this.prefsFile );
 
-		String headerStr = "UserPrefsFileLoader $Revision: 1.2 $";
+		final String headerStr = "UserPrefsFileLoader $Revision: 1.2 $";
 
 		prefs.storeProperties( fout, headerStr );
 

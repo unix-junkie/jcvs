@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,20 +16,32 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.lang.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.text.*;
-import javax.swing.text.html.HTMLEditorKit;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.EditorKit;
 
 import com.ice.util.AWTUtilities;
 
@@ -52,7 +64,7 @@ implements	ActionListener
 	private JTextArea	messageText;
 
 	public
-	HTMLDialog( Frame parent, String title, boolean modal, String html )
+	HTMLDialog( final Frame parent, final String title, final boolean modal, final String html )
 		{
 		super( parent, title, modal );
 
@@ -85,9 +97,9 @@ implements	ActionListener
 		}
 
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-	    String command = evt.getActionCommand();
+	    final String command = evt.getActionCommand();
 
 		if ( command.compareTo( "OK" ) == 0 )
 			{
@@ -96,7 +108,7 @@ implements	ActionListener
         }
 
 	public void
-	establishDialogContents( String html ) 
+	establishDialogContents( final String html )
 		{
 		JButton			button;
 
@@ -110,34 +122,34 @@ implements	ActionListener
 			pane.setEditable( false );
 			editor = pane.getEditorKit();
 			doc = editor.createDefaultDocument();
-			Reader rdr = new StringReader( html );
+			final Reader rdr = new StringReader( html );
 			editor.read( rdr, doc, 0 );
 			pane.setDocument( doc );
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			ex.printStackTrace( System.err );
 			pane = null;
 			}
-		catch ( BadLocationException ex )
+		catch ( final BadLocationException ex )
 			{
 			ex.printStackTrace( System.err );
 			pane = null;
 			}
 
-		JScrollPane scroller = new JScrollPane();
+		final JScrollPane scroller = new JScrollPane();
 		scroller.getViewport().add( pane );
 
-		JPanel ctlPan = new JPanel();
+		final JPanel ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 		button = new JButton( rmgr.getUIString( "name.for.ok" ) );
 		button.addActionListener( this );
 		button.setActionCommand( "OK" );
 		ctlPan.add( BorderLayout.EAST, button );
 
-		JPanel content = new JPanel();
+		final JPanel content = new JPanel();
 		content.setLayout( new BorderLayout( 0, 8 ) );
 		content.setBorder( new EmptyBorder( 6, 6, 6, 6 ) );
 

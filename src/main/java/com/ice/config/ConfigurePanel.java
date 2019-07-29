@@ -1,22 +1,30 @@
 
 package com.ice.config;
 
-import java.io.*;
-import java.awt.*;
-import java.text.DateFormat;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
-import javax.swing.border.*;
-import javax.swing.event.*;
-
-import com.ice.util.AWTUtilities;
 import com.ice.pref.UserPrefs;
-import com.ice.pref.PrefsTupleTable;
-import com.ice.config.editor.*;
 
 
 public
@@ -44,7 +52,7 @@ implements	ConfigureConstants, TreeSelectionListener
 
 
 	public
-	ConfigurePanel( UserPrefs cfgPrefs, UserPrefs specs )
+	ConfigurePanel( final UserPrefs cfgPrefs, final UserPrefs specs )
 		{
 		this( cfgPrefs, specs,
 				new DefaultConfigureEditorFactory( specs ) );
@@ -52,8 +60,8 @@ implements	ConfigureConstants, TreeSelectionListener
 
 	public
 	ConfigurePanel
-			( UserPrefs cfgPrefs, UserPrefs specs,
-				ConfigureEditorFactory factory )
+			( final UserPrefs cfgPrefs, final UserPrefs specs,
+				final ConfigureEditorFactory factory )
 		{
 		this.origPrefs = cfgPrefs;
 
@@ -72,7 +80,7 @@ implements	ConfigureConstants, TreeSelectionListener
 			this.specVector =
 				ConfigureUtil.readConfigSpecification( specs );
 			}
-		catch ( InvalidSpecificationException ex )
+		catch ( final InvalidSpecificationException ex )
 			{
 			// REVIEW
 			// UNDONE
@@ -86,9 +94,9 @@ implements	ConfigureConstants, TreeSelectionListener
 		this.tree = new ConfigureTree( model );
 		this.tree.addTreeSelectionListener( this );
 
-		JScrollPane treeScroller = new JScrollPane( this.tree );
+		final JScrollPane treeScroller = new JScrollPane( this.tree );
 
-		JPanel pan = new JPanel();
+		final JPanel pan = new JPanel();
 		pan.setLayout( new BorderLayout() );
 		pan.setPreferredSize( new Dimension( 125, 225 ) );
 		pan.add( BorderLayout.CENTER, treeScroller );
@@ -97,10 +105,10 @@ implements	ConfigureConstants, TreeSelectionListener
 		this.editorPanel.setLayout( new BorderLayout() );
 		this.editorPanel.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 
-		JPanel contentPanel = new JPanel();
+		final JPanel contentPanel = new JPanel();
 		contentPanel.setLayout( new BorderLayout() );
 
-		this.title = new JLabel( "Properties", JLabel.LEFT );
+		this.title = new JLabel( "Properties", SwingConstants.LEFT );
 		this.title.setPreferredSize( new Dimension( 30, 30 ) );
 		this.title.setBackground( new Color( 224, 224, 255 ) );
 		this.title.setForeground( Color.black );
@@ -129,7 +137,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	setDividerLocation( double divPct )
+	setDividerLocation( final double divPct )
 		{
 		this.splitter.setDividerLocation( divPct );
 		}
@@ -141,7 +149,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	setEditorFactory( ConfigureEditorFactory factory )
+	setEditorFactory( final ConfigureEditorFactory factory )
 		{
 		this.factory = factory;
 		}
@@ -149,13 +157,13 @@ implements	ConfigureConstants, TreeSelectionListener
 	public void
 	commit()
 		{
-		for ( Enumeration enum = this.specVector.elements()
-				; enum.hasMoreElements() ; )
+		for ( final Enumeration enumeration = this.specVector.elements()
+				; enumeration.hasMoreElements() ; )
 			{
-			ConfigureSpec spec =
-				(ConfigureSpec) enum.nextElement();
+			final ConfigureSpec spec =
+				(ConfigureSpec) enumeration.nextElement();
 
-			ConfigureEditor editor =
+			final ConfigureEditor editor =
 				this.factory.createEditor( spec.getPropertyType() );
 
 			if ( editor != null )
@@ -172,13 +180,13 @@ implements	ConfigureConstants, TreeSelectionListener
 	private void
 	establishConfigTree()
 		{
-		for ( Enumeration enum = this.specVector.elements()
-				; enum.hasMoreElements() ; )
+		for ( final Enumeration enumeration = this.specVector.elements()
+				; enumeration.hasMoreElements() ; )
 			{
-			ConfigureSpec spec =
-				(ConfigureSpec) enum.nextElement();
+			final ConfigureSpec spec =
+				(ConfigureSpec) enumeration.nextElement();
 
-			String path = spec.getPropertyPath();
+			final String path = spec.getPropertyPath();
 
 			this.model.addPath( path, spec );
 			}
@@ -195,9 +203,9 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	valueChanged( TreeSelectionEvent event )
+	valueChanged( final TreeSelectionEvent event )
 		{
-		Object obj = tree.getLastSelectedPathComponent();
+		final Object obj = tree.getLastSelectedPathComponent();
 
 		if ( obj == this.currSelection )
 			return;
@@ -211,13 +219,13 @@ implements	ConfigureConstants, TreeSelectionListener
 
 			if ( obj != null )
 				{
-				ConfigureTreeNode node =
+				final ConfigureTreeNode node =
 					this.currSelection =
 						(ConfigureTreeNode) obj;
 
 				if ( node.isLeaf() )
 					{
-					ConfigureSpec spec = node.getConfigureSpec();
+					final ConfigureSpec spec = node.getConfigureSpec();
 
 					if ( spec != null )
 						{
@@ -229,7 +237,7 @@ implements	ConfigureConstants, TreeSelectionListener
 							this.currEditor =
 								this.factory.createEditor( CFG_DEFAULT );
 
-						StringBuffer sb = new StringBuffer();
+						final StringBuffer sb = new StringBuffer();
 
 						sb.append( spec.getName() );
 
@@ -274,7 +282,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	addEditor( String type, ConfigureEditor editor )
+	addEditor( final String type, final ConfigureEditor editor )
 		{
 		if ( this.factory instanceof DefaultConfigureEditorFactory )
 			{
@@ -283,19 +291,19 @@ implements	ConfigureConstants, TreeSelectionListener
 			}
 		else
 			{
-			(new Throwable
+			new Throwable
 				( "can not add editor, factory is not class "
-						+ "DefaultConfigureEditorFactory" )).
+						+ "DefaultConfigureEditorFactory" ).
 					printStackTrace();
 			}
 		}
 
 	public String
-	treePath( TreePath treePath )
+	treePath( final TreePath treePath )
 		{
 		ConfigureTreeNode node;
-		Object[] list = treePath.getPath();
-		StringBuffer path = new StringBuffer();
+		final Object[] list = treePath.getPath();
+		final StringBuffer path = new StringBuffer();
 
 		for ( int i = 1 ; i < list.length ; i++ )
 			{
@@ -309,26 +317,26 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	editProperty( String propName )
+	editProperty( final String propName )
 		{
-		String[] propNames = { propName };
+		final String[] propNames = { propName };
 		this.editProperties( propNames );
 		}
 
 	public void
-	editProperties( String[] propNames )
+	editProperties( final String[] propNames )
 		{
-		int numSpecs = this.specVector.size();
+		final int numSpecs = this.specVector.size();
 
-		Vector pathV = new Vector();
+		final Vector pathV = new Vector();
 
 		for ( int i = propNames.length - 1 ; i >= 0 ; --i )
 			{
-			String propName = propNames[i];
+			final String propName = propNames[i];
 
 			for ( int j = 0 ; j < numSpecs ; ++j )
 				{
-				ConfigureSpec spec = (ConfigureSpec)
+				final ConfigureSpec spec = (ConfigureSpec)
 					this.specVector.elementAt(j);
 
 				if ( spec.getPropertyName().equals( propName ) )
@@ -341,30 +349,30 @@ implements	ConfigureConstants, TreeSelectionListener
 
 		if ( pathV.size() > 0 )
 			{
-			String[] paths = new String[ pathV.size() ];
+			final String[] paths = new String[ pathV.size() ];
 			pathV.copyInto( paths );
 			this.editPaths( paths );
 			}
 		}
 
 	public void
-	editPath( String path )
+	editPath( final String path )
 		{
-		String[] paths = { path };
+		final String[] paths = { path };
 		this.editPaths( paths );
 		}
 
 	public void
-	editPaths( String[] paths )
+	editPaths( final String[] paths )
 		{
 		for ( int i = paths.length - 1 ; i >= 0 ; --i )
 			{
-			ConfigureTreeNode node =
+			final ConfigureTreeNode node =
 				this.model.getPathNode( paths[ i ] );
 
 			if ( node != null )
 				{
-				TreePath tPath = new TreePath( node.getPath() );
+				final TreePath tPath = new TreePath( node.getPath() );
 				this.tree.expandPath( tPath );
 				if ( i == 0 )
 					this.tree.setSelectionPath( tPath );
@@ -392,7 +400,7 @@ implements	ConfigureConstants, TreeSelectionListener
 
 		public int
 		getScrollableBlockIncrement
-				( Rectangle visibleRect, int orientation, int direction )
+				( final Rectangle visibleRect, final int orientation, final int direction )
 			{
 			if ( orientation == SwingConstants.VERTICAL )
 				return visibleRect.height - 10;
@@ -414,17 +422,17 @@ implements	ConfigureConstants, TreeSelectionListener
 
 		public int
 		getScrollableUnitIncrement
-				( Rectangle visibleRect, int orientation, int direction )
+				( final Rectangle visibleRect, final int orientation, final int direction )
 			{
 			if ( orientation == SwingConstants.VERTICAL )
 				{
-				int unit = visibleRect.height / 10;
-				return (unit == 0 ? 1 : (unit > 20 ? 20 : unit));
+				final int unit = visibleRect.height / 10;
+				return unit == 0 ? 1 : unit > 20 ? 20 : unit;
 				}
 			else
 				{
-				int unit = visibleRect.width / 10;
-				return (unit == 0 ? 1 : (unit > 20 ? 20 : unit));
+				final int unit = visibleRect.width / 10;
+				return unit == 0 ? 1 : unit > 20 ? 20 : unit;
 				}
 			}
 		}

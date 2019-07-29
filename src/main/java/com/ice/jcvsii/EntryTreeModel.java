@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,14 +16,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
 import java.util.Enumeration;
-import com.ice.cvsc.CVSEntry;
+
 import javax.swing.tree.DefaultTreeModel;
 
 
@@ -32,7 +32,7 @@ class		EntryTreeModel
 extends		DefaultTreeModel
 	{
     public
-	EntryTreeModel( EntryRootNode rootEntry )
+	EntryTreeModel( final EntryRootNode rootEntry )
 		{
 		super( rootEntry );
 		}
@@ -48,36 +48,36 @@ extends		DefaultTreeModel
     //
 
 	public void
-	fireStructureChanged( EntryNode source )
+	fireStructureChanged( final EntryNode source )
 		{
-		Object[] path = source.getPath();
+		final Object[] path = source.getPath();
 		this.fireTreeStructureChanged( source, path, null, null );
 		}
 
 	public void
-	fireColumnsResized( boolean isResizing )
+	fireColumnsResized( final boolean isResizing )
 		{
 		this.fireColumnsResized( getEntryRootNode(), isResizing );
 		}
 
 	public void
-	fireColumnsResized( EntryNode source, boolean isResizing )
+	fireColumnsResized( final EntryNode source, final boolean isResizing )
 		{
 		if ( ! isResizing )
 			System.err.println( "listenerList: " + this.listenerList );
 
 		if ( source.hasLoadedChildren() )
 			{
-			Object[] path = source.getPath();
-			int len = source.getChildCount();
-			int[] ci = new int[ len ];
+			final Object[] path = source.getPath();
+			final int len = source.getChildCount();
+			final int[] ci = new int[ len ];
 			for ( int i = 0 ; i < len ; ++i ) ci[i] = i;
 			this.fireTreeNodesChanged( source, path, ci, null );
 
-			Enumeration enum = source.children();
-			for ( ; enum.hasMoreElements() ; )
+			final Enumeration enumeration = source.children();
+			for ( ; enumeration.hasMoreElements() ; )
 				{
-				EntryNode cn = (EntryNode) enum.nextElement();
+				final EntryNode cn = (EntryNode) enumeration.nextElement();
 				if ( ! cn.isLeaf() )
 					{
 					this.fireColumnsResized( cn, isResizing );
@@ -92,11 +92,11 @@ extends		DefaultTreeModel
 	 * @param child The CVSEntry belonging to the child node being inserted.
 	 */
 	public void
-	fireEntryNodeInserted( EntryNode source, int idx, EntryNode child )
+	fireEntryNodeInserted( final EntryNode source, final int idx, final EntryNode child )
 		{
-		int[] indices = { idx };
-		Object[] children = { child };
-		Object[] path = source.getPath();
+		final int[] indices = { idx };
+		final Object[] children = { child };
+		final Object[] path = source.getPath();
 		this.fireTreeNodesInserted( source, path, indices, children );
 		}
 
@@ -106,11 +106,11 @@ extends		DefaultTreeModel
 	 * @param child The CVSEntry belonging to the child node being deleted.
 	 */
 	public void
-	fireEntryNodeRemoved( EntryNode source, int idx, EntryNode child )
+	fireEntryNodeRemoved( final EntryNode source, final int idx, final EntryNode child )
 		{
-		int[] indices = { idx };
-		Object[] children = { child };
-		Object[] path = source.getPath();
+		final int[] indices = { idx };
+		final Object[] children = { child };
+		final Object[] path = source.getPath();
 		this.fireTreeNodesRemoved( source, path, indices, children );
 		}
 

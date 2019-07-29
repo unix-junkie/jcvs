@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,19 +16,42 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.*;
-import javax.swing.border.*;
 
-import com.ice.cvsc.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+import com.ice.cvsc.CVSArgumentVector;
+import com.ice.cvsc.CVSClient;
+import com.ice.cvsc.CVSEntryVector;
+import com.ice.cvsc.CVSProject;
+import com.ice.cvsc.CVSRequest;
+import com.ice.cvsc.CVSResponse;
+import com.ice.cvsc.CVSScramble;
+import com.ice.cvsc.CVSUserInterface;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -47,7 +70,7 @@ implements	ActionListener, CVSUserInterface
 
 
 	public
-	ExportPanel( MainPanel parent )
+	ExportPanel( final MainPanel parent )
 		{
 		super( parent );
 		this.establishContents();
@@ -66,9 +89,9 @@ implements	ActionListener, CVSUserInterface
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equalsIgnoreCase( "EXPORT" ) )
 			{
@@ -89,9 +112,9 @@ implements	ActionListener, CVSUserInterface
 	private void
 	performExport()
 		{
-		Config cfg = Config.getInstance();
-		UserPrefs prefs = cfg.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final Config cfg = Config.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		CVSProject		project;
 		CVSRequest		request;
@@ -99,39 +122,39 @@ implements	ActionListener, CVSUserInterface
 
 		location = this.getLocationOnScreen();
 
-		String	argumentStr = this.info.getArguments();
+		final String	argumentStr = this.info.getArguments();
 
-		CVSEntryVector entries = new CVSEntryVector();
+		final CVSEntryVector entries = new CVSEntryVector();
 
-		CVSArgumentVector arguments =
+		final CVSArgumentVector arguments =
 			CVSArgumentVector.parseArgumentString( argumentStr );
 
-		String userName = this.info.getUserName();
-		String passWord = this.info.getPassword();
-		String hostname = this.info.getServer();
-		String repository = this.info.getModule();
-		String rootDirectory = this.info.getRepository();
-		String exportDirectory = this.info.getExportDirectory();
+		final String userName = this.info.getUserName();
+		final String passWord = this.info.getPassword();
+		final String hostname = this.info.getServer();
+		final String repository = this.info.getModule();
+		final String rootDirectory = this.info.getRepository();
+		final String exportDirectory = this.info.getExportDirectory();
 
-		boolean isPServer = this.info.isPServer();
+		final boolean isPServer = this.info.isPServer();
 
-		int connMethod = this.info.getConnectionMethod();
+		final int connMethod = this.info.getConnectionMethod();
 
-		int cvsPort =
+		final int cvsPort =
 			CVSUtilities.computePortNum
 				( hostname, connMethod, isPServer );
 
 		//
 		// SANITY
 		//
-		if ( ( arguments.size() < 2 )
-			|| ( ! arguments.containsArgument( "-r" )
-				&& ! arguments.containsArgument( "-D" ) ) )
+		if ( arguments.size() < 2
+			|| ! arguments.containsArgument( "-r" )
+				&& ! arguments.containsArgument( "-D" ) )
 			{
-			String msg = rmgr.getUIString( "export.needs.option.msg" );
-			String title = rmgr.getUIString( "export.needs.option.title" );
+			final String msg = rmgr.getUIString( "export.needs.option.msg" );
+			final String title = rmgr.getUIString( "export.needs.option.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
@@ -140,20 +163,20 @@ implements	ActionListener, CVSUserInterface
 				|| rootDirectory.length() < 1
 					|| exportDirectory.length() < 1 )
 			{
-			String[] fmtArgs = new String[1];
+			final String[] fmtArgs = new String[1];
 			fmtArgs[0] =
-				( hostname.length() < 1
+				hostname.length() < 1
 					? rmgr.getUIString( "name.for.cvsserver" ) :
-				( repository.length() < 1
+				repository.length() < 1
 					? rmgr.getUIString( "name.for.cvsmodule" ) :
-				( rootDirectory.length() < 1
+				rootDirectory.length() < 1
 					? rmgr.getUIString( "name.for.cvsrepos" )
-					: rmgr.getUIString( "name.for.exportdir" ) )));
+					: rmgr.getUIString( "name.for.exportdir" );
 
-			String msg = rmgr.getUIFormat( "export.needs.input.msg", fmtArgs );
-			String title = rmgr.getUIString( "export.needs.input.title" );
+			final String msg = rmgr.getUIFormat( "export.needs.input.msg", fmtArgs );
+			final String title = rmgr.getUIString( "export.needs.input.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
@@ -162,27 +185,27 @@ implements	ActionListener, CVSUserInterface
 				&& (connMethod == CVSRequest.METHOD_RSH
 					|| connMethod == CVSRequest.METHOD_SSH) )
 			{
-			String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
-			String title = rmgr.getUIString("common.rsh.needs.user.title" );
+			final String msg = rmgr.getUIString("common.rsh.needs.user.msg" );
+			final String title = rmgr.getUIString("common.rsh.needs.user.title" );
 			JOptionPane.showMessageDialog
-				( (Frame)this.getTopLevelAncestor(),
+				( this.getTopLevelAncestor(),
 					msg, title, JOptionPane.ERROR_MESSAGE );
 			return;
 			}
 
-		File localRootDir = new File( exportDirectory );
+		final File localRootDir = new File( exportDirectory );
 
 		if ( ! localRootDir.exists() )
 			{
-			String[] fmtArgs = { localRootDir.getPath() };
-			String prompt =
+			final String[] fmtArgs = { localRootDir.getPath() };
+			final String prompt =
 				rmgr.getUIFormat
 					( "export.create.directory.prompt", fmtArgs );
 			String title =
 				rmgr.getUIString( "export.create.directory.title" );
-			
+
 			if ( JOptionPane.showConfirmDialog
-					( (Frame)this.getTopLevelAncestor(), prompt,
+					( this.getTopLevelAncestor(), prompt,
 						title, JOptionPane.YES_NO_OPTION )
 					== JOptionPane.NO_OPTION )
 				{
@@ -191,13 +214,13 @@ implements	ActionListener, CVSUserInterface
 
 			if ( ! localRootDir.mkdirs() )
 				{
-				String[] failArgs = { localRootDir.getPath() };
-				String msg = rmgr.getUIFormat
+				final String[] failArgs = { localRootDir.getPath() };
+				final String msg = rmgr.getUIFormat
 					( "export.create.directory.failed.msg", failArgs );
 				title = rmgr.getUIString
 					( "export.create.directory.failed.title" );
 				JOptionPane.showMessageDialog
-					( (Frame)this.getTopLevelAncestor(),
+					( this.getTopLevelAncestor(),
 						msg, title, JOptionPane.ERROR_MESSAGE );
 				return;
 				}
@@ -211,7 +234,7 @@ implements	ActionListener, CVSUserInterface
 
 		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
 		project = new CVSProject( this.client );
-				
+
 		project.setUserName( userName );
 
 		project.setTempDirectory( cfg.getTemporaryDirectory() );
@@ -233,14 +256,14 @@ implements	ActionListener, CVSUserInterface
 				( hostname, connMethod, isPServer ) );
 
 		project.setAllowsGzipFileMode
-			( prefs.getBoolean( Config.GLOBAL_ALLOWS_FILE_GZIP, false ) );
+			( prefs.getBoolean( ConfigConstants.GLOBAL_ALLOWS_FILE_GZIP, false ) );
 
 		project.setGzipStreamLevel
-			( prefs.getInteger( Config.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
+			( prefs.getInteger( ConfigConstants.GLOBAL_GZIP_STREAM_LEVEL, 0 ) );
 
 		if ( isPServer )
 			{
-			String scrambled =
+			final String scrambled =
 				CVSScramble.scramblePassword( passWord, 'A' );
 
 			project.setPassword( scrambled );
@@ -315,9 +338,9 @@ implements	ActionListener, CVSUserInterface
 
 		request.setUserInterface( this );
 
-		CVSResponse response = new CVSResponse();
+		final CVSResponse response = new CVSResponse();
 
-		CVSThread thread =
+		final CVSThread thread =
 			new CVSThread( "Export",
 				this.new MyRunner( project, this.client, request, response ),
 					this.new MyMonitor( request, response ) );
@@ -329,14 +352,14 @@ implements	ActionListener, CVSUserInterface
 	class		MyRunner
 	implements	Runnable
 		{
-		private CVSClient client;
-		private CVSProject project;
-		private CVSRequest request;
-		private CVSResponse response;
+		private final CVSClient client;
+		private final CVSProject project;
+		private final CVSRequest request;
+		private final CVSResponse response;
 
 		public
-		MyRunner( CVSProject project, CVSClient client,
-					CVSRequest request, CVSResponse response )
+		MyRunner( final CVSProject project, final CVSClient client,
+					final CVSRequest request, final CVSResponse response )
 			{
 			this.client = client;
 			this.project = project;
@@ -364,11 +387,11 @@ implements	ActionListener, CVSUserInterface
 	class		MyMonitor
 	implements	CVSThread.Monitor
 		{
-		private CVSRequest request;
-		private CVSResponse response;
+		private final CVSRequest request;
+		private final CVSResponse response;
 
 		public
-		MyMonitor( CVSRequest request, CVSResponse response )
+		MyMonitor( final CVSRequest request, final CVSResponse response )
 			{
 			this.request = request;
 			this.response = response;
@@ -396,7 +419,7 @@ implements	ActionListener, CVSUserInterface
 					( "export.perform.label" ) );
 			actionButton.setActionCommand( "EXPORT" );
 
-			String resultStr = this.response.getDisplayResults();
+			final String resultStr = this.response.getDisplayResults();
 
 			if ( this.response.getStatus() == CVSResponse.OK )
 				{
@@ -431,19 +454,19 @@ implements	ActionListener, CVSUserInterface
 	//
 
 	public void
-	uiDisplayProgressMsg( String message )
+	uiDisplayProgressMsg( final String message )
 		{
 		this.feedback.setText( message );
 		this.feedback.repaint( 0 );
 		}
 
 	public void
-	uiDisplayProgramError( String error )
+	uiDisplayProgramError( final String error )
 		{
 		}
 
 	public void
-	uiDisplayResponse( CVSResponse response )
+	uiDisplayResponse( final CVSResponse response )
 		{
 		}
 
@@ -454,9 +477,9 @@ implements	ActionListener, CVSUserInterface
 	private void
 	establishContents()
 		{
-		JLabel		lbl;
-		JPanel		panel;
-		JButton		button;
+		final JLabel		lbl;
+		final JPanel		panel;
+		final JButton		button;
 
 		this.setLayout( new GridBagLayout() );
 
@@ -468,7 +491,7 @@ implements	ActionListener, CVSUserInterface
 
 		int row = 0;
 
-		JSeparator sep;
+		final JSeparator sep;
 
 		AWTUtilities.constrain(
 			this, info,
@@ -514,10 +537,10 @@ implements	ActionListener, CVSUserInterface
 				};
 		this.outputText.setEditable( false );
 
-		JScrollPane scroller =
+		final JScrollPane scroller =
 			new JScrollPane( this.outputText );
 		scroller.setVerticalScrollBarPolicy
-			( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
+			( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 
 		AWTUtilities.constrain(
 			this, scroller,

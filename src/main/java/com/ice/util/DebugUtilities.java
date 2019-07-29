@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,13 +16,13 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.util;
 
-import java.io.*;
+import java.io.PrintWriter;
 
 
 public class
@@ -30,7 +30,7 @@ DebugUtilities
 	{
 	public static void
 	printClassHierarchy(
-			Class aClass, PrintWriter writer, String prefix )
+			Class aClass, final PrintWriter writer, final String prefix )
 		{
 		String subPrefix = "-->";
 
@@ -51,10 +51,10 @@ DebugUtilities
 
 	public static void
 	printContainerComponents(
-			java.awt.Container cont, PrintWriter writer,
-			String prefix, boolean recurse )
+			final java.awt.Container cont, final PrintWriter writer,
+			final String prefix, final boolean recurse )
 		{
-		java.awt.Component[] comps = cont.getComponents();
+		final java.awt.Component[] comps = cont.getComponents();
 
 		if ( comps.length < 1 )
 			{
@@ -70,12 +70,12 @@ DebugUtilities
 
 			if ( recurse )
 				{
-				Class c = java.awt.Container.class;
+				final Class c = java.awt.Container.class;
 				if ( c.isAssignableFrom( comps[i].getClass() ) )
 					{
 					DebugUtilities.printContainerComponents(
 						(java.awt.Container)comps[i], writer,
-							(prefix + "[" +i+ "] "), recurse );
+							prefix + "[" +i+ "] ", recurse );
 					}
 				}
 			}

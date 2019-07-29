@@ -1,14 +1,33 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Vector;
-import java.util.Enumeration;
-import javax.swing.*;
-import javax.swing.border.*;
 
-import com.ice.config.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -30,11 +49,11 @@ implements	FocusListener, ActionListener
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		Color color =
+		final Color color =
 			prefs.getColor( spec.getPropertyName(), null );
 
 		if ( color != null )
@@ -52,38 +71,38 @@ implements	FocusListener, ActionListener
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
 		try {
-			int r = Integer.parseInt( this.rField.getText() );
-			int g = Integer.parseInt( this.gField.getText() );
-			int b = Integer.parseInt( this.bField.getText() );
+			final int r = Integer.parseInt( this.rField.getText() );
+			final int g = Integer.parseInt( this.gField.getText() );
+			final int b = Integer.parseInt( this.bField.getText() );
 
-			Color newVal = new Color( r, g, b );
-			Color oldVal = prefs.getColor( propName, Color.black );
+			final Color newVal = new Color( r, g, b );
+			final Color oldVal = prefs.getColor( propName, Color.black );
 
 			if ( ! newVal.equals( oldVal ) )
 				{
 				prefs.setColor( propName, newVal );
 				}
 			}
-		catch ( NumberFormatException ex )
+		catch ( final NumberFormatException ex )
 			{
 			ex.printStackTrace();
 			}
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String cmdStr = event.getActionCommand();
+		final String cmdStr = event.getActionCommand();
 
 		if ( cmdStr.equals( "COLORBUTTON" ) )
 			{
-			JComponent cb = (JComponent) event.getSource();
-			Color c = cb.getBackground();
+			final JComponent cb = (JComponent) event.getSource();
+			final Color c = cb.getBackground();
 			this.rField.setText( Integer.toString( c.getRed() ) );
 			this.gField.setText( Integer.toString( c.getGreen() ) );
 			this.bField.setText( Integer.toString( c.getBlue() ) );
@@ -102,9 +121,9 @@ implements	FocusListener, ActionListener
 	computeColor()
 		{
 		try {
-			int red = Integer.parseInt( this.rField.getText() );
-			int green = Integer.parseInt( this.gField.getText() );
-			int blue = Integer.parseInt( this.bField.getText() );
+			final int red = Integer.parseInt( this.rField.getText() );
+			final int green = Integer.parseInt( this.gField.getText() );
+			final int blue = Integer.parseInt( this.bField.getText() );
 
 			if ( red < 0 || red > 255 )
 				{
@@ -127,23 +146,23 @@ implements	FocusListener, ActionListener
 
 			this.color.setColor( red, green, blue );
 			}
-		catch ( NumberFormatException ex )
+		catch ( final NumberFormatException ex )
 			{
 			JOptionPane.showMessageDialog ( null,
 				"one of the color fields is valid, " + ex.getMessage(),
-				"Invalid Number", JOptionPane.ERROR_MESSAGE ); 
+				"Invalid Number", JOptionPane.ERROR_MESSAGE );
 			}
 		}
 
 	public void
-	focusGained( FocusEvent event )
+	focusGained( final FocusEvent event )
 		{
 		this.computeColor();
 		((JTextField) event.getComponent()).selectAll();
 		}
 
 	public void
-	focusLost( FocusEvent event )
+	focusLost( final FocusEvent event )
 		{
 		this.computeColor();
 		}
@@ -151,7 +170,7 @@ implements	FocusListener, ActionListener
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 		result.setBorder( new EmptyBorder( 5, 3, 3, 3 ) );
 
@@ -220,7 +239,7 @@ implements	FocusListener, ActionListener
 			GridBagConstraints.CENTER,
 			2, 0, 1, 3, 1.0, 1.0 );
 
-		JPanel btnPan = new JPanel();
+		final JPanel btnPan = new JPanel();
 		btnPan.setLayout( new GridBagLayout() );
 		btnPan.setBorder
 				( new CompoundBorder
@@ -378,17 +397,17 @@ implements	FocusListener, ActionListener
 		private int		red;
 		private int		green;
 		private int		blue;
-		private JButton	color;
-		private Vector	listeners;
+		private final JButton	color;
+		private final Vector	listeners;
 
 		public
-		JColorButton( Color c )
+		JColorButton( final Color c )
 			{
 			this( c.getRed(), c.getGreen(), c.getBlue() );
 			}
 
 		public
-		JColorButton( int r, int g, int b )
+		JColorButton( final int r, final int g, final int b )
 			{
 			this.red = r;
 			this.green = g;
@@ -416,13 +435,13 @@ implements	FocusListener, ActionListener
 			}
 
 		public void
-		setColor( Color c )
+		setColor( final Color c )
 			{
 			this.setColor( c.getRed(), c.getGreen(), c.getBlue() );
 			}
 
 		public void
-		setColor( int r, int g, int b )
+		setColor( final int r, final int g, final int b )
 			{
 			this.red = r;
 			this.green = g;
@@ -434,42 +453,42 @@ implements	FocusListener, ActionListener
 		public int
 		getRed()
 			{
-			Color c = this.color.getBackground();
+			final Color c = this.color.getBackground();
 			return c.getRed();
 			}
 
 		public int
 		getGreen()
 			{
-			Color c = this.color.getBackground();
+			final Color c = this.color.getBackground();
 			return c.getGreen();
 			}
 
 		public int
 		getBlue()
 			{
-			Color c = this.color.getBackground();
+			final Color c = this.color.getBackground();
 			return c.getBlue();
 			}
 
 		public synchronized void
-		setActionCommand( String cmd )
+		setActionCommand( final String cmd )
 			{
 			this.color.setActionCommand( cmd );
 			}
 
 		public synchronized void
-		addActionListener( ActionListener listener )
+		addActionListener( final ActionListener listener )
 			{
 			this.color.addActionListener( listener );
 			}
 
 		public synchronized void
-		removeActionListener( ActionListener listener )
+		removeActionListener( final ActionListener listener )
 			{
 			this.color.removeActionListener( listener );
 			}
-		} 
+		}
 
 	}
 

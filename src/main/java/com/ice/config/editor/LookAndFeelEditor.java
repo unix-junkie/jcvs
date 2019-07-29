@@ -1,14 +1,15 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.util.Vector;
-import javax.swing.*;
-import javax.swing.border.*;
-
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
-import com.ice.config.*;
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 
 
@@ -31,25 +32,25 @@ extends		ConfigureEditor
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
 		this.radioPanel.removeAll();
 
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		String currPlaf = prefs.getProperty( propName, null );
+		final String currPlaf = prefs.getProperty( propName, null );
 
 		this.group = new ButtonGroup();
 
 		this.getLookAndFeelInfo();
-		String[] choices = this.plafDisplayNames;
+		final String[] choices = this.plafDisplayNames;
 
 		this.choiceButtons = new JRadioButton[ choices.length ];
 		for ( int i = 0 ; i < this.plafDisplayNames.length ; ++i )
 			{
-			JRadioButton radio =
+			final JRadioButton radio =
 				new JRadioButton( this.plafDisplayNames[i] );
 
 			this.choiceButtons[i] = radio;
@@ -73,17 +74,17 @@ extends		ConfigureEditor
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		String oldChoice = prefs.getProperty( propName, null );
+		final String oldChoice = prefs.getProperty( propName, null );
 
 		for ( int i = 0 ; i < this.choiceButtons.length ; ++i )
 			{
 			if ( this.choiceButtons[i].isSelected() )
 				{
-				String newChoice = this.plafClassNames[i];
+				final String newChoice = this.plafClassNames[i];
 				prefs.setProperty( propName, newChoice );
 				break;
 				}
@@ -98,7 +99,7 @@ extends		ConfigureEditor
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 
 		result.setLayout( new BoxLayout( result, BoxLayout.Y_AXIS ) );
 		result.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
@@ -109,7 +110,7 @@ extends		ConfigureEditor
 	private void
 	getLookAndFeelInfo()
 		{
-		UIManager.LookAndFeelInfo[] lafi =
+		final UIManager.LookAndFeelInfo[] lafi =
 			UIManager.getInstalledLookAndFeels();
 
 		this.plafClassNames = new String[ lafi.length + 1 ];

@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,22 +16,23 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Vector;
-import java.util.Enumeration;
-import java.text.SimpleDateFormat;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.ice.cvsc.CVSEntry;
 import com.ice.cvsc.CVSCUtilities;
+import com.ice.cvsc.CVSEntry;
 import com.ice.cvsc.CVSEntryVector;
 import com.ice.cvsc.CVSTimestamp;
 
@@ -51,7 +52,7 @@ implements	CVSEntry.ChildEventListener
 
 
 	public static void
-	setTimestampFormat( String fmtStr )
+	setTimestampFormat( final String fmtStr )
 		{
 		EntryNode.tsFormatStr = fmtStr;
 		if ( EntryNode.tsFormatStr == null )
@@ -60,7 +61,7 @@ implements	CVSEntry.ChildEventListener
 			}
 		else
 			{
-			SimpleDateFormat format =
+			final SimpleDateFormat format =
 				new SimpleDateFormat( fmtStr, Locale.US ); // UNDONE
 			format.setTimeZone( TimeZone.getDefault() );
 			EntryNode.timeStampFormat = format;
@@ -68,8 +69,8 @@ implements	CVSEntry.ChildEventListener
 		}
 
 	public
-	EntryNode( CVSEntry entry )
-		{ 
+	EntryNode( final CVSEntry entry )
+		{
 		this.entry = entry;
 		this.tsCache = null;
 	    this.hasLoaded = false;
@@ -84,8 +85,8 @@ implements	CVSEntry.ChildEventListener
 	 */
 	public String
 	toString()
-		{ 
-		EntryRootNode root = (EntryRootNode) this.getRoot();
+		{
+		final EntryRootNode root = (EntryRootNode) this.getRoot();
 		return "[EntryNode " +
 				" hasLoaded=" + hasLoaded +
 				" entry=" + entry +
@@ -106,7 +107,7 @@ implements	CVSEntry.ChildEventListener
 	public File
 	getLocalFile()
 		{
-		EntryRootNode root = (EntryRootNode) this.getRoot();
+		final EntryRootNode root = (EntryRootNode) this.getRoot();
 
 		return new File
 			( CVSCUtilities.exportPath( root.getLocalRootPath() ),
@@ -118,7 +119,7 @@ implements	CVSEntry.ChildEventListener
 	 */
 	public String
 	getEntryVersion()
-		{ 
+		{
 		return this.entry.getVersion();
 		}
 
@@ -140,10 +141,10 @@ implements	CVSEntry.ChildEventListener
 		this.tsCache = null;
 		if ( this.hasLoaded )
 			{
-			Enumeration enum = this.children();
-			for ( ; enum.hasMoreElements() ; )
+			final Enumeration enumeration = this.children();
+			for ( ; enumeration.hasMoreElements() ; )
 				{
-				EntryNode node = (EntryNode) enum.nextElement();
+				final EntryNode node = (EntryNode) enumeration.nextElement();
 				node.resetDisplayCaches();
 				}
 			}
@@ -157,7 +158,7 @@ implements	CVSEntry.ChildEventListener
 		{
 		if ( this.tsCache == null )
 			{
-			CVSTimestamp ts = this.entry.getCVSTime();
+			final CVSTimestamp ts = this.entry.getCVSTime();
 			if ( ts != null )
 				{
 				this.tsCache =
@@ -170,7 +171,7 @@ implements	CVSEntry.ChildEventListener
 				}
 			}
 
-		return (this.tsCache == null ? "" : this.tsCache);
+		return this.tsCache == null ? "" : this.tsCache;
 		}
 
 	/**
@@ -178,7 +179,7 @@ implements	CVSEntry.ChildEventListener
 	 */
 	public CVSEntry
 	getEntry()
-		{ 
+		{
 		return this.entry;
 		}
 
@@ -218,7 +219,7 @@ implements	CVSEntry.ChildEventListener
 
 		return super.getChildCount();
 		}
-    
+
 	/**
 	 * Creates the children of the receiver.
 	 */
@@ -242,23 +243,23 @@ implements	CVSEntry.ChildEventListener
 		}
 
 	private CVSEntryVector
-	sortEntryVector( CVSEntryVector entries )
+	sortEntryVector( final CVSEntryVector entries )
 		{
 		Vector v = null;
-		Vector dirV = new Vector();
-		Vector fileV = new Vector();
+		final Vector dirV = new Vector();
+		final Vector fileV = new Vector();
 
 		for ( int i = 0, sz = entries.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = entries.entryAt(i);
-			String entryName = entry.getName();
+			final CVSEntry entry = entries.entryAt(i);
+			final String entryName = entry.getName();
 
 			boolean inserted = false;
-			v = ( entry.isDirectory() ? dirV : fileV );
+			v = entry.isDirectory() ? dirV : fileV;
 
 			for ( int j = 0, jsz = v.size() ; j < jsz ; ++j )
 				{
-				CVSEntry jEntry = (CVSEntry) v.elementAt(j);
+				final CVSEntry jEntry = (CVSEntry) v.elementAt(j);
 
 				if ( entryName.compareTo( jEntry.getName() ) < 0 )
 					{
@@ -274,19 +275,19 @@ implements	CVSEntry.ChildEventListener
 				}
 			}
 
-		CVSEntryVector result = new CVSEntryVector();
+		final CVSEntryVector result = new CVSEntryVector();
 
 		v = fileV;
 		for ( int i = 0, sz = v.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = (CVSEntry) v.elementAt(i);
+			final CVSEntry entry = (CVSEntry) v.elementAt(i);
 			result.appendEntry( entry );
 			}
 
 		v = dirV;
 		for ( int i = 0, sz = v.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = (CVSEntry) v.elementAt(i);
+			final CVSEntry entry = (CVSEntry) v.elementAt(i);
 			result.appendEntry( entry );
 			}
 
@@ -294,16 +295,16 @@ implements	CVSEntry.ChildEventListener
 		}
 
 	public void
-	cvsEntryAddedChild( CVSEntry.ChildEvent event )
+	cvsEntryAddedChild( final CVSEntry.ChildEvent event )
 		{
-		int idx = event.getChildIndex();
+		final int idx = event.getChildIndex();
 
-		EntryRootNode rootNode = (EntryRootNode) this.getRoot();
+		final EntryRootNode rootNode = (EntryRootNode) this.getRoot();
 
-		EntryTreeModel model =
+		final EntryTreeModel model =
 			(EntryTreeModel) rootNode.getEntryTree().getModel();
 
-		CVSEntry entry = event.getChildEntry();
+		final CVSEntry entry = event.getChildEntry();
 
 		EntryNode chNode = null;
 
@@ -323,18 +324,18 @@ implements	CVSEntry.ChildEventListener
 			chNode = new EntryNode( entry );
 			this.insert( chNode, idx );
 			}
-		
+
 		model.fireEntryNodeInserted( this, idx, chNode );
 		}
 
 	public void
-	cvsEntryRemovedChild( CVSEntry.ChildEvent event )
+	cvsEntryRemovedChild( final CVSEntry.ChildEvent event )
 		{
 		int idx = event.getChildIndex();
 
-		EntryRootNode rootNode = (EntryRootNode) this.getRoot();
+		final EntryRootNode rootNode = (EntryRootNode) this.getRoot();
 
-		EntryTreeModel model =
+		final EntryTreeModel model =
 			(EntryTreeModel) rootNode.getEntryTree().getModel();
 
 		if ( idx == -1 )
@@ -350,7 +351,7 @@ implements	CVSEntry.ChildEventListener
 			// occurred there.
 			//
 			EntryNode remNode = null;
-			CVSEntry remEntry = event.getChildEntry();
+			final CVSEntry remEntry = event.getChildEntry();
 
 			if ( ! this.hasLoaded )
 				{
@@ -375,7 +376,7 @@ implements	CVSEntry.ChildEventListener
 				//
 				for ( int i = 0, sz = this.getChildCount() ; i < sz ; ++i )
 					{
-					EntryNode node = (EntryNode) this.getChildAt(i);
+					final EntryNode node = (EntryNode) this.getChildAt(i);
 					if ( remEntry.getName().equals( node.getEntry().getName() ) )
 						{
 						idx = i;
@@ -391,7 +392,7 @@ implements	CVSEntry.ChildEventListener
 				model.fireEntryNodeRemoved( this, idx, remNode );
 				}
 			}
-		} 
+		}
 
     }
 

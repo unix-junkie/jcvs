@@ -1,8 +1,8 @@
 
 package com.ice.config;
 
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import com.ice.pref.UserPrefs;
 
@@ -13,17 +13,17 @@ implements	ConfigureConstants
 	{
 
 	public static Vector
-	readConfigSpecification( UserPrefs specs )
+	readConfigSpecification( final UserPrefs specs )
 		throws InvalidSpecificationException
 		{
-		String specSfx = ".spec";
-		Vector result = new Vector();
-		String propPfx = specs.getPropertyPrefix();
+		final String specSfx = ".spec";
+		final Vector result = new Vector();
+		final String propPfx = specs.getPropertyPrefix();
 
-		for ( Enumeration enum = specs.keys()
-				; enum.hasMoreElements() ; )
+		for ( final Enumeration enumeration = specs.keys()
+				; enumeration.hasMoreElements() ; )
 			{
-			String key = (String) enum.nextElement();
+			final String key = (String) enumeration.nextElement();
 
 			if ( ! key.endsWith( specSfx ) )
 				continue;
@@ -32,21 +32,21 @@ implements	ConfigureConstants
 			String keyBase = specs.getBaseName( key );
 
 			// Get the property type using this key.
-			String type = specs.getProperty( keyBase, null );
+			final String type = specs.getProperty( keyBase, null );
 
 			// Strip off the ".spec" suffix.
 			keyBase =
 				keyBase.substring
-					( 0, (keyBase.length() - specSfx.length()) );
+					( 0, keyBase.length() - specSfx.length() );
 
 			// Get the other property parameters using the various suffixes.
-			String path =
+			final String path =
 				specs.getProperty( keyBase + ".path", null );
-			String name =
+			final String name =
 				specs.getProperty( keyBase + ".name", null );
-			String desc =
+			final String desc =
 				specs.getProperty( keyBase + ".desc", null );
-			String help =
+			final String help =
 				specs.getProperty( keyBase + ".help", null );
 
 			String reason = "";
@@ -68,12 +68,12 @@ implements	ConfigureConstants
 				}
 			else if ( type.equals( "choice" ) || type.equals( "combo" ) )
 				{
-				Vector sV = new Vector();
+				final Vector sV = new Vector();
 				for ( int ci = 0 ; ci < 64 ; ++ci )
 					{
-					String item =
+					final String item =
 						specs.getProperty
-							( (keyBase + "." + type + "." + ci), null );
+							( keyBase + "." + type + "." + ci, null );
 					if ( item == null )
 						break;
 					sV.addElement( item );
@@ -86,17 +86,17 @@ implements	ConfigureConstants
 					}
 				else
 					{
-					String[] choices = new String[ sV.size() ];
+					final String[] choices = new String[ sV.size() ];
 					sV.copyInto( choices );
 
-					ConfigureSpec spec =
+					final ConfigureSpec spec =
 						new ConfigureSpec
 							( keyBase,
 								type.trim(),
 								path.trim(),
 								name.trim(),
-								( (desc == null) ? desc : desc.trim() ),
-								( (help == null) ? help : help.trim() ),
+								desc == null ? desc : desc.trim(),
+								help == null ? help : help.trim(),
 								choices
 							);
 
@@ -105,14 +105,14 @@ implements	ConfigureConstants
 				}
 			else
 				{
-				ConfigureSpec spec =
+				final ConfigureSpec spec =
 					new ConfigureSpec
 						( keyBase,
 							type.trim(),
 							path.trim(),
 							name.trim(),
-							( (desc == null) ? desc : desc.trim() ),
-							( (help == null) ? help : help.trim() ),
+							desc == null ? desc : desc.trim(),
+							help == null ? help : help.trim(),
 							null
 						);
 
@@ -126,7 +126,7 @@ implements	ConfigureConstants
 						+ keyBase + "', " + reason );
 				}
 			}
-		
+
 		return result;
 		}
 

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,11 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
-
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
 
 /**
  * The CVSProject class implements the concept of a local
@@ -97,8 +92,8 @@ CVSScramble extends Object
 	static
 		{
 		int i;
-		int[] sh = new int[256];
-		
+		final int[] sh = new int[256];
+
 		for ( i = 0 ; i < 32 ; ++i )
 			{
 			sh[i] = i;
@@ -170,18 +165,18 @@ CVSScramble extends Object
 		}
 
 	public static String
-	scramblePassword( String password, char selector )
+	scramblePassword( final String password, final char selector )
 		{
 		if ( selector == 'A' )
 			{
-			StringBuffer buf = new StringBuffer( "A" );
+			final StringBuffer buf = new StringBuffer( "A" );
 
 			for ( int i = 0 ; i < password.length() ; ++i )
 				{
-				char ch = password.charAt(i);
+				final char ch = password.charAt(i);
 
-				byte newCh = (byte)
-					(CVSScramble.shifts[ ( (int)ch & 255 ) ] & 255);
+				final byte newCh = (byte)
+					(CVSScramble.shifts[ ch & 255 ] & 255);
 
 				buf.append( (char)newCh );
 				}
@@ -195,14 +190,14 @@ CVSScramble extends Object
 		}
 
 	public static String
-	unScramblePassword( String scramble )
+	unScramblePassword( final String scramble )
 		{
-		char	selector = scramble.charAt(0);
+		final char	selector = scramble.charAt(0);
 
 		if ( selector == 'A' )
 			{
 			// This method is symmetrical.
-			String pass =
+			final String pass =
 				CVSScramble.scramblePassword
 					( scramble.substring( 1 ), 'A' );
 

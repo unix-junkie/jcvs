@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,24 +16,41 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.ice.cvsc.CVSEntry;
-import com.ice.cvsc.CVSIgnore;
 import com.ice.cvsc.CVSEntryVector;
+import com.ice.cvsc.CVSIgnore;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -56,7 +73,7 @@ implements	ActionListener, ListSelectionListener
 
 	public
 	NewFilesDialog
-			( Frame parent, boolean modal, String prompt )
+			( final Frame parent, final boolean modal, final String prompt )
 		{
 		super( parent, "New Files", modal );
 
@@ -66,16 +83,16 @@ implements	ActionListener, ListSelectionListener
 
 		this.ignoreStr =
 			Config.getPreferences().getProperty
-				( Config.GLOBAL_USER_IGNORES, null );
+				( ConfigConstants.GLOBAL_USER_IGNORES, null );
 
 		this.establishDialogContents( prompt );
 
-		Dimension sz = this.getPreferredSize();
+		final Dimension sz = this.getPreferredSize();
 		if ( sz.width < 360 ) sz.width = 360;		// UNDONE properties these!
 		if ( sz.height < 240 ) sz.height = 240;
 		this.setSize( sz );
 
-		Point location =
+		final Point location =
 			AWTUtilities.centerDialogInParent( this, parent );
 
 		this.setLocation( location.x, location.y );
@@ -84,28 +101,28 @@ implements	ActionListener, ListSelectionListener
 			( new WindowAdapter()
 				{
 				public void
-				windowActivated( WindowEvent evt )
+				windowActivated( final WindowEvent evt )
 					{ fileList.requestFocus(); }
 				}
 			);
 		}
 
 	public void
-	refreshFileList( File dirF, CVSEntry dirEntry )
+	refreshFileList( final File dirF, final CVSEntry dirEntry )
 		{
 		File ignFile;
 		this.dirFile = dirF;
 		this.dirEntry = dirEntry;
 
 		this.fileV = new Vector();
-		String[] files = this.dirFile.list();
+		final String[] files = this.dirFile.list();
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
-		CVSIgnore dirIgnore = new CVSIgnore();
+		final CVSIgnore dirIgnore = new CVSIgnore();
 
-		String ignoreName =
-			prefs.getProperty( Config.GLOBAL_IGNORE_FILENAME, null );
+		final String ignoreName =
+			prefs.getProperty( ConfigConstants.GLOBAL_IGNORE_FILENAME, null );
 
 		this.ignoreStr = this.ignoreText.getText();
 		if ( this.ignoreStr != null )
@@ -127,9 +144,9 @@ implements	ActionListener, ListSelectionListener
 
 		for ( int i = 0 ; i < files.length ; ++i )
 			{
-			String fileName = files[i];
+			final String fileName = files[i];
 
-			File f = new File( this.dirFile, fileName );
+			final File f = new File( this.dirFile, fileName );
 
 			if ( ! f.isFile() || ! f.exists() || ! f.canRead() )
 				continue;
@@ -143,7 +160,7 @@ implements	ActionListener, ListSelectionListener
 			if ( dirIgnore.isFileToBeIgnored( fileName ) )
 				continue;
 
-			CVSEntryVector eV = this.dirEntry.getEntryList();
+			final CVSEntryVector eV = this.dirEntry.getEntryList();
 
 			if ( this.dirEntry.locateEntry( fileName ) != null )
 				continue;
@@ -159,8 +176,8 @@ implements	ActionListener, ListSelectionListener
 		{
 		if ( this.okClicked )
 			{
-			Object[] items = this.fileList.getSelectedValues();
-			String[] result = new String[ items.length ];
+			final Object[] items = this.fileList.getSelectedValues();
+			final String[] result = new String[ items.length ];
 			if ( items.length >  0 )
 				System.arraycopy( items, 0, result, 0, items.length );
 			return result;
@@ -172,7 +189,7 @@ implements	ActionListener, ListSelectionListener
 		}
 
     public void
-    valueChanged( ListSelectionEvent evt )
+    valueChanged( final ListSelectionEvent evt )
         {
 		if ( this.fileList.getSelectedIndex() == -1 )
 			this.okButton.setEnabled( false );
@@ -181,9 +198,9 @@ implements	ActionListener, ListSelectionListener
 		}
 
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-	    String command = evt.getActionCommand();
+	    final String command = evt.getActionCommand();
 
 		if ( command.compareTo( "OK" ) == 0 )
 			{
@@ -207,14 +224,14 @@ implements	ActionListener, ListSelectionListener
         }
 
 	public void
-	establishDialogContents( String prompt ) 
+	establishDialogContents( final String prompt )
 		{
 		JButton		button;
 		JPanel		controlPanel;
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
- 		JLabel promptLabel = new JLabel( prompt );
+ 		final JLabel promptLabel = new JLabel( prompt );
 		promptLabel.setBorder( new EmptyBorder( 2, 2, 0, 0 ) );
 		promptLabel.setFont(
 			prefs.getFont(
@@ -228,20 +245,20 @@ implements	ActionListener, ListSelectionListener
 				"newFileDialog.text.font",
 				new Font( "Dialog", Font.BOLD, 12 ) ) );
 
-		JScrollPane scroller = new JScrollPane( this.fileList );
+		final JScrollPane scroller = new JScrollPane( this.fileList );
 
-		JPanel ignorePanel = new JPanel();
+		final JPanel ignorePanel = new JPanel();
 		ignorePanel.setLayout( new BorderLayout() );
 		ignorePanel.setBorder( new EmptyBorder( 1, 2, 8, 2 ) );
 
-		JLabel ignoreLbl = new JLabel( "Ignore:" );
+		final JLabel ignoreLbl = new JLabel( "Ignore:" );
 		ignoreLbl.setBorder( new EmptyBorder( 1, 1, 1, 4 ) );
 		this.ignoreText = new JTextField( this.ignoreStr );
 		this.ignoreText.addActionListener
 			( new ActionListener()
 				{
 				public void
-				actionPerformed( ActionEvent evt )
+				actionPerformed( final ActionEvent evt )
 					{
 					refreshFileList( dirFile, dirEntry );
 					}
@@ -253,7 +270,7 @@ implements	ActionListener, ListSelectionListener
 		controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 20, 20 ) );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		this.okButton = new JButton( rmgr.getUIString( "name.for.ok" ) );
 		this.okButton.addActionListener( this );
@@ -271,15 +288,15 @@ implements	ActionListener, ListSelectionListener
 		button.setActionCommand( "CLEAR" );
 		controlPanel.add( button );
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		JPanel contPan = new JPanel();
+		final JPanel contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 3, 3, 3 ) );
 		content.add( BorderLayout.CENTER, contPan );
 
-		JPanel southPan = new JPanel();
+		final JPanel southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.NORTH, ignorePanel );
 		southPan.add( BorderLayout.WEST, button );

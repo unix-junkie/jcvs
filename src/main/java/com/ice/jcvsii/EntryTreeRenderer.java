@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,29 +16,39 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.MediaTracker;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTree;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeCellRenderer;
-import javax.swing.table.TableColumnModel;
 
-import com.ice.cvsc.CVSLog;
-import com.ice.cvsc.CVSEntry;
-import com.ice.cvsc.CVSTracer;
 import com.ice.cvsc.CVSCUtilities;
+import com.ice.cvsc.CVSEntry;
+import com.ice.cvsc.CVSLog;
+import com.ice.cvsc.CVSTracer;
 import com.ice.util.AWTUtilities;
 
 
@@ -79,7 +89,7 @@ implements	TreeCellRenderer
 
 
 	public
-	EntryTreeRenderer( String localRoot, EntryColumnModel columnModel )
+	EntryTreeRenderer( final String localRoot, final EntryColumnModel columnModel )
 		{
 		this.model = columnModel;
 
@@ -88,13 +98,13 @@ implements	TreeCellRenderer
 		this.setPreferredSize( new Dimension( 500, 18 ) );
 
 		this.localRoot = localRoot;
-		} 
+		}
 
 	public Component
 	getTreeCellRendererComponent(
-			JTree tree, Object value,
-			boolean selected, boolean expanded, boolean leaf,
-			int row, boolean hasFocus )
+			final JTree tree, final Object value,
+			final boolean selected, final boolean expanded, final boolean leaf,
+			final int row, final boolean hasFocus )
 		{
 		this.isLeaf = leaf;
 		this.isExpanded = expanded;
@@ -114,7 +124,7 @@ implements	TreeCellRenderer
 			{
 			this.setIcon( expanded ? this.openFolder : this.closedFolder );
 			this.setToolTipText( null ); //no tool tip
-			} 
+			}
 
 		return this;
 		}
@@ -126,7 +136,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setIcon( Icon icon )
+	setIcon( final Icon icon )
 		{
 		this.icon = icon;
 		}
@@ -138,7 +148,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setHandleIndent( int indent )
+	setHandleIndent( final int indent )
 		{
 		this.handleIndent = indent;
 		}
@@ -150,7 +160,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setEntry( CVSEntry entry )
+	setEntry( final CVSEntry entry )
 		{
 		this.entry = entry;
 		}
@@ -162,7 +172,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setNameWidth( int w )
+	setNameWidth( final int w )
 		{
 		this.model.setNameWidth( w );
 		}
@@ -174,7 +184,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setVersionWidth( int w )
+	setVersionWidth( final int w )
 		{
 		this.model.setVersionWidth( w );
 		}
@@ -186,7 +196,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setTagWidth( int w )
+	setTagWidth( final int w )
 		{
 		this.model.setTagWidth( w );
 		}
@@ -198,7 +208,7 @@ implements	TreeCellRenderer
 		}
 
 	public void
-	setModifiedWidth( int w )
+	setModifiedWidth( final int w )
 		{
 		this.model.setModifiedWidth( w );
 		}
@@ -206,9 +216,9 @@ implements	TreeCellRenderer
 	public Dimension
 	getPreferredSize()
 		{
-		Insets ins = this.getInsets();
+		final Insets ins = this.getInsets();
 
-		int w = this.getNameWidth() + this.getVersionWidth()
+		final int w = this.getNameWidth() + this.getVersionWidth()
 				+ this.getTagWidth() + this.getModifiedWidth()
 				+ ins.left + ins.right;
 
@@ -216,57 +226,57 @@ implements	TreeCellRenderer
 		}
 
     public void
-	paint( Graphics g ) 
+	paint( final Graphics g )
 		{
 		String text = null;
 
-		Insets ins = this.getInsets();
+		final Insets ins = this.getInsets();
 
-		FontMetrics fm = g.getFontMetrics();
+		final FontMetrics fm = g.getFontMetrics();
 
-		Shape saveClip = g.getClip();
-		Rectangle clipBounds = g.getClipBounds();
+		final Shape saveClip = g.getClip();
+		final Rectangle clipBounds = g.getClipBounds();
 
-		Rectangle bounds = this.getBounds();
+		final Rectangle bounds = this.getBounds();
 
-		int fAscent = fm.getAscent();
-		int fHeight = fm.getHeight();
+		final int fAscent = fm.getAscent();
+		final int fHeight = fm.getHeight();
 
-		int insH = (ins.left + ins.right);
-		int insV = (ins.top + ins.bottom);
+		final int insH = ins.left + ins.right;
+		final int insV = ins.top + ins.bottom;
 
-		int width = bounds.width - insH;
-		int height = bounds.height - insV;
+		final int width = bounds.width - insH;
+		final int height = bounds.height - insV;
 
-		int baseLine =
-			ins.top + (((height - fHeight) + 1) / 2) + fAscent;
+		final int baseLine =
+			ins.top + (height - fHeight + 1) / 2 + fAscent;
 
-		Rectangle iconR =
+		final Rectangle iconR =
 			new Rectangle( ins.left, ins.top, 2, height );
 
 		if ( this.icon != null )
 			{
-			int iconH = this.icon.getIconHeight();
+			final int iconH = this.icon.getIconHeight();
 
-			if ( iconH <= (baseLine - ins.top) )
+			if ( iconH <= baseLine - ins.top )
 				iconR.y = baseLine - iconH;
 			else
-				iconR.y = ins.top + ((bounds.height - iconH) / 2);
-			
+				iconR.y = ins.top + (bounds.height - iconH) / 2;
+
 			iconR.width = this.iconWidth;
 			}
 
-		int nameW = this.getNameWidth() -
+		final int nameW = this.getNameWidth() -
 					(bounds.x + ins.left + this.handleIndent);
 
-		Rectangle nameR =
+		final Rectangle nameR =
 			new Rectangle
 			// UNDONE missing iconToTextOffset...
-				( (iconR.x + iconR.width), ins.top, nameW, height );
+				( iconR.x + iconR.width, ins.top, nameW, height );
 
 		if ( this.icon != null )
 			{
-			int tl = iconR.x + this.nameOffset
+			final int tl = iconR.x + this.nameOffset
 						 + this.icon.getIconWidth();
 
 			if ( tl > nameR.x )
@@ -274,19 +284,19 @@ implements	TreeCellRenderer
 			}
 
 		// REVIEW intercell spacing?
-		Rectangle versR =
+		final Rectangle versR =
 			new Rectangle
-				( (nameR.x + nameR.width), ins.top,
+				( nameR.x + nameR.width, ins.top,
 					this.getVersionWidth(), height );
 
-		Rectangle tagR =
+		final Rectangle tagR =
 			new Rectangle
-				( (versR.x + versR.width), ins.top,
+				( versR.x + versR.width, ins.top,
 					this.getTagWidth(), height );
 
-		Rectangle modfR =
+		final Rectangle modfR =
 			new Rectangle
-				( (tagR.x + tagR.width), ins.top,
+				( tagR.x + tagR.width, ins.top,
 					this.getModifiedWidth(), height );
 
 		g.setFont( this.getFont() );
@@ -305,15 +315,15 @@ implements	TreeCellRenderer
 		text = this.entry.getName();
 		if ( text != null )
 			{
-			int textX = nameR.x + 1; // REVIEW should be property
-			int textY = nameR.y + baseLine;
+			final int textX = nameR.x + 1; // REVIEW should be property
+			final int textY = nameR.y + baseLine;
 
 			g.setClip( nameR.intersection(clipBounds) );
 
 			if ( this.isSelected )
 				{
-				int w = fm.stringWidth( text ) + 3;
-				Rectangle hiR =
+				final int w = fm.stringWidth( text ) + 3;
+				final Rectangle hiR =
 					new Rectangle
 						( nameR.x, textY - fAscent, w, fHeight );
 
@@ -341,18 +351,18 @@ implements	TreeCellRenderer
 				{
 				g.setClip( versR.intersection(clipBounds) );
 
-				int textX = versR.x + 1; // REVIEW should be property
-				int textY = versR.y + baseLine;
+				final int textX = versR.x + 1; // REVIEW should be property
+				final int textY = versR.y + baseLine;
 
 				g.setColor( Color.black );
 				g.drawString( text, textX, textY );
 
 				if ( this.isSelected && this.hasFocus )
 					{
-					int w = fm.stringWidth( text ) + 1;
-					int x1 = versR.x;
-					int x2 = versR.x + w;
-					int y = textY + 1;
+					final int w = fm.stringWidth( text ) + 1;
+					final int x1 = versR.x;
+					final int x2 = versR.x + w;
+					final int y = textY + 1;
 					g.setColor( Color.gray );
 					g.drawLine( x1, y, x2, y );
 					}
@@ -366,18 +376,18 @@ implements	TreeCellRenderer
 				{
 				g.setClip( tagR.intersection(clipBounds) );
 
-				int textX = tagR.x + 1; // REVIEW should be property
-				int textY = tagR.y + baseLine;
+				final int textX = tagR.x + 1; // REVIEW should be property
+				final int textY = tagR.y + baseLine;
 
 				g.setColor( Color.black );
 				g.drawString( text, textX, textY );
 
 				if ( this.isSelected && this.hasFocus )
 					{
-					int w = fm.stringWidth( text ) + 1;
-					int x1 = tagR.x;
-					int x2 = tagR.x + w;
-					int y = textY + 1;
+					final int w = fm.stringWidth( text ) + 1;
+					final int x1 = tagR.x;
+					final int x2 = tagR.x + w;
+					final int y = textY + 1;
 					g.setColor( Color.gray );
 					g.drawLine( x1, y, x2, y );
 					}
@@ -391,13 +401,13 @@ implements	TreeCellRenderer
 				{
 				g.setClip( modfR.intersection(clipBounds) );
 
-				int textX = modfR.x + 1; // REVIEW should be property
-				int textY = modfR.y + baseLine;
+				final int textX = modfR.x + 1; // REVIEW should be property
+				final int textY = modfR.y + baseLine;
 
 				if ( false && this.isSelected )
 					{
-					int w = fm.stringWidth( text ) + 3;
-					Rectangle hiR =
+					final int w = fm.stringWidth( text ) + 3;
+					final Rectangle hiR =
 						new Rectangle
 							( modfR.x, textY - fAscent, w, fHeight );
 
@@ -410,10 +420,10 @@ implements	TreeCellRenderer
 
 				if ( this.isSelected && this.hasFocus )
 					{
-					int w = fm.stringWidth( text ) + 1;
-					int x1 = modfR.x;
-					int x2 = modfR.x + w;
-					int y = textY + 1;
+					final int w = fm.stringWidth( text ) + 1;
+					final int x1 = modfR.x;
+					final int x2 = modfR.x + w;
+					final int y = textY + 1;
 					g.setColor( Color.gray );
 					g.drawLine( x1, y, x2, y );
 					}
@@ -440,12 +450,12 @@ implements	TreeCellRenderer
 		}
 
 	private Icon
-	determineIcon( CVSEntry entry )
+	determineIcon( final CVSEntry entry )
 		{
-		String path =
+		final String path =
 			this.localRoot + File.separator + this.entry.getFullName();
 
-		File eFile = new File( CVSCUtilities.exportPath( path ) );
+		final File eFile = new File( CVSCUtilities.exportPath( path ) );
 
 		if ( entry.isToBeRemoved() )
 			return this.removedFile;
@@ -465,7 +475,7 @@ implements	TreeCellRenderer
 	loadIconImages()
 		{
 		Image		image = null;
-		Vector		names = new Vector();
+		final Vector		names = new Vector();
 		Hashtable	iconTable;
 
 		iconTable = new Hashtable();
@@ -481,26 +491,26 @@ implements	TreeCellRenderer
 		names.addElement( "conflictFile" );
 		names.addElement( "conModFile" );
 
-		Toolkit tk = this.getToolkit();
+		final Toolkit tk = this.getToolkit();
 
 		int maxWidth = 0;
 		int maxHeight = 0;
 		int width, height;
 
-		MediaTracker tracker = new MediaTracker( this );
+		final MediaTracker tracker = new MediaTracker( this );
 
 		for ( int i = 0 ; i < names.size() ; ++i )
 			{
-			String iconName =
+			final String iconName =
 				(String) names.elementAt( i );
 
-			String imageURLName =
+			final String imageURLName =
 				"/com/ice/jcvsii/images/icons/" + iconName + ".gif";
 
 			try {
 				image = AWTUtilities.getImageResource( imageURLName );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				image = null;
 				CVSLog.logMsg
@@ -524,7 +534,7 @@ implements	TreeCellRenderer
 			}
 
 		try { tracker.waitForAll(); }
-		catch ( InterruptedException ex )
+		catch ( final InterruptedException ex )
 			{
 			CVSTracer.traceWithStack
 				( "EntryTreeRenderer.loadIconImages: "
@@ -532,10 +542,10 @@ implements	TreeCellRenderer
 					+ "   " + ex.getMessage() );
 			}
 
-		Enumeration enum = iconTable.elements();
-		for ( ; enum.hasMoreElements() ; )
+		final Enumeration enumeration = iconTable.elements();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			image = (Image) enum.nextElement();
+			image = (Image) enumeration.nextElement();
 
 			width = image.getWidth( null );
 			height = image.getHeight( null );
@@ -545,7 +555,7 @@ implements	TreeCellRenderer
 				CVSTracer.traceWithStack
 					( "EntryTreeRenderer.loadIconImages: "
 						+ "NEGATIVE DIMENSION: "
-						+ " Width " + width + " Height " + height );			
+						+ " Width " + width + " Height " + height );
 				}
 			else
 				{

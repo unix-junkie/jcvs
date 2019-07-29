@@ -1,9 +1,9 @@
 /*
 ** Java CVS client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,15 +16,15 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
 import java.text.MessageFormat;
-import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 
 /**
@@ -54,7 +54,7 @@ class		ResourceMgr
 	/**
 	 * The manager's name. Currently, used only to improved debugging output.
 	 */
-	private String					name;
+	private final String					name;
 
 	/**
 	 * The user interface resource bundle. This includes strings like menu
@@ -70,7 +70,7 @@ class		ResourceMgr
 		}
 
 	public static void
-	initializeResourceManager( String name )
+	initializeResourceManager( final String name )
 		{
 		ResourceMgr.instance = new ResourceMgr( name );
 		ResourceMgr.instance.initializeResources();
@@ -83,26 +83,26 @@ class		ResourceMgr
 		}
 
 	public
-	ResourceMgr( String name )
+	ResourceMgr( final String name )
 		{
 		this.name = name;
 		}
 
 	public String
-	getUIString( String key )
+	getUIString( final String key )
 		{
 		return this.ui.getString( key );
 		}
 
 	public String
-	getUIFormat( String key, Object[] args )
+	getUIFormat( final String key, final Object[] args )
 		{
 		return MessageFormat.format
 			( this.ui.getString( key ), args );
 		}
 
 	private void
-	printResourceInfo( String name, ResourceBundle rb )
+	printResourceInfo( final String name, final ResourceBundle rb )
 		{
 		System.err.println
 			( "Loaded resource bundle '" + name + "'." );
@@ -122,7 +122,7 @@ class		ResourceMgr
 			this.ui = ResourceBundle.getBundle( rbnm );
 			this.printResourceInfo( rbnm, this.ui );
 			}
-		catch ( MissingResourceException ex )
+		catch ( final MissingResourceException ex )
 			{
 			ex.printStackTrace();
 			}

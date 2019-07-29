@@ -2,14 +2,15 @@
 package com.ice.event;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.Action;
-import javax.swing.JTree;
 import javax.swing.JPopupMenu;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 
 public
@@ -27,16 +28,16 @@ extends		MouseAdapter
 
 	public
 	TreePopupMouseAdapter
-			( JTree tree, JPopupMenu nodePopup,
-				JPopupMenu leafPopup, Action action )
+			( final JTree tree, final JPopupMenu nodePopup,
+				final JPopupMenu leafPopup, final Action action )
 		{
 		this( tree, nodePopup, leafPopup, action, "DoubleClick" );
 		}
 
 	public
 	TreePopupMouseAdapter
-			( JTree tree, JPopupMenu nodePopup,
-				JPopupMenu leafPopup, Action action, String command )
+			( final JTree tree, final JPopupMenu nodePopup,
+				final JPopupMenu leafPopup, final Action action, final String command )
 		{
 		super();
 		this.tree = tree;
@@ -47,19 +48,19 @@ extends		MouseAdapter
 		}
 
 	public void
-	setActionCommand( String command )
+	setActionCommand( final String command )
 		{
 		this.actionCommand = command;
 		}
 
 	public void
-	mousePressed( MouseEvent event )
+	mousePressed( final MouseEvent event )
 		{
 		this.isPopupClick = false;
 
 		if ( event.isPopupTrigger() )
 			{
-			int selRow =
+			final int selRow =
 				this.tree.getRowForLocation
 					( event.getX(), event.getY() );
 
@@ -73,14 +74,14 @@ extends		MouseAdapter
 		}
 
 	public void
-	mouseReleased( MouseEvent event )
+	mouseReleased( final MouseEvent event )
 		{
 		if ( this.isPopupClick )
 			return;
 
 		if ( event.isPopupTrigger() )
 			{
-			int selRow =
+			final int selRow =
 				this.tree.getRowForLocation
 					( event.getX(), event.getY() );
 
@@ -94,7 +95,7 @@ extends		MouseAdapter
 		}
 
 	public void
-	mouseClicked( MouseEvent event )
+	mouseClicked( final MouseEvent event )
 		{
 		if ( this.isPopupClick )
 			{
@@ -109,15 +110,15 @@ extends		MouseAdapter
 		}
 
 	private void
-	doPopup( int row, int x, int y )
+	doPopup( final int row, final int x, final int y )
 		{
 		this.tree.setSelectionRow( row );
 
-		TreePath path = this.tree.getPathForRow( row );
-		TreeNode node = (TreeNode) path.getLastPathComponent();
+		final TreePath path = this.tree.getPathForRow( row );
+		final TreeNode node = (TreeNode) path.getLastPathComponent();
 
-		JPopupMenu popup =
-			( node.isLeaf() ? this.leafPopup : this.nodePopup );
+		final JPopupMenu popup =
+			node.isLeaf() ? this.leafPopup : this.nodePopup;
 
 		if ( popup != null )
 			{
@@ -136,7 +137,7 @@ extends		MouseAdapter
 					public void
 					run()
 						{
-						ActionEvent event =
+						final ActionEvent event =
 							new ActionEvent
 								( tree, ActionEvent.ACTION_PERFORMED,
 									actionCommand );

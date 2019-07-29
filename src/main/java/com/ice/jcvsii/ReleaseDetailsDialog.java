@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,24 +16,34 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
-import com.ice.cvsc.CVSEntry;
-import com.ice.cvsc.CVSIgnore;
-import com.ice.cvsc.CVSEntryVector;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -45,10 +55,10 @@ implements	ActionListener
 	{
 	private boolean		okClicked;
 
-	private Vector		adds;
-	private Vector		mods;
-	private Vector		rems;
-	private Vector		unks;
+	private final Vector		adds;
+	private final Vector		mods;
+	private final Vector		rems;
+	private final Vector		unks;
 
 	private JTextArea	detailsText;
 	private JButton		okButton;
@@ -56,7 +66,7 @@ implements	ActionListener
 
 	public
 	ReleaseDetailsDialog
-			( Frame parent, Vector adds, Vector mods, Vector rems, Vector unks )
+			( final Frame parent, final Vector adds, final Vector mods, final Vector rems, final Vector unks )
 		{
 		super( parent, "ReleaseDetails", true );
 
@@ -66,7 +76,7 @@ implements	ActionListener
 		this.rems = rems;
 		this.unks = unks;
 
-		StringBuffer buf = new StringBuffer();
+		final StringBuffer buf = new StringBuffer();
 
 		for ( int i = adds.size()-1 ; i >= 0 ; --i )
 			buf.append( "New  " + adds.elementAt(i) + "\n" );
@@ -88,12 +98,12 @@ implements	ActionListener
 
 		this.pack();
 
-		Dimension sz = this.getPreferredSize();
+		final Dimension sz = this.getPreferredSize();
 		if ( sz.width < 480 ) sz.width = 480;	// UNDONE properties these!
 		if ( sz.height < 420 ) sz.height = 420;
 		this.setSize( sz );
 
-		Point location =
+		final Point location =
 			AWTUtilities.centerDialogInParent( this, parent );
 
 		this.setLocation( location.x, location.y );
@@ -102,7 +112,7 @@ implements	ActionListener
 			( new WindowAdapter()
 				{
 				public void
-				windowActivated( WindowEvent evt )
+				windowActivated( final WindowEvent evt )
 					{ /* fileList.requestFocus(); */ }
 				}
 			);
@@ -115,9 +125,9 @@ implements	ActionListener
 		}
 
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-	    String command = evt.getActionCommand();
+	    final String command = evt.getActionCommand();
 
 		if ( command.compareTo( "OK" ) == 0 )
 			{
@@ -134,14 +144,14 @@ implements	ActionListener
         }
 
 	public void
-	establishDialogContents( String prompt, String details ) 
+	establishDialogContents( final String prompt, final String details )
 		{
 		JButton		button;
 		JPanel		controlPanel;
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
- 		JLabel promptLabel = new JLabel( prompt );
+ 		final JLabel promptLabel = new JLabel( prompt );
 		promptLabel.setBorder( new EmptyBorder( 2, 2, 0, 0 ) );
 		promptLabel.setFont(
 			prefs.getFont(
@@ -155,12 +165,12 @@ implements	ActionListener
 				"releaseDialog.details.font",
 				new Font( "Monospaced", Font.PLAIN, 12 ) ) );
 
-		JScrollPane scroller = new JScrollPane( this.detailsText );
+		final JScrollPane scroller = new JScrollPane( this.detailsText );
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 20, 20 ) );
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		this.okButton = new JButton( rmgr.getUIString( "name.for.ok" ) );
 		this.okButton.addActionListener( this );
@@ -172,10 +182,10 @@ implements	ActionListener
 		button.setActionCommand( "CANCEL" );
 		controlPanel.add( button );
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		JPanel contPan = new JPanel();
+		final JPanel contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 3, 3, 3 ) );
 

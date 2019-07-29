@@ -2,7 +2,7 @@
 package com.ice.jcvsii;
 
 import java.awt.Container;
-import java.awt.Cursor;
+
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -15,7 +15,7 @@ extends		JPanel
 	protected MainPanel		parent;
 
 	public
-	MainTabPanel( MainPanel parent )
+	MainTabPanel( final MainPanel parent )
 		{
 		super();
 		this.parent = parent;
@@ -51,14 +51,14 @@ extends		JPanel
 	protected void
 	setWaitCursor()
 		{
-		Container frame = this.getTopLevelAncestor();
+		final Container frame = this.getTopLevelAncestor();
 		MainFrame.setWaitCursor( frame, true );
 		}
 
 	protected void
 	resetCursor()
 		{
-		Container frame = this.getTopLevelAncestor();
+		final Container frame = this.getTopLevelAncestor();
 		MainFrame.setWaitCursor( frame, false );
 		}
 

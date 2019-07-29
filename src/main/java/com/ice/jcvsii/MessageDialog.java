@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,18 +16,32 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
@@ -43,7 +57,7 @@ implements	ActionListener
 
 
 	public
-	MessageDialog( Frame parent, boolean modal, String prompt )
+	MessageDialog( final Frame parent, final boolean modal, final String prompt )
 		{
 		super( parent, "Message Argument", modal );
 
@@ -51,12 +65,12 @@ implements	ActionListener
 
 		this.establishDialogContents( prompt );
 
-		Dimension sz = this.getPreferredSize();
+		final Dimension sz = this.getPreferredSize();
 		if ( sz.width < 360 ) sz.width = 360;		// UNDONE properties these!
 		if ( sz.height < 240 ) sz.height = 240;
 		this.setSize( sz );
 
-		Point location =
+		final Point location =
 			AWTUtilities.centerDialogInParent( this, parent );
 
 		this.setLocation( location.x, location.y );
@@ -65,7 +79,7 @@ implements	ActionListener
 			( new WindowAdapter()
 				{
 				public void
-				windowActivated( WindowEvent evt )
+				windowActivated( final WindowEvent evt )
 					{ messageText.requestFocus(); }
 				}
 			);
@@ -76,11 +90,11 @@ implements	ActionListener
 		{
 		return this.messageString;
 		}
-	
+
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-	    String command = evt.getActionCommand();
+	    final String command = evt.getActionCommand();
 
 		if ( command.compareTo( "OK" ) == 0 )
 			{
@@ -95,15 +109,15 @@ implements	ActionListener
         }
 
 	public void
-	establishDialogContents( String prompt ) 
+	establishDialogContents( final String prompt )
 		{
 		JButton		button;
 		JPanel		controlPanel;
 
-		UserPrefs prefs = Config.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
- 		JLabel promptLabel = new JLabel( prompt );
+ 		final JLabel promptLabel = new JLabel( prompt );
 		promptLabel.setBorder( new EmptyBorder( 2, 2, 0, 0 ) );
 		promptLabel.setFont(
 			prefs.getFont(
@@ -118,7 +132,7 @@ implements	ActionListener
 				"messageDialog.text.font",
 				new Font( "Serif", Font.PLAIN, 14 ) ) );
 
-		JScrollPane scroller = new JScrollPane( this.messageText );
+		final JScrollPane scroller = new JScrollPane( this.messageText );
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 20, 20 ) );
@@ -133,15 +147,15 @@ implements	ActionListener
 		button.setActionCommand( "CANCEL" );
 		controlPanel.add( button );
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		JPanel contPan = new JPanel();
+		final JPanel contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 5, 5, 5 ) );
 		content.add( BorderLayout.CENTER, contPan );
 
-		JPanel southPan = new JPanel();
+		final JPanel southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.EAST, controlPanel );
 		southPan.setBorder( new EmptyBorder( 8, 0, 5, 0 ) );

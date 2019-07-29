@@ -3,8 +3,8 @@ package com.ice.config;
 
 import java.util.Enumeration;
 
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 
 public
@@ -14,26 +14,26 @@ extends		DefaultMutableTreeNode
 	private ConfigureSpec		spec = null;
 
 	public
-	ConfigureTreeNode( String name )
+	ConfigureTreeNode( final String name )
 		{
 		super( name );
 		}
 
 	public
-	ConfigureTreeNode( String name, ConfigureSpec spec )
+	ConfigureTreeNode( final String name, final ConfigureSpec spec )
 		{
 		super( name );
 		this.spec = spec;
 		}
 
 	public void
-	add( ConfigureTreeNode node )
+	add( final ConfigureTreeNode node )
 		{
-		int chCnt = this.getChildCount();
+		final int chCnt = this.getChildCount();
 
 		for ( int i = 0 ; i < chCnt ; ++i )
 			{
-			ConfigureTreeNode chNode =
+			final ConfigureTreeNode chNode =
 				(ConfigureTreeNode) this.getChildAt( i );
 
 			if ( node.getName().compareTo( chNode.getName() ) < 0 )
@@ -55,14 +55,14 @@ extends		DefaultMutableTreeNode
 	public String
 	getPathName()
 		{
-		StringBuffer result = new StringBuffer();
+		final StringBuffer result = new StringBuffer();
 
-		TreeNode[] path = this.getPath();
+		final TreeNode[] path = this.getPath();
 		// We start at 1 to avoid the root
 		for ( int i = 1 ; i < path.length ; ++i )
 			{
 			result.append( ((ConfigureTreeNode) path[i]).getName() );
-			if ( i < (path.length - 1) )
+			if ( i < path.length - 1 )
 				result.append( "." );
 			}
 
@@ -76,19 +76,19 @@ extends		DefaultMutableTreeNode
 		}
 
 	public void
-	setPropertySpec( ConfigureSpec spec )
+	setPropertySpec( final ConfigureSpec spec )
 		{
 		this.spec = spec;
 		}
 
 	public ConfigureTreeNode
-	getChild( String name )
+	getChild( final String name )
 		{
-		for ( Enumeration enum = children()
-				; enum.hasMoreElements() ; )
+		for ( final Enumeration enumeration = children()
+				; enumeration.hasMoreElements() ; )
 			{
-			ConfigureTreeNode node =
-				(ConfigureTreeNode) enum.nextElement();
+			final ConfigureTreeNode node =
+				(ConfigureTreeNode) enumeration.nextElement();
 
 			if ( node.toString().equals( name ) )
 				return node;

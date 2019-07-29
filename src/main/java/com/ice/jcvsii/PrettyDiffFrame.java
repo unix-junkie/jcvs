@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,22 +16,45 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Event;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
-import com.ice.cvsc.*;
-import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 import com.ice.util.StringUtilities;
 
@@ -44,16 +67,16 @@ implements	ActionListener, SwingConstants
 	private int					dCol;
 	private int					dRow;
 
-	private ProjectFrame		projectFrame;
-	private JPanel				mainPanel;
+	private final ProjectFrame		projectFrame;
+	private final JPanel				mainPanel;
 	private JPanel				diffPanel;
-	private JScrollPane			scroller;
+	private final JScrollPane			scroller;
 
-	private Font				lblFont;
-	private Font				rawFont;
-	private Font				timeFont;
-	private Font				titleFont;
-	private Font				headerFont;
+	private final Font				lblFont;
+	private final Font				rawFont;
+	private final Font				timeFont;
+	private final Font				titleFont;
+	private final Font				headerFont;
 
 	private Color				clrRmv = null;
 	private Color				clrChg = null;
@@ -67,8 +90,8 @@ implements	ActionListener, SwingConstants
 
 	public
 	PrettyDiffFrame(
-			ProjectFrame projectFrame, String title, String fileName,
-			String diffs, String rev1, String rev2 )
+			final ProjectFrame projectFrame, final String title, final String fileName,
+			final String diffs, final String rev1, final String rev2 )
 		{
 		super( title );
 
@@ -92,30 +115,30 @@ implements	ActionListener, SwingConstants
 
  		this.timeFont =
 			Config.getPreferences().getFont
-				( Config.PRETTY_TITLE_FONT,
+				( ConfigConstants.PRETTY_TITLE_FONT,
 					new Font( "SansSerif", Font.PLAIN, 10 ) );
 
  		this.titleFont =
 			Config.getPreferences().getFont
-				( Config.PRETTY_TITLE_FONT,
+				( ConfigConstants.PRETTY_TITLE_FONT,
 					new Font( "SansSerif", Font.BOLD, 14 ) );
 
  		this.headerFont =
 			Config.getPreferences().getFont
-				( Config.PRETTY_HEADER_FONT,
+				( ConfigConstants.PRETTY_HEADER_FONT,
 					new Font( "SansSerif", Font.BOLD, 12 ) );
 
  		this.lblFont =
 			Config.getPreferences().getFont
-				( Config.PRETTY_DIFF_FONT,
+				( ConfigConstants.PRETTY_DIFF_FONT,
 					new Font( "Monospaced", Font.PLAIN, 12 ) );
 
  		this.rawFont =
 			Config.getPreferences().getFont
-				( Config.PRETTY_RAW_FONT,
+				( ConfigConstants.PRETTY_RAW_FONT,
 					new Font( "Monospaced", Font.PLAIN, 10 ) );
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 
 		content.setLayout( new BorderLayout( 0, 0 ) );
 
@@ -133,11 +156,11 @@ implements	ActionListener, SwingConstants
 				// we do not want to create and dispose of frequently. Only the
 				// project frame that owns us can dispose of us!
 				public void
-					windowClosing( WindowEvent e )
+					windowClosing( final WindowEvent e )
 						{ setVisible( false ); dispose(); }
 
 				public void
-					windowClosed( WindowEvent e )
+					windowClosed( final WindowEvent e )
 						{ windowBeingClosed(); }
 				}
 			);
@@ -147,23 +170,23 @@ implements	ActionListener, SwingConstants
 	// they may have their own concept of preferences, like ProjectFrames.
 
 	public void
-	loadPreferences( Rectangle defBounds )
+	loadPreferences( final Rectangle defBounds )
 		{
 		this.setBounds
 			( this.projectFrame.getPreferences().getBounds
-				( Config.PRETTY_WINDOW_BOUNDS, defBounds ) );
+				( ConfigConstants.PRETTY_WINDOW_BOUNDS, defBounds ) );
 		}
 
 	public void
 	savePreferences()
 		{
-		Rectangle bounds = this.getBounds();
+		final Rectangle bounds = this.getBounds();
 
 		if ( bounds.x >= 0 && bounds.y >= 0
 				&& bounds.width > 0 && bounds.height > 0 )
 			{
 			this.projectFrame.getPreferences().setBounds
-				( Config.PRETTY_WINDOW_BOUNDS, bounds );
+				( ConfigConstants.PRETTY_WINDOW_BOUNDS, bounds );
 			}
 		}
 
@@ -174,10 +197,10 @@ implements	ActionListener, SwingConstants
 		}
 
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-		String	subCmd;
-	    String	command = evt.getActionCommand();
+		final String	subCmd;
+	    final String	command = evt.getActionCommand();
 
 		if ( command.startsWith( "Close" ) )
 			{
@@ -194,14 +217,14 @@ implements	ActionListener, SwingConstants
 		}
 
 	private String
-	spaceTabs( String text )
+	spaceTabs( final String text )
 		{
-		int len = text.length();
-		StringBuffer buf = new StringBuffer( len * 2 );
+		final int len = text.length();
+		final StringBuffer buf = new StringBuffer( len * 2 );
 
 		for ( int i = 0 ; i < len ; ++i )
 			{
-			char ch = text.charAt(i);
+			final char ch = text.charAt(i);
 			if ( ch == '\t' )
 				buf.append( "    " ); // UNDONE configurable!
 			else
@@ -212,7 +235,7 @@ implements	ActionListener, SwingConstants
 		}
 
 	private JLabel
-	createDiffLabel( String text )
+	createDiffLabel( final String text )
 		{
 		JLabel lbl = null;
 		lbl = new JLabel( text );
@@ -223,7 +246,7 @@ implements	ActionListener, SwingConstants
 		}
 
 	private void
-	establishDiffs( String rawDiff, String fileName, String rev1, String rev2 )
+	establishDiffs( final String rawDiff, String fileName, final String rev1, final String rev2 )
 		{
 		JLabel		lbl = null;
 		JSeparator	sep = null;
@@ -233,13 +256,13 @@ implements	ActionListener, SwingConstants
 		// I prefer a loop that processed lines individually. This
 		// is very wasteful of memory!
 		//
-		String[] lines = StringUtilities.splitString( rawDiff, "\n" );
+		final String[] lines = StringUtilities.splitString( rawDiff, "\n" );
 
 		int lnIdx = 0;
-		String[] revStrs = { rev1, rev2 };
-		String[] timeStamps = { null, null };
+		final String[] revStrs = { rev1, rev2 };
+		final String[] timeStamps = { null, null };
 
-		int numLines = lines.length;
+		final int numLines = lines.length;
 
 		// NOTE
 		// The diff command for this functionality includes the flags '-u -w'
@@ -259,35 +282,35 @@ implements	ActionListener, SwingConstants
 		// will assume that there was an error, and display it as such.
 		//
 
-		Vector errV = new Vector();
+		final Vector errV = new Vector();
 		boolean gotDiffLines = false;
 		for ( ; lnIdx < numLines ; ++lnIdx )
 			{
 			if ( lines[lnIdx].startsWith( "--- " )
 					|| lines[lnIdx].startsWith( "+++ " ) )
 				{
-				int idx = lines[lnIdx].startsWith( "--- " ) ? 0 : 1;
+				final int idx = lines[lnIdx].startsWith( "--- " ) ? 0 : 1;
 
-				StringTokenizer toker =
+				final StringTokenizer toker =
 					new StringTokenizer( lines[lnIdx].substring(4), "\t" );
 
 				if ( toker.hasMoreTokens() )
 					{
-					String name = toker.nextToken();
+					final String name = toker.nextToken();
 					if ( fileName == null )
 						fileName = name;
 					}
 
 				if ( toker.hasMoreTokens() )
 					{
-					String timestamp = toker.nextToken();
+					final String timestamp = toker.nextToken();
 					if ( timeStamps[idx] == null )
 						timeStamps[idx] = timestamp;
 					}
 
 				if ( toker.hasMoreTokens() )
 					{
-					String rev = toker.nextToken();
+					final String rev = toker.nextToken();
 					if ( revStrs[idx] == null )
 						revStrs[idx] = rev;
 					}
@@ -377,7 +400,7 @@ implements	ActionListener, SwingConstants
 
 		if ( timeStamps[0] != null || timeStamps[1] == null )
 			{
-			lbl = new JLabel( (timeStamps[0]==null?" ":timeStamps[0]), CENTER );
+			lbl = new JLabel( timeStamps[0]==null?" ":timeStamps[0], CENTER );
 			lbl.setFont( this.timeFont );
 			lbl.setOpaque( true );
 			lbl.setBackground( this.clrTitle );
@@ -389,7 +412,7 @@ implements	ActionListener, SwingConstants
 				this.dCol++, this.dRow, 1, 1, 1.0, 0.0,
 				new Insets( 0,0,0,0 ) );
 
-			lbl = new JLabel( (timeStamps[1]==null?" ":timeStamps[1]), CENTER );
+			lbl = new JLabel( timeStamps[1]==null?" ":timeStamps[1], CENTER );
 			lbl.setFont( this.timeFont );
 			lbl.setOpaque( true );
 			lbl.setBackground( this.clrTitle );
@@ -435,31 +458,31 @@ implements	ActionListener, SwingConstants
 		//
 		char state = 'D';
 
-		Vector ltColV = new Vector();
-		Vector rtColV = new Vector();
+		final Vector ltColV = new Vector();
+		final Vector rtColV = new Vector();
 
 		for ( ; lnIdx < numLines ; ++lnIdx )
 			{
-			String ln = lines[lnIdx];
+			final String ln = lines[lnIdx];
 
 			if ( ln.startsWith( "@@" ) )
 				{
 				String[] flds;
-				
+
 				flds = StringUtilities.splitString( ln, " " );
 
-				String oldStr = flds[1].substring(1);
-				String newStr = flds[2].substring(1);
+				final String oldStr = flds[1].substring(1);
+				final String newStr = flds[2].substring(1);
 
 				flds = StringUtilities.splitString( oldStr, "," );
 				String oldLineCnt = "";
-				String oldLineNum = flds[0];
+				final String oldLineNum = flds[0];
 				if ( flds.length > 1 )
 					oldLineCnt = flds[1];
 
 				flds = StringUtilities.splitString( newStr, "," );
 				String newLineCnt = "1";
-				String newLineNum = flds[0];
+				final String newLineNum = flds[0];
 				if ( flds.length > 1 )
 					newLineCnt = flds[1];
 
@@ -491,7 +514,7 @@ implements	ActionListener, SwingConstants
 				}
 			else
 				{
-				char diffCode = ln.charAt(0);
+				final char diffCode = ln.charAt(0);
 				String remStr = ln.substring(1);
 
 				remStr = this.spaceTabs( remStr );
@@ -516,7 +539,7 @@ implements	ActionListener, SwingConstants
 						lbl.setBackground( this.clrBack );
 						this.diffPanel.add( lbl );
 
-						lbl = this.createDiffLabel( (remStr.length()==0?" ":remStr) );
+						lbl = this.createDiffLabel( remStr.length()==0?" ":remStr );
 						lbl.setBackground( this.clrAdd );
 						this.diffPanel.add( lbl );
 						}
@@ -536,7 +559,7 @@ implements	ActionListener, SwingConstants
 					{
 					// ZZ empty diffcode
 					this.appendDiffElements( state, ltColV, rtColV );
-					
+
 					lbl = this.createDiffLabel( remStr );
 					lbl.setBackground( this.clrBack );
 					this.diffPanel.add( lbl );
@@ -577,7 +600,7 @@ implements	ActionListener, SwingConstants
 		//
 		if ( false )
 			{
-			JTextArea rawArea = new JTextArea( rawDiff );
+			final JTextArea rawArea = new JTextArea( rawDiff );
 			rawArea.setFont( this.rawFont );
 			rawArea.setOpaque( true );
 			rawArea.setEditable( false );
@@ -597,7 +620,7 @@ implements	ActionListener, SwingConstants
 		}
 
 	private void
-	appendDiffElements( char state, Vector ltColV, Vector rtColV )
+	appendDiffElements( final char state, final Vector ltColV, final Vector rtColV )
 		{
 		JLabel lbl = null;
 
@@ -650,13 +673,13 @@ implements	ActionListener, SwingConstants
 				}
 			}
 		}
-	
+
 	private void
-	appendLegend( String[] revStrs )
+	appendLegend( final String[] revStrs )
 		{
 		JLabel lbl = null;
 
-		JPanel outerPan = new JPanel();
+		final JPanel outerPan = new JPanel();
 		outerPan.setOpaque( true );
 		outerPan.setBackground( this.clrBack );
 		outerPan.setLayout( new GridBagLayout() );
@@ -672,7 +695,7 @@ implements	ActionListener, SwingConstants
 			0, this.dRow++, 2, 1, 1.0, 0.0,
 			new Insets( 0,0,0,0 ) );
 
-		JPanel legendPan = new JPanel();
+		final JPanel legendPan = new JPanel();
 		legendPan.setOpaque( true );
 		legendPan.setBackground( this.clrTitle );
 		legendPan.setLayout( new GridBagLayout() );
@@ -790,9 +813,9 @@ implements	ActionListener, SwingConstants
 		{
 		JMenuItem		mItem;
 
-		JMenuBar mBar = new JMenuBar();
+		final JMenuBar mBar = new JMenuBar();
 
-		JMenu mFile = new JMenu( "File", true );
+		final JMenu mFile = new JMenu( "File", true );
 		mBar.add( mFile );
 /*
 		mItem = new JMenuItem( "Show Project" );

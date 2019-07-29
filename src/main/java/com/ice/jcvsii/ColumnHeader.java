@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,23 +16,34 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.EventListener;
 
-import javax.swing.*;
+import javax.swing.CellRendererPane;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.MouseInputListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 
 public
@@ -70,7 +81,7 @@ extends		JComponent
 
 
 	public
-	ColumnHeader( TableColumnModel model )
+	ColumnHeader( final TableColumnModel model )
 		{
 		this.columnModel = model;
 		this.resizingAllowed = true;
@@ -80,7 +91,7 @@ extends		JComponent
 
 		this.hdrCellRenderer = this.new DefaultColumnHeaderRenderer();
 
-        MouseInputHandler mouseListener = this.new MouseInputHandler();
+        final MouseInputHandler mouseListener = this.new MouseInputHandler();
 
         this.addMouseListener( mouseListener );
         this.addMouseMotionListener( mouseListener );
@@ -90,24 +101,24 @@ extends		JComponent
 		}
 
 	public void
-	addResizeListener( ColumnHeader.ResizeListener l )
+	addResizeListener( final ColumnHeader.ResizeListener l )
 		{
 		this.resizeListeners.add
 			( ColumnHeader.ResizeListener.class, l );
 		}
 
 	public void
-	removeResizeListener( ColumnHeader.ResizeListener l )
+	removeResizeListener( final ColumnHeader.ResizeListener l )
 		{
 		this.resizeListeners.remove
 			( ColumnHeader.ResizeListener.class, l );
 		}
 
 	protected void
-	fireColumnHeadersResized( boolean isResizing )
+	fireColumnHeadersResized( final boolean isResizing )
 		{
 		// Guaranteed to return a non-null array
-		Object[] listeners = resizeListeners.getListenerList();
+		final Object[] listeners = resizeListeners.getListenerList();
 
 		// Process the listeners last to first, notifying
 		// those that are interested in this event
@@ -115,20 +126,20 @@ extends		JComponent
 			{
 			if ( listeners[i] == ColumnHeader.ResizeListener.class )
 				{
-				ColumnHeader.ResizeEvent evt =
+				final ColumnHeader.ResizeEvent evt =
 					new ColumnHeader.ResizeEvent( this, isResizing );
 
 				((ColumnHeader.ResizeListener) listeners[ i + 1 ]).
 					columnHeadersResized( evt );
-				}	       
+				}
 			}
-		}	
+		}
 
 	protected void
-	fireColumnHeadersNeedUpdate( boolean isResizing )
+	fireColumnHeadersNeedUpdate( final boolean isResizing )
 		{
 		// Guaranteed to return a non-null array
-		Object[] listeners = resizeListeners.getListenerList();
+		final Object[] listeners = resizeListeners.getListenerList();
 
 		// Process the listeners last to first, notifying
 		// those that are interested in this event
@@ -136,14 +147,14 @@ extends		JComponent
 			{
 			if ( listeners[i] == ColumnHeader.ResizeListener.class )
 				{
-				ColumnHeader.ResizeEvent evt =
+				final ColumnHeader.ResizeEvent evt =
 					new ColumnHeader.ResizeEvent( this, isResizing );
 
 				((ColumnHeader.ResizeListener) listeners[ i + 1 ]).
 					columnHeadersNeedUpdate( evt );
-				}	       
+				}
 			}
-		}	
+		}
 
 	public TableColumnModel
 	getColumnModel()
@@ -158,7 +169,7 @@ extends		JComponent
 		}
 
 	public void
-	setRenderer( ColumnHeaderRenderer rend )
+	setRenderer( final ColumnHeaderRenderer rend )
 		{
 		this.hdrCellRenderer = rend;
 		}
@@ -170,7 +181,7 @@ extends		JComponent
 		}
 
 	public void
-	setDraggedColumn( TableColumn col )
+	setDraggedColumn( final TableColumn col )
 		{
 		this.draggedColumn = col;
 		}
@@ -182,7 +193,7 @@ extends		JComponent
 		}
 
 	public void
-	setResizingColumn( TableColumn col )
+	setResizingColumn( final TableColumn col )
 		{
 		this.resizingColumn = col;
 		}
@@ -194,7 +205,7 @@ extends		JComponent
 		}
 
 	public void
-	setDraggedDistance( int dist )
+	setDraggedDistance( final int dist )
 		{
 		this.draggedDistance = dist;
 		}
@@ -206,7 +217,7 @@ extends		JComponent
 		}
 
 	public void
-	setResizingAllowed( boolean allowed )
+	setResizingAllowed( final boolean allowed )
 		{
 		this.resizingAllowed = allowed;
 		}
@@ -218,7 +229,7 @@ extends		JComponent
 		}
 
 	public void
-	setReorderingAllowed( boolean allowed )
+	setReorderingAllowed( final boolean allowed )
 		{
 		this.reorderingAllowed = allowed;
 		}
@@ -230,7 +241,7 @@ extends		JComponent
 		}
 
 	public void
-	setUpdateTableInRealTime( boolean upd )
+	setUpdateTableInRealTime( final boolean upd )
 		{
 		this.updateTableInRealTime = upd;
 		}
@@ -247,34 +258,34 @@ extends		JComponent
         private int lastEffectiveMouseX;
 
         public void
-		mouseClicked( MouseEvent e )
+		mouseClicked( final MouseEvent e )
 			{
 			}
 
         public void
-		mousePressed( MouseEvent evt )
+		mousePressed( final MouseEvent evt )
 			{
             setDraggedColumn( null );
             setResizingColumn( null );
             setDraggedDistance( 0 );
 
-            Point p = evt.getPoint();
+            final Point p = evt.getPoint();
             lastEffectiveMouseX = p.x;
 
-            int index = getColumnModel().getColumnIndexAtX( p.x );
+            final int index = getColumnModel().getColumnIndexAtX( p.x );
             if ( index != -1 )
 				{
                 // The last 3 pixels + 3 pixels of next column are for resizing
-                int resizeIndex = computeResizingColumn( p );
-                if ( getResizingAllowed() && (resizeIndex != -1) )
+                final int resizeIndex = computeResizingColumn( p );
+                if ( getResizingAllowed() && resizeIndex != -1 )
 					{
-                    TableColumn hitColumn =
+                    final TableColumn hitColumn =
 						columnModel.getColumn( resizeIndex );
                     setResizingColumn( hitColumn );
 					}
                 else if ( getReorderingAllowed() )
 					{
-                    TableColumn hitColumn = columnModel.getColumn( index );
+                    final TableColumn hitColumn = columnModel.getColumn( index );
                     setDraggedColumn( hitColumn );
 					}
                 else
@@ -285,11 +296,11 @@ extends		JComponent
 			}
 
         public void
-		mouseMoved( MouseEvent evt )
+		mouseMoved( final MouseEvent evt )
 			{
             if ( computeResizingColumn( evt.getPoint() ) != -1 )
 				{
-                Cursor resizeCursor =
+                final Cursor resizeCursor =
 					Cursor.getPredefinedCursor( Cursor.E_RESIZE_CURSOR );
 
                 if ( getCursor() != resizeCursor )
@@ -299,7 +310,7 @@ extends		JComponent
 				}
             else
 				{
-                Cursor defaultCursor =
+                final Cursor defaultCursor =
 					Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR );
 
                 if ( getCursor() != defaultCursor )
@@ -310,31 +321,31 @@ extends		JComponent
 			}
 
         public void
-		mouseDragged( MouseEvent evt )
+		mouseDragged( final MouseEvent evt )
 			{
-			int mouseX = evt.getX();
-			int deltaX = mouseX - lastEffectiveMouseX;
+			final int mouseX = evt.getX();
+			final int deltaX = mouseX - lastEffectiveMouseX;
 
 			if ( deltaX == 0 )
 				{
 				return;
 				}
 
-			TableColumn rColumn = getResizingColumn();
-			TableColumn draggedColumn = getDraggedColumn();
+			final TableColumn rColumn = getResizingColumn();
+			final TableColumn draggedColumn = getDraggedColumn();
 
 			if ( rColumn != null )
 				{
-				Dimension origSz = getSize();
-				int oldWidth = rColumn.getWidth();
-				int newWidth = oldWidth + deltaX;
+				final Dimension origSz = getSize();
+				final int oldWidth = rColumn.getWidth();
+				final int newWidth = oldWidth + deltaX;
 
 				rColumn.setWidth( newWidth );
 				rColumn.setPreferredWidth( newWidth );
 
-				int acheivedDeltaX = rColumn.getWidth() - oldWidth;
+				final int acheivedDeltaX = rColumn.getWidth() - oldWidth;
 				lastEffectiveMouseX = lastEffectiveMouseX + acheivedDeltaX;
-				
+
 				fireColumnHeadersResized( true );
 
 				revalidate();
@@ -358,10 +369,10 @@ extends		JComponent
 			}
 
         public void
-		mouseReleased( MouseEvent evt )
+		mouseReleased( final MouseEvent evt )
 			{
-            TableColumn rColumn = getResizingColumn();
-            TableColumn draggedColumn = getDraggedColumn();
+            final TableColumn rColumn = getResizingColumn();
+            final TableColumn draggedColumn = getDraggedColumn();
 
             if ( rColumn != null )
 				{
@@ -378,19 +389,19 @@ extends		JComponent
 			}
 
         public void
-		mouseEntered( MouseEvent evt )
+		mouseEntered( final MouseEvent evt )
 			{
 			}
 
         public void
-		mouseExited( MouseEvent evt )
+		mouseExited( final MouseEvent evt )
 			{
 			}
 
 		private int
-		viewIndexForColumn( TableColumn aColumn )
+		viewIndexForColumn( final TableColumn aColumn )
 			{
-            TableColumnModel cm = getColumnModel();
+            final TableColumnModel cm = getColumnModel();
             for ( int column = 0 ; column < cm.getColumnCount() ; column++ )
 				{
                 if ( cm.getColumn( column ) == aColumn )
@@ -402,23 +413,23 @@ extends		JComponent
 			}
 
         private void
-		move( MouseEvent evt, int delta )
+		move( final MouseEvent evt, final int delta )
 			{
-            TableColumnModel columnModel = getColumnModel();
-            int lastColumn = columnModel.getColumnCount() - 1;
+            final TableColumnModel columnModel = getColumnModel();
+            final int lastColumn = columnModel.getColumnCount() - 1;
 
-            TableColumn draggedColumn = getDraggedColumn();
+            final TableColumn draggedColumn = getDraggedColumn();
             int draggedDistance = getDraggedDistance() + delta;
             int hitColumnIndex = viewIndexForColumn( draggedColumn );
 
             // Now check if we have moved enough to do a swap
-            if ( (draggedDistance < 0) && (hitColumnIndex != 0) )
+            if ( draggedDistance < 0 && hitColumnIndex != 0 )
 				{
                 // Moving left; check prevColumn
-                int width = columnModel.getColumnMargin() +
+                final int width = columnModel.getColumnMargin() +
                     columnModel.getColumn( hitColumnIndex - 1 ).getWidth();
 
-                if ( -draggedDistance > (width / 2) )
+                if ( -draggedDistance > width / 2 )
 					{
                     // Swap me
                     columnModel.moveColumn( hitColumnIndex, hitColumnIndex - 1 );
@@ -427,13 +438,13 @@ extends		JComponent
                     hitColumnIndex--;
 					}
 				}
-            else if ( (draggedDistance > 0) && (hitColumnIndex != lastColumn) )
+            else if ( draggedDistance > 0 && hitColumnIndex != lastColumn )
 				{
                 // Moving right; check nextColumn
-                int width = columnModel.getColumnMargin() +
+                final int width = columnModel.getColumnMargin() +
                     columnModel.getColumn( hitColumnIndex + 1 ).getWidth();
 
-                if ( draggedDistance > (width / 2) )
+                if ( draggedDistance > width / 2 )
 					{
                     // Swap me
                     columnModel.moveColumn( hitColumnIndex, hitColumnIndex + 1 );
@@ -448,7 +459,7 @@ extends		JComponent
             redrawRect.x += getDraggedDistance();
 
             // draggedDistance += delta;
-            Rectangle redrawRect2 = getHeaderRect( hitColumnIndex ); // where I'm now
+            final Rectangle redrawRect2 = getHeaderRect( hitColumnIndex ); // where I'm now
             redrawRect2.x += draggedDistance;
             redrawRect = redrawRect.union( redrawRect2 );  // Union the 2 rects
 
@@ -473,19 +484,19 @@ extends		JComponent
 			}
 
         private int
-		computeResizingColumn( Point p )
+		computeResizingColumn( final Point p )
 			{
             int column = 0;
-            Rectangle resizeRect =
+            final Rectangle resizeRect =
 				new Rectangle( -3, 0, 6, getSize().height );
 
-            int columnMargin = getColumnModel().getColumnMargin();
+            final int columnMargin = getColumnModel().getColumnMargin();
 
-            Enumeration enumeration = getColumnModel().getColumns();
+            final Enumeration enumeration = getColumnModel().getColumns();
 
             for ( ; enumeration.hasMoreElements() ; )
 				{
-                TableColumn aColumn = (TableColumn) enumeration.nextElement();
+                final TableColumn aColumn = (TableColumn) enumeration.nextElement();
                 resizeRect.x += aColumn.getWidth() + columnMargin;
 
                 if ( resizeRect.x > p.x )
@@ -506,9 +517,9 @@ extends		JComponent
 
 
     public void
-	paint( Graphics g )
+	paint( final Graphics g )
 		{
-		Rectangle clipBounds = g.getClipBounds();
+		final Rectangle clipBounds = g.getClipBounds();
 
 		if ( getColumnModel() == null )
 			return;
@@ -518,19 +529,19 @@ extends		JComponent
 		int draggedColumnIndex = -1;
 		Rectangle draggedCellRect = null;
 
-		Dimension size = this.getSize();
+		final Dimension size = this.getSize();
 
-		Rectangle cellRect =
+		final Rectangle cellRect =
 			new Rectangle( 0, 0, size.width, size.height );
 
-		Enumeration enumeration = getColumnModel().getColumns();
+		final Enumeration enumeration = getColumnModel().getColumns();
 
 		for ( ; enumeration.hasMoreElements() ; )
 			{
-			TableColumn aColumn =
+			final TableColumn aColumn =
 				(TableColumn) enumeration.nextElement();
 
-			int columnMargin = this.getColumnModel().getColumnMargin();
+			final int columnMargin = this.getColumnModel().getColumnMargin();
 
 			cellRect.width = aColumn.getWidth() + columnMargin;
 			// Note: The header cellRect includes columnMargin so the
@@ -565,7 +576,7 @@ extends		JComponent
 			}
 
 		// draw the dragged cell if we are dragging
-		TableColumn draggedColumnObject = this.getDraggedColumn();
+		final TableColumn draggedColumnObject = this.getDraggedColumn();
 		if ( draggedColumnObject != null && draggedCellRect != null )
 			{
 			draggedCellRect.x += getDraggedDistance();
@@ -574,11 +585,11 @@ extends		JComponent
 		}
 
     private void
-	paintCell( Graphics g, Rectangle cellRect, int columnIndex )
+	paintCell( final Graphics g, final Rectangle cellRect, final int columnIndex )
 		{
-        TableColumn aCol = this.getColumnModel().getColumn( columnIndex );
+        final TableColumn aCol = this.getColumnModel().getColumn( columnIndex );
 
-		Component component =
+		final Component component =
 			this.hdrCellRenderer.getHeaderCellRendererComponent
 				( this, aCol.getHeaderValue(), columnIndex );
 
@@ -597,12 +608,12 @@ extends		JComponent
 	getHeaderHeight()
 		{
         int height = 0;
-        TableColumnModel columnModel = getColumnModel();
+        final TableColumnModel columnModel = getColumnModel();
         for( int col = 0 ; col < columnModel.getColumnCount() ; col++ )
 			{
-            TableColumn aCol = columnModel.getColumn( col );
+            final TableColumn aCol = columnModel.getColumn( col );
 
-            Component comp =
+            final Component comp =
 				this.hdrCellRenderer.getHeaderCellRendererComponent
 					( this, aCol.getHeaderValue(), col );
 
@@ -615,7 +626,7 @@ extends		JComponent
     private Dimension
 	createHeaderSize( long width )
 		{
-        TableColumnModel columnModel = getColumnModel();
+        final TableColumnModel columnModel = getColumnModel();
 
         // None of the callers include the intercell spacing, do it here.
 		// The + 1 includes the extra margin on the last column.
@@ -632,53 +643,53 @@ extends		JComponent
 
 
     /**
-     * Return the minimum size of the header. The minimum width is the sum 
+     * Return the minimum size of the header. The minimum width is the sum
      * of the minimum widths of each column (plus inter-cell spacing).
      */
     public Dimension
 	getMinimumSize()
 		{
         long width = 0;
-        Enumeration enumeration = getColumnModel().getColumns();
+        final Enumeration enumeration = getColumnModel().getColumns();
         for ( ; enumeration.hasMoreElements() ; )
 			{
-            TableColumn aColumn = (TableColumn)enumeration.nextElement();
+            final TableColumn aColumn = (TableColumn)enumeration.nextElement();
             width += aColumn.getMinWidth();
 			}
         return createHeaderSize( width );
 		}
 
     /**
-     * Return the preferred size of the header. The preferred height is the 
-     * maximum of the preferred heights of all of the components provided 
-     * by the header renderers. The preferred width is the sum of the 
+     * Return the preferred size of the header. The preferred height is the
+     * maximum of the preferred heights of all of the components provided
+     * by the header renderers. The preferred width is the sum of the
      * preferred widths of each column (plus inter-cell spacing).
      */
     public Dimension
 	getPreferredSize()
 		{
         long width = 0;
-        Enumeration enumeration = getColumnModel().getColumns();
+        final Enumeration enumeration = getColumnModel().getColumns();
         for ( ; enumeration.hasMoreElements() ; )
 			{
-            TableColumn aColumn = (TableColumn)enumeration.nextElement();
+            final TableColumn aColumn = (TableColumn)enumeration.nextElement();
             width += aColumn.getPreferredWidth();
 			}
         return createHeaderSize( width );
 		}
 
     /**
-     * Return the maximum size of the header. The maximum width is the sum 
+     * Return the maximum size of the header. The maximum width is the sum
      * of the maximum widths of each column (plus inter-cell spacing).
      */
     public Dimension
 	getMaximumSize()
 		{
         long width = 0;
-        Enumeration enumeration = getColumnModel().getColumns();
+        final Enumeration enumeration = getColumnModel().getColumns();
         for ( ; enumeration.hasMoreElements() ; )
 			{
-            TableColumn aColumn = (TableColumn)enumeration.nextElement();
+            final TableColumn aColumn = (TableColumn)enumeration.nextElement();
             width += aColumn.getMaxWidth();
 			}
         return createHeaderSize( width );
@@ -693,25 +704,25 @@ extends		JComponent
      *						of range
      */
     public Rectangle
-	getHeaderRect( int columnIndex )
+	getHeaderRect( final int columnIndex )
 		{
-		TableColumnModel columnModel = getColumnModel();
+		final TableColumnModel columnModel = getColumnModel();
 
-		if ( (columnIndex < 0)
-				|| (columnIndex >= columnModel.getColumnCount()) )
+		if ( columnIndex < 0
+				|| columnIndex >= columnModel.getColumnCount() )
 			{
 			throw new IllegalArgumentException("Column index out of range");
 			}
 
 		int rectX = 0;
 		int column = 0;
-		int columnMargin = this.getColumnModel().getColumnMargin();
+		final int columnMargin = this.getColumnModel().getColumnMargin();
 
-		Enumeration enumeration = this.getColumnModel().getColumns();
+		final Enumeration enumeration = this.getColumnModel().getColumns();
 
 		for ( ; enumeration.hasMoreElements() ; )
 			{
-			TableColumn aColumn = (TableColumn) enumeration.nextElement();
+			final TableColumn aColumn = (TableColumn) enumeration.nextElement();
 
 			if ( column == columnIndex )
 				{
@@ -729,11 +740,11 @@ extends		JComponent
 	public Point
 	getLocationOnScreen()
 		{
-		Container parent = this.getParent();
+		final Container parent = this.getParent();
 		if ( parent != null )
 			{
-			Point parentLocation = parent.getLocationOnScreen();
-			Point componentLocation = this.getLocation();
+			final Point parentLocation = parent.getLocationOnScreen();
+			final Point componentLocation = this.getLocation();
 			componentLocation.translate
 				( parentLocation.x, parentLocation.y );
 			return componentLocation;
@@ -743,7 +754,7 @@ extends		JComponent
 			return null;
 			}
 		}
-		
+
 	public boolean
 	isFocusTraversable()
 		{
@@ -766,10 +777,10 @@ extends		JComponent
 	class		ResizeEvent
 	extends		AWTEvent
 		{
-		private boolean		isResizing;
+		private final boolean		isResizing;
 
 		public
-		ResizeEvent( Component source, boolean isResizing )
+		ResizeEvent( final Component source, final boolean isResizing )
 			{
 			super( source, RESERVED_ID_MAX );
 			this.isResizing = isResizing;
@@ -806,7 +817,7 @@ extends		JComponent
 
 		public Component
 		getHeaderCellRendererComponent(
-				ColumnHeader header, Object value, int index )
+				final ColumnHeader header, Object value, final int index )
 			{
 			if ( value == null )
 				{

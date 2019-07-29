@@ -1,16 +1,28 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
-import com.ice.pref.*;
-import com.ice.config.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.table.AbstractTableModel;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
+import com.ice.pref.PrefsTuple;
+import com.ice.pref.PrefsTupleTable;
+import com.ice.pref.UserPrefs;
 
 
 public
@@ -30,7 +42,7 @@ implements	FocusListener
 		}
 
 	public
-	ConfigTupleTableEditor( String typeName )
+	ConfigTupleTableEditor( final String typeName )
 		{
 		super( typeName );
 		}
@@ -41,21 +53,21 @@ implements	FocusListener
 		}
 
 	public void
-	focusGained( FocusEvent event )
+	focusGained( final FocusEvent event )
 		{
 		}
 
 	public void
-	focusLost( FocusEvent event )
+	focusLost( final FocusEvent event )
 		{
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		PrefsTupleTable table =
+		final PrefsTupleTable table =
 			prefs.getTupleTable( spec.getPropertyName(), null );
 
 		this.model.setData( table );
@@ -65,23 +77,23 @@ implements	FocusListener
 		}
 
 	public boolean
-	isTupleTable( ConfigureSpec spec )
+	isTupleTable( final ConfigureSpec spec )
 		{
 		return true;
 		}
 
 	public boolean
-	isStringArray( ConfigureSpec spec )
+	isStringArray( final ConfigureSpec spec )
 		{
 		return false;
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		this.table.clearSelection();
-		String propName = spec.getPropertyName();
-		PrefsTupleTable table = this.model.getData();
+		final String propName = spec.getPropertyName();
+		final PrefsTupleTable table = this.model.getData();
 		if ( table != null )
 			{
 			prefs.setTupleTable( propName, this.model.getData() );
@@ -91,7 +103,7 @@ implements	FocusListener
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new BorderLayout() );
 		result.setBorder(
 			new CompoundBorder(
@@ -110,11 +122,11 @@ implements	FocusListener
 
 		this.table.setIntercellSpacing( new Dimension( 1, 1 ) );
 
-		JScrollPane scroller = new JScrollPane( this.table );
+		final JScrollPane scroller = new JScrollPane( this.table );
 
 		result.add( "Center", scroller );
 
-		JPanel ctlPan = new JPanel();
+		final JPanel ctlPan = new JPanel();
 		ctlPan.setLayout( new GridLayout( 1, 3, 5, 5 ) );
 
 		result.add( "South", ctlPan );
@@ -123,7 +135,7 @@ implements	FocusListener
 			this.new ActionAdapter()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{ insertElement(); }
 				}
 			);
@@ -134,7 +146,7 @@ implements	FocusListener
 			this.new ActionAdapter()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{ appendElement(); }
 				}
 			);
@@ -145,7 +157,7 @@ implements	FocusListener
 			this.new ActionAdapter()
 				{
 				public void
-				actionPerformed( ActionEvent e )
+				actionPerformed( final ActionEvent e )
 					{ deleteElement(); }
 				}
 			);
@@ -159,7 +171,7 @@ implements	FocusListener
 	public void
 	insertElement()
 		{
-		int row = this.table.getSelectedRow();
+		final int row = this.table.getSelectedRow();
 		this.model.insertElement( "New Key", row );
 		this.table.setRowSelectionInterval( row, row );
 		this.table.repaint( 250 );
@@ -169,7 +181,7 @@ implements	FocusListener
 	appendElement()
 		{
 		this.model.appendElement( "New Key" );
-		int row = this.model.getRowCount() - 1;
+		final int row = this.model.getRowCount() - 1;
 		this.table.setRowSelectionInterval( row, row );
 		this.table.repaint( 250 );
 		}
@@ -205,12 +217,12 @@ implements	FocusListener
 			}
 
 		public
-		TupleTableModel( PrefsTupleTable table )
+		TupleTableModel( final PrefsTupleTable table )
 			{
 			this.table = table;
 			this.colCount =
-				( table == null ? 0
-					: this.table.getMaximumTupleLength() );
+				table == null ? 0
+					: this.table.getMaximumTupleLength();
 			}
 
 		public PrefsTupleTable
@@ -220,52 +232,52 @@ implements	FocusListener
 			}
 
 		public void
-		setData( PrefsTupleTable table )
+		setData( final PrefsTupleTable table )
 			{
 			this.table = table;
 
 			this.colCount =
-				( table == null ? 0
-					: this.table.getMaximumTupleLength() + 1 );
+				table == null ? 0
+					: this.table.getMaximumTupleLength() + 1;
 
 			this.fireTableStructureChanged();
 			}
 
 		public void
-		insertElement( String key, int row )
+		insertElement( final String key, final int row )
 			{
-			String[] vals = new String[ this.colCount - 1 ];
+			final String[] vals = new String[ this.colCount - 1 ];
 			for ( int i = 0 ; i < this.colCount - 1 ; ++i ) vals[i] = "";
-			PrefsTuple tup = new PrefsTuple( key, vals );
+			final PrefsTuple tup = new PrefsTuple( key, vals );
 			this.insertElement( tup, row );
 			}
 
 		public void
-		insertElement( PrefsTuple tup, int row )
+		insertElement( final PrefsTuple tup, final int row )
 			{
 			this.table.insertTupleAt( tup, row );
 			this.fireTableRowsInserted( row, row );
 			}
 
 		public void
-		appendElement( String key )
+		appendElement( final String key )
 			{
-			String[] vals = new String[ this.colCount - 1 ];
+			final String[] vals = new String[ this.colCount - 1 ];
 			for ( int i = 0 ; i < this.colCount - 1 ; ++i ) vals[i] = "";
-			PrefsTuple tup = new PrefsTuple( key, vals );
+			final PrefsTuple tup = new PrefsTuple( key, vals );
 			this.appendElement( tup );
 			}
 
 		public void
-		appendElement( PrefsTuple tup )
+		appendElement( final PrefsTuple tup )
 			{
-			int sz = this.table.size();
+			final int sz = this.table.size();
 			this.table.appendTuple( tup );
 			this.fireTableRowsInserted( sz, sz );
 			}
 
 		public void
-		deleteElement( int row )
+		deleteElement( final int row )
 			{
 			this.table.removeTupleAt( row );
 			this.fireTableRowsDeleted( row, row );
@@ -276,16 +288,16 @@ implements	FocusListener
 		//
 
 		public String
-		getColumnName( int column )
+		getColumnName( final int column )
 			{
 			return
-				(column == 0
-					? "Key"
-					: "Value["+(column-1)+"]" );
+				column == 0
+				? "Key"
+				: "Value["+(column-1)+"]";
 			}
- 
+
 		public Class
-		getColumnClass( int column )
+		getColumnClass( final int column )
 			{
 			return String.class;
 			}
@@ -293,7 +305,7 @@ implements	FocusListener
 		public int
 		getColumnCount()
 			{
-			return this.colCount; 
+			return this.colCount;
 			}
 
 		public int
@@ -301,17 +313,17 @@ implements	FocusListener
 			{
 			if ( this.table == null )
 				return 0;
-			
+
 			return table.size();
 			}
- 
+
 		public Object
-		getValueAt( int aRow, int aColumn )
+		getValueAt( final int aRow, final int aColumn )
 			{
 			if ( this.table == null )
 				return "";
 
-			PrefsTuple tuple = this.table.getTupleAt( aRow );
+			final PrefsTuple tuple = this.table.getTupleAt( aRow );
 			if ( tuple != null )
 				{
 				if ( aColumn == 0 )
@@ -320,8 +332,8 @@ implements	FocusListener
 					}
 				else if ( aColumn <= tuple.length() )
 					{
-					String val = tuple.getValues()[ aColumn - 1 ];
-					return ( val == null ? "" : val );
+					final String val = tuple.getValues()[ aColumn - 1 ];
+					return val == null ? "" : val;
 					}
 				else
 					{
@@ -335,17 +347,17 @@ implements	FocusListener
 			}
 
 		public void
-		setValueAt( Object value, int row, int column )
+		setValueAt( final Object value, final int row, final int column )
 			{
-			PrefsTuple tuple = this.table.getTupleAt( row );
+			final PrefsTuple tuple = this.table.getTupleAt( row );
 
 			if ( column > 0 )
 				{
 				String[] vals = tuple.getValues();
 
-				if ( (column - 1) >= vals.length )
+				if ( column - 1 >= vals.length )
 					{
-					String[] nvals = new String[ column ];
+					final String[] nvals = new String[ column ];
 					System.arraycopy( vals, 0, nvals, 0, vals.length );
 					for ( int j = vals.length ; j < column ; ++j )
 						nvals[j] = "";
@@ -357,15 +369,15 @@ implements	FocusListener
 				}
 			else if ( row < this.table.size() )
 				{
-				String[] vals = tuple.getValues();
-				PrefsTuple newTup =
+				final String[] vals = tuple.getValues();
+				final PrefsTuple newTup =
 					new PrefsTuple( (String) value, vals );
 				this.table.setTupleAt( newTup, row );
 				}
 			}
 
 		public boolean
-		isCellEditable( int row, int column )
+		isCellEditable( final int row, final int column )
 			{
 			return true;
 			}
@@ -376,7 +388,7 @@ implements	FocusListener
 	implements	ActionListener
 		{
 		public void
-		actionPerformed( ActionEvent event )
+		actionPerformed( final ActionEvent event )
 			{
 			}
 		}

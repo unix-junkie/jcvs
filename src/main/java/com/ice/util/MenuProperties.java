@@ -3,19 +3,19 @@ package com.ice.util;
 
 import java.awt.event.ActionListener;
 
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 
 public class
 MenuProperties extends Object
 	{
 	static public JPopupMenu
-    loadPopupMenu( String menuPropertyName, ActionListener listener )
+    loadPopupMenu( final String menuPropertyName, final ActionListener listener )
 		{
-		JPopupMenu popup = new JPopupMenu();
+		final JPopupMenu popup = new JPopupMenu();
 
 		MenuProperties.addMenuItems( popup, menuPropertyName, listener );
 
@@ -23,11 +23,11 @@ MenuProperties extends Object
 		}
 
 	static public void
-	addGenericItem( JComponent menu, JComponent item )
+	addGenericItem( final JComponent menu, final JComponent item )
 		{
 		if ( menu instanceof JMenu )
 			{
-			JMenu jm = (JMenu) menu;
+			final JMenu jm = (JMenu) menu;
 
 			if ( item == null )
 				jm.addSeparator();
@@ -36,7 +36,7 @@ MenuProperties extends Object
 			}
 		else
 			{
-			JPopupMenu jp = (JPopupMenu) menu;
+			final JPopupMenu jp = (JPopupMenu) menu;
 
 			if ( item == null )
 				jp.addSeparator();
@@ -47,16 +47,16 @@ MenuProperties extends Object
 
 	static public void
 	addMenuItems(
-			JComponent menu, String menuPropertyName,
-			ActionListener listener )
+			final JComponent menu, final String menuPropertyName,
+			final ActionListener listener )
 		{
 		String[]	itemList;
 		String		itemString;
 		String		menuString;
-		String		itemNameStr; 
+		String		itemNameStr;
 		JMenuItem	mItem;
 
-		menuString = 
+		menuString =
 			UserProperties.getProperty
 				( "menu." + menuPropertyName, null );
 
@@ -89,7 +89,7 @@ MenuProperties extends Object
 					}
 				else
 					{
-					int colonIdx = itemString.indexOf( ':' );
+					final int colonIdx = itemString.indexOf( ':' );
 
 					if ( itemString.equals( "-" ) )
 						{
@@ -104,17 +104,17 @@ MenuProperties extends Object
 						}
 					 else
 						{
-						String title =
+						final String title =
 							itemString.substring( 0, colonIdx );
 
-						String command =
+						final String command =
 							itemString.substring( colonIdx + 1 );
 
 						if ( command.equals( "@" ) )
 							{
-							JMenu subMenu = new JMenu( title );
+							final JMenu subMenu = new JMenu( title );
 
-							String subMenuName =
+							final String subMenuName =
 								menuPropertyName + "." + itemList[iIdx];
 
 							MenuProperties.addMenuItems

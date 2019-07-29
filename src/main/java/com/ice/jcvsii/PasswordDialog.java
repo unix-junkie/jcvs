@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,18 +16,36 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
@@ -44,7 +62,7 @@ implements	ActionListener
 	private JPasswordField	passwordField;
 
 	public
-	PasswordDialog( Frame parent, String userName )
+	PasswordDialog( final Frame parent, final String userName )
 		{
 		super( parent, "Login Information", true );
 
@@ -54,9 +72,9 @@ implements	ActionListener
 
 		this.pack();
 
-		Dimension sz = this.getSize();
+		final Dimension sz = this.getSize();
 
-		Point location =
+		final Point location =
 			AWTUtilities.computeDialogLocation
 				( this, sz.width, sz.height );
 
@@ -66,7 +84,7 @@ implements	ActionListener
 			new WindowAdapter()
 				{
 				public void
-				windowActivated(WindowEvent e)
+				windowActivated(final WindowEvent e)
 					{
 					passwordField.requestFocus();
 					}
@@ -79,20 +97,20 @@ implements	ActionListener
 		{
 		return this.userName;
 		}
-	
+
 	public String
 	getPassword()
 		{
 		return this.password;
 		}
-	
+
     public void
-    actionPerformed( ActionEvent event )
+    actionPerformed( final ActionEvent event )
         {
 		boolean doDispose = true;
 
-	    String command = event.getActionCommand();
-		
+	    final String command = event.getActionCommand();
+
 		if ( event.getSource() == this.passwordField )
 			{
 			this.userName = this.userNameField.getText();
@@ -124,22 +142,22 @@ implements	ActionListener
         }
 
 	public void
-	establishDialogContents( String userName ) 
+	establishDialogContents( final String userName )
 		{
 		JLabel		label;
 		JButton		button;
 
-		UserPrefs prefs = Config.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		JPanel mainPanel = new JPanel();
+		final JPanel mainPanel = new JPanel();
 		mainPanel.setLayout( new GridBagLayout() );
 		mainPanel.setBorder
 			( new CompoundBorder
 				( new EtchedBorder( EtchedBorder.LOWERED ),
 					new EmptyBorder( 3, 3, 3, 3 ) ) );
 
-		Font lblFont =
+		final Font lblFont =
 			prefs.getFont
 				( "passwordDialog.label.font",
 					new Font( "Dialog", Font.BOLD, 14 ) );
@@ -185,7 +203,7 @@ implements	ActionListener
 			1, 1, 1, 1, 1.0, 1.0,
 			new Insets( 5, 1, 10, 1 ) );
 
-		JPanel controlPanel = new JPanel();
+		final JPanel controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 5, 5 ) );
 
 		button = new JButton( rmgr.getUIString( "name.for.ok" ) );
@@ -198,15 +216,15 @@ implements	ActionListener
 		button.setActionCommand( "CANCEL" );
 		controlPanel.add( button );
 
-		JPanel southPan = new JPanel();
+		final JPanel southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.EAST, controlPanel );
 		southPan.setBorder( new EmptyBorder( 12, 0, 2, 0 ) );
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		JPanel contPan = new JPanel();
+		final JPanel contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 5, 5, 5 ) );
 		content.add( BorderLayout.CENTER, contPan );

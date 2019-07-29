@@ -1,13 +1,28 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
-import java.io.File;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import javax.swing.*;
-import javax.swing.border.*;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import com.ice.cvsc.CVSProject;
 import com.ice.cvsc.CVSProjectDef;
@@ -49,20 +64,20 @@ implements	ActionListener, PropertyChangeListener
 		//
 		// Remove our property listeners.
 		//
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
 		prefs.removePropertyChangeListener
-			( Config.WB_DET_TITLE_BG, this );
+			( ConfigConstants.WB_DET_TITLE_BG, this );
 		prefs.removePropertyChangeListener
-			( Config.WB_DET_TITLE_FONT, this );
+			( ConfigConstants.WB_DET_TITLE_FONT, this );
 		prefs.removePropertyChangeListener
-			( Config.WB_DET_TITLE_HEIGHT, this );
+			( ConfigConstants.WB_DET_TITLE_HEIGHT, this );
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equals( "UNKNOWN" ) )
 			{
@@ -70,29 +85,29 @@ implements	ActionListener, PropertyChangeListener
 		}
 
 	public void
-	propertyChange( PropertyChangeEvent evt )
+	propertyChange( final PropertyChangeEvent evt )
 		{
-		String propName = evt.getPropertyName();
+		final String propName = evt.getPropertyName();
 
-		UserPrefs p = (UserPrefs) evt.getSource();
-		if ( propName.equals( Config.WB_DET_TITLE_BG ) )
+		final UserPrefs p = (UserPrefs) evt.getSource();
+		if ( propName.equals( ConfigConstants.WB_DET_TITLE_BG ) )
 			{
 			title.setBackground( p.getColor
-				( Config.WB_DET_TITLE_BG,
+				( ConfigConstants.WB_DET_TITLE_BG,
 					title.getBackground() ) );
 			}
-		else if ( propName.equals( Config.WB_DET_TITLE_HEIGHT ) )
+		else if ( propName.equals( ConfigConstants.WB_DET_TITLE_HEIGHT ) )
 			{
 			title.setPreferredSize
 				( new Dimension( 125, p.getInteger
-					( Config.WB_DET_TITLE_HEIGHT,
+					( ConfigConstants.WB_DET_TITLE_HEIGHT,
 						title.getSize().height ) ) );
 			title.revalidate();
 			}
-		else if ( propName.equals( Config.WB_DET_TITLE_FONT ) )
+		else if ( propName.equals( ConfigConstants.WB_DET_TITLE_FONT ) )
 			{
 			title.setFont( p.getFont
-				( Config.WB_DET_TITLE_FONT,
+				( ConfigConstants.WB_DET_TITLE_FONT,
 					title.getFont() ) );
 			title.revalidate();
 			}
@@ -103,7 +118,7 @@ implements	ActionListener, PropertyChangeListener
 	public void
 	clearDefinition()
 		{
-		String titleStr =
+		final String titleStr =
 			ResourceMgr.getInstance().getUIString( "wb.detail.title" );
 		this.title.setText( titleStr );
 
@@ -121,7 +136,7 @@ implements	ActionListener, PropertyChangeListener
 		}
 
 	public void
-	showDefinition( WorkBenchDefinition def )
+	showDefinition( final WorkBenchDefinition def )
 		{
 		this.projectToke.setText( def.getName() );
 		this.title.setText( def.getDisplayName() );
@@ -141,12 +156,12 @@ implements	ActionListener, PropertyChangeListener
 			{
 			this.localDirectory.setText( def.getLocalDirectory() );
 
-			String adminPath =
+			final String adminPath =
 				CVSProject.rootPathToAdminPath
 					( def.getLocalDirectory() );
 
 			try {
-				CVSProjectDef projDef =
+				final CVSProjectDef projDef =
 					CVSProjectDef.readDef( adminPath );
 
 				this.repository.setText( projDef.getRepository() );
@@ -155,9 +170,9 @@ implements	ActionListener, PropertyChangeListener
 				this.hostName.setText( projDef.getHostName() );
 				this.connectMethod.setText( projDef.getConnectMethodString() );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
-				String errMsg =
+				final String errMsg =
 					ResourceMgr.getInstance().getUIString
 						( "wb.details.error.repos" );
 
@@ -180,29 +195,29 @@ implements	ActionListener, PropertyChangeListener
 		JLabel lbl;
 		String lblStr;
 
-		UserPrefs prefs = Config.getPreferences();
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		this.setLayout( new BorderLayout() );
 
 		this.setMinimumSize( new Dimension( 175, 100 ) );
 		this.setPreferredSize( new Dimension( 325, 125 ) );
 
-		String titleStr =
+		final String titleStr =
 			ResourceMgr.getInstance().getUIString( "wb.detail.title" );
-		this.title = new JLabel( titleStr, JLabel.LEFT );
+		this.title = new JLabel( titleStr, SwingConstants.LEFT );
 		this.title.setOpaque( true );
 		this.title.setForeground( Color.black );
 		this.title.setPreferredSize
 			( new Dimension
 				( 125, prefs.getInteger
-					( Config.WB_DET_TITLE_HEIGHT, 35 ) ) );
+					( ConfigConstants.WB_DET_TITLE_HEIGHT, 35 ) ) );
 		this.title.setBackground
 			( prefs.getColor
-				( Config.WB_DET_TITLE_BG, new Color( 232, 232, 255 ) ) );
+				( ConfigConstants.WB_DET_TITLE_BG, new Color( 232, 232, 255 ) ) );
 		this.title.setFont
 			( prefs.getFont
-				( Config.WB_DET_TITLE_FONT,
+				( ConfigConstants.WB_DET_TITLE_FONT,
 					new Font( "SansSerif", Font.BOLD, 14 ) ) );
 		this.title.setBorder
 			( new CompoundBorder
@@ -214,16 +229,16 @@ implements	ActionListener, PropertyChangeListener
 		//
 
 		prefs.addPropertyChangeListener
-			( Config.WB_DET_TITLE_BG, this );
+			( ConfigConstants.WB_DET_TITLE_BG, this );
 
 		prefs.addPropertyChangeListener
-			( Config.WB_DET_TITLE_FONT, this );
+			( ConfigConstants.WB_DET_TITLE_FONT, this );
 
 		prefs.addPropertyChangeListener
-			( Config.WB_DET_TITLE_HEIGHT, this );
+			( ConfigConstants.WB_DET_TITLE_HEIGHT, this );
 
 
-		JPanel infoPan = new JPanel();
+		final JPanel infoPan = new JPanel();
 		infoPan.setLayout( new GridBagLayout() );
 		infoPan.setBorder( new EmptyBorder( 9, 9, 9, 9 ) );
 
@@ -354,7 +369,7 @@ implements	ActionListener, PropertyChangeListener
 		this.descText.setWrapStyleWord( true );
 		this.descText.setOpaque( false );
 
-		String descTitle = rmgr.getUIString( "wb.detail.descpan.title" );
+		final String descTitle = rmgr.getUIString( "wb.detail.descpan.title" );
 		this.descPan = new JPanel();
 		this.descPan.setLayout( new BorderLayout() );
 		this.descPan.add( BorderLayout.CENTER, descText );
@@ -383,7 +398,7 @@ implements	ActionListener, PropertyChangeListener
 	extends		JLabel
 		{
 		public
-		DetailLabel( String text )
+		DetailLabel( final String text )
 			{
 			super( text );
 

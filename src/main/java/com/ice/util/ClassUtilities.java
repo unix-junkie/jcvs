@@ -5,11 +5,11 @@ public class
 ClassUtilities
 	{
 	public static boolean
-	implementsInterface( Class aClass, String interfaceName )
+	implementsInterface( final Class aClass, final String interfaceName )
 		{
 		int ii;
 
-		Class[] interfaces = aClass.getInterfaces();
+		final Class[] interfaces = aClass.getInterfaces();
 
 		for ( ii = 0 ; ii < interfaces.length ; ++ii )
 			{
@@ -17,7 +17,7 @@ ClassUtilities
 				break;
 			}
 
-		return ( ii < interfaces.length );
+		return ii < interfaces.length;
 		}
 
 	}

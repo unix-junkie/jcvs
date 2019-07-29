@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,29 +16,46 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.io.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.*;
-import java.util.Enumeration;
+import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.Enumeration;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
-import com.ice.cvsc.*;
-import com.ice.pref.UserPrefs;
+import com.ice.cvsc.CVSEntry;
+import com.ice.cvsc.CVSEntryVector;
 import com.ice.pref.MenuPrefs;
-import com.ice.util.AWTUtilities;
+import com.ice.pref.UserPrefs;
 import com.ice.util.JFCUtilities;
 
 
@@ -48,29 +65,29 @@ extends		JPanel
 implements	ActionListener, FocusListener,
 			PropertyChangeListener, ColumnHeader.ResizeListener
 	{
-	private ColumnHeader		entriesHeader;
-	private EntryTree			entriesTree;
-	private EntryTreeModel		entriesModel;
-	private EntryColumnModel	columnModel;
-	private JScrollPane			entriesScroller;
+	private final ColumnHeader		entriesHeader;
+	private final EntryTree			entriesTree;
+	private final EntryTreeModel		entriesModel;
+	private final EntryColumnModel	columnModel;
+	private final JScrollPane			entriesScroller;
 
-	private JPopupMenu			dirPopup;
-	private JPopupMenu			filePopup;
+	private final JPopupMenu			dirPopup;
+	private final JPopupMenu			filePopup;
 
-	private ActionListener		popupListener;
+	private final ActionListener		popupListener;
 
-	private Border				actBorder;
-	private Border				deActBorder;
+	private final Border				actBorder;
+	private final Border				deActBorder;
 
 
 	public
-	EntryPanel( CVSEntry rootEntry, String localRoot, ActionListener popupListener )
+	EntryPanel( final CVSEntry rootEntry, final String localRoot, final ActionListener popupListener )
 		{
 		super();
 
 		this.setLayout( new GridBagLayout() );
 
-		EntryRootNode rootNode =
+		final EntryRootNode rootNode =
 			new EntryRootNode( rootEntry, localRoot );
 
 		this.columnModel = new EntryColumnModel();
@@ -80,11 +97,11 @@ implements	ActionListener, FocusListener,
 		this.entriesTree =
 			new EntryTree( this.entriesModel, this.columnModel );
 
-		UserPrefs prefs = Config.getPreferences();
+		final UserPrefs prefs = Config.getPreferences();
 
-		String lineStyle =
-			prefs.getProperty( Config.PROJECT_TREE_LINESTYLE, "Angled" );
-		
+		final String lineStyle =
+			prefs.getProperty( ConfigConstants.PROJECT_TREE_LINESTYLE, "Angled" );
+
 		this.entriesTree.putClientProperty
 			( "JTree.lineStyle", lineStyle );
 
@@ -126,39 +143,39 @@ implements	ActionListener, FocusListener,
 		ToolTipManager.sharedInstance().registerComponent( this.entriesTree );
 
 		prefs.addPropertyChangeListener
-			( Config.PROJECT_TREE_FONT, this );
+			( ConfigConstants.PROJECT_TREE_FONT, this );
 
 		prefs.addPropertyChangeListener
-			( Config.PROJECT_TREE_LINESTYLE, this );
+			( ConfigConstants.PROJECT_TREE_LINESTYLE, this );
 
 		prefs.addPropertyChangeListener
-			( Config.PROJECT_MODIFIED_FORMAT, this );
+			( ConfigConstants.PROJECT_MODIFIED_FORMAT, this );
 		}
 
 	public void
-	loadPreferences( UserPrefs prefs )
+	loadPreferences( final UserPrefs prefs )
 		{
 		int w, totalW = 0;
 
-		Font f =
+		final Font f =
 			prefs.getFont
-				( Config.PROJECT_TREE_FONT, this.getFont() );
+				( ConfigConstants.PROJECT_TREE_FONT, this.getFont() );
 
 		this.entriesTree.setFont( f );
 
-		w = prefs.getInteger( Config.PROJECT_NAME_WIDTH, 275 );
+		w = prefs.getInteger( ConfigConstants.PROJECT_NAME_WIDTH, 275 );
 		this.columnModel.setNameWidth( w );
 		totalW += w;
 
-		w = prefs.getInteger( Config.PROJECT_VERSION_WIDTH, 50 );
+		w = prefs.getInteger( ConfigConstants.PROJECT_VERSION_WIDTH, 50 );
 		this.columnModel.setVersionWidth( w );
 		totalW += w;
 
-		w = prefs.getInteger( Config.PROJECT_TAG_WIDTH, 50 );
+		w = prefs.getInteger( ConfigConstants.PROJECT_TAG_WIDTH, 50 );
 		this.columnModel.setTagWidth( w );
 		totalW += w;
 
-		w = prefs.getInteger( Config.PROJECT_MODIFIED_WIDTH, 175 );
+		w = prefs.getInteger( ConfigConstants.PROJECT_MODIFIED_WIDTH, 175 );
 		this.columnModel.setModifiedWidth( w );
 		totalW += w;
 
@@ -170,60 +187,60 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	savePreferences( UserPrefs prefs )
+	savePreferences( final UserPrefs prefs )
 		{
 		prefs.setInteger
-			( Config.PROJECT_NAME_WIDTH,
+			( ConfigConstants.PROJECT_NAME_WIDTH,
 				this.columnModel.getNameWidth() );
 
 		prefs.setInteger
-			( Config.PROJECT_VERSION_WIDTH,
+			( ConfigConstants.PROJECT_VERSION_WIDTH,
 				this.columnModel.getVersionWidth() );
 
 		prefs.setInteger
-			( Config.PROJECT_TAG_WIDTH,
+			( ConfigConstants.PROJECT_TAG_WIDTH,
 				this.columnModel.getTagWidth() );
 
 		prefs.setInteger
-			( Config.PROJECT_MODIFIED_WIDTH,
+			( ConfigConstants.PROJECT_MODIFIED_WIDTH,
 				this.columnModel.getModifiedWidth() );
 
 		Config.getPreferences().removePropertyChangeListener
-			( Config.PROJECT_TREE_FONT, this );
+			( ConfigConstants.PROJECT_TREE_FONT, this );
 
 		Config.getPreferences().removePropertyChangeListener
-			( Config.PROJECT_TREE_LINESTYLE, this );
+			( ConfigConstants.PROJECT_TREE_LINESTYLE, this );
 
 		Config.getPreferences().removePropertyChangeListener
-			( Config.PROJECT_MODIFIED_FORMAT, this );
+			( ConfigConstants.PROJECT_MODIFIED_FORMAT, this );
 
 		ToolTipManager.sharedInstance().
 			unregisterComponent( this.entriesTree );
 		}
 
 	public void
-	propertyChange( PropertyChangeEvent evt )
+	propertyChange( final PropertyChangeEvent evt )
 		{
-		String propName = evt.getPropertyName();
-		UserPrefs p = (UserPrefs) evt.getSource();
-		if ( propName.equals( Config.PROJECT_TREE_FONT ) )
+		final String propName = evt.getPropertyName();
+		final UserPrefs p = (UserPrefs) evt.getSource();
+		if ( propName.equals( ConfigConstants.PROJECT_TREE_FONT ) )
 			{
-			Font f =
-				( p.getFont
-					( Config.PROJECT_TREE_FONT,
-						this.entriesTree.getFont() ) );
+			final Font f =
+				p.getFont
+				( ConfigConstants.PROJECT_TREE_FONT,
+					this.entriesTree.getFont() );
 
 			this.entriesTree.setFont( f );
 			this.entriesTree.revalidate();
 			this.entriesTree.repaint();
 			}
-		else if ( propName.equals( Config.PROJECT_TREE_LINESTYLE ) )
+		else if ( propName.equals( ConfigConstants.PROJECT_TREE_LINESTYLE ) )
 			{
 			this.entriesTree.putClientProperty
 				( "JTree.lineStyle", evt.getNewValue() );
 			this.entriesTree.repaint();
 			}
-		else if ( propName.equals( Config.PROJECT_MODIFIED_FORMAT ) )
+		else if ( propName.equals( ConfigConstants.PROJECT_MODIFIED_FORMAT ) )
 			{
 			this.entriesTree.resetDisplayCaches();
 			this.entriesTree.repaint();
@@ -231,13 +248,13 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	focusGained( FocusEvent e )
+	focusGained( final FocusEvent e )
 		{
 		this.entriesScroller.setBorder( this.actBorder );
 		}
 
 	public void
-	focusLost( FocusEvent e )
+	focusLost( final FocusEvent e )
 		{
 		this.entriesScroller.setBorder( this.deActBorder );
 		}
@@ -249,7 +266,7 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	clearSelection( TreePath selPath )
+	clearSelection( final TreePath selPath )
 		{
 		this.entriesTree.removeSelectionPath( selPath );
 		}
@@ -261,24 +278,24 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	selectAll( EntryNode root )
+	selectAll( final EntryNode root )
 		{
 		// NOTE This call to getChildCount() is REQUIRED
 		//      in order to get the child nodes loaded so
 		//      that the children() enumerator will not be
 		//      empty.
-		int cnt = root.getChildCount();
-	
-		TreePath rootPath = new TreePath( root.getPath() );
+		final int cnt = root.getChildCount();
+
+		final TreePath rootPath = new TreePath( root.getPath() );
 		this.entriesTree.expandPath( rootPath );
 
-		Enumeration enum = root.children();
-		for ( ; enum.hasMoreElements() ; )
+		final Enumeration enumeration = root.children();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			EntryNode node = (EntryNode) enum.nextElement();
+			final EntryNode node = (EntryNode) enumeration.nextElement();
 			if ( node.isLeaf() )
 				{
-				TreePath path = new TreePath( node.getPath() );
+				final TreePath path = new TreePath( node.getPath() );
 				this.entriesTree.addSelectionPath( path );
 			//	this.entriesTree.expandPath( path );
 				}
@@ -298,26 +315,26 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	selectModified( EntryNode root )
+	selectModified( final EntryNode root )
 		{
 		// NOTE This call to getChildCount() is REQUIRED
 		//      in order to get the child nodes loaded so
 		//      that the children() enumerator will not be
 		//      empty.
-		int cnt = root.getChildCount();
-		Enumeration enum = root.children();
-		for ( ; enum.hasMoreElements() ; )
+		final int cnt = root.getChildCount();
+		final Enumeration enumeration = root.children();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			EntryNode node = (EntryNode) enum.nextElement();
+			final EntryNode node = (EntryNode) enumeration.nextElement();
 			if ( node.isLeaf() )
 				{
-				CVSEntry entry = node.getEntry();
+				final CVSEntry entry = node.getEntry();
 				if ( entry.isLocalFileModified( node.getLocalFile() )
 						|| entry.isNewUserFile()
 						|| entry.isToBeRemoved()
-						|| entry.isInConflict() )	
+						|| entry.isInConflict() )
 					{
-					TreePath path = new TreePath( node.getPath() );
+					final TreePath path = new TreePath( node.getPath() );
 					this.entriesTree.addSelectionPath( path );
 					this.entriesTree.expandPath( path );
 					}
@@ -330,9 +347,9 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	expandAll( boolean expand )
+	expandAll( final boolean expand )
 		{
-		EntryNode root = this.entriesModel.getEntryRootNode();
+		final EntryNode root = this.entriesModel.getEntryRootNode();
 		// Can not use the enumeration method for expansion, as it
 		// only traverses *open* nodes! 8^)
 		//
@@ -344,10 +361,10 @@ implements	ActionListener, FocusListener,
 			{
 			// If the tree is not totally expanded,
 			// this approach quicker.
-			Enumeration enum = root.depthFirstEnumeration();
-			for ( ; enum.hasMoreElements() ; )
+			final Enumeration enumeration = root.depthFirstEnumeration();
+			for ( ; enumeration.hasMoreElements() ; )
 				{
-				EntryNode node = (EntryNode) enum.nextElement();
+				final EntryNode node = (EntryNode) enumeration.nextElement();
 				if ( node == root )
 					continue;
 				if ( ! node.isLeaf() )
@@ -358,14 +375,14 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	expandAll( EntryNode root )
+	expandAll( final EntryNode root )
 		{
 		// NOTE getChildCount() is used to force load the children.
-		int cnt = root.getChildCount();
-		Enumeration enum = root.children();
-		for ( ; enum.hasMoreElements() ; )
+		final int cnt = root.getChildCount();
+		final Enumeration enumeration = root.children();
+		for ( ; enumeration.hasMoreElements() ; )
 			{
-			EntryNode node = (EntryNode) enum.nextElement();
+			final EntryNode node = (EntryNode) enumeration.nextElement();
 			if ( ! node.isLeaf() )
 				{
 				this.entriesTree.expandPath
@@ -376,20 +393,20 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		Object	source = event.getSource();
+		final Object	source = event.getSource();
 	    String command = event.getActionCommand();
 
 		if ( source instanceof JMenuItem
 				&& this.popupListener != null )
 			{
-			TreePath[] selPaths = this.getSelectionPaths();
-			
+			final TreePath[] selPaths = this.getSelectionPaths();
+
 			// There had BETTER be one and only one.
 			if ( selPaths != null && selPaths.length > 0 )
 				{
-				EntryNode node = (EntryNode)
+				final EntryNode node = (EntryNode)
 					selPaths[0].getLastPathComponent();
 
 				//
@@ -408,9 +425,9 @@ implements	ActionListener, FocusListener,
 				// update overwriting all the locally modified files, since it
 				// does not know they are there!!!
 				//
-				char selectCh = command.charAt(0);
+				final char selectCh = command.charAt(0);
 				command = command.substring(2);
-				CVSEntryVector vector = new CVSEntryVector();
+				final CVSEntryVector vector = new CVSEntryVector();
 
 				if ( selectCh == 'L' )
 					{
@@ -437,7 +454,7 @@ implements	ActionListener, FocusListener,
 
 				if ( this.popupListener != null )
 					{
-					ActionEvent aEvent = new ActionEvent
+					final ActionEvent aEvent = new ActionEvent
 						( vector, ActionEvent.ACTION_PERFORMED,
 							"POPUP:" + command );
 
@@ -451,14 +468,14 @@ implements	ActionListener, FocusListener,
 	// COLUMN RESIZE LISTENER INTERFACE BEGIN
 	//
 	public void
-	columnHeadersNeedUpdate( ColumnHeader.ResizeEvent event )
+	columnHeadersNeedUpdate( final ColumnHeader.ResizeEvent event )
 		{
 		this.entriesTree.revalidate();
 		this.entriesTree.repaint();
 		}
 
 	public void
-	columnHeadersResized( ColumnHeader.ResizeEvent event )
+	columnHeadersResized( final ColumnHeader.ResizeEvent event )
 		{
 		this.entriesTree.resetCachedSizes();
 		this.entriesTree.revalidate();
@@ -468,7 +485,7 @@ implements	ActionListener, FocusListener,
 	//
 
 	public void
-	setRoot( TreeNode root )
+	setRoot( final TreeNode root )
 		{
 		this.entriesModel.setRoot( root );
 		}
@@ -486,7 +503,7 @@ implements	ActionListener, FocusListener,
 		}
 
 	public void
-	setTreeEntries( CVSEntry root )
+	setTreeEntries( final CVSEntry root )
 		{
 		this.setRoot( new EntryNode( root ) );
 		this.entriesTree.repaint( 500 );
@@ -497,11 +514,11 @@ implements	ActionListener, FocusListener,
 		{
 		EntryNode result = null;
 
-		TreePath path = this.entriesTree.getSelectionPath();
+		final TreePath path = this.entriesTree.getSelectionPath();
 
 		if ( path != null )
 			{
-			Object obj = path.getLastPathComponent();
+			final Object obj = path.getLastPathComponent();
 			result = (EntryNode) obj;
 			}
 
@@ -515,7 +532,7 @@ implements	ActionListener, FocusListener,
 		if ( paths == null )
 			paths = new TreePath[0];
 
-		EntryNode[] result = new EntryNode[ paths.length ];
+		final EntryNode[] result = new EntryNode[ paths.length ];
 		for ( int i = 0 ; i < paths.length ; ++i )
 			{
 			result[i] = (EntryNode) paths[i].getLastPathComponent();
@@ -536,13 +553,13 @@ implements	ActionListener, FocusListener,
 			}
 
 		public void
-		mousePressed( MouseEvent event )
+		mousePressed( final MouseEvent event )
 			{
 			this.isPopupClick = false;
 
 			if ( event.isPopupTrigger() )
 				{
-				int selRow =
+				final int selRow =
 					entriesTree.getRowForLocation
 						( event.getX(), event.getY() );
 
@@ -552,12 +569,12 @@ implements	ActionListener, FocusListener,
 					{
 					entriesTree.setSelectionRow( selRow );
 
-					JPopupMenu popup =
-						( getSelectedNode().isLeaf()
-							? filePopup
-							: dirPopup );
+					final JPopupMenu popup =
+						getSelectedNode().isLeaf()
+						? filePopup
+						: dirPopup;
 
-					Point pt =
+					final Point pt =
 						JFCUtilities.computePopupLocation
 							( event, (Component) event.getSource(), popup );
 
@@ -567,14 +584,14 @@ implements	ActionListener, FocusListener,
 			}
 
 		public void
-		mouseReleased( MouseEvent event )
+		mouseReleased( final MouseEvent event )
 			{
 			if ( this.isPopupClick )
 				return;
 
 			if ( event.isPopupTrigger() )
 				{
-				int selRow =
+				final int selRow =
 					entriesTree.getRowForLocation
 						( event.getX(), event.getY() );
 
@@ -584,12 +601,12 @@ implements	ActionListener, FocusListener,
 					{
 					entriesTree.setSelectionRow( selRow );
 
-					JPopupMenu popup =
-						( getSelectedNode().isLeaf()
-							? filePopup
-							: dirPopup );
+					final JPopupMenu popup =
+						getSelectedNode().isLeaf()
+						? filePopup
+						: dirPopup;
 
-					Point pt =
+					final Point pt =
 						JFCUtilities.computePopupLocation
 							( event, (Component) event.getSource(), popup );
 
@@ -599,7 +616,7 @@ implements	ActionListener, FocusListener,
 			}
 
 		public void
-		mouseClicked( MouseEvent event )
+		mouseClicked( final MouseEvent event )
 			{
 			if ( this.isPopupClick )
 				{
@@ -616,7 +633,7 @@ implements	ActionListener, FocusListener,
 		private void
 		processDoubleClick()
 			{
-			EntryNode node = getSelectedNode();
+			final EntryNode node = getSelectedNode();
 
 			if ( node == null )
 				return;
@@ -624,11 +641,11 @@ implements	ActionListener, FocusListener,
 			if ( ! node.isLeaf() )
 				return;
 
-			File selF = node.getLocalFile();
+			final File selF = node.getLocalFile();
 
-			String verb =
+			final String verb =
 				Config.getPreferences().getProperty
-					( Config.PROJECT_DOUBLE_CLICK_VERB, "open" );
+					( ConfigConstants.PROJECT_DOUBLE_CLICK_VERB, "open" );
 
 			JAFUtilities.openFile
 				( node.getEntry().getName(), selF, verb );

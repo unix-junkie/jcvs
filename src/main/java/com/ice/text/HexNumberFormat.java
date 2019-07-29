@@ -1,8 +1,8 @@
 /*
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -15,15 +15,16 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.text;
 
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.ParsePosition;
 
 /**
  * The HexNumberFormat class implements the code necessary
@@ -36,22 +37,22 @@ import java.util.*;
 
 public class
 HexNumberFormat	extends Format
-	{																
+	{
 	static public final String		RCS_ID = "$Id: HexNumberFormat.java,v 1.2 1999/04/01 17:27:42 time Exp $";
 	static public final String		RCS_REV = "$Revision: 1.2 $";
 
 	private static char[]		lowChars;
 	private static char[]		uprChars;
 
-	private int					count;
-	private String				pattern;
+	private final int					count;
+	private final String				pattern;
 	private static char[]		hexChars;
 
 	static
 		{
 		HexNumberFormat.lowChars = new char[20];
 		HexNumberFormat.uprChars = new char[20];
-		
+
 		HexNumberFormat.uprChars[0] = HexNumberFormat.lowChars[0] = '0';
 		HexNumberFormat.uprChars[1] = HexNumberFormat.lowChars[1] = '1';
 		HexNumberFormat.uprChars[2] = HexNumberFormat.lowChars[2] = '2';
@@ -77,23 +78,23 @@ HexNumberFormat	extends Format
 		}
 
 	public
-	HexNumberFormat( String pattern )
+	HexNumberFormat( final String pattern )
 		{
 		super();
 		this.pattern = pattern;
 		this.count = pattern.length();
-		this.hexChars =
-			( pattern.charAt(0) == 'X'
+		HexNumberFormat.hexChars =
+			pattern.charAt(0) == 'X'
 				? HexNumberFormat.uprChars
-				: HexNumberFormat.lowChars );
+				: HexNumberFormat.lowChars;
 		}
 
 	public String
-	format( int hexNum )
+	format( final int hexNum )
 		throws IllegalArgumentException
 		{
-		FieldPosition pos = new FieldPosition(0);
-		StringBuffer hexBuf = new StringBuffer(8);
+		final FieldPosition pos = new FieldPosition(0);
+		final StringBuffer hexBuf = new StringBuffer(8);
 
 		this.format( new Integer( hexNum ), hexBuf, pos );
 
@@ -101,23 +102,23 @@ HexNumberFormat	extends Format
 		}
 
 	public StringBuffer
-	format( Object hexInt, StringBuffer appendTo, FieldPosition fieldPos )
+	format( final Object hexInt, final StringBuffer appendTo, final FieldPosition fieldPos )
 		throws IllegalArgumentException
 		{
-		char[] hexBuf = new char[16];
-		
-		int end = fieldPos.getEndIndex();
-		int beg = fieldPos.getBeginIndex();
+		final char[] hexBuf = new char[16];
+
+		final int end = fieldPos.getEndIndex();
+		final int beg = fieldPos.getBeginIndex();
 
 		int hexNum = ((Integer) hexInt).intValue();
 
 		for ( int i = 7 ; i >= 0 ; --i )
 			{
-			hexBuf[i] = this.hexChars[ (hexNum & 0x0F) ];
+			hexBuf[i] = HexNumberFormat.hexChars[ hexNum & 0x0F ];
 			hexNum = hexNum >> 4;
 			}
 
-		for ( int i = (8 - this.count) ; i < 8 ; ++i )
+		for ( int i = 8 - this.count ; i < 8 ; ++i )
 			{
 			appendTo.append( hexBuf[i] );
 			}
@@ -126,14 +127,14 @@ HexNumberFormat	extends Format
 		}
 
 	public int
-	parse( String source )
+	parse( final String source )
 		throws ParseException
 		{
 		throw new ParseException( "unimplemented!", 0 );
 		}
 
 	public Object
-	parseObject( String source, ParsePosition pos )
+	parseObject( final String source, final ParsePosition pos )
 		{
 		return null;
 		}

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,16 +18,17 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.io.*;
-import java.lang.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.text.ParseException;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * CVSEntry implements the concept of a CVS Entry. Traditionally,
@@ -118,7 +119,7 @@ implements	Cloneable
 	private String			tag;
 	private String			date;
 
-	private Vector			childListeners;
+	private final Vector			childListeners;
 
 
 	public CVSEntry()
@@ -161,7 +162,7 @@ implements	Cloneable
 		}
 
 	public void
-	setValid( boolean valid )
+	setValid( final boolean valid )
 		{
 		this.valid = valid;
 		}
@@ -173,7 +174,7 @@ implements	Cloneable
 		}
 
 	public void
-	setDirty( boolean dirty )
+	setDirty( final boolean dirty )
 		{
 		this.isDirty = dirty;
 		}
@@ -185,7 +186,7 @@ implements	Cloneable
 		}
 
 	public void
-	setForceModified( boolean forceModified )
+	setForceModified( final boolean forceModified )
 		{
 		this.forceModified = forceModified;
 		}
@@ -197,7 +198,7 @@ implements	Cloneable
 		}
 
 	public void
-	setForceNoExistence( boolean forceNoExistence )
+	setForceNoExistence( final boolean forceNoExistence )
 		{
 		this.forceNoExistence = forceNoExistence;
 		}
@@ -209,7 +210,7 @@ implements	Cloneable
 		}
 
 	public void
-	setName( String name )
+	setName( final String name )
 		{
 		this.name = name;
 		}
@@ -221,7 +222,7 @@ implements	Cloneable
 		}
 
 	public void
-	setRepository( String repository )
+	setRepository( final String repository )
 		{
 		this.repository =
 			CVSCUtilities.stripFinalSlash( repository );
@@ -236,7 +237,7 @@ implements	Cloneable
 		}
 
 	public void
-	setLocalDirectory( String directory )
+	setLocalDirectory( final String directory )
 		{
 		this.localDirectory =
 			CVSCUtilities.ensureFinalSlash( directory );
@@ -248,7 +249,7 @@ implements	Cloneable
 		if ( this.isDirectory() )
 			return this.getLocalDirectory();
 		else
-			return ( this.getLocalDirectory() + this.getName() );
+			return this.getLocalDirectory() + this.getName();
 		}
 
 	private String
@@ -288,7 +289,7 @@ implements	Cloneable
 	public String
 	getRepositoryName()
 		{
-		return ( this.getRepository() + this.getName() );
+		return this.getRepository() + this.getName();
 		}
 
 	public String
@@ -309,7 +310,7 @@ implements	Cloneable
 		}
 
 	public void
-	appendEntry( CVSEntry entry )
+	appendEntry( final CVSEntry entry )
 		{
 		this.entryList.appendEntry( entry );
 		this.fireChildAddedEvent
@@ -317,16 +318,16 @@ implements	Cloneable
 		}
 
 	public boolean
-	removeEntry( CVSEntry entry )
+	removeEntry( final CVSEntry entry )
 		{
 		boolean result = false;
 
-		int index = this.entryList.indexOf( entry );
+		final int index = this.entryList.indexOf( entry );
 		if ( index != -1 )
 			{
 			result = true;
 			this.isDirty = true;
-			CVSEntry child = this.entryList.entryAt( index );
+			final CVSEntry child = this.entryList.entryAt( index );
 			this.entryList.removeElementAt( index );
 			this.fireChildRemovedEvent
 				( this.new ChildEvent( index, child ) );
@@ -336,13 +337,13 @@ implements	Cloneable
 		}
 
 	public boolean
-	removeEntry( String entryName )
+	removeEntry( final String entryName )
 		{
 		boolean result = false;
 
 		for ( int i = 0, sz = this.entryList.size() ; i < sz ; ++i )
 			{
-			CVSEntry entry = this.entryList.entryAt(i);
+			final CVSEntry entry = this.entryList.entryAt(i);
 			if ( entryName.equals( entry.getName() ) )
 				{
 				result = true;
@@ -372,7 +373,7 @@ implements	Cloneable
 		}
 
 	public CVSEntry
-	locateEntry( String name )
+	locateEntry( final String name )
 		{
 		return this.entryList.locateEntry( name );
 		}
@@ -392,7 +393,7 @@ implements	Cloneable
 	 * @param entryList The directory's entry list.
 	 */
 	public void
-	setDirectoryEntryList( CVSEntryVector entryList )
+	setDirectoryEntryList( final CVSEntryVector entryList )
 		{
 		if ( entryList != null )
 			{
@@ -408,7 +409,7 @@ implements	Cloneable
 		}
 
 	public void
-	setVersion( String version )
+	setVersion( final String version )
 		{
 		this.isNoUserFile = false;
 		this.isNewUserFile = false;
@@ -437,26 +438,26 @@ implements	Cloneable
 		}
 
 	public void
-	markForRemoval( boolean markState )
+	markForRemoval( final boolean markState )
 		{
 		this.isToBeRemoved = markState;
 		}
 
 	private CVSTimestamp
-	parseTimestamp( String stampStr )
+	parseTimestamp( final String stampStr )
 		{
 		CVSTimestamp result =
 			new CVSTimestamp(0);
 
 		if ( stampStr != null )
 			{
-			CVSTimestampFormat stamper =
+			final CVSTimestampFormat stamper =
 				CVSTimestampFormat.getInstance();
 
 			try {
 				result = stamper.parse( stampStr );
 				}
-			catch ( ParseException ex )
+			catch ( final ParseException ex )
 				{
 				result = new CVSTimestamp(0);
 				CVSTracer.traceWithStack(
@@ -491,7 +492,7 @@ implements	Cloneable
 			this.timestamp
 			+ ( this.conflict == null
 				? ""
-				: ( "+" + this.conflict )
+				: "+" + this.conflict
 				);
 		}
 
@@ -510,7 +511,7 @@ implements	Cloneable
 			}
 		else
 			{
-			CVSTimestampFormat	stamper =
+			final CVSTimestampFormat	stamper =
 				CVSTimestampFormat.getInstance();
 
 			return stamper.formatTerse( this.tsCache );
@@ -535,18 +536,18 @@ implements	Cloneable
 	 */
 
 	public void
-	setTimestamp( File entryFile )
+	setTimestamp( final File entryFile )
 		{
 		// FIRST strip the millisecond digits and make them zero!
 		long mTime = entryFile.lastModified();
-		mTime = (mTime / 1000) * 1000;
+		mTime = mTime / 1000 * 1000;
 
-		CVSTimestamp stamp = new CVSTimestamp( mTime );
+		final CVSTimestamp stamp = new CVSTimestamp( mTime );
 
-		CVSTimestampFormat	stamper =
+		final CVSTimestampFormat	stamper =
 			CVSTimestampFormat.getInstance();
 
-		String stampStr = stamper.format( stamp );
+		final String stampStr = stamper.format( stamp );
 
 		this.setTimestamp( stampStr );
 		}
@@ -591,7 +592,7 @@ implements	Cloneable
 			}
 		else
 			{
-			int index = tstamp.indexOf( '+' );
+			final int index = tstamp.indexOf( '+' );
 			if ( index < 0 )
 				{
 				// Only the timestamp is provided (no '+').
@@ -650,8 +651,8 @@ implements	Cloneable
 					}
 				}
 			}
-		
-		CVSTimestampFormat	stamper =
+
+		final CVSTimestampFormat	stamper =
 			CVSTimestampFormat.getInstance();
 
 		// If tsCache is set to null, we need to update it...
@@ -661,7 +662,7 @@ implements	Cloneable
 			try {
 				this.tsCache = stamper.parse( this.timestamp );
 				}
-			catch ( ParseException ex )
+			catch ( final ParseException ex )
 				{
 				this.tsCache = null;
 				if ( false ) // in normal operations, this is ok
@@ -678,7 +679,7 @@ implements	Cloneable
 			try {
 				this.cfCache = stamper.parse( this.conflict );
 				}
-			catch ( ParseException ex )
+			catch ( final ParseException ex )
 				{
 				this.cfCache = null;
 				if ( false ) // in normal operations, this is ok
@@ -705,21 +706,21 @@ CVSTracer.traceIf( true,
 	 * to the resolution of file times and CVS timestamps.
 	 */
 	public void
-	setConflict( File entryFile )
+	setConflict( final File entryFile )
 		{
 		// FIRST strip the millisecond digits and make them zero!
 		long mTime = entryFile.lastModified();
-		mTime = (mTime / 1000) * 1000;
+		mTime = mTime / 1000 * 1000;
 
 		this.cfCache = new CVSTimestamp( mTime );
 
-		CVSTimestamp stamp =
+		final CVSTimestamp stamp =
 			new CVSTimestamp( this.cfCache.getTime() );
 
-		CVSTimestampFormat	stamper =
+		final CVSTimestampFormat	stamper =
 			CVSTimestampFormat.getInstance();
 
-		String stampStr = stamper.format( stamp );
+		final String stampStr = stamper.format( stamp );
 
 		this.conflict = stampStr;
 		}
@@ -731,7 +732,7 @@ CVSTracer.traceIf( true,
 		}
 
 	public void
-	setOptions( String options )
+	setOptions( final String options )
 		{
 		this.options = options;
 		}
@@ -739,30 +740,30 @@ CVSTracer.traceIf( true,
 	public boolean
 	isBinary()
 		{
-		return ( this.options.indexOf( "-kb" ) != -1 );
+		return this.options.indexOf( "-kb" ) != -1;
 		}
 
-	public String 
+	public String
 	getTag()
 		{
 		return this.tag;
 		}
 
 	public void
-	setTag( String tag )
+	setTag( final String tag )
 		{
 		this.tag = tag;
 		this.date = null;
 		}
 
-	public String 
+	public String
 	getDate()
 		{
 		return this.date;
 		}
 
 	public void
-	setDate( String date )
+	setDate( final String date )
 		{
 		this.tag = null;
 		this.date = date;
@@ -775,7 +776,7 @@ CVSTracer.traceIf( true,
 		}
 
 	public void
-	setMode( CVSMode mode )
+	setMode( final CVSMode mode )
 		{
 		this.mode = mode;
 		}
@@ -783,10 +784,10 @@ CVSTracer.traceIf( true,
 	public String
 	getModeLine()
 		{
-		return 
-			( this.mode == null
-				? "u=rw,g=r,o=r" // UNDONE - better idea?
-				: this.mode.getModeLine() );
+		return
+			this.mode == null
+			? "u=rw,g=r,o=r" // UNDONE - better idea?
+			: this.mode.getModeLine();
 		}
 
 	public boolean
@@ -796,7 +797,7 @@ CVSTracer.traceIf( true,
 		}
 
 	public void
-	setNoUserFile( boolean isNo )
+	setNoUserFile( final boolean isNo )
 		{
 		this.isNoUserFile = isNo;
 		}
@@ -804,7 +805,7 @@ CVSTracer.traceIf( true,
 	public boolean
 	isInConflict()
 		{
-		return (this.conflict != null);
+		return this.conflict != null;
 		}
 
 	private String
@@ -820,7 +821,7 @@ CVSTracer.traceIf( true,
 		}
 
 	public void
-	setNewUserFile( boolean isNew )
+	setNewUserFile( final boolean isNew )
 		{
 		this.isNewUserFile = isNew;
 		}
@@ -832,13 +833,13 @@ CVSTracer.traceIf( true,
 		}
 
 	public void
-	setToBeRemoved( boolean toBe )
+	setToBeRemoved( final boolean toBe )
 		{
 		this.isToBeRemoved = toBe;
 		}
 
 	public boolean
-	isLocalFileModified( File localFile )
+	isLocalFileModified( final File localFile )
 		{
 		if ( this.forceModified )
 			{
@@ -850,19 +851,19 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		if ( this.tsCache == null )
 			return true;
 
-		return ! this.tsCache.equalsTime( localFile.lastModified() ); 
+		return ! this.tsCache.equalsTime( localFile.lastModified() );
 		}
 
 
 	// UNDONE - all of the "ParseException( , offset's" are zero!
 
 	private String
-	parseAToken( StringTokenizer toker )
+	parseAToken( final StringTokenizer toker )
 		{
 		String token = null;
 
 		try { token = toker.nextToken(); }
-		catch ( NoSuchElementException ex )
+		catch ( final NoSuchElementException ex )
 			{
 			token = null;
 			}
@@ -871,7 +872,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		}
 
 	public boolean
-	parseEntryLine( String parseLine, boolean fromServer )
+	parseEntryLine( final String parseLine, final boolean fromServer )
 		throws ParseException
 		{
 		String token = null;
@@ -879,7 +880,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		String versionToke = null;
 		String conflictToke = null;
 		String optionsToke = null;
-		String tagToke = null;		 
+		String tagToke = null;
 
 		this.valid = false;
 
@@ -892,10 +893,10 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			entryLine = entryLine.substring( 1 );
 			}
 
-		StringTokenizer toker =
+		final StringTokenizer toker =
 			new StringTokenizer( entryLine, "/", true );
 
-		int tokeCount = toker.countTokens();
+		final int tokeCount = toker.countTokens();
 
 		if ( tokeCount < 6 )
 			{
@@ -1023,10 +1024,10 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		}
 
 	public String
-	padString( String str, int width )
+	padString( final String str, final int width )
 		{
 		int		i;
-		StringBuffer result =
+		final StringBuffer result =
 			new StringBuffer( width );
 
 		result.append( str );
@@ -1045,8 +1046,8 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			return "D/" + this.name + "////";
 			}
 
-		StringBuffer result = new StringBuffer("");
-		
+		final StringBuffer result = new StringBuffer("");
+
 		result.append( "/" + this.name + "/" );
 
 		if ( ! this.isNoUserFile() )
@@ -1101,7 +1102,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		}
 
 	public String
-	getServerEntryLine( boolean exists, boolean isModified )
+	getServerEntryLine( final boolean exists, final boolean isModified )
 		{
 		if ( this.isDirectory() )
 			{
@@ -1109,8 +1110,8 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			return "/" + this.name + "////";
 			}
 
-		StringBuffer result = new StringBuffer("");
-		
+		final StringBuffer result = new StringBuffer("");
+
 		result.append( "/" + this.name + "/" );
 
 		if ( ! this.isNoUserFile() )
@@ -1183,14 +1184,14 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 	 */
 
 	public void
-	addFileEntries( CVSEntryVector vector )
+	addFileEntries( final CVSEntryVector vector )
 		{
-		CVSEntryVector entries = this.getEntryList();
+		final CVSEntryVector entries = this.getEntryList();
 		for ( int idx = 0 ; idx < entries.size() ; ++idx )
 			{
-			CVSEntry entry = entries.entryAt( idx );
+			final CVSEntry entry = entries.entryAt( idx );
 			if ( ! entry.isDirectory() )
-				vector.appendEntry( entry );	
+				vector.appendEntry( entry );
 			}
 		}
 
@@ -1202,17 +1203,17 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 	 */
 
 	public void
-	addAllSubTreeEntries( CVSEntryVector vector )
+	addAllSubTreeEntries( final CVSEntryVector vector )
 		{
-		CVSEntryVector dirs = new CVSEntryVector();
-		CVSEntryVector list = this.getEntryList();
+		final CVSEntryVector dirs = new CVSEntryVector();
+		final CVSEntryVector list = this.getEntryList();
 
 		// First, append all of the files, caching directories...
 		for ( int idx = 0 ; idx < list.size() ; ++idx )
 			{
-			CVSEntry entry = list.entryAt( idx );
+			final CVSEntry entry = list.entryAt( idx );
 			if ( entry.isDirectory() )
-				dirs.appendEntry( entry );	
+				dirs.appendEntry( entry );
 			else
 				vector.appendEntry( entry );
 			}
@@ -1220,8 +1221,8 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		// Now, process all of the cached directories...
 		for ( int idx = 0 ; idx < dirs.size() ; ++idx )
 			{
-			CVSEntry entry = dirs.entryAt( idx );
-			entry.addAllSubTreeEntries( vector );	
+			final CVSEntry entry = dirs.entryAt( idx );
+			entry.addAllSubTreeEntries( vector );
 			}
 		}
 
@@ -1238,7 +1239,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		 */
 
 		public
-		ChildEvent( int index, CVSEntry child )
+		ChildEvent( final int index, final CVSEntry child )
 			{
 			this.childIndex = index;
 			this.childEntry = child;
@@ -1272,7 +1273,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		}
 
 	protected void
-	fireChildAddedEvent( ChildEvent event )
+	fireChildAddedEvent( final ChildEvent event )
 		{
 		// Process the listeners last to first, notifying
 		// those that are interested in this event
@@ -1280,11 +1281,11 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			{
 			((ChildEventListener) this.childListeners.elementAt(i)).
 				cvsEntryAddedChild( event );
-			}	       
+			}
 		}
 
 	protected void
-	fireChildRemovedEvent( ChildEvent event )
+	fireChildRemovedEvent( final ChildEvent event )
 		{
 		// Process the listeners last to first, notifying
 		// those that are interested in this event
@@ -1292,17 +1293,17 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			{
 			((ChildEventListener) this.childListeners.elementAt(i)).
 				cvsEntryRemovedChild( event );
-			}	       
+			}
 		}
 
 	public void
-	addChildEventListener( ChildEventListener l )
+	addChildEventListener( final ChildEventListener l )
 		{
 		this.childListeners.addElement( l );
 		}
 
 	public void
-	removeChildEventListener( ChildEventListener l )
+	removeChildEventListener( final ChildEventListener l )
 		{
 		this.childListeners.removeElement( l );
 		}
@@ -1314,7 +1315,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		}
 
 	public String
-	dumpString( String prefix )
+	dumpString( final String prefix )
 		{
 		return
 			prefix + "CVSEntry: " + super.toString() + "\n" +
@@ -1330,4 +1331,4 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 
 
 
-	   
+

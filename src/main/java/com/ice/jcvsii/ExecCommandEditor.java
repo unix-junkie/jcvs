@@ -1,16 +1,28 @@
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-import com.ice.config.*;
-import com.ice.pref.UserPrefs;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.PrefsTuple;
 import com.ice.pref.PrefsTupleTable;
+import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 //	addEditor( String type, ConfigureEditor editor )
@@ -36,7 +48,7 @@ implements	ActionListener, ItemListener
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
@@ -52,21 +64,21 @@ implements	ActionListener, ItemListener
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		this.saveCurrentCommand
 			( (String) this.cmdBox.getSelectedItem() );
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 		prefs.setTupleTable( propName, this.cmdTable );
 		}
 
 	// REVIEW I'll bet we can think of a way to move this up a level...
 	public void
-	commitChanges( ConfigureSpec spec, UserPrefs prefs, UserPrefs orig )
+	commitChanges( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		PrefsTupleTable table =
+		final PrefsTupleTable table =
 			prefs.getTupleTable( propName, null );
 
 		orig.removeTupleTable( propName );
@@ -80,14 +92,14 @@ implements	ActionListener, ItemListener
 		}
 
 	public boolean
-	isModified( ConfigureSpec spec, UserPrefs prefs, UserPrefs orig )
+	isModified( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
-		PrefsTupleTable nt =
+		final PrefsTupleTable nt =
 			prefs.getTupleTable( propName, null );
 
-		PrefsTupleTable ot =
+		final PrefsTupleTable ot =
 			orig.getTupleTable( propName, null );
 
 		if ( nt != null && ot != null )
@@ -112,18 +124,18 @@ implements	ActionListener, ItemListener
 		}
 
 	public void
-	saveCurrentCommand( String extVerb )
+	saveCurrentCommand( final String extVerb )
 		{
 		if ( extVerb != null )
 			{
-			String cmd = this.cmdText.getText();
-			String env = this.envText.getText();
+			final String cmd = this.cmdText.getText();
+			final String env = this.envText.getText();
 
-			String[] vals = new String[2];
-			vals[ Config.EXEC_DEF_ENV_IDX ] = env;
-			vals[ Config.EXEC_DEF_CMD_IDX ] = cmd;
+			final String[] vals = new String[2];
+			vals[ ConfigConstants.EXEC_DEF_ENV_IDX ] = env;
+			vals[ ConfigConstants.EXEC_DEF_CMD_IDX ] = cmd;
 
-			PrefsTuple tup = new PrefsTuple( extVerb, vals );
+			final PrefsTuple tup = new PrefsTuple( extVerb, vals );
 
 			this.cmdTable.putTuple( tup );
 			}
@@ -152,13 +164,13 @@ implements	ActionListener, ItemListener
 				continue;
 				}
 
-			String[] tupVals = { "", "" };
-			PrefsTuple newTuple = new PrefsTuple( extVerb, tupVals );
+			final String[] tupVals = { "", "" };
+			final PrefsTuple newTuple = new PrefsTuple( extVerb, tupVals );
 
 			boolean append = true;
 			for ( int i = 0, sz = this.cmdTable.size() ; i < sz ; ++i )
 				{
-				PrefsTuple tup = this.cmdTable.getTupleAt(i);
+				final PrefsTuple tup = this.cmdTable.getTupleAt(i);
 				if ( extVerb.compareTo( tup.getKey() ) < 0 )
 					{
 					append = false;
@@ -183,12 +195,12 @@ implements	ActionListener, ItemListener
 	public void
 	deleteCommand()
 		{
-		String extVerb =
+		final String extVerb =
 			(String) this.cmdBox.getSelectedItem();
 
 		if ( extVerb != null )
 			{
-			PrefsTuple tup = this.cmdTable.getTuple( extVerb );
+			final PrefsTuple tup = this.cmdTable.getTuple( extVerb );
 
 			if ( tup != null )
 				{
@@ -199,9 +211,9 @@ implements	ActionListener, ItemListener
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equals( "NEW" ) )
 			{
@@ -214,20 +226,20 @@ implements	ActionListener, ItemListener
 		}
 
 	public void
-	itemStateChanged( ItemEvent evt )
+	itemStateChanged( final ItemEvent evt )
 		{
-		int stateChg = evt.getStateChange();
+		final int stateChg = evt.getStateChange();
 
 		if ( stateChg == ItemEvent.SELECTED )
 			{
-			String key = (String) evt.getItem();
-			PrefsTuple tup = this.cmdTable.getTuple( key );
+			final String key = (String) evt.getItem();
+			final PrefsTuple tup = this.cmdTable.getTuple( key );
 			if ( tup != null )
 				{
 				this.cmdText.setText
-					( tup.getValueAt( Config.EXEC_DEF_CMD_IDX ) );
+					( tup.getValueAt( ConfigConstants.EXEC_DEF_CMD_IDX ) );
 				this.envText.setText
-					( tup.getValueAt( Config.EXEC_DEF_ENV_IDX ) );
+					( tup.getValueAt( ConfigConstants.EXEC_DEF_ENV_IDX ) );
 				}
 			else
 				{
@@ -243,17 +255,17 @@ implements	ActionListener, ItemListener
 			this.envText.setText( "" );
 			}
 		}
- 
+
 	protected JPanel
 	createEditPanel()
 		{
 		JLabel lbl;
 
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 		result.setBorder( new EmptyBorder( 5, 3, 3, 3 ) );
 
-		int cols = 3;
+		final int cols = 3;
 		int row = 0;
 
 		JButton btn = new JButton( "New..." );

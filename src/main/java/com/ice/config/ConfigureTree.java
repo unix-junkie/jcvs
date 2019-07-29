@@ -4,8 +4,8 @@ package com.ice.config;
 import java.awt.Dimension;
 
 import javax.swing.JTree;
-import javax.swing.tree.TreeSelectionModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeSelectionModel;
 
 
 public
@@ -14,7 +14,7 @@ extends		JTree
 	{
 
 	public
-	ConfigureTree( ConfigureTreeModel model )
+	ConfigureTree( final ConfigureTreeModel model )
 		{
 		this.setShowsRootHandles( true );
 		this.setRootVisible( false );
@@ -26,16 +26,16 @@ extends		JTree
 
 		this.putClientProperty( "JTree.lineStyle", "Angled" );
 
-		DefaultTreeCellRenderer defRend =
+		final DefaultTreeCellRenderer defRend =
 			new DefaultTreeCellRenderer()
 				{
-				/**  
+				/**
 				 * Overrides return slightly taller preferred size value.
 				 */
 				public Dimension
 				getPreferredSize()
 					{
-					Dimension result = super.getPreferredSize();
+					final Dimension result = super.getPreferredSize();
 					if ( result != null ) result.height += 1;
 					return result;
 					}

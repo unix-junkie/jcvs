@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,14 +16,14 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import javax.swing.table.TableColumn;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
 
 
 public
@@ -42,7 +42,7 @@ extends		DefaultTableColumnModel
 		String titleStr;
 		TableColumn tblCol;
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		titleStr = rmgr.getUIString( "project.tree.entry.header" );
 		tblCol = new TableColumn( IDX_NAME, 275 );
@@ -94,7 +94,7 @@ extends		DefaultTableColumnModel
 		}
 
 	public void
-	setNameWidth( int w )
+	setNameWidth( final int w )
 		{
 		this.getColumn(IDX_NAME).setWidth( w );
 		this.getColumn(IDX_NAME).setPreferredWidth( w );
@@ -108,7 +108,7 @@ extends		DefaultTableColumnModel
 		}
 
 	public void
-	setVersionWidth( int w )
+	setVersionWidth( final int w )
 		{
 		this.getColumn(IDX_REV).setWidth( w );
 		this.getColumn(IDX_REV).setPreferredWidth( w );
@@ -122,7 +122,7 @@ extends		DefaultTableColumnModel
 		}
 
 	public void
-	setTagWidth( int w )
+	setTagWidth( final int w )
 		{
 		this.getColumn(IDX_TAG).setWidth( w );
 		this.getColumn(IDX_TAG).setPreferredWidth( w );
@@ -136,7 +136,7 @@ extends		DefaultTableColumnModel
 		}
 
 	public void
-	setModifiedWidth( int w )
+	setModifiedWidth( final int w )
 		{
 		this.getColumn(IDX_MOD).setWidth( w );
 		this.getColumn(IDX_MOD).setPreferredWidth( w );
@@ -152,15 +152,15 @@ extends		DefaultTableColumnModel
 	 */
 
 	public int
-	getColumnIndexAtX( int x )
+	getColumnIndexAtX( final int x )
 		{
 		int width = 0;
-		int cnt = this.getColumnCount();
-		int mgn = this.getColumnMargin();
+		final int cnt = this.getColumnCount();
+		final int mgn = this.getColumnMargin();
 
         for ( int colIdx = 0 ; colIdx < cnt ; colIdx++ )
 			{
-			TableColumn col = this.getColumn( colIdx );
+			final TableColumn col = this.getColumn( colIdx );
 			width += col.getWidth() + mgn;
 			if ( x < width )
 				return colIdx;
@@ -181,12 +181,12 @@ extends		DefaultTableColumnModel
 	getTotalColumnWidth()
 		{
 		int width = 0;
-		int cnt = this.getColumnCount();
-		int mgn = this.getColumnMargin();
+		final int cnt = this.getColumnCount();
+		final int mgn = this.getColumnMargin();
 
         for ( int colIdx = 0 ; colIdx < cnt ; colIdx++ )
 			{
-			TableColumn col = this.getColumn( colIdx );
+			final TableColumn col = this.getColumn( colIdx );
 			width += col.getWidth() + mgn;
 			}
 

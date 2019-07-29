@@ -1,13 +1,33 @@
 
 package com.ice.config.editor;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-import com.ice.config.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.ice.config.ConfigureEditor;
+import com.ice.config.ConfigureSpec;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -34,8 +54,8 @@ implements	FocusListener, ItemListener, ChangeListener
 	getConfiguredFont()
 		throws NumberFormatException
 		{
-		String name = (String) this.fontName.getSelectedItem();
-		int size = Integer.parseInt( this.sizeField.getText() );
+		final String name = (String) this.fontName.getSelectedItem();
+		final int size = Integer.parseInt( this.sizeField.getText() );
 		int style = Font.PLAIN;
 		if ( this.boldCheck.isSelected() )
 			style |= Font.BOLD;
@@ -45,11 +65,11 @@ implements	FocusListener, ItemListener, ChangeListener
 		}
 
 	public void
-	edit( UserPrefs prefs, ConfigureSpec spec )
+	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		Font font = prefs.getFont( spec.getPropertyName(), null );
+		final Font font = prefs.getFont( spec.getPropertyName(), null );
 
 		if ( font != null )
 			{
@@ -68,14 +88,14 @@ implements	FocusListener, ItemListener, ChangeListener
 		}
 
 	public void
-	saveChanges( UserPrefs prefs, ConfigureSpec spec )
+	saveChanges( final UserPrefs prefs, final ConfigureSpec spec )
 		{
-		String propName = spec.getPropertyName();
+		final String propName = spec.getPropertyName();
 
 		try {
-			Font newVal = this.getConfiguredFont();
+			final Font newVal = this.getConfiguredFont();
 
-			Font oldVal =
+			final Font oldVal =
 				prefs.getFont
 					( propName, new Font( "Serif", Font.PLAIN, 12) );
 
@@ -84,11 +104,11 @@ implements	FocusListener, ItemListener, ChangeListener
 				prefs.setFont( propName, newVal );
 				}
 			}
-		catch ( NumberFormatException ex )
+		catch ( final NumberFormatException ex )
 			{
 			JOptionPane.showMessageDialog ( null,
 				"the font size field is valid, " + ex.getMessage(),
-				"Invalid Size", JOptionPane.ERROR_MESSAGE ); 
+				"Invalid Size", JOptionPane.ERROR_MESSAGE );
 			}
 		}
 
@@ -103,42 +123,42 @@ implements	FocusListener, ItemListener, ChangeListener
 	showConfiguredFont()
 		{
 		try {
-			Font f = this.getConfiguredFont();
+			final Font f = this.getConfiguredFont();
 			this.exLabel.setFont( f );
 			this.exLabel.repaint( 250 );
 			}
-		catch ( NumberFormatException ex )
+		catch ( final NumberFormatException ex )
 			{
 			JOptionPane.showMessageDialog ( null,
 				"the font size field is valid, " + ex.getMessage(),
-				"Invalid Size", JOptionPane.ERROR_MESSAGE ); 
+				"Invalid Size", JOptionPane.ERROR_MESSAGE );
 			}
 		}
 
 	public void
-	stateChanged( ChangeEvent event )
+	stateChanged( final ChangeEvent event )
 		{
 		this.showConfiguredFont();
 		}
 
 	public void
-	itemStateChanged( ItemEvent event )
+	itemStateChanged( final ItemEvent event )
 		{
 		this.showConfiguredFont();
 		}
 
 	public void
-	focusGained( FocusEvent event )
+	focusGained( final FocusEvent event )
 		{
 		this.showConfiguredFont();
 
-		Component comp = event.getComponent();
+		final Component comp = event.getComponent();
 		if ( comp instanceof JTextField )
 			((JTextField) comp).selectAll();
 		}
 
 	public void
-	focusLost( FocusEvent event )
+	focusLost( final FocusEvent event )
 		{
 		this.showConfiguredFont();
 		}
@@ -146,7 +166,7 @@ implements	FocusListener, ItemListener, ChangeListener
 	protected JPanel
 	createEditPanel()
 		{
-		JPanel result = new JPanel();
+		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 		result.setBorder( new EmptyBorder( 5, 3, 3, 3 ) );
 
@@ -192,7 +212,7 @@ implements	FocusListener, ItemListener, ChangeListener
 
 		col = 0;
 
-		JPanel chkPan = new JPanel();
+		final JPanel chkPan = new JPanel();
 		chkPan.setLayout( new GridBagLayout() );
 		chkPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 		AWTUtilities.constrain(
@@ -228,7 +248,7 @@ implements	FocusListener, ItemListener, ChangeListener
 			GridBagConstraints.CENTER,
 			1, 0, 1, 1, 0.5, 0.0 );
 
-		JPanel exPan = new JPanel();
+		final JPanel exPan = new JPanel();
 		exPan.setLayout( new BorderLayout() );
 		exPan.setBorder(
 			new CompoundBorder(

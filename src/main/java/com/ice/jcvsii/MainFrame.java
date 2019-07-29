@@ -1,9 +1,9 @@
 /*
 ** Copyright (c) 1998 by Timothy Gerard Endres
 ** <mailto:time@ice.com>  <http://www.ice.com>
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,23 +16,41 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Event;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.net.URL;
-import javax.help.*;
-import javax.swing.*;
-import javax.swing.border.*;
 
+import javax.help.CSH;
+import javax.help.HelpBroker;
+import javax.help.HelpSet;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+import com.ice.cvsc.CVSCUtilities;
 import com.ice.cvsc.CVSLog;
 import com.ice.cvsc.CVSProject;
-import com.ice.cvsc.CVSCUtilities;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -42,24 +60,24 @@ class		MainFrame
 extends		JFrame
 implements	ActionListener
 	{
-	private JCVS			app;
+	private final JCVS			app;
 	private JMenuBar		menuBar;
 	private JMenu			fileMenu;
 	private JMenu			helpMenu;
-	private MainPanel		mainPanel;
+	private final MainPanel		mainPanel;
 
 	private String			lastBrowseDirectory = null;
-	
+
 
 	public
-	MainFrame( JCVS jcvs, String title, Rectangle bounds )
+	MainFrame( final JCVS jcvs, final String title, final Rectangle bounds )
 		{
 		super( title );
 
 		this.app = jcvs;
 
 		this.mainPanel = new MainPanel( this );
-		
+
 		this.getContentPane().add( mainPanel );
 
 		this.establishMenuBar();
@@ -68,7 +86,7 @@ implements	ActionListener
 			new WindowAdapter()
 				{
 				public void
-				windowClosing( WindowEvent e )
+				windowClosing( final WindowEvent e )
 					{ app.performShutDown(); }
 				}
 			);
@@ -90,28 +108,28 @@ implements	ActionListener
 	public void
 	savePreferences()
 		{
-		Rectangle bounds = this.getBounds();
+		final Rectangle bounds = this.getBounds();
 
 		if ( bounds.x >= 0 && bounds.y >= 0
 				&& bounds.width > 0 && bounds.height > 0 )
 			{
 			Config.getPreferences().setBounds
-				( Config.MAIN_WINDOW_BOUNDS, bounds );
+				( ConfigConstants.MAIN_WINDOW_BOUNDS, bounds );
 			}
 
 		this.mainPanel.savePreferences();
 		}
 
 	public void
-	addProjectToWorkBench( CVSProject project )
+	addProjectToWorkBench( final CVSProject project )
 		{
 		this.mainPanel.addProjectToWorkBench( project );
 		}
 
 	public void
-	actionPerformed( ActionEvent event )
+	actionPerformed( final ActionEvent event )
 		{
-		String command = event.getActionCommand();
+		final String command = event.getActionCommand();
 
 		if ( command.equals( "QUIT" ) )
 			{
@@ -134,7 +152,7 @@ implements	ActionListener
 					public void
 					run()
 						{
-						AboutDialog dlg =
+						final AboutDialog dlg =
 							new AboutDialog( MainFrame.this );
 						dlg.show();
 						}
@@ -212,21 +230,21 @@ implements	ActionListener
 		}
 
 	public void
-	showHTMLDialog( String titleKey, String msgKey )
+	showHTMLDialog( final String titleKey, final String msgKey )
 		{
-		String msgStr =
+		final String msgStr =
 			ResourceMgr.getInstance().getUIString( msgKey );
 
-		String title =
+		final String title =
 			ResourceMgr.getInstance().getUIString( titleKey );
 
-		HTMLDialog dlg =
+		final HTMLDialog dlg =
 			new HTMLDialog
 				( null, title, true, msgStr );
 
-		Dimension newSz = new Dimension( 560, 420 );
+		final Dimension newSz = new Dimension( 560, 420 );
 		dlg.setSize( newSz );
-		Point location =
+		final Point location =
 			AWTUtilities.computeDialogLocation( dlg );
 		dlg.setLocation( location.x, location.y );
 
@@ -236,13 +254,13 @@ implements	ActionListener
 	public void
 	performBrowse()
 		{
-		Config cfg = Config.getInstance();
-		UserPrefs prefs = cfg.getPreferences();
+		final Config cfg = Config.getInstance();
+		final UserPrefs prefs = Config.getPreferences();
 
-		String prompt =
+		final String prompt =
 			ResourceMgr.getInstance().getUIString( "open.project.prompt" );
 
-		String localRootDirName =
+		final String localRootDirName =
 			ProjectFrame.getUserSelectedProject
 				( this, prompt, this.lastBrowseDirectory );
 
@@ -253,12 +271,12 @@ implements	ActionListener
 
 			if ( ! ProjectFrameMgr.checkProjectOpen( localRootDirName ) )
 				{
-				String entriesPath = CVSProject.getAdminEntriesPath
+				final String entriesPath = CVSProject.getAdminEntriesPath
 					( CVSProject.rootPathToAdminPath( localRootDirName ) );
 
-				File entriesFile = new File( entriesPath );
-				File rootDirFile = new File( localRootDirName );
-				
+				final File entriesFile = new File( entriesPath );
+				final File rootDirFile = new File( localRootDirName );
+
 				ProjectFrame.openProject( rootDirFile, null );
 				}
 			}
@@ -267,7 +285,7 @@ implements	ActionListener
 	private void
 	establishMenuBar()
 		{
-		JMenuItem	item;
+		final JMenuItem	item;
 
 		this.menuBar = new JMenuBar();
 
@@ -279,11 +297,11 @@ implements	ActionListener
 		}
 
 	private void
-	addFileMenu( JMenuBar mbar )
+	addFileMenu( final JMenuBar mbar )
 		{
 		JMenuItem	item;
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		this.fileMenu = new JMenu( rmgr.getUIString( "menu.file.name" ) );
 		mbar.add( this.fileMenu );
@@ -315,21 +333,21 @@ implements	ActionListener
 		}
 
 	private void
-	addHelpMenu( JMenuBar mbar )
+	addHelpMenu( final JMenuBar mbar )
 		{
 		JMenuItem	item;
 
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		this.helpMenu = new JMenu( rmgr.getUIString( "menu.help.name" ) );
 		mbar.add( this.helpMenu );
 
 		boolean haveJH = false;
 		try {
-			Class cls = Class.forName( "javax.help.HelpSet" );
+			final Class cls = Class.forName( "javax.help.HelpSet" );
 			haveJH = true;
 			}
-		catch ( ClassNotFoundException ex )
+		catch ( final ClassNotFoundException ex )
 			{
 			haveJH = false;
 			}
@@ -374,14 +392,14 @@ implements	ActionListener
 	addJavaHelpItem()
 		{
 		JMenuItem	item;
-		String helpSetUrlName = "com/ice/jcvsii/doc/help/help.hs";
-		ResourceMgr rmgr = ResourceMgr.getInstance();
+		final String helpSetUrlName = "com/ice/jcvsii/doc/help/help.hs";
+		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
 		try {
-			ClassLoader loader =
+			final ClassLoader loader =
 				MainFrame.class.getClassLoader();
 
-			URL hsURL =
+			final URL hsURL =
 				HelpSet.findHelpSet( loader, helpSetUrlName );
 
 			if ( hsURL == null )
@@ -390,10 +408,10 @@ implements	ActionListener
 					( "HelpSet URL is null (not found?)" );
 				}
 
-			HelpSet hs =
+			final HelpSet hs =
 				new HelpSet( loader, hsURL );
 
-			HelpBroker hb = hs.createHelpBroker();
+			final HelpBroker hb = hs.createHelpBroker();
 
 			item = new JMenuItem( rmgr.getUIString( "menu.help.javahelp.name" ) );
 			this.helpMenu.add( item );
@@ -401,7 +419,7 @@ implements	ActionListener
 
 			this.helpMenu.addSeparator();
 			}
-		catch ( Exception ex )
+		catch ( final Exception ex )
 			{
 			JOptionPane.showMessageDialog( this,
 				"Could not open HelpSet '" + helpSetUrlName
@@ -412,9 +430,9 @@ implements	ActionListener
 
 
 	public static void
-	setWaitCursor( Container cont, boolean busy )
+	setWaitCursor( final Container cont, final boolean busy )
 		{
-		Cursor curs =
+		final Cursor curs =
 			busy
 				? Cursor.getPredefinedCursor( Cursor.WAIT_CURSOR )
 				: Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR );
@@ -423,9 +441,9 @@ implements	ActionListener
 
 		for ( int i = 0, sz = cont.getComponentCount() ; i < sz ; ++i )
 			{
-			Component comp = cont.getComponent( i );
-			Class contCls = Container.class;
-			Class compCls = comp.getClass();
+			final Component comp = cont.getComponent( i );
+			final Class contCls = Container.class;
+			final Class compCls = comp.getClass();
 			if ( contCls.isAssignableFrom( compCls ) )
 				{
 				MainFrame.setWaitCursor( (Container)comp, busy );

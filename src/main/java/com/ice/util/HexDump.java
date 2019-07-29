@@ -1,8 +1,9 @@
 
 package com.ice.util;
 
-import java.lang.*;
-import java.io.*;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 
 public class
@@ -14,9 +15,9 @@ HexDump
 	private static final int		ROW_QTR2 = 11;
 
 	public static void
-	dumpHexData( PrintStream out, String title, byte[] buf, int numBytes )
+	dumpHexData( final PrintStream out, final String title, final byte[] buf, final int numBytes )
 		{
-		PrintWriter wrtr =
+		final PrintWriter wrtr =
 			new PrintWriter( new OutputStreamWriter( out ) );
 
 		HexDump.dumpHexData( wrtr, title, buf, 0, numBytes );
@@ -24,15 +25,15 @@ HexDump
 
 	public static void
 	dumpHexData(
-			PrintWriter out, String title,
-			byte[] buf, int offset, int numBytes )
+			final PrintWriter out, final String title,
+			final byte[] buf, final int offset, final int numBytes )
 		{
 		int			rows, residue, i, j;
-		byte[]		save_buf= new byte[ ROW_BYTES+2 ];
-		char[]		hex_buf = new char[ 4 ];
-		char[]		idx_buf = new char[ 8 ];
-		char[]		hex_chars = new char[20];
-		
+		final byte[]		save_buf= new byte[ ROW_BYTES+2 ];
+		final char[]		hex_buf = new char[ 4 ];
+		final char[]		idx_buf = new char[ 8 ];
+		final char[]		hex_chars = new char[20];
+
 		hex_chars[0] = '0';
 		hex_chars[1] = '1';
 		hex_chars[2] = '2';
@@ -49,26 +50,26 @@ HexDump
 		hex_chars[13] = 'D';
 		hex_chars[14] = 'E';
 		hex_chars[15] = 'F';
-		
+
 		out.println( title + " - " + numBytes + " bytes." );
 		rows = numBytes >> 4;
 		residue = numBytes & 0x0000000F;
 		for ( i = 0 ; i < rows ; i++ )
 			{
-			int hexVal = (i * ROW_BYTES);
-			idx_buf[0] = hex_chars[ ((hexVal >> 12) & 15) ];
-			idx_buf[1] = hex_chars[ ((hexVal >> 8) & 15) ];
-			idx_buf[2] = hex_chars[ ((hexVal >> 4) & 15) ];
-			idx_buf[3] = hex_chars[ (hexVal & 15) ];
+			final int hexVal = i * ROW_BYTES;
+			idx_buf[0] = hex_chars[ hexVal >> 12 & 15 ];
+			idx_buf[1] = hex_chars[ hexVal >> 8 & 15 ];
+			idx_buf[2] = hex_chars[ hexVal >> 4 & 15 ];
+			idx_buf[3] = hex_chars[ hexVal & 15 ];
 
-			String idxStr = new String( idx_buf, 0, 4 );
+			final String idxStr = new String( idx_buf, 0, 4 );
 			out.print( idxStr + ": " );
-		
+
 			for ( j = 0 ; j < ROW_BYTES ; j++ )
 				{
-				save_buf[j] = buf[ offset + (i * ROW_BYTES) + j ];
+				save_buf[j] = buf[ offset + i * ROW_BYTES + j ];
 
-				hex_buf[0] = hex_chars[ (save_buf[j] >> 4) & 0x0F ];
+				hex_buf[0] = hex_chars[ save_buf[j] >> 4 & 0x0F ];
 				hex_buf[1] = hex_chars[ save_buf[j] & 0x0F ];
 
 				out.print( hex_buf[0] );
@@ -82,30 +83,30 @@ HexDump
 					save_buf[j] = (byte) '.';
 				}
 
-			String saveStr = new String( save_buf, 0, j );
+			final String saveStr = new String( save_buf, 0, j );
 			out.println( " | " + saveStr + " |" );
 			}
-		
+
 		if ( residue > 0 )
 			{
-			int hexVal = (i * ROW_BYTES);
-			idx_buf[0] = hex_chars[ ((hexVal >> 12) & 15) ];
-			idx_buf[1] = hex_chars[ ((hexVal >> 8) & 15) ];
-			idx_buf[2] = hex_chars[ ((hexVal >> 4) & 15) ];
-			idx_buf[3] = hex_chars[ (hexVal & 15) ];
+			final int hexVal = i * ROW_BYTES;
+			idx_buf[0] = hex_chars[ hexVal >> 12 & 15 ];
+			idx_buf[1] = hex_chars[ hexVal >> 8 & 15 ];
+			idx_buf[2] = hex_chars[ hexVal >> 4 & 15 ];
+			idx_buf[3] = hex_chars[ hexVal & 15 ];
 
-			String idxStr = new String( idx_buf, 0, 4 );
+			final String idxStr = new String( idx_buf, 0, 4 );
 			out.print( idxStr + ": " );
 
 			for ( j = 0 ; j < residue ; j++ )
 				{
-				save_buf[j] = buf[ offset + (i * ROW_BYTES) + j ];
+				save_buf[j] = buf[ offset + i * ROW_BYTES + j ];
 
-				hex_buf[0] = hex_chars[ (save_buf[j] >> 4) & 0x0F ];
+				hex_buf[0] = hex_chars[ save_buf[j] >> 4 & 0x0F ];
 				hex_buf[1] = hex_chars[ save_buf[j] & 0x0F ];
 
-				out.print( (char)hex_buf[0] );
-				out.print( (char)hex_buf[1] );
+				out.print( hex_buf[0] );
+				out.print( hex_buf[1] );
 				out.print( ' ' );
 
 				if ( j == ROW_QTR1 || j == ROW_HALF || j == ROW_QTR2 )
@@ -114,7 +115,7 @@ HexDump
 				if ( save_buf[j] < 0x20 || save_buf[j] > 0x7E )
 					save_buf[j] = (byte) '.';
 				}
-				
+
 			for ( /*j INHERITED*/ ; j < ROW_BYTES ; j++ )
 				{
 				save_buf[j] = (byte) ' ';
@@ -122,16 +123,16 @@ HexDump
 				if ( j == ROW_QTR1 || j == ROW_HALF || j == ROW_QTR2 )
 					out.print( " " );
 				}
-			
-			String saveStr = new String( save_buf, 0, j );
+
+			final String saveStr = new String( save_buf, 0, j );
 			out.println( " | " + saveStr + " |" );
 			}
 		}
 
 	static public void
-	main( String[] args )
+	main( final String[] args )
 		{
-		byte[] data = new byte[132];
+		final byte[] data = new byte[132];
 		for ( int i = 0 ; i < 132 ; ++i ) data[i] = (byte)i;
 
 		HexDump.dumpHexData( System.err, "Test HexDump", data, 132 );

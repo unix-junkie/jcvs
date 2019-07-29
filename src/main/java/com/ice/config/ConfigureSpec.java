@@ -1,29 +1,26 @@
 
 package com.ice.config;
 
-import javax.swing.*;
-
-
 public
 class		ConfigureSpec
 implements	ConfigureConstants, java.io.Serializable
 	{
 
-	private String		key;
-	private String		type;
-	private String		path;
-	private String		propName;
-	private String		description;
-	private String		help;
+	private final String		key;
+	private final String		type;
+	private final String		path;
+	private final String		propName;
+	private final String		description;
+	private final String		help;
 
-	private String[]	choices;
+	private final String[]	choices;
 
 
 	public
 	ConfigureSpec
-			( String key, String type, String path,
-				String name, String desc, String help,
-				String[] choices )
+			( final String key, final String type, final String path,
+				final String name, final String desc, final String help,
+				final String[] choices )
 		{
 		this.key = key;
 		this.type = type;
@@ -43,7 +40,7 @@ implements	ConfigureConstants, java.io.Serializable
 	public String
 	getName()
 		{
-		int index = this.path.lastIndexOf( "." );
+		final int index = this.path.lastIndexOf( "." );
 		if ( index == -1 )
 			return this.path;
 		else

@@ -1,14 +1,7 @@
 
 package com.ice.jcvsii;
 
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.ice.pref.UserPrefs;
 
@@ -18,32 +11,32 @@ class		WorkBenchTreeModel
 extends		DefaultTreeModel
 	{
 	public
-	WorkBenchTreeModel( WorkBenchTreeNode rootNode )
+	WorkBenchTreeModel( final WorkBenchTreeNode rootNode )
 		{
 		super( rootNode );
 		}
 
 	public void
-	saveWorkBench( UserPrefs prefs )
+	saveWorkBench( final UserPrefs prefs )
 		{
-		WorkBenchTreeNode rootNode = 
+		final WorkBenchTreeNode rootNode =
 			(WorkBenchTreeNode) this.getRoot();
 
 		this.recursiveSave( prefs, rootNode );
 		}
 
 	public void
-	recursiveSave( UserPrefs prefs, WorkBenchTreeNode rootNode )
+	recursiveSave( final UserPrefs prefs, final WorkBenchTreeNode rootNode )
 		{
 		if ( false )
 			System.err.println
 				( "SAVE WORKBENCH NODE: "
 					+ rootNode.getDefinition().getFullPath() );
 
-		String propName =
+		final String propName =
 			"wb." + rootNode.getDefinition().getFullPath();
 
-		WorkBenchDefinition def = rootNode.getDefinition();
+		final WorkBenchDefinition def = rootNode.getDefinition();
 
 		prefs.setBoolean( propName + ".isleaf", ! def.isFolder() );
 		prefs.setProperty( propName + ".name", def.getDisplayName() );
@@ -56,7 +49,7 @@ extends		DefaultTreeModel
 			}
 		else
 			{
-			WorkBenchTreeNode[] childs = rootNode.getChildren();
+			final WorkBenchTreeNode[] childs = rootNode.getChildren();
 
 			prefs.setTokens
 				( propName + ".children", this.getChildTokens( childs ) );
@@ -71,16 +64,16 @@ extends		DefaultTreeModel
 	public void
 	fireTreeChanged()
 		{
-		WorkBenchTreeNode rootNode = 
+		final WorkBenchTreeNode rootNode =
 			(WorkBenchTreeNode) this.getRoot();
 		this.fireTreeStructureChanged
 			( rootNode, rootNode.getPath(), null, null );
 		}
 
 	public void
-	loadWorkBench( UserPrefs prefs )
+	loadWorkBench( final UserPrefs prefs )
 		{
-		WorkBenchTreeNode rootNode = 
+		final WorkBenchTreeNode rootNode =
 			(WorkBenchTreeNode) this.getRoot();
 
 		this.recursiveLoad( prefs, rootNode );
@@ -90,49 +83,49 @@ extends		DefaultTreeModel
 		}
 
 	public void
-	recursiveLoad( UserPrefs prefs, WorkBenchTreeNode rootNode )
+	recursiveLoad( final UserPrefs prefs, final WorkBenchTreeNode rootNode )
 		{
-		String rootPath = rootNode.getDefinition().getFullPath();
+		final String rootPath = rootNode.getDefinition().getFullPath();
 
 		String propName = "wb." + rootPath;
 
-		String[] chNames =
+		final String[] chNames =
 			prefs.getTokens( propName + ".children", new String[0] );
 
 		for ( int i = 0 ; i < chNames.length ; ++i )
 			{
-			String name = chNames[i];
+			final String name = chNames[i];
 
 			propName = "wb." + rootPath + "." + name;
 
-			boolean isFolder =
+			final boolean isFolder =
 				! prefs.getBoolean( propName + ".isleaf", true );
-			String display =
+			final String display =
 				prefs.getProperty( propName + ".name", null );
-			String desc =
+			final String desc =
 				prefs.getProperty( propName + ".desc", null );
 
-			String localRoot =
+			final String localRoot =
 				isFolder ? null :
 					prefs.getProperty( propName + ".local", null );
 
 			if ( display == null || desc == null
-					|| (!isFolder && localRoot == null) )
+					|| !isFolder && localRoot == null )
 				{
 				// UNDONE
-				(new Throwable
+				new Throwable
 					( "loadWorkBench: path '" + propName +
-						"' appears corrupted." )).printStackTrace();
+						"' appears corrupted." ).printStackTrace();
 				continue;
 				}
 
 			if ( isFolder )
 				{
-				WorkBenchDefinition childDef =
+				final WorkBenchDefinition childDef =
 					new WorkBenchDefinition
 						( name, rootPath, display, desc );
 
-				WorkBenchTreeNode newNode =
+				final WorkBenchTreeNode newNode =
 					new WorkBenchTreeNode( childDef );
 
 				rootNode.add( newNode );
@@ -141,11 +134,11 @@ extends		DefaultTreeModel
 				}
 			else
 				{
-				WorkBenchDefinition childDef =
+				final WorkBenchDefinition childDef =
 					new WorkBenchDefinition
 						( name, rootPath, display, desc, localRoot );
 
-				WorkBenchTreeNode newNode =
+				final WorkBenchTreeNode newNode =
 					new WorkBenchTreeNode( childDef );
 
 				rootNode.add( newNode );
@@ -154,10 +147,10 @@ extends		DefaultTreeModel
 		}
 
 	private String[]
-	getChildTokens( WorkBenchTreeNode[] childs )
+	getChildTokens( final WorkBenchTreeNode[] childs )
 		{
-		String[] result = new String[ childs.length ];
-		
+		final String[] result = new String[ childs.length ];
+
 		for ( int i = 0 ; i < childs.length ; ++i )
 			{
 			result[i] = childs[i].getDefinition().getName();

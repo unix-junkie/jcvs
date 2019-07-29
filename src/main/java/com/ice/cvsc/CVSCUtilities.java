@@ -1,9 +1,9 @@
 /*
 ** Java cvs client library package.
 ** Copyright (c) 1997-2002 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** Library General Public License (LGPL) as published by the Free Software
 ** Foundation.
@@ -18,15 +18,20 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.cvsc;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 
 /**
@@ -59,8 +64,8 @@ CVSCUtilities extends Object
 		{
 		boolean result = true;
 
-		String osname = System.getProperty( "os.name" );
-		
+		final String osname = System.getProperty( "os.name" );
+
 		if ( osname != null )
 			{
 			if ( osname.startsWith( "macos" ) )
@@ -102,7 +107,7 @@ CVSCUtilities extends Object
 			{
 			subPath = CVSCUtilities.importPath( subPath );
 			rootPath = CVSCUtilities.importPath( rootPath );
-			 
+
 			if ( ! CVSCUtilities.caseSensitivePathNames() )
 				{
 				subPath = subPath.toLowerCase();
@@ -111,7 +116,7 @@ CVSCUtilities extends Object
 
 			result = subPath.startsWith( rootPath );
 			}
- 			
+
 		if ( ! result )
 			{
 			CVSTracer.traceIf( true,
@@ -124,9 +129,9 @@ CVSCUtilities extends Object
 		}
 
 	static public int
-	computeTranslation( CVSEntry entry )
+	computeTranslation( final CVSEntry entry )
 		{
-		String options = entry.getOptions();
+		final String options = entry.getOptions();
 
 		int trans = CVSClient.TRANSLATE_ASCII;
 
@@ -151,32 +156,32 @@ CVSCUtilities extends Object
 	// appear to be adequate.
 	//
 	static public String
-	exportPath( String path )
+	exportPath( final String path )
 		{
 		return path.replace( '/', File.separatorChar );
 		}
 
 	static public String
-	importPath( String path )
+	importPath( final String path )
 		{
 		return path.replace( File.separatorChar, '/' );
 		}
 
 	static public String
-	ensureFinalSlash( String path )
+	ensureFinalSlash( final String path )
 		{
 		return
-			( path.endsWith( "/" )
-				? path : path + "/" );
+			path.endsWith( "/" )
+			? path : path + "/";
 		}
 
 	static public String
-	stripFinalSlash( String path )
+	stripFinalSlash( final String path )
 		{
 		return
-			( path.endsWith( "/" )
-				? path.substring( 0, (path.length() - 1) )
-				: path );
+			path.endsWith( "/" )
+			? path.substring( 0, path.length() - 1 )
+			: path;
 		}
 
 	static public String
@@ -185,9 +190,9 @@ CVSCUtilities extends Object
 		for ( ; ; )
 			{
 			if ( path.endsWith( "/" ) )
-				path = path.substring( 0, (path.length() - 1) );
+				path = path.substring( 0, path.length() - 1 );
 			else if ( path.endsWith( File.separator ) )
-				path = path.substring( 0, (path.length() - 1) );
+				path = path.substring( 0, path.length() - 1 );
 			else
 				break;
 			}
@@ -203,7 +208,7 @@ CVSCUtilities extends Object
 	getLocalParent( String localDir )
 		{
 		localDir = CVSCUtilities.stripFinalSlash( localDir );
-		int index = localDir.lastIndexOf( '/' );
+		final int index = localDir.lastIndexOf( '/' );
 		if ( index > 0 )
 			{
 			localDir = localDir.substring( 0, index );
@@ -212,7 +217,7 @@ CVSCUtilities extends Object
 		}
 
 	static public int
-	slashCount( String s )
+	slashCount( final String s )
 		{
 		int result = 0;
 		for ( int cIdx = 0 ; cIdx < s.length() ; ++cIdx )
@@ -224,15 +229,15 @@ CVSCUtilities extends Object
 		}
 
 	static public boolean
-	createEmptyFile( File f )
+	createEmptyFile( final File f )
 		{
 		boolean result = true;
 
 		try {
-			FileWriter writer = new FileWriter( f );
+			final FileWriter writer = new FileWriter( f );
 			writer.close();
 			}
-		catch ( IOException ex )
+		catch ( final IOException ex )
 			{
 			result = false;
 			CVSTracer.traceWithStack
@@ -244,7 +249,7 @@ CVSCUtilities extends Object
 		}
 
 	static public void
-	writeStringFile( File f, String str )
+	writeStringFile( final File f, final String str )
 		throws IOException
 		{
 		FileWriter writer = null;
@@ -265,7 +270,7 @@ CVSCUtilities extends Object
 		}
 
 	static public String
-	readStringFile( File f )
+	readStringFile( final File f )
 		throws IOException
 		{
 		BufferedReader	in = null;
@@ -281,7 +286,7 @@ CVSCUtilities extends Object
 			{
 			if ( in != null )
 				try { in.close(); }
-					catch ( IOException ex )
+					catch ( final IOException ex )
 						{ }
 			}
 
@@ -304,7 +309,7 @@ CVSCUtilities extends Object
 		}
 
 	public static void
-	integrateEntriesLog( File adminDir )
+	integrateEntriesLog( final File adminDir )
 		throws IOException
 		{
 		PrintWriter outBak = null;
@@ -313,7 +318,7 @@ CVSCUtilities extends Object
 
 	//	System.err.println( "INTEGRATE LOGFILE: " + adminDir.getPath() );
 
-		File logF = new File( adminDir, "Entries.Log" );
+		final File logF = new File( adminDir, "Entries.Log" );
 
 		if ( ! logF.exists() )
 			return;
@@ -321,27 +326,27 @@ CVSCUtilities extends Object
 	//	System.err.println
 	//		( "Integrating '" + logF.getPath() + "' into 'Entries'" );
 
-		Vector nameV = new Vector();
-		Vector lineV = new Vector();
+		final Vector nameV = new Vector();
+		final Vector lineV = new Vector();
 
-		File entF = new File( adminDir, "Entries" );
-		File bakF = new File( adminDir, "Entries.Backup" );
+		final File entF = new File( adminDir, "Entries" );
+		final File bakF = new File( adminDir, "Entries.Backup" );
 
 		try {
 			entIn = new BufferedReader( new FileReader( entF ) );
 
 			for ( ; ; )
 				{
-				String inLine = entIn.readLine();
+				final String inLine = entIn.readLine();
 				if ( inLine == null )
 					break;
 
-				char ch = inLine.charAt(0);
+				final char ch = inLine.charAt(0);
 				if ( ch != '/' && ch != 'D' )
 					continue;
 
-				int begIdx = ( ch == 'D' ? 2 : 1 );
-				int idx = inLine.indexOf( "/", begIdx );
+				final int begIdx = ch == 'D' ? 2 : 1;
+				final int idx = inLine.indexOf( "/", begIdx );
 				if ( idx == -1 )
 					continue;
 
@@ -358,7 +363,7 @@ CVSCUtilities extends Object
 
 			for ( ; ; )
 				{
-				String inLine = logIn.readLine();
+				final String inLine = logIn.readLine();
 				if ( inLine == null )
 					break;
 
@@ -367,23 +372,23 @@ CVSCUtilities extends Object
 
 			//	System.err.println( "Processing LOG LINE: " + inLine );
 
-				char selCh = inLine.charAt(0);
-				char sepCh = inLine.charAt(1);
-				if ( (selCh != 'A' && selCh != 'R')
+				final char selCh = inLine.charAt(0);
+				final char sepCh = inLine.charAt(1);
+				if ( selCh != 'A' && selCh != 'R'
 						|| sepCh != ' ' )
 					{
 				//	System.err.println( "IGNORE bad selector: " + inLine );
 					continue;
 					}
 
-				char ch = inLine.charAt(2);
+				final char ch = inLine.charAt(2);
 
-				int begIdx = (ch == 'D' ? 4 : 3);
+				final int begIdx = ch == 'D' ? 4 : 3;
 				int idx = inLine.indexOf( "/", begIdx );
 				if ( idx == -1 )
 					continue;
 
-				String name = inLine.substring( begIdx, idx );
+				final String name = inLine.substring( begIdx, idx );
 			//	System.err.println( "Processing LOG NAME: " + name );
 
 				if ( selCh == 'A' )
@@ -458,7 +463,7 @@ CVSCUtilities extends Object
 				if ( logIn != null ) logIn.close();
 				if ( outBak != null ) outBak.close();
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{ }
 			}
 		}

@@ -1,9 +1,9 @@
 /*
 ** Java cvs client application package.
 ** Copyright (c) 1997 by Timothy Gerard Endres
-** 
+**
 ** This program is free software.
-** 
+**
 ** You may redistribute it and/or modify it under the terms of the GNU
 ** General Public License as published by the Free Software Foundation.
 ** Version 2 of the license should be included with this distribution in
@@ -16,20 +16,41 @@
 ** NOT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY. THE AUTHOR
 ** OF THIS SOFTWARE, ASSUMES _NO_ RESPONSIBILITY FOR ANY
 ** CONSEQUENCE RESULTING FROM THE USE, MODIFICATION, OR
-** REDISTRIBUTION OF THIS SOFTWARE. 
-** 
+** REDISTRIBUTION OF THIS SOFTWARE.
+**
 */
 
 package com.ice.jcvsii;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Event;
+import java.awt.FileDialog;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
-import com.ice.cvsc.*;
 import com.ice.pref.UserPrefs;
 
 
@@ -40,8 +61,8 @@ implements	ActionListener
 	{
 	private ProjectFrame		projectFrame;
 
-	private JTextArea			outputText;
-	private JScrollPane			scroller;
+	private final JTextArea			outputText;
+	private final JScrollPane			scroller;
 
 	private boolean				isRedirecting;
 	private File				redirectFile;
@@ -54,7 +75,7 @@ implements	ActionListener
 
 
 	public
-	OutputFrame( ProjectFrame projectFrame, String title )
+	OutputFrame( final ProjectFrame projectFrame, final String title )
 		{
 		super( title );
 
@@ -76,10 +97,10 @@ implements	ActionListener
 		this.outputText.setBackground( Color.white );
  		this.outputText.setFont
 			( Config.getPreferences().getFont
-				( Config.OUTPUT_WINDOW_FONT,
+				( ConfigConstants.OUTPUT_WINDOW_FONT,
 					new Font( "Monospaced", Font.PLAIN, 12 ) ) );
 
-		Container content = this.getContentPane();
+		final Container content = this.getContentPane();
 
 		content.setLayout( new BorderLayout( 0, 0 ) );
 
@@ -94,11 +115,11 @@ implements	ActionListener
 				// we do not want to create and dispose of frequently. Only the
 				// project frame that owns us can dispose of us!
 				public void
-					windowClosing( WindowEvent e )
+					windowClosing( final WindowEvent e )
 						{ setVisible( false ); }
 
 				public void
-					windowClosed( WindowEvent e )
+					windowClosed( final WindowEvent e )
 						{ windowBeingClosed(); }
 				}
 			);
@@ -108,23 +129,23 @@ implements	ActionListener
 	// they may have their own concept of preferences, like ProjectFrames.
 
 	public void
-	loadPreferences( Rectangle defBounds )
+	loadPreferences( final Rectangle defBounds )
 		{
 		this.setBounds
 			( this.projectFrame.getPreferences().getBounds
-				( Config.OUTPUT_WINDOW_BOUNDS, defBounds ) );
+				( ConfigConstants.OUTPUT_WINDOW_BOUNDS, defBounds ) );
 		}
 
 	public void
 	savePreferences()
 		{
-		Rectangle bounds = this.getBounds();
+		final Rectangle bounds = this.getBounds();
 
 		if ( bounds.x >= 0 && bounds.y >= 0
 				&& bounds.width > 0 && bounds.height > 0 )
 			{
 			this.projectFrame.getPreferences().setBounds
-				( Config.OUTPUT_WINDOW_BOUNDS, bounds );
+				( ConfigConstants.OUTPUT_WINDOW_BOUNDS, bounds );
 			}
 		}
 
@@ -137,7 +158,7 @@ implements	ActionListener
 				&& this.redirectWriter != null )
 			{
 			try { this.redirectWriter.close(); }
-				catch ( IOException ex ) { }
+				catch ( final IOException ex ) { }
 			}
 
 		this.projectFrame.outputIsClosing();
@@ -151,13 +172,13 @@ implements	ActionListener
 		}
 
 	public void
-	setText( String newText )
+	setText( final String newText )
 		{
 		if ( this.isRedirecting
 				&& this.redirectWriter != null )
 			{
 			try {
-				String lineSep =
+				final String lineSep =
 					UserPrefs.getLineSeparator();
 
 				this.redirectWriter.write( newText );
@@ -166,7 +187,7 @@ implements	ActionListener
 					this.redirectWriter.write( lineSep );
 					}
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				this.endRedirection();
 				this.outputText.setText
@@ -184,10 +205,10 @@ implements	ActionListener
 		}
 
     public void
-    actionPerformed( ActionEvent evt )
+    actionPerformed( final ActionEvent evt )
         {
-		String	subCmd;
-	    String	command = evt.getActionCommand();
+		final String	subCmd;
+	    final String	command = evt.getActionCommand();
 
 		if ( command.startsWith( "Hide" ) )
 			{
@@ -266,7 +287,7 @@ implements	ActionListener
 	public void
 	saveToFile()
 		{
-		FileDialog dialog = new
+		final FileDialog dialog = new
 			FileDialog( this, "Save To File", FileDialog.SAVE );
 
 		if ( this.fileDialogDefaultPath != null )
@@ -274,9 +295,9 @@ implements	ActionListener
 
 		dialog.show();
 
-		String dirName = dialog.getDirectory();
-		String fileName = dialog.getFile();
-		
+		final String dirName = dialog.getDirectory();
+		final String fileName = dialog.getFile();
+
 		if ( dirName != null && fileName != null )
 			{
 			File outF = null;
@@ -285,16 +306,16 @@ implements	ActionListener
 			try {
 				outF = new File( dirName, fileName );
 
-				PrintWriter out =
+				final PrintWriter out =
 					new PrintWriter( new FileWriter( outF ) );
 
-				BufferedReader rdr =
+				final BufferedReader rdr =
 					new BufferedReader
 						( new StringReader( this.outputText.getText() ) );
 
 				for ( ; ; )
 					{
-					String ln = rdr.readLine();
+					final String ln = rdr.readLine();
 					if ( ln == null )
 						break;
 					out.println( ln );
@@ -302,7 +323,7 @@ implements	ActionListener
 
 				out.close();
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSUserDialog.Error
 					( "Could not save text to file '"
@@ -323,8 +344,8 @@ implements	ActionListener
 
 			return;
 			}
-		
-		FileDialog dialog = new
+
+		final FileDialog dialog = new
 			FileDialog( this, "Redirect File", FileDialog.SAVE );
 
 		if ( this.fileDialogDefaultPath != null )
@@ -332,9 +353,9 @@ implements	ActionListener
 
 		dialog.show();
 
-		String dirName = dialog.getDirectory();
-		String fileName = dialog.getFile();
-		
+		final String dirName = dialog.getDirectory();
+		final String fileName = dialog.getFile();
+
 		if ( dirName != null && fileName != null )
 			{
 			this.fileDialogDefaultPath = dirName;
@@ -346,7 +367,7 @@ implements	ActionListener
 					new BufferedWriter
 						( new FileWriter( this.redirectFile ) );
 				}
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSUserDialog.Error
 					( "Could not redirect to file '"
@@ -378,7 +399,7 @@ implements	ActionListener
 		if ( this.redirectWriter != null )
 			{
 			try { this.redirectWriter.close(); }
-			catch ( IOException ex )
+			catch ( final IOException ex )
 				{
 				CVSUserDialog.Error
 					( "Failed closing redirect file '"
@@ -403,9 +424,9 @@ implements	ActionListener
 		{
 		JMenuItem		mItem;
 
-		JMenuBar mBar = new JMenuBar();
+		final JMenuBar mBar = new JMenuBar();
 
-		JMenu mFile = new JMenu( "File", true );
+		final JMenu mFile = new JMenu( "File", true );
 		mBar.add( mFile );
 
 		mItem = new JMenuItem( "Show Project" );
@@ -456,7 +477,7 @@ implements	ActionListener
 			( KeyStroke.getKeyStroke
 				( KeyEvent.VK_W, Event.CTRL_MASK ) );
 
-		JMenu mEdit = new JMenu( "Edit", true );
+		final JMenu mEdit = new JMenu( "Edit", true );
 		mBar.add( mEdit );
 
 		mItem = new JMenuItem( "Copy" );
