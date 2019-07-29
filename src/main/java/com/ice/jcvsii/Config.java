@@ -45,7 +45,7 @@ import com.ice.util.TempFileManager;
 /**
  * The Configuration class.
  *
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @author Timothy Gerard Endres,
  *  <a href="mailto:time@ice.com">time@ice.com</a>.
  */
@@ -54,8 +54,8 @@ public
 class		Config
 implements	ConfigConstants, PropertyChangeListener
 	{
-	static public final String		RCS_ID = "$Id: Config.java,v 1.6 2000/06/12 23:28:29 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.6 $";
+	static public final String		RCS_ID = "$Id: Config.java,v 1.7 2003/07/27 04:39:06 time Exp $";
+	static public final String		RCS_REV = "$Revision: 1.7 $";
 
 
 	/**

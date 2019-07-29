@@ -32,8 +32,8 @@ import java.util.*;
 public class
 CVSLog extends Object
 	{
-	private static final String		RCS_ID = "$Id: CVSLog.java,v 2.6 1999/04/01 17:49:07 time Exp $";
-	private static final String		RCS_REV = "$Revision: 2.6 $";
+	private static final String		RCS_ID = "$Id: CVSLog.java,v 2.7 2003/07/27 01:08:32 time Exp $";
+	private static final String		RCS_REV = "$Revision: 2.7 $";
 	private static final String		RCS_NAME = "$Name:  $";
 
 	public static final String		DEFAULT_FILENAME = "cvslog.txt";

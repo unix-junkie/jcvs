@@ -39,7 +39,7 @@ import java.util.*;
  * you need to communicate with a CVS Server and maintain
  * local working directories for CVS repositories.
  *
- * @version $Revision: 2.1 $
+ * @version $Revision: 2.2 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  *
@@ -89,8 +89,8 @@ import java.util.*;
 public class
 CVSScramble extends Object
 	{
-	static public final String		RCS_ID = "$Id: CVSScramble.java,v 2.1 1997/04/19 05:12:11 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.1 $";
+	static public final String		RCS_ID = "$Id: CVSScramble.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.2 $";
 
 	static private int[]	shifts;
 

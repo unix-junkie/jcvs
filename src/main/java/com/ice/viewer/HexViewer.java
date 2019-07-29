@@ -36,21 +36,21 @@ implements	CommandObject
 	private EditorKit		editor = null;
 	private Document		doc = null;
 
-	private boolean			hitEOF;
-	private boolean			closeStream;
-	private int				dataLength;
+	private boolean			hitEOF = false;
+	private boolean			closeStream = false;
+	private int				dataLength = -1;
 	private InputStream		dataStream = null;
 
-	private int				currentBlkIdx;
-	private Vector			blockCache;
-	private HexNumberFormat	hexFmt;
+	private int				currentBlkIdx = 0;
+	private Vector			blockCache = null;
+	private HexNumberFormat	hexFmt = null;
 
-	private HexCanvas		hexCanvas;
-	private JScrollBar		scrollBar;
-	private JTextField		blkHexField;
-	private JTextField		blkDecField;
-	private JTextField		offHexField;
-	private JTextField		offDecField;
+	private HexCanvas		hexCanvas = null;
+	private JScrollBar		scrollBar = null;
+	private JTextField		blkHexField = null;
+	private JTextField		blkDecField = null;
+	private JTextField		offHexField = null;
+	private JTextField		offDecField = null;
 	private Cursor			saveCursor = null;
 
 

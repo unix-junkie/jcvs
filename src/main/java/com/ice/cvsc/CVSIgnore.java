@@ -33,7 +33,7 @@ package com.ice.cvsc;
  * we implement that scans directories, and thus cares about ignoring
  * certain files.
  *
- * @version $Revision: 2.3 $
+ * @version $Revision: 2.4 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSProject
  *
@@ -46,8 +46,8 @@ import java.util.*;
 
 public class CVSIgnore extends Object 
 	{
-	static public final String		RCS_ID = "$Id: CVSIgnore.java,v 2.3 1998/07/03 15:56:40 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	static public final String		RCS_ID = "$Id: CVSIgnore.java,v 2.4 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.4 $";
 
 	static private final String		DEFAULT_IGNORE_SPEC =
 		"RCSLOG RCS SCCS CVS cvslog.*" +

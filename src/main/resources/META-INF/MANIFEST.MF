@@ -1,8 +1,13 @@
 Manifest-Version: 1.0
 Main-Class: com.ice.jcvsii.JCVS
-Class-Path: jars/jh.jar jars/activation.jar jars/mindbright.jar
+Class-Path: jars/jh.jar
+   jars/activation.jar
+   jars/j2ssh-core.jar
+   jars/j2ssh-common.jar
+   jars/commons-logging.jar
+
 Name: "jCVS II"
 Created-By: "Tim Endres <time@jcvs.org>"
 Implementation-Vendor: "com.ice"
-Implementation-Title: "jCVS II Release 5.3"
-Implementation-Version: "5.3.1"
+Implementation-Title: "jCVS II Release 5.4.2"
+Implementation-Version: "5.4.2"

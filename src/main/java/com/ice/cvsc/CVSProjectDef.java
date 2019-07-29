@@ -39,7 +39,7 @@ import java.util.*;
  * a CVS file, such as its name, check-out time, modification status,
  * local pathname, repository, etc.
  *
- * @version $Revision: 2.3 $
+ * @version $Revision: 2.4 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSProject
@@ -50,8 +50,8 @@ public
 class		CVSProjectDef
 extends		Object
 	{
-	static public final String		RCS_ID = "$Id: CVSProjectDef.java,v 2.3 2002/02/10 18:01:44 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	static public final String		RCS_ID = "$Id: CVSProjectDef.java,v 2.4 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.4 $";
 
 	/**
 	 * True if this definition is parsed and valid.
@@ -239,6 +239,23 @@ extends		Object
 			}
 
 		rootDirStr.append( this.hostName );
+
+	/*
+	** UNDONE HIGH
+	** Standard CVS URL has a port field:
+	**
+		// If there is a non-standard port, add to URL
+		if ( this.isPServer() )
+			{
+			if ( this.port != CVSClient.DEFAULT_CVS_PORT )
+				{
+				rootDirStr.append( "#" );
+				rootDirStr.append( this.port );
+				}
+			}
+	**
+	*/
+
 		rootDirStr.append( ":" );
 		rootDirStr.append( this.rootDirectory );
 

@@ -35,7 +35,7 @@ import java.util.*;
  * Some responses include parameters, and in some cases, files,
  * and the CVSReponseItem encapsulates these 'additional' data.
  *
- * @version $Revision: 2.4 $
+ * @version $Revision: 2.5 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSRequest
@@ -44,8 +44,8 @@ import java.util.*;
 public class
 CVSResponseItem extends Object
 	{
-	static public final String	RCS_ID = "$Id: CVSResponseItem.java,v 2.4 1998/07/05 22:48:25 time Exp $";
-	static public final String	RCS_REV = "$Revision: 2.4 $";
+	static public final String	RCS_ID = "$Id: CVSResponseItem.java,v 2.5 2003/07/27 01:08:32 time Exp $";
+	static public final String	RCS_REV = "$Revision: 2.5 $";
 
 	static public final int		CHECKED_IN			= 1;
 	static public final int		CHECKSUM			= 2;
@@ -337,7 +337,8 @@ CVSResponseItem extends Object
 			+ "entriesLine=" + this.entriesLine + ","
 			+ "newName=" + this.newName + ","
 			+ "tagSpec=" + this.tagSpec + ","
-			+ "useProgram=" + this.useProgram
+			+ "useProgram=" + this.useProgram + ","
+			+ "file=" + this.file
 			+ " ]";
 		}
 	}

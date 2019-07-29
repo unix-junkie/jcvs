@@ -33,15 +33,15 @@ import java.util.*;
  * Implements several general utility methods used by the cvs
  * client package.
  *
- * @version $Revision: 2.10 $
+ * @version $Revision: 2.11 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
 public class
 CVSCUtilities extends Object
 	{
-	static public final String		RCS_ID = "$Id: CVSCUtilities.java,v 2.10 2000/06/11 00:01:55 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.10 $";
+	static public final String		RCS_ID = "$Id: CVSCUtilities.java,v 2.11 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.11 $";
 
 	static private boolean			redirectOutErr;
 	static private PrintStream		out;

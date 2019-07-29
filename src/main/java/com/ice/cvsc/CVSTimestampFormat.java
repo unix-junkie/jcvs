@@ -38,7 +38,7 @@ import java.util.*;
  * <em>not</em> useful for display purposes, since the values
  * are not localized.
  *
- * @version $Revision: 2.4 $
+ * @version $Revision: 2.5 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSRequest
@@ -47,8 +47,8 @@ import java.util.*;
 public class
 CVSTimestampFormat	extends Format
 	{																
-	static public final String		RCS_ID = "$Id: CVSTimestampFormat.java,v 2.4 1999/04/01 17:50:29 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.4 $";
+	static public final String		RCS_ID = "$Id: CVSTimestampFormat.java,v 2.5 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.5 $";
 
 	static public final String		DEFAULT_GMT_TZID = "GMT";
 

@@ -36,7 +36,7 @@ import java.util.*;
  * <strong>strictly</strong> class based interface. There are
  * no instance methods.
  *
- * @version $Revision: 2.3 $
+ * @version $Revision: 2.4 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  *
@@ -45,8 +45,8 @@ import java.util.*;
 public class
 CVSTracer extends Object
 	{
-	static public final String		RCS_ID = "$Id: CVSTracer.java,v 2.3 1999/04/01 17:50:50 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	static public final String		RCS_ID = "$Id: CVSTracer.java,v 2.4 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.4 $";
 
 	static private PrintWriter		out = null;
 									

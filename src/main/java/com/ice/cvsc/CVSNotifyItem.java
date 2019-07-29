@@ -32,7 +32,7 @@ import java.util.*;
 /**
  * Encapsulates a 'Notify' request, resulting a an 'edit' or 'unedit'.
  *
- * @version $Revision: 2.1 $
+ * @version $Revision: 2.2 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSEntry
  * @see CVSRequest
@@ -41,8 +41,8 @@ import java.util.*;
 public class
 CVSNotifyItem extends Object
 	{
-	static public final String	RCS_ID = "$Id: CVSNotifyItem.java,v 2.1 1997/04/19 05:12:15 time Exp $";
-	static public final String	RCS_REV = "$Revision: 2.1 $";
+	static public final String	RCS_ID = "$Id: CVSNotifyItem.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	static public final String	RCS_REV = "$Revision: 2.2 $";
 
 	private String			type;
 	private String			name;

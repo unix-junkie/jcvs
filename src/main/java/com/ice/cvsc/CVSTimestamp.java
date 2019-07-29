@@ -33,7 +33,7 @@ import java.util.*;
  * class allows us to display the timestamps of CVS Entries,
  * as well as determine when files have been updated.
  *
- * @version $Revision: 2.5 $
+ * @version $Revision: 2.6 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSTimestampFormat
  */
@@ -42,8 +42,8 @@ public class
 CVSTimestamp extends Date
 		implements Cloneable
 	{
-	static public final String		RCS_ID = "$Id: CVSTimestamp.java,v 2.5 1999/07/27 03:17:55 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.5 $";
+	static public final String		RCS_ID = "$Id: CVSTimestamp.java,v 2.6 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.6 $";
 
 	public
 	CVSTimestamp()

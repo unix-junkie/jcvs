@@ -39,7 +39,7 @@ import java.util.*;
  * will return a CVSResponse containing the results of the
  * request.
  *
- * @version $Revision: 2.8 $
+ * @version $Revision: 2.9 $
  * @author Timothy Gerard Endres, <time@gjt.org>.
  * @see CVSClient
  * @see CVSProject
@@ -48,8 +48,8 @@ import java.util.*;
 public class
 CVSRequest extends Object
 	{
-	static public final String	RCS_ID = "$Id: CVSRequest.java,v 2.8 2002/02/10 18:01:44 time Exp $";
-	static public final String	RCS_REV = "$Revision: 2.8 $";
+	static public final String	RCS_ID = "$Id: CVSRequest.java,v 2.9 2003/07/27 01:08:32 time Exp $";
+	static public final String	RCS_REV = "$Revision: 2.9 $";
 
 	static public final int		METHOD_INETD = 1;
 	static public final int		METHOD_RSH = 2;
@@ -341,6 +341,21 @@ CVSRequest extends Object
 	private CVSUserInterface	ui;
 
 	private PrintWriter			redirectWriter;
+
+
+
+	public static String
+	getConnMethodName( int method )
+		{
+		return (
+			method == CVSRequest.METHOD_INETD
+				? "pserver"
+				: ( method == CVSRequest.METHOD_SSH
+					? "ssh"
+					: "rsh"
+					)
+				);
+		}
 
 
 	/**

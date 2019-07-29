@@ -1,0 +1,151 @@
+
+JCVS II - 5.3
+
+This is release 5.3.4. July 26, 2002.
+
+Please excuse my inability to keep up with this file.
+
+------------------------------------------------------------------------------
+
+INSTALLATION
+
+jCVS is now Java 2 "ready". Therefore, you should not have to deal with
+the CLASSPATH unless you want to build jCVS.
+
+
+------------------------------------------------------------------------------
+COMMANDS TO START JCVS
+
+Change your current directory to the 'bin' directory in the jCVS
+distribution that you extracted. Then, you can start jCVS with the
+following commands.
+
+Start jCVS with Java 2 with a command such as:
+
+   java -jar jcvsii.jar
+
+This command must be run from the bin directory, or Java will not be
+able to locate the jar files.
+
+Windows users may wish to use the Shortcut included in the bin directory.
+If you wish to use this shortcut, you must edit its "Target" via the
+"Properties" of the shortcut. The Target must have the path of the Java
+executable (javaw.exe) as it is installed on your machine. If you are
+having trouble launching jCVS, change the executable to "java.exe",
+as opposed to "javaw.exe", and you will get a shell window in which
+error messages will be displayed.
+
+If you can not start jCVS with either of the two methods above, then
+you can use the more traditional approach described here.
+
+Start jCVS with command such as follows. It assumes that you are in
+the bin directory of the distribution.
+
+   CLASSPATH="jcvsii.jar;jars/activation.jar;jars/jh.jar;jars/mindbright.jar;$CLASSPATH"
+   java -classpath $CLASSPATH com.ice.jcvsii.JCVS
+
+
+------------------------------------------------------------------------------
+MAILING LIST
+
+You may subscribe to the jCVS mailing list at:
+
+   <http://www.gjt.org/servlets/MailingLists/ListInfo.html/jcvs>
+
+To post to the list, you must subscribe (spam filter).
+
+
+------------------------------------------------------------------------------
+BUG REPORTS
+
+Please use BugRat to report bugs.
+
+   <http://www.gjt.org/bugrat/report/SelectCat/jcvs>
+
+If you have troubles with BugRat, please feel free to email bug reports
+to myself at time@jcvs.org, or to the jCVS mailing list.
+
+
+------------------------------------------------------------------------------
+DOCUMENTATION
+
+The documentation both builtin, and available for browsing with your
+web browser. To browse, start with the file 'doc/readme.html'.
+
+
+------------------------------------------------------------------------------
+SIGNIFICANT FEATURE CHANGES
+
+
+This release ...
+
+* Final MindBright SSH release
+
+* Multiple TCP interface support
+
+* 
+
+------------------------------------------------------------------------------
+FIXED IN THIS RELEASE
+
+* Miscellaneous bug fixes
+
+* item 
+
+* 
+
+
+------------------------------------------------------------------------------
+TODO
+
+* item
+
+* item 
+
+* 
+
+
+------------------------------------------------------------------------------
+KNOWN PROBLEMS
+
+* item
+
+* item 
+
+* 
+
+
+------------------------------------------------------------------------------
+HOWTO
+
+* Configure Exec Viewer
+
+  CHANGE - You can now turn off JAF in the preferences and just configure
+           Exec Commands directly and be done with it. See the preference
+           named 'Actions.Use JAF'.
+
+  All "actions" are now driven by JAF. JAF uses a "mailcap" file to define
+  how things are "acted upon". The default mailcap in the jcvsii.jar file
+  defaults everything to 'com.ice.jcvsii.ExecViewer'. ExecViewer is a class
+  that simply invoke "System.exec()" with the environment and command line
+  that you supply via the configuration.
+
+  The configuration, which is accessed via 'Actions.Exec Commands' lets
+  you define "extension.action" commands. For example, if you wanted to
+  have vi open your java source code, you would click the "New" button
+  and enter ".java.open" (open is the default verb used when you double
+  click on a file. You can change this via 'Project Window.Double Click Verb').
+  This will put ".java.open" in the combo box, and select it. Now, enter
+  your command line in the Command text field using "$FILE" to reference the
+  file's full path name, and be sure to use double backslash if you are cursed
+  with Win32. You can enter environment also as "name=value" pairs in the
+  Environment field.
+
+* Define your own mailcap file?
+
+  jCVS, if it finds one, will read the file ~/.jcvsmailcap (~/jcvsmailcap.txt
+  for Win32 folks). Use the mailcap in the doc/examples folder for a template.
+  Win32 folks may wish to use the Win32Viewer, which uses the native DDE
+  interface to use the verbs configured via the Windows Folder Options.
+
+

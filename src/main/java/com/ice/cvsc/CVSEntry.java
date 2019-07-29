@@ -39,7 +39,7 @@ import java.util.*;
  * a CVS file, such as its name, check-out time, modification status,
  * local pathname, repository, etc.
  *
- * @version $Revision: 2.10 $
+ * @version $Revision: 2.11 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSProject
@@ -51,8 +51,8 @@ class		CVSEntry
 extends		Object
 implements	Cloneable
 	{
-	static public final String		RCS_ID = "$Id: CVSEntry.java,v 2.10 1999/07/27 03:14:51 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.10 $";
+	static public final String		RCS_ID = "$Id: CVSEntry.java,v 2.11 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.11 $";
 
 	/**
 	 * True if this entry is valid.
@@ -88,6 +88,23 @@ implements	Cloneable
 	private boolean			isToBeRemoved;
 	private boolean			isDirty;
 
+	/**
+	 * If this is set, then when the getServerEntryLine() is
+	 * called, we will ignore the file's modification status
+	 * and mark the entry as "/modified/". This was added to
+	 * support jcvsweb, but is currently unused.
+	 */
+	private boolean			forceModified;
+
+	/**
+	 * If this is set, then when the getServerEntryLine() is
+	 * called, we will ignore the "exists" flag and pretend
+	 * that the file does NOT exist. This was added to support
+	 * jcvsweb's need for updates of existing files for viewing
+	 * purposes.
+	 */
+	private boolean			forceNoExistence;
+
 	private CVSMode			mode;
 
 	private CVSTimestamp	tsCache;
@@ -119,6 +136,8 @@ implements	Cloneable
 		this.isNewUserFile = false;
 		this.isToBeRemoved = false;
 		this.isDirty = false;
+		this.forceModified = false;
+		this.forceNoExistence = false;
 
 		this.mode = null;
 		this.tsCache = null;
@@ -157,6 +176,30 @@ implements	Cloneable
 	setDirty( boolean dirty )
 		{
 		this.isDirty = dirty;
+		}
+
+	public boolean
+	isForceModified()
+		{
+		return this.forceModified;
+		}
+
+	public void
+	setForceModified( boolean forceModified )
+		{
+		this.forceModified = forceModified;
+		}
+
+	public boolean
+	isForceNoExistence()
+		{
+		return this.forceNoExistence;
+		}
+
+	public void
+	setForceNoExistence( boolean forceNoExistence )
+		{
+		this.forceNoExistence = forceNoExistence;
 		}
 
 	public String
@@ -693,6 +736,12 @@ CVSTracer.traceIf( true,
 		this.options = options;
 		}
 
+	public boolean
+	isBinary()
+		{
+		return ( this.options.indexOf( "-kb" ) != -1 );
+		}
+
 	public String 
 	getTag()
 		{
@@ -791,6 +840,12 @@ CVSTracer.traceIf( true,
 	public boolean
 	isLocalFileModified( File localFile )
 		{
+		if ( this.forceModified )
+			{
+System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
+			return true;
+			}
+
 		// REVIEW is this the best return value for this case?
 		if ( this.tsCache == null )
 			return true;
@@ -1069,7 +1124,7 @@ CVSTracer.traceIf( true,
 				if ( this.isToBeRemoved() )
 					result.append( "-" );
 
-				if ( this.version != null )
+				if ( this.version != null && ! this.forceNoExistence )
 					result.append( this.version );
 				}
 			}
@@ -1080,14 +1135,14 @@ CVSTracer.traceIf( true,
 			{
 			result.append( "Initial " + this.getName() );
 			}
-		else if ( exists )
+		else if ( exists && ! this.forceNoExistence )
 			{
 			if ( this.isInConflict() )
 				{
 				result.append( "+" );
 				}
 
-			if ( isModified )
+			if ( isModified || forceModified )
 				result.append( "modified" );
 			else
 				result.append( "=" );
@@ -1100,9 +1155,9 @@ CVSTracer.traceIf( true,
 
 		result.append( "/" );
 
-		if ( this.tag != null )
+		if ( this.tag != null && ! this.forceNoExistence )
 			result.append( "T" + this.tag );
-		else if ( this.date != null )
+		else if ( this.date != null && ! this.forceNoExistence  )
 			result.append( "D" + this.date );
 
 		 CVSTracer.traceIf( false,

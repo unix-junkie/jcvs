@@ -26,7 +26,7 @@ package com.ice.jcvsii;
 /**
  * The Configuration constants.
  *
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @author Timothy Gerard Endres,
  *  <a href="mailto:time@ice.com">time@ice.com</a>.
  */

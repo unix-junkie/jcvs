@@ -1,11 +1,14 @@
 <!--
   **
-  ** Copyright (c) 1997-2002 By Timothy G. Endres, <time@jcvs.org>
+  ** Copyright (c) 1997-2004 By Timothy G. Endres, <time@jcvs.org>
   ** All rights reserved.
   **
   -->
 
 <project name="jcvsii" default="all" basedir="../../../..">
+
+	<property name="reltag" value="release-5-4-2" />
+	<property name="relnum" value="5.4.2" />
 
 	<target name="dev">
 		<property name="javadoc.notreq" value="true" />
@@ -50,7 +53,8 @@
 	  **
 	  -->
 
-	<target name="deploy" depends="mindbright,compile,source-code,docs">
+	<target name="deploy" depends="compile,docs">
+
 		<jar
 			jarfile="${bindir}/jcvsii.jar"
 			manifest="${jcvsiidir}/META-INF/MANIFEST.MF"
@@ -77,33 +81,16 @@
 		<copy file="${winshortcut}" todir="${bindir}" />
 		<copy file="${jafjar}" todir="${jarsdir}" />
 		<copy file="${jhjar}" todir="${jarsdir}" />
-		<copy file="${mbjar}" todir="${jarsdir}" />
+		<copy file="${j2sshcorejar}" tofile="${jarsdir}/j2ssh-core.jar" />
+		<copy file="${j2sshcmnjar}" tofile="${jarsdir}/j2ssh-common.jar" />
+		<copy file="${cmnslogjar}" tofile="${jarsdir}/commons-logging.jar" />
 		<copy file="${jcvsiidir}/doc/relnotes/Release ${relnum} Notes.txt"
 			todir="${builddir}" />
 
 		<copy todir="${builddir}/javascript">
 			<fileset dir="${jsdir}"/>
 		</copy>
-	</target>
 
-	<target name="source-code" depends="init">
-		<copy todir="${sourcedir}" >
-			<fileset dir="${srcdir}">
-				<include name="com/ice/cvsc/"/>
-				<include name="com/ice/config/"/>
-				<include name="com/ice/config/editor/"/>
-				<include name="com/ice/jcvsii/"/>
-				<include name="com/ice/jni/dde/"/>
-				<include name="com/ice/pref/"/>
-				<include name="com/ice/text/"/>
-				<include name="com/ice/util/"/>
-				<include name="com/ice/viewer/"/>
-
-				<exclude name="**/*.class"/>
-				<exclude name="**/build/"/>
-				<exclude name="**/CVS/"/>
-			</fileset>
-		</copy>
 	</target>
 
 	<!--
@@ -112,18 +99,21 @@
 	  **
 	  -->
 
-	<target name="compile" depends="init">
+	<target name="compile" depends="source-code">
 		<javac
-			srcdir="${srcdir}"
+			srcdir="${sourcedir}"
 			destdir="${classdir}"
 			verbose="${my.verbose}"
 			deprecation="${my.deprec}"
+			debug="${javac.debug}"
+			debuglevel="${javac.debuglevel}"
 			excludes="**/build/"
 			>
 
 			<include name="com/ice/cvsc/"/>
 			<include name="com/ice/config/"/>
 			<include name="com/ice/config/editor/"/>
+			<include name="com/ice/event/"/>
 			<include name="com/ice/jcvsii/"/>
 			<include name="com/ice/jni/dde/"/>
 			<include name="com/ice/pref/"/>
@@ -134,7 +124,9 @@
 			<classpath id="javac.classpath">
 				<pathelement location="${jhjar}" />
 				<pathelement location="${jafjar}" />
-				<pathelement location="${mbclassdir}" />
+				<pathelement location="${j2sshcorejar}" />
+				<pathelement location="${j2sshcmnjar}" />
+				<pathelement location="${cmnslogjar}" />
 			</classpath>
 		</javac>
 	</target>
@@ -162,12 +154,13 @@
 			version="true"
 			use="true"
 			windowtitle="jCVS II"
-			bottom="&lt;i&gt;Copyright &#169; 1997-2002, Timothy G. Endres, All Rights Reserved.&lt;/i&gt;"
+			bottom="&lt;i&gt;Copyright &#169; 1997-2003, Timothy G. Endres, All Rights Reserved.&lt;/i&gt;"
 			>
 
 			<group title="JCVS II Package" packages="com.ice.jcvsii" />
 			<group title="ICE CVS Client Package" packages="com.ice.cvsc" />
 			<group title="ICE Config Package" packages="com.ice.config" />
+			<group title="ICE Event Support" packages="com.ice.event" />
 			<group title="ICE JNI DDE Package" packages="com.ice.jni.dde" />
 			<group title="ICE Prefs Package" packages="com.ice.pref" />
 			<group title="ICE Text Package" packages="com.ice.text" />
@@ -178,11 +171,12 @@
 
 			<sourcepath>
 				<pathelement location="${srcdir}"/>
-				<pathelement location="${mbsrcdir}" />
 			</sourcepath>
 
 			<classpath id="javadoc.classpath">
 				<pathelement location="${jafjar}" />
+				<pathelement location="${j2sshcorejar}" />
+				<pathelement location="${j2sshcmnjar}" />
 			</classpath>
 
 		</javadoc>
@@ -190,84 +184,32 @@
 
 	<!--
 	  **
-	  ** - - - - - - - -  MINDBRIGHT  - - - - - - - -
+	  ** - - - - - - - -  SOURCE CODE  - - - - - - - -
 	  **
 	  -->
-	<target name="mindbright" depends="deploy-mindbright">
-	</target>
+	<target name="source-code" depends="init">
+		<copy todir="${sourcedir}" >
+			<fileset dir="${srcdir}">
+				<include name="com/ice/cvsc/"/>
+				<include name="com/ice/config/"/>
+				<include name="com/ice/config/editor/"/>
+				<include name="com/ice/event/"/>
+				<include name="com/ice/jcvsii/"/>
+				<include name="com/ice/jni/dde/"/>
+				<include name="com/ice/pref/"/>
+				<include name="com/ice/text/"/>
+				<include name="com/ice/util/"/>
+				<include name="com/ice/viewer/"/>
 
-	<target name="deploy-mindbright" depends="compile-mindbright,mb-source-code,mb-javadoc">
-		<jar jarfile="${mbjar}">
-			<fileset dir="${mbclassdir}" />
-  		</jar>
-	</target>
-
-	<target name="compile-mindbright" depends="init">
-		<javac
-			srcdir="${mbsrcdir}"
-			destdir="${mbclassdir}"
-			verbose="${my.verbose}"
-			deprecation="${my.deprec}"
-			excludes="**/doc/"
-			>
-
-			<include name="com/mindbright/asn1/"/>
-			<include name="com/mindbright/jca/security/"/>
-			<include name="com/mindbright/jca/security/interfaces/"/>
-			<include name="com/mindbright/jca/security/spec/"/>
-			<include name="com/mindbright/security/"/>
-			<include name="com/mindbright/security/cipher/"/>
-			<include name="com/mindbright/security/digest/"/>
-			<include name="com/mindbright/security/mac/"/>
-			<include name="com/mindbright/security/prng/"/>
-			<include name="com/mindbright/security/publickey/"/>
-			<include name="com/mindbright/ssh/"/>
-			<include name="com/mindbright/ssh2/"/>
-			<include name="com/mindbright/sshcommon/"/>
-			<include name="com/mindbright/util/"/>
-
-			<include name="com/isnetworks/ssh/"/>
-			<include name="com/jcraft/jzlib/"/>
-			<include name="netscape/security/"/>
-
-			<include name="javax/crypto/"/>
-			<include name="javax/crypto/interfaces/"/>
-			<include name="javax/crypto/spec/"/>
-
-		</javac>
-	</target>
-
-	<target name="mb-source-code" depends="init">
-		<copy todir="${mbuserdocdir}" >
-			<fileset dir="${mbdocdir}">
-				<exclude name="**/CVS/"/>
-			</fileset>
-		</copy>
-		<copy todir="${mbsourcedir}" >
-			<fileset dir="${mbsrcdir}">
 				<exclude name="**/*.class"/>
+				<exclude name="**/build/"/>
 				<exclude name="**/CVS/"/>
 			</fileset>
+
+			<filterset>
+				<filter token="VERSION" value="${relnum}" />
+			</filterset>
 		</copy>
-	</target>
-
-	<target name="mb-javadoc" depends="init" unless="mbjavadoc.notreq">
-  		<javadoc
-			destdir="${mbapidocdir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="MindBright"
-			bottom="&lt;i&gt;Copyright &#169; 1999-2001 AppGate AB. All Rights Reserved.&lt;/i&gt;"
-			packagenames="com.mindbright.*,javax.*,com.isnetworks.ssh,com.jcraft.jzlib,netscape.security"
-			>
-
-			<link href="http://java.sun.com/products/jdk/1.2/docs/api/" />
-
-			<sourcepath>
-				<pathelement location="${mbsrcdir}" />
-			</sourcepath>
-		</javadoc>
 	</target>
 
 	<!--
@@ -286,18 +228,9 @@
 		<mkdir dir="${docdir}" />
 		<mkdir dir="${apidocdir}" />
 		<mkdir dir="${sourcedir}" />
-		<mkdir dir="${mbbuilddir}" />
-		<mkdir dir="${mbclassdir}" />
-		<mkdir dir="${mbsourcedir}" />
-		<mkdir dir="${mbuserdocdir}" />
-		<mkdir dir="${mbapidocdir}" />
 
 		<uptodate property="javadoc.notreq" targetfile="${apidocdir}/index.html" >
 			<srcfiles dir="${srcdir}" includes="**/*.java"/>
-		</uptodate>
-
-		<uptodate property="mbjavadoc.notreq" targetfile="${mbapidocdir}/index.html" >
-			<srcfiles dir="${mbsrcdir}" includes="**/*.java"/>
 		</uptodate>
 
 	</target>
@@ -311,16 +244,14 @@
 	<target name="init-props">
 		<property name="my.deprec" value="off"/>
 		<property name="my.verbose" value="off"/>
-
-		<property name="reltag" value="release-5-3-2" />
-		<property name="relnum" value="5.3.2" />
-		<property name="zipfile" value="jcvsii-${relnum}.zip" />
-		<property name="binzipfile" value="jcvsii-bin-${relnum}.zip" />
+		<property name="javac.debug" value="on"/>
+		<property name="javac.debuglevel" value="lines,vars,source"/>
 
 		<property name="srcdir" value="${basedir}/java" />
 		<property name="jcvsiidir" value="${srcdir}/com/ice/jcvsii" />
 
-		<property name="builddir" value="${basedir}/jcvsii-${relnum}" />
+		<property name="buildbase" value="${basedir}/build/jcvs" />
+		<property name="builddir" value="${buildbase}/jcvsii-${relnum}" />
 		<property name="docdir" value="${builddir}/doc" />
 		<property name="apidocdir" value="${docdir}/api" />
 		<property name="sourcedir" value="${builddir}/source" />
@@ -328,6 +259,9 @@
 		<property name="bindir" value="${builddir}/bin" />
 		<property name="jarsdir" value="${bindir}/jars" />
 		<property name="jsdir" value="${jcvsiidir}/javascript" />
+
+		<property name="zipfile" value="${buildbase}/jcvsii-${relnum}.zip" />
+		<property name="binzipfile" value="${buildbase}/jcvsii-bin-${relnum}.zip" />
 
 		<property name="javadir" value="C:/java"/>
 		<property name="java.home" value="C:/java/jdk1.3"/>
@@ -340,15 +274,11 @@
 		<property name="jhdir" value="${javadir}/jh1.1.1"/>
 		<property name="jhjar" value="${jhdir}/javahelp/lib/jh.jar"/>
 
-		<property name="mbdir" value="C:/src/mindbright" />
-		<property name="mbdocdir" value="${mbdir}/doc" />
-		<property name="mbsrcdir" value="${mbdir}/java" />
-		<property name="mbbuilddir" value="${builddir}/mindbright" />
-		<property name="mbclassdir" value="${mbbuilddir}/classes" />
-		<property name="mbsourcedir" value="${mbbuilddir}/source" />
-		<property name="mbapidocdir" value="${mbbuilddir}/doc/api" />
-		<property name="mbuserdocdir" value="${mbbuilddir}/doc" />
-		<property name="mbjar" value="${jarsdir}/mindbright.jar" />
+		<property name="j2sshdir" value="${javadir}/j2ssh-0.2.6"/>
+		<property name="j2sshlibdir" value="${j2sshdir}/dist/lib"/>
+		<property name="j2sshcorejar" value="${j2sshlibdir}/j2ssh-core-0.2.6.jar"/>
+		<property name="j2sshcmnjar" value="${j2sshlibdir}/j2ssh-common-0.2.6.jar"/>
+		<property name="cmnslogjar" value="${j2sshdir}/lib/commons-logging.jar"/>
 
 		<property name="winshortcut" value="${jcvsiidir}/bin/jCVS II.lnk" />
   	</target>

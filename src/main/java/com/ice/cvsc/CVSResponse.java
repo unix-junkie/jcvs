@@ -39,17 +39,18 @@ import java.util.*;
  * or temporary files will go undeleted and populate the local
  * temp directory.
  *
- * @version $Revision: 2.2 $
+ * @version $Revision: 2.3 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSRequest
  */
 
-public class
-CVSResponse extends Object
+public
+class		CVSResponse
+extends		Object
 	{
-	static public final String		RCS_ID = "$Id: CVSResponse.java,v 2.2 1999/05/18 07:13:20 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+	static public final String		RCS_ID = "$Id: CVSResponse.java,v 2.3 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.3 $";
 
 	static public final int			OK		= 0;
 	static public final int			ERROR	= 1;

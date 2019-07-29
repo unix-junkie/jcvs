@@ -31,7 +31,7 @@ import java.lang.*;
  * CVSMode objects are used to represent, parse, and otherwise handle
  * CVS 'mode' lines such as 'u=rw,g=r,o=r'.
  *
- * @version $Revision: 2.1 $
+ * @version $Revision: 2.2 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSEntry
@@ -41,8 +41,8 @@ public class
 CVSMode extends Object
 		implements Cloneable
 	{
-	static public final String		RCS_ID = "$Id: CVSMode.java,v 2.1 1997/04/19 05:12:07 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.1 $";
+	static public final String		RCS_ID = "$Id: CVSMode.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.2 $";
 
 	public boolean		userRead;
 	public boolean		userWrite;

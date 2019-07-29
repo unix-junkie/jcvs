@@ -1,6 +1,6 @@
 /*
 ** Java cvs client library package.
-** Copyright (c) 1997-2002 by Timothy Gerard Endres
+** Copyright (c) 1997-2004 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
@@ -24,26 +24,38 @@
 
 package com.ice.cvsc;
 
-/**
- * The CVSResponseHandler interface provides an interface
- * for CVSClient to call for inline processing of the server
- * responses. This is used when the CVSRequest specifies that
- * the response should <strong>not</strong> be <em>queued</em>.
- *
- * @version $Revision: 2.3 $
- * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
- * @see CVSProject
- * @see CVSClient
- *
- */
+import com.ice.cvsc.CVSResponse;
+import com.ice.cvsc.CVSUserInterface;
 
-public interface
-CVSResponseHandler
+public
+class		CVSBufferedUI
+implements	CVSUserInterface
 	{
-	static public final String		RCS_ID = "$Id: CVSResponseHandler.java,v 2.3 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	StringBuffer buf = new StringBuffer();
 
-	abstract public boolean
-		handleResponseItem(
-			CVSRequest request, CVSResponse response, CVSResponseItem item );
+	public void
+	uiDisplayProgressMsg( String message )
+		{
+		buf.append( message ).append( "\r\n" );
+		}
+
+	public void
+	uiDisplayProgramError( String error )
+		{
+		buf.append( error ).append( "\r\n" );
+		}
+
+	public void
+	uiDisplayResponse( CVSResponse response )
+		{
+		buf.append( response.getResultText() ).
+			append( response.getResultStatus() ).append( "\r\n" );
+		}
+
+	public String
+	toString()
+		{
+		return buf.toString();
+		}
+
 	}

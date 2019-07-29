@@ -31,7 +31,7 @@ package com.ice.cvsc;
  * and its client, to make requests to the user interface
  * to display progress, results, and the like.
  *
- * @version $Revision: 2.2 $
+ * @version $Revision: 2.3 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSProject
  * @see CVSClient
@@ -41,8 +41,8 @@ package com.ice.cvsc;
 public interface
 CVSUserInterface
 	{
-	static public final String		RCS_ID = "$Id: CVSUserInterface.java,v 2.2 2002/01/26 04:36:52 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+	static public final String		RCS_ID = "$Id: CVSUserInterface.java,v 2.3 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.3 $";
 
 	abstract public void
 		uiDisplayProgressMsg( String message );

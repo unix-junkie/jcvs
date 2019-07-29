@@ -1,6 +1,6 @@
 /*
 ** Java cvs client library package.
-** Copyright (c) 1997-2002 by Timothy Gerard Endres
+** Copyright (c) 1997-2003 by Timothy Gerard Endres
 ** 
 ** This program is free software.
 ** 
@@ -22,6 +22,7 @@
 ** 
 */
 
+
 package com.ice.cvsc;
 
 import java.io.*;
@@ -32,9 +33,15 @@ import java.util.*;
 import java.util.zip.*;
 import java.applet.*;
 
-import com.mindbright.ssh.SSH;
-import com.mindbright.ssh2.*;
-import com.mindbright.util.*;
+
+import com.sshtools.j2ssh.SshClient;
+import com.sshtools.j2ssh.session.SessionChannelClient;
+import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
+import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
+import com.sshtools.j2ssh.configuration.SshConnectionProperties;
+import com.sshtools.j2ssh.transport.HostKeyVerification;
+import com.sshtools.j2ssh.transport.TransportProtocolException;
+import com.sshtools.j2ssh.transport.publickey.SshPublicKey;
 
 
 /**
@@ -48,13 +55,12 @@ import com.mindbright.util.*;
  * contained in a CVSProject. Typically, you use a CVSClient
  * by handing it a CVSRequest, and it will hand back a CVSResponse.
  *
- *
  * Thanks to Wes Sonnenreich <wes@sonnenreich.com> for his original
  * attempt at the integration of MindBright's SSH package into this
  * client. The effort was most helpful in understanding the package.
  *
- * @version $Revision: 2.19 $
- * @author Timothy Gerard Endres, <time@gjt.org>.
+ * @version $Revision: 2.20 $
+ * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSRequest
  * @see CVSResponse
  * @see CVSProject
@@ -73,20 +79,21 @@ import com.mindbright.util.*;
 //   data sat buffered and the server never responded.
 //
 
-public class
-CVSClient extends Object
+
+
+public
+class		CVSClient
+extends		Object
+implements	HostKeyVerification
 	{
-	static public final String		RCS_ID = "$Id: CVSClient.java,v 2.19 2002/02/10 18:01:44 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.19 $";
+	static public final String		RCS_ID = "$Id: CVSClient.java,v 2.20 2003/07/27 04:32:56 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.20 $";
 
     public static final int			DEFAULT_SSH_PORT = 22;
     public static final int			DEFAULT_RSH_PORT = 514;
 	public static final int			DEFAULT_CVS_PORT = 2401;
 	public static final int			DEFAULT_DIR_PORT = 2402;
 	public static final String		DEFAULT_TEMP_PATH = ".";
-
-    public static RandomSeed         randomSeed;
-    public static SecureRandomAndPad secureRandom;
 
 
 	/**
@@ -144,14 +151,8 @@ CVSClient extends Object
 	/**
 	 * SSH supporting fields
 	 */
-	SSH2Connection				sshConnection = null;
-	SSH2UserAuth				sshUserAuth = null;
-	SSH2Authenticator			sshAuthenticator = null;
-	SSH2Transport				sshTransport = null;
-	SSH2TransportEventAdapter	sshEventAdapter = null;
-	SSH2TransportPreferences	sshTransPrefs = null;
-	SecureRandomAndPad			sshSecure = null;
-	SSH2SessionChannel			sshSession = null;
+	SshClient					sshClient = null;
+	SessionChannelClient		sshSession = null;
 
 	/**
 	 * Creates a CVS client.
@@ -3171,37 +3172,37 @@ CVSClient extends Object
 	getInterfaceAddress( String host, int port )
 		throws IOException
 		{
-		InetAddress interfaceAddress = InetAddress.getLocalHost();
+		InetAddress interfaceAddress = null;
 
-		if ( this.supportMultipleInterfaces )
+		//
+		// The following code is used for the case where we have
+		// multiple interfaces on the system. When there is more
+		// than one interface, InetAddress.getLocalHost() may not
+		// return the interface that we need to route to the cvs
+		// server. Thus, we instead first make a connection, then
+		// we use that connection to determine the interface, and
+		// ergo the ip address to use, that routes to the server.
+		//
+		// REVIEW
+		// This does cost us a double connect, which is expensive.
+		// I am also not sure what cost it is to the server, which
+		// will reject the rsh because it is not on a priveleged
+		// port. We may eventually want a property to be able to
+		// turn this on and off.
+		//
+		// Thanks to Roger Vaughn <rvaughn@pobox.com> for solving
+		// this problem and providing this code!
+		//
+
+		try {
+			Socket probe = new Socket( host, port );
+			interfaceAddress = probe.getLocalAddress();
+			probe.close();
+			}
+		catch ( IOException ex )
 			{
-			//
-			// The following code is used for the case where we have
-			// multiple interfaces on the system. When there is more
-			// than one interface, InetAddress.getLocalHost() may not
-			// return the interface that we need to route to the cvs
-			// server. Thus, we instead first make a connection, then
-			// we use that connection to determine the interface, and
-			// ergo the ip address to use, that routes to the server.
-			//
-			// This does cost us a double connect, which is expensive.
-			// Thus, we have the property to turn it off.
-			//
-			// REVIEW 
-			// I am also not sure what cost it is to the server, which
-			// will reject the rsh because it is not on a priveleged
-			// port.
-			//
-			// Thanks to Roger Vaughn <rvaughn@pobox.com> for solving
-			// this problem and providing this code!
-			//
-			try {
-				Socket probe = new Socket( host, port );
-				interfaceAddress = probe.getLocalAddress();
-				probe.close();
-				}
-			catch ( IOException ex )
-				{ }
+			// Didn't work! Use the "default" instead.
+			interfaceAddress = InetAddress.getLocalHost();
 			}
 
 		return interfaceAddress;
@@ -3258,168 +3259,110 @@ CVSClient extends Object
 		return sock;
 		}
 
-	public static RandomSeed
-	randomSeed()
+	//
+	// UNDONE HIGH
+	// There *is* a .ssh_known_hosts file, especially w/ cygwin.
+	//
+	public boolean
+	verifyHost( String host, SshPublicKey pk )
+		throws TransportProtocolException
 		{
-		if ( randomSeed == null )
-			{
-			randomSeed = new RandomSeed( "/dev/random", "/dev/urandom" );
-			}
+		CVSTracer.traceIf( false,
+			"CVSClient.verifyHost: host '" + host + "', Pk '" + pk + "'" );
 
-		return randomSeed;
-		}
-
-	public static void
-	initSeedGenerator()
-		{
-		RandomSeed seed = randomSeed();
-
-		if ( secureRandom == null )
-			{
-			byte[] s = seed.getBytesBlocking( 20, false );
-			secureRandom = new SecureRandomAndPad
-				( new com.mindbright.jca.security.SecureRandom( s ) );
-			}
-		else
-			{
-			int bytes = seed.getAvailableBits() / 8;
-			secureRandom.setSeed
-				( seed.getBytesBlocking( bytes > 20 ? 20 : bytes ) );
-			}
-
-		secureRandom.setPadSeed( seed.getBytes(20) );
+		return true;
 		}
 
 	private void
 	establishSSHConnection( CVSRequest request )
 		throws IOException
 		{
-		Properties settings = new Properties();
-
-		settings.put("kex-algorithms", "diffie-hellman-group1-sha1");
-		settings.put("server-host-key-algorithms", "ssh-dss");
-		settings.put("enc-algorithms-cli2srv", "blowfish-cbc,aes128-cbc");
-		settings.put("enc-algorithms-srv2cli", "blowfish-cbc,aes128-cbc");
-		settings.put("mac-algorithms-cli2srv", "hmac-md5,hmac-sha1");
-		settings.put("mac-algorithms-srv2cli", "hmac-md5,hmac-sha1");
-		settings.put("comp-algorithms-cli2srv", "none");
-		settings.put("comp-algorithms-srv2cli", "none");
-		settings.put("languages-cli2srv", "");
-		settings.put("languages-srv2cli", "");
-		settings.put("package-version", "com.ice.cvsc - time@gjt.org" );
+		SshConnectionProperties properties = new SshConnectionProperties();
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: creating connection..." );
-
-		initSeedGenerator();
 
 		InetAddress localhost =
 			this.getInterfaceAddress
 				( request.getHostName(), request.getPort() );
 
+		properties.setHost( request.getHostName() );
+		properties.setPort( request.getPort() );
+
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: localHost=" + localhost );
 
-		this.socket =
-			this.bindLocalSocket
-				( request, localhost, request.getHostName(), request.getPort() );
+		this.sshClient = new SshClient();
 
 		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: socket=" + this.socket );
+			"CVSClient.establishSSHConnection: sshClient=" + this.sshClient );
 
-		this.sshTransPrefs = new SSH2TransportPreferences( settings );
-
-		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: sshTransPrefs=" + this.sshTransPrefs );
-
-		this.sshTransport = new
-			SSH2Transport(
-				this.socket,
-				this.sshTransPrefs,
-				this.new CVSTEAdapter( request.traceRequest ),
-				secureRandom
-				);
+		this.sshClient.connect( properties, this );
 
 		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: sshTransport=" + this.sshTransport );
+			"CVSClient.establishSSHConnection: connected" );
 
-		this.sshTransport.disableKeepAlive();
-		this.sshTransport.setLog( new Log( Log.LEVEL_ALERT ) );
+		PasswordAuthenticationClient pwdAuth =
+			new PasswordAuthenticationClient();
 
-		try {
-			this.sshTransport.boot();
-			}
-		catch ( SSH2Exception ex )
-			{
-			throw new IOException
-				( "Error in transport boot() - " + ex.getMessage() );
-			}
+		pwdAuth.setUsername( request.getUserName() );
+		pwdAuth.setPassword( request.getPassword() );
 
-		if ( ! this.sshTransport.waitForKEXComplete() )
-			{
-			throw new IOException( "key exchange failed" );
-			}
-
-		if ( ! this.sshTransport.isConnected() )
-			{
-			throw new IOException( "transport is not connected" );
-			}
-
-		this.sshAuthenticator =
-			new SSH2Authenticator( request.getUserName() );
-
-		this.sshAuthenticator.addModule
-			( "password", new SSH2AuthPassword( request.getPassword() ) );
-
-		// System.err.println( "PASSWORD '" + request.getPassword() + "'" );
+		int result = sshClient.authenticate( pwdAuth );
 
 		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: sshAuthenticator=" + this.sshAuthenticator );
+			"CVSClient.authenticate: result=" + result );
 
-		this.sshUserAuth = new SSH2UserAuth( this.sshTransport, this.sshAuthenticator );
-
-		if ( ! this.sshUserAuth.authenticateUser( "ssh-connection" ) )
+		if ( result==AuthenticationProtocolState.FAILED )
 			{
+			CVSTracer.traceIf( request.traceRequest,
+				"The authentication failed" );
 			throw new IOException( "ssh authentication failure" );
 			}
+		else if ( result==AuthenticationProtocolState.PARTIAL )
+			{
+			CVSTracer.traceIf( request.traceRequest,
+				"The authentication succeeded but another"
+				+ "authentication is required");
+			throw new IOException( "ssh authentication partial" );
+			}
+		else if ( result==AuthenticationProtocolState.COMPLETE )
+			{
+			CVSTracer.traceIf( request.traceRequest,
+				"The authentication is complete");
+			}
 
-		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: sshUserAuth=" + this.sshUserAuth );
+	//	String srvVersionStr = this.sshTransport.getServerVersion();
 
-		this.sshConnection =
-			new SSH2Connection( this.sshUserAuth, this.sshTransport, null, null );
+	//	CVSTracer.traceIf( request.traceRequest,
+	//		"CVSClient.establishSSHConnection: SVR VERSION '" + srvVersionStr + "'" );
 
-		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: sshConnection=" + this.sshConnection );
-
-		this.sshTransport.setConnection( this.sshConnection );
-
-		String srvVersionStr = this.sshTransport.getServerVersion();
-
-		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: sshTransport=" + this.sshTransport );
-		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: SVR VERSION '" + srvVersionStr + "'" );
-
-		this.sshSession = this.sshConnection.newSession();
+		this.sshSession = this.sshClient.openSessionChannel();
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: sshSession=" + this.sshSession );
 
-		boolean ok = this.sshSession.doSingleCommand( request.getServerCommand() );
+		boolean ok = this.sshSession.executeCommand( request.getServerCommand() );
 
 		CVSTracer.traceIf( request.traceRequest,
 			"CVSClient.establishSSHConnection: command("
 			+ request.getServerCommand() + ") = " + ok );
 
-		this.instream =
-			new DataInputStream( this.sshSession.getStdOut() );
+		if ( ok )
+			{
+			CVSTracer.traceIf( request.traceRequest,
+				"CVSClient.establishSSHConnection: command session established" );
+			}
+		else
+			{
+			CVSTracer.traceIf( request.traceRequest,
+				"CVSClient.establishSSHConnection: executeCommand( '"
+				+ request.getServerCommand() + "' failed." );
 
-		this.outstream =
-			new DataOutputStream( this.sshSession.getStdIn() );
-
-		CVSTracer.traceIf( request.traceRequest,
-			"CVSClient.establishSSHConnection: streams are established!" );
+			throw new IOException
+				( "failed to execute command '"
+					+ request.getServerCommand() + "'" );
+			}
 		}
 
 	private Socket
@@ -3427,7 +3370,6 @@ CVSClient extends Object
 		throws IOException
 		{
 		Socket sock = null;
-		String errMessage = "could not bind rsh socket between 512-1023 locally";
 
 		InetAddress localhost =
 			this.getInterfaceAddress
@@ -3435,42 +3377,21 @@ CVSClient extends Object
 
 		for ( int local = 512 ; sock == null && local < 1024 ; ++local )
 			{
-			if ( this.isCanceled() )
-				break;
-
-			CVSTracer.traceIf( request.traceRequest,
-				"establishRSHSocket() trying port " + local );
 			try {
 				sock = new Socket
-					( request.getHostName(), request.getPort(), localhost, local );
+					( request.getHostName(),
+						request.getPort(), localhost, local );
 				}
 			catch ( IOException ex )
 				{
 				socket = null;
-				CVSTracer.traceIf( request.traceRequest,
-					"establishRSHSocket() exception message: " + ex.getMessage() );
-				//
-				// HACK
-				// If we attempt to run through each of these sockets, while
-				// we are going over the wire (we don't get "Address in use",
-				// we get "Connection refused"), then we are going to spend
-				// one hell of a time in this loop. The hack is that we depend
-				// on the word "refused" to be in the correct error message. If
-				// not, then we only revert back to the infinite wait while we
-				// loop over all of these ports.
-				//
-				if ( ex.getMessage().indexOf( "refused" ) > -1
-						|| ex.getMessage().indexOf( "timed out" ) > -1 )
-					{
-					errMessage = ex.getMessage();
-					break;
-					}
 				}
 			}
 
 		if ( sock == null )
 			{
-			throw new IOException( errMessage );
+			throw new IOException
+				( "Could not bind rsh socket between 512-1023 locally." );
 			}
 
 		return sock;
@@ -3550,7 +3471,17 @@ CVSClient extends Object
 			CVSTracer.traceIf( request.traceRequest,
 				"CVSClient.openServer: creating i/o streams..." );
 
-			if ( this.process != null )
+			if ( this.sshSession != null )
+				{
+				this.instream =
+					new DataInputStream
+						( this.sshSession.getInputStream() );
+
+				this.outstream =
+					new DataOutputStream
+						( this.sshSession.getOutputStream() );
+				}
+			else if ( this.process != null )
 				{
 				this.instream =
 					new DataInputStream
@@ -3562,16 +3493,13 @@ CVSClient extends Object
 				}
 			else if ( this.socket != null )
 				{
-				if ( request.getConnectionMethod() != CVSRequest.METHOD_SSH )
-					{
-					this.instream =
-						new DataInputStream
-							( this.socket.getInputStream() );
+				this.instream =
+					new DataInputStream
+						( this.socket.getInputStream() );
 
-					this.outstream =
-						new DataOutputStream
-							( this.socket.getOutputStream() );
-					}
+				this.outstream =
+					new DataOutputStream
+						( this.socket.getOutputStream() );
 				}
 			else
 				{
@@ -3708,12 +3636,10 @@ CVSClient extends Object
 			{
 			try
 				{
-			//	if ( this.sshConsole != null )
 				if ( this.sshSession != null )
 					{
 					this.sshSession.close();
-					this.sshSession.waitForExit( 5 * 1000 );
-					this.sshTransport.normalDisconnect( "cvs session done" );
+					this.sshClient.disconnect();
 					}
 				else
 					{
@@ -3739,98 +3665,14 @@ CVSClient extends Object
 				}
 
 			this.socket = null;
+			this.sshClient = null;
 			this.sshSession = null;
-			this.sshTransport = null;
 			this.instream = null;
 			this.outstream = null;
 			this.serverIsOpen = false;
 			}
 
 		return result; 
-		}
-
-	private
-	class		CVSTEAdapter
-	extends		SSH2TransportEventAdapter
-		{
-		private boolean		trace = false;
-
-		public
-		CVSTEAdapter( boolean trace )
-			{
-			this.trace = trace;
-			}
-
-		public void
-		gotConnectInfoText( SSH2Transport tp, String text )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT gotConnectInfoText('" +text+ "')" );
-			}
-
-		public void
-		gotPeerVersion( SSH2Transport tp, String versionString, int major, int minor, String packageVersion )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT gotPeerVersion('"
-				+versionString+ "', "+major+", "+minor+", '" +packageVersion+ "')" );
-			}
-
-		public void
-		kexStart( SSH2Transport tp )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT KEX kexStart()" );
-			}
-
-		public void
-		kexComplete( SSH2Transport tp )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT KEX kexComplete()" );
-			}
-
-		public void
-		msgDebug( SSH2Transport tp, boolean alwaysDisplay, String message, String languageTag )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT msgDebug( " +alwaysDisplay+ ", '"+message+"', '"+languageTag+"')" );
-			}
-
-		public void
-		msgIgnore( SSH2Transport tp, byte[] data )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT msgIgnore() has " + data.length + " bytes." );
-			}
-
-		public void
-		msgUnimplemented( SSH2Transport tp, int rejectedSeqNum )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT msgUnimplemented() rejectedSeqNum=" + rejectedSeqNum );
-			}
-
-		public void
-		peerDisconnect( SSH2Transport tp, int reason, String description, String languageTag )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT peerDisconnect( " +reason+ ", '"+description+"', '"+languageTag+"')" );
-			}
-
-		public void
-		normalDisconnect( SSH2Transport tp, String description, String languageTag )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT normalDisconnect('"+description+"', '"+languageTag+"')" );
-			}
-
-		public void
-		peerSentUnknownMessage( SSH2Transport tp, int pktType )
-			{
-			CVSTracer.traceIf( this.trace,
-				"SSH-TRANSPORT peerSentUnknownMessage( " +pktType+ ")" );
-			}
 		}
 
 	// EH-null-ui  Etienne-Hugues Fortin <ehfortin@sympatico.ca>

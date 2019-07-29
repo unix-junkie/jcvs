@@ -43,7 +43,7 @@ import com.ice.util.StringUtilities;
  * text area, the user feedback display area, and a series of menus.
  * The primary unit of display in this class is a CVSProject.
  *
- * @version $Id: ProjectFrame.java,v 1.11 2002/02/10 18:04:15 time Exp $
+ * @version $Id: ProjectFrame.java,v 1.12 2003/07/27 04:53:06 time Exp $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  *
  */
@@ -61,8 +61,8 @@ class		ProjectFrame
 extends		JFrame
 implements	ActionListener, CVSUserInterface
 	{
-	static public final String		RCS_ID = "$Id: ProjectFrame.java,v 1.11 2002/02/10 18:04:15 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.11 $";
+	static public final String		RCS_ID = "$Id: ProjectFrame.java,v 1.12 2003/07/27 04:53:06 time Exp $";
+	static public final String		RCS_REV = "$Revision: 1.12 $";
 
 	private CVSProject		project;
 	private OutputFrame		output;

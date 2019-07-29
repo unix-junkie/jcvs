@@ -32,7 +32,7 @@ import java.util.*;
  * Implements a Vector subclass that handles CVSResonseItems
  * from CVSRequest objects.
  *
- * @version $Revision: 2.1 $
+ * @version $Revision: 2.2 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSProject
@@ -44,8 +44,8 @@ import java.util.*;
 public class
 CVSRespItemVector extends Vector
 	{
-	static public final String		RCS_ID = "$Id: CVSRespItemVector.java,v 2.1 1997/04/19 05:12:09 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.1 $";
+	static public final String		RCS_ID = "$Id: CVSRespItemVector.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.2 $";
 
 	public CVSRespItemVector()
 		{

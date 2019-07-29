@@ -40,7 +40,7 @@ import java.util.zip.*;
  * you need to communicate with a CVS Server and maintain
  * local working directories for CVS repositories.
  *
- * @version $Revision: 2.25 $
+ * @version $Revision: 2.26 $
  * @author Timothy Gerard Endres, <time@gjt.org>.
  * @see CVSClient
  *
@@ -65,7 +65,7 @@ import java.util.zip.*;
 // MTT-null-list  Matthias Tichy <mtt@uni-paderborn.de>
 //   Fixed to properly handle a null file file.
 //
-// GG-dot-rep  GÃ©rard COLLIN <gcollin@netonomy.com>
+// GG-dot-rep  Gérard COLLIN <gcollin@netonomy.com>
 //   When we see a repository string of ".", it should be ignored.
 //
 
@@ -74,8 +74,8 @@ public class
 CVSProject extends Object
 		implements CVSResponseHandler
 	{
-	static public final String		RCS_ID = "$Id: CVSProject.java,v 2.25 2002/02/10 18:02:14 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.25 $";
+	static public final String		RCS_ID = "$Id: CVSProject.java,v 2.26 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.26 $";
 
 	static private final String		INFO_PREFIX		= "#   ";
 	static private final String		ERROR_PREFIX	= "*** ";
@@ -669,7 +669,7 @@ CVSProject extends Object
 		}
 
 	public CVSProjectDef
-	setProjectDef()
+	getProjectDef()
 		{
 		return this.projectDef;
 		}
@@ -1152,7 +1152,10 @@ CVSProject extends Object
 
 			request.setUserName( this.userName );
 			request.setPServer( this.isPServer() );
-			if ( this.isPServer() )
+
+			// NOTE this.password is "correct" (scrambled for PServer
+			//      mode, and not scrambled for SSH mode).
+			if ( this.isPServer() || this.isSSHServer() )
 				{
 				request.setPassword( this.password );
 				}
@@ -3166,7 +3169,7 @@ CVSProject extends Object
 		//
 		// REVIEW This patch was submitted, but I do not understand
 		//        in what context it ever occurs to be fixed. TGE
-		// GG-NT-no-server  GÃ©rard COLLIN <gcollin@netonomy.com>
+		// GG-NT-no-server  Gérard COLLIN <gcollin@netonomy.com>
 		//    Changed to searching first : after @ because of
 		//    "user@host.domain:C:/src/cvs" specifications
 		//

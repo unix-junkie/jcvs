@@ -1,6 +1,6 @@
 /*
 ** Java CVS client application package.
-** Copyright (c) 1997-2002 by Timothy Gerard Endres, <time@jcvs.org>
+** Copyright (c) 1997-2003 by Timothy Gerard Endres, <time@jcvs.org>
 ** 
 ** This program is free software.
 ** 
@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 
 import javax.swing.*;
 
@@ -38,17 +39,17 @@ import com.ice.util.ResourceUtilities;
 /**
  * The jCVS application class.
  *
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
 public
 class		JCVS
 	{
-	static public final String		RCS_ID = "$Id: JCVS.java,v 1.8 2002/02/10 18:04:15 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.8 $";
+	static public final String		RCS_ID = "$Id: JCVS.java,v 1.9 2003/07/27 04:50:28 time Exp $";
+	static public final String		RCS_REV = "$Revision: 1.9 $";
 
-	static public final String		VERSION_STR = "5.3.2";
+	static public final String		VERSION_STR = "5.4.2";
 
 	static private JCVS		instance;
 	
@@ -79,6 +80,23 @@ class		JCVS
 	instanceMain( String[] argv )
 		{
 		this.processArguments( argv );
+
+		// NOTE
+		// The new j2ssh package uses the commons-logging package from Apache.
+		// This sucks, because now we get a bunch of logging to stderr, and I
+		// do not currently have a way to put it into the jCVS log. I suspect
+		// that I should upgrade jCVS to JDK1.4, and use java.util.logging for
+		// all jCVS logging. But that is another issue. For now, we set the
+		// level to ERROR.
+		//
+		LogManager logMgr = LogManager.getLogManager();
+		Enumeration loggers = logMgr.getLoggerNames();
+		for ( ; loggers.hasMoreElements() ; )
+			{
+			String nm = (String) loggers.nextElement();
+			Logger l = (Logger) logMgr.getLogger( nm );
+			l.setLevel( Level.WARNING  );
+			}
 
 		DefaultBoundedRangeModel model =
 			new DefaultBoundedRangeModel( 0, 0, 0, 100 );

@@ -33,7 +33,7 @@ import java.util.*;
  * handle CVSEntry ocjects. This subclass adds several convenience
  * methods for adding and retrieving CVSEntry objects quickly.
  *
- * @version $Revision: 2.2 $
+ * @version $Revision: 2.3 $
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  * @see CVSClient
  * @see CVSProject
@@ -42,8 +42,8 @@ import java.util.*;
 public class
 CVSEntryVector extends Vector
 	{
-	static public final String		RCS_ID = "$Id: CVSEntryVector.java,v 2.2 1999/04/01 17:48:22 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+	static public final String		RCS_ID = "$Id: CVSEntryVector.java,v 2.3 2003/07/27 01:08:32 time Exp $";
+	static public final String		RCS_REV = "$Revision: 2.3 $";
 
 	static public  boolean			traceLocate = false;
 	static public  boolean			traceLocatePath = false;
