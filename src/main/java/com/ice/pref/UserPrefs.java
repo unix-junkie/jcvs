@@ -22,6 +22,8 @@
 
 package com.ice.pref;
 
+import static java.util.Collections.emptyList;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,10 +33,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -116,21 +117,16 @@ import com.ice.util.StringUtilities;
  *    <a href="mailto:time@ice.com">time@ice.com</a>.
  *
  */
-
-public
+public final
 class       UserPrefs
 extends		Properties
     {
+	private static final long serialVersionUID = 4066236418157392250L;
+
 	/**
 	 * The instance of th DEFAULT preferences.
 	 */
 	private static UserPrefs		instance;
-
-	/**
-	 * The hashtable of various UserPrefs instances.
-	 */
-	private static Hashtable		propsTable;
-
 
 	/**
 	 * Determines if debugging is turned on.
@@ -164,7 +160,7 @@ extends		Properties
 	 */
 	private String			delim;
 
-	protected Hashtable		subScribers;
+	private Map<String, PropertyChangeSupport>	subScribers;
 
 
 	/**
@@ -173,26 +169,16 @@ extends		Properties
 	 */
 	static
 		{
-		UserPrefs.propsTable = new Hashtable();
-		UserPrefs.setInstance( new UserPrefs( "DEFAULT" ) );
+		setInstance( new UserPrefs( "DEFAULT" ) );
 		}
 
 	/**
 	 * Get the current properties instance.
 	 */
-    public static UserPrefs
+    private static UserPrefs
 	getInstance()
     	{
-    	return UserPrefs.instance;
-    	}
-
-	/**
-	 * Get the current properties instance.
-	 */
-    public static UserPrefs
-	getInstance( final String name )
-    	{
-    	return (UserPrefs) UserPrefs.propsTable.get( name );
+    	return instance;
     	}
 
 	/**
@@ -201,7 +187,7 @@ extends		Properties
     public static void
 	setInstance( final UserPrefs inst )
     	{
-    	UserPrefs.instance = inst;
+    	instance = inst;
     	}
 
 	/**
@@ -218,30 +204,12 @@ extends		Properties
 		}
 
 	/**
-	 * Set the System line separator property. This setting
-	 * will affect the idea of lines for Writers and other
-	 * core classes that work with text lines.
-	 *
-	 * @param sep The line separator property.
-	 * @return The previous line separator property.
-	 */
-
-	public static String
-	setLineSeparator( final String sep )
-		{
-		return (String)
-			System.getProperties().put
-				( "line.separator", sep );
-		}
-
-	/**
 	 * We make this constructor private. It is not used.
 	 */
-	private
-	UserPrefs()
-		{
-		throw new Error( "DO NOT USE THIS CONSTRUCTOR!" );
-		}
+	@SuppressWarnings("unused")
+	private UserPrefs() {
+		assert false;
+	}
 
 	/**
 	 * Construct a UserPrefs named <em>name</em> with the System
@@ -265,8 +233,6 @@ extends		Properties
 		super( defProps );
 
 		this.initializePrefs( nm );
-
-		UserPrefs.propsTable.put( nm, this );
 		}
 
 	private void
@@ -275,7 +241,7 @@ extends		Properties
 		this.name = nm;
 		this.debug = false;
 		this.delim = ":";
-		this.prefix = this.name + ".";
+		this.prefix = this.name + '.';
 
 		this.userHome =
 			System.getProperty( "user.home", null );
@@ -292,7 +258,7 @@ extends		Properties
 		this.userSuffix =
 			this.normalizeSuffix( System.getProperty( "user.name", "" ) );
 
-		this.subScribers = new Hashtable();
+		this.subScribers = new Hashtable<>();
 		}
 
 	public UserPrefs
@@ -301,24 +267,6 @@ extends		Properties
 		final UserPrefs result = new UserPrefs( nm, this );
 		result.setPropertyPrefix( this.getPropertyPrefix() );
 		return result;
-		}
-
-	public String
-	getName()
-		{
-		return this.name;
-		}
-
-	public void
-	setDebug( final boolean debug )
-		{
-		this.debug = debug;
-		}
-
-	public void
-	setDelimiter( final String delim )
-		{
-		this.delim = delim;
 		}
 
 	public String
@@ -348,25 +296,19 @@ extends		Properties
 	public void
 	setPropertyPrefix( final String prefix )
 		{
-		if ( prefix == null || prefix.length() == 0 )
+		if ( prefix == null || prefix.isEmpty())
 			{
 			this.prefix = ".";
 			}
-		else if ( prefix.endsWith( "." ) )
+		else if (prefix.charAt(prefix.length() - 1) == '.')
 			this.prefix = prefix;
 		else
-			this.prefix = prefix + ".";
+			this.prefix = prefix + '.';
 
 		if ( this.debug )
 			System.err.println
-				( "UserPrefs.setPropertyPrefix: prefix set to '"
-					+ this.prefix + "'" );
-		}
-
-	public String
-	getDelimiter()
-		{
-		return this.delim;
+				("UserPrefs.setPropertyPrefix: prefix set to '"
+				 + this.prefix + '\'');
 		}
 
 	public String
@@ -412,11 +354,10 @@ extends		Properties
 	 */
 
 	public void
-	setUserHome( final String newHome )
-		{
+	setUserHome( final String newHome ) {
 		this.userHome = newHome;
-		System.getProperties().put( "user.home", newHome );
-		}
+		System.setProperty("user.home", newHome);
+	}
 
 	/**
 	 * Given a property name with a prefix, such as 'com.ice.jcvs.tempDir',
@@ -431,9 +372,9 @@ extends		Properties
 	public String
 	getBaseName( final String propName )
 		{
-		if ( this.prefix == null || this.prefix.length() == 0
-				|| this.prefix.equals( "." )
-					|| propName.startsWith( "." ) )
+		if ( this.prefix == null || this.prefix.isEmpty()
+		     || this.prefix.equals( "." )
+		     || !propName.isEmpty() && propName.charAt(0) == '.')
 			{
 			return propName;
 			}
@@ -444,41 +385,6 @@ extends		Properties
 			}
 
 		return propName;
-		}
-
-	private String
-	normalizeKey( final String key )
-		{
-		final StringBuffer kBuf = new StringBuffer( key.length() + 8 );
-
-		for ( int i = 0, sz = key.length() ; i < sz ; ++i )
-			{
-			final char ch = key.charAt( i );
-			if ( Character.isLetterOrDigit( ch ) )
-				{
-				kBuf.append( ch );
-				}
-			else
-				{
-				final int chVal = Character.getNumericValue( ch );
-
-				kBuf.append( "%" );
-
-				int hexDig = chVal & 15;
-				kBuf.append
-					( hexDig < 9
-						? (char)('0' + hexDig)
-						: (char)('A' + (hexDig - 10)) );
-
-				hexDig = chVal >> 4 & 15;
-				kBuf.append
-					( hexDig < 9
-						? (char)('0' + hexDig)
-						: (char)('A' + (hexDig - 10)) );
-				}
-			}
-
-		return kBuf.toString();
 		}
 
 	private String
@@ -496,14 +402,14 @@ extends		Properties
 	 * @return The normalized property name.
 	 */
 
-	public String
-	prefixedPropertyName( final String name )
+	private String
+	prefixedPropertyName(final String name)
 		{
 		if ( this.debug )
 			System.err.println
-				( "UserPrefs.prefixedPropertyName: prefix '"
-					+ this.prefix + "' name '" + name + "'" );
-		final StringBuffer result = new StringBuffer();
+				("UserPrefs.prefixedPropertyName: prefix '"
+				 + this.prefix + "' name '" + name + '\'');
+		final StringBuilder result = new StringBuilder();
 		if ( ! this.prefix.equals( "." ) )
 			result.append( this.prefix );
 		result.append( name );
@@ -525,14 +431,12 @@ extends		Properties
 	 * @return The normalized property name.
 	 */
 
-	public String
-	normalizedPropertyName( final String name )
-		{
-		if ( name.startsWith( "." ) )
-			return name.substring( 1 );
-		else
-			return this.prefixedPropertyName( name );
-		}
+	private String
+	normalizedPropertyName(final String name) {
+		return !name.isEmpty() && name.charAt(0) == '.'
+		       ? name.substring(1)
+		       : this.prefixedPropertyName(name);
+	}
 
 	/**
 	 * Retrieve a system string property.
@@ -547,56 +451,53 @@ extends		Properties
 	private String
 	locateProperty( final Properties props, final String normName )
 		{
-		String		value = null;
-		String		overName = null;
+		String		value;
+		String		overName;
 
 		if ( this.osSuffix != null
 				&& this.userSuffix != null )
 			{
 			overName =
-				normName + "." + this.osSuffix
-				 + "." + this.userSuffix;
+					normName + '.' + this.osSuffix
+					+ '.' + this.userSuffix;
 			value = (String) props.get( overName );
 			if ( this.debug )
 				System.err.println
-					( "UserPrefs.getOverridableProperty: "
-						+ overName + " = '" + value + "'" );
+					("UserPrefs.getOverridableProperty: "
+					 + overName + " = '" + value + '\'');
 			if ( value != null )
 				return value;
 			}
 
 		if ( this.userSuffix != null )
 			{
-			overName = normName + "." + this.userSuffix;
+			overName = normName + '.' + this.userSuffix;
 			value = (String) props.get( overName );
 			if ( this.debug )
 				System.err.println
-					( "UserPrefs.getOverridableProperty: "
-						+ overName + " = '" + value + "'" );
+					("UserPrefs.getOverridableProperty: "
+					 + overName + " = '" + value + '\'');
 			if ( value != null )
 				return value;
 			}
 
 		if ( this.osSuffix != null )
 			{
-			overName = normName + "." + this.osSuffix;
+			overName = normName + '.' + this.osSuffix;
 			value = (String) props.get( overName );
 			if ( this.debug )
 				System.err.println
-					( "UserPrefs.getOverridableProperty: "
-						+ overName + " = '" + value + "'" );
+					("UserPrefs.getOverridableProperty: "
+					 + overName + " = '" + value + '\'');
 			if ( value != null )
 				return value;
 			}
 
-		if ( value == null )
-			{
-			value = (String) props.get( normName );
-			if ( this.debug )
-				System.err.println
-					( "UserPrefs.getOverridableProperty: "
-						+ normName + " = '" + value + "'" );
-			}
+		value = (String) props.get( normName );
+		if ( this.debug )
+			System.err.println
+				("UserPrefs.getOverridableProperty: "
+				 + normName + " = '" + value + '\'');
 
 		return value;
 		}
@@ -604,22 +505,22 @@ extends		Properties
 	private synchronized String
 	getOverridableProperty( final String name, final String defval )
 		{
-		String		value = null;
+		String		value;
 
 		String normName = this.normalizedPropertyName( name );
 		if ( this.debug )
 			System.err.println
-				( "UserPrefs.getOverridableProperty: Normalized name '"
-					+ normName + "'" );
+				("UserPrefs.getOverridableProperty: Normalized name '"
+				 + normName + '\'');
 
-		if ( normName.endsWith( "." ) )
+		if (!normName.isEmpty() && normName.charAt(normName.length() - 1) == '.')
 			{
 			normName = normName.substring( 0, normName.length() - 1 );
 			value = super.getProperty( normName, defval );
 			if ( this.debug )
 				System.err.println
-					( "UserPrefs.getOverridableProperty: "
-						+ normName + " = '" + value + "'" );
+					("UserPrefs.getOverridableProperty: "
+					 + normName + " = '" + value + '\'');
 			return value;
 			}
 
@@ -666,8 +567,9 @@ extends		Properties
 						+ "Last ditch call to defs.getProperty() on '"
 						+ dnm + "'..." );
 
-				if ( value == null )
-					value = defs.getProperty( dNorm, null );
+					if (value == null) {
+						value = defs.getProperty(dNorm, null);
+					}
 
 				defs = null;
 				}
@@ -678,8 +580,8 @@ extends		Properties
 			value = defval;
 			if ( this.debug )
 				System.err.println
-					( "UserPrefs.getOverridableProperty: "
-						+ name + " defaulted to '" + value + "'" );
+					("UserPrefs.getOverridableProperty: "
+					 + name + " defaulted to '" + value + '\'');
 			}
 
 		return value;
@@ -697,10 +599,8 @@ extends		Properties
 	public String
 	getProperty( final String name )
 		{
-		final String result =
-			this.getOverridableProperty
+			return this.getOverridableProperty
 				( name, null );
-		return result;
 		}
 
 	/**
@@ -717,10 +617,8 @@ extends		Properties
 	public String
 	getProperty( final String name, final String defval )
 		{
-		final String result =
-			this.getOverridableProperty
+			return this.getOverridableProperty
 				( name, defval );
-		return result;
 		}
 
 	/**
@@ -743,8 +641,8 @@ extends		Properties
 		if ( val != null )
 			{
 			try { result = Integer.parseInt( val ); }
-				catch ( final NumberFormatException ex )
-					{ result = defval; }
+				catch ( final NumberFormatException ex ) {
+				}
 			}
 
 		return result;
@@ -770,8 +668,8 @@ extends		Properties
 		if ( val != null )
 			{
 			try { result = Long.parseLong( val ); }
-				catch ( final NumberFormatException ex )
-					{ result = defval; }
+				catch ( final NumberFormatException ex ) {
+				}
 			}
 
 		return result;
@@ -796,9 +694,9 @@ extends		Properties
 
 		if ( val != null )
 			{
-			try { result = Float.valueOf( val ).floatValue(); }
-				catch ( final NumberFormatException ex )
-					{ result = defval; }
+			try { result = Float.valueOf(val); }
+				catch ( final NumberFormatException ex ) {
+				}
 			}
 
 		return result;
@@ -823,9 +721,9 @@ extends		Properties
 
 		if ( val != null )
 			{
-			try { result = Double.valueOf( val ).doubleValue(); }
-				catch ( final NumberFormatException ex )
-					{ result = defval; }
+			try { result = Double.valueOf(val); }
+				catch ( final NumberFormatException ex ) {
+				}
 			}
 
 		return result;
@@ -881,8 +779,7 @@ extends		Properties
 	 */
 
 	public Font
-	getFont( final String name, final Font defaultFont )
-		{
+	getFont( final String name, final Font defaultFont ) {
 		Font result = defaultFont;
 
 		final String val = this.getProperty( name, null );
@@ -890,77 +787,78 @@ extends		Properties
 			System.err.println
 				( "UserPrefs.getFont: property = " + val );
 
-		if ( val != null )
-			{
-			final String[] flds = UserPrefs.splitString( val, "-" );
+		if ( val != null ) {
+			final String[] flds = splitString( val, "-" );
 			if ( this.debug )
 				System.err.println
 					( "UserPrefs.getFont: flds.length = " + flds.length );
 
-			if ( flds.length == 1 )
-				{
-				if ( this.debug )
+			switch (flds.length) {
+			case 1:
+				if (this.debug) {
 					System.err.println
-						( "UserPrefs.getFont: [0] " + flds[0] );
-				result = new Font( flds[0], Font.PLAIN, 12 );
+							("UserPrefs.getFont: [0] " + flds[0]);
 				}
-			else if ( flds.length == 3 )
-				{
-				if ( this.debug )
+				result = new Font(flds[0], Font.PLAIN, 12);
+				break;
+			case 3:
+				if (this.debug) {
 					System.err.println
-						( "UserPrefs.getFont: [0] " + flds[0]
-							+ " [1] " + flds[1] + " [2] " + flds[2] );
+							("UserPrefs.getFont: [0] " + flds[0]
+							 + " [1] " + flds[1] + " [2] " + flds[2]);
+				}
 				try {
 					int style = Font.PLAIN;
-					final int size = Integer.parseInt( flds[2] );
-					if ( flds[1].equalsIgnoreCase( "BOLD" ) )
+					final int size = Integer.parseInt(flds[2]);
+					if (flds[1].equalsIgnoreCase("BOLD")) {
 						style = Font.BOLD;
-					else if ( flds[1].equalsIgnoreCase( "ITALIC" ) )
+					} else if (flds[1].equalsIgnoreCase("ITALIC")) {
 						style = Font.ITALIC;
-					else if ( flds[1].equalsIgnoreCase( "BOLDITALIC" ) )
+					} else if (flds[1].equalsIgnoreCase("BOLDITALIC")) {
 						style = Font.BOLD | Font.ITALIC;
-					result = new Font( flds[0], style, size );
 					}
-				catch ( final NumberFormatException ex )
-					{
-					if ( this.debug )
+					result = new Font(flds[0], style, size);
+				} catch (final NumberFormatException ex) {
+					if (this.debug) {
 						System.err.println
-							( "UserPrefs.getFont: SIZE NumberFormatException: "
-								+ ex.getMessage() );
+								("UserPrefs.getFont: SIZE NumberFormatException: "
+								 + ex.getMessage());
 					}
 				}
-			else if ( flds.length == 2 )
-				{
+				break;
+			case 2:
 				// We must determine if field 2 is a size or a style...
-				if ( this.debug )
+				if (this.debug) {
 					System.err.println
-						( "UserPrefs.getFont: [0] "
-							+ flds[0] + " [1] " + flds[1] );
-				try {
-					final int size = Integer.parseInt( flds[1] );
-					result = new Font( flds[0], Font.PLAIN, size );
-					}
-				catch ( final NumberFormatException ex )
-					{
-					if ( this.debug )
-						System.err.println
-							( "UserPrefs.getFont: SIZE NumberFormatException: "
-								+ ex.getMessage() );
-					int style = Font.PLAIN;
-					if ( flds[1].equalsIgnoreCase( "BOLD" ) )
-						style = Font.BOLD;
-					else if ( flds[1].equalsIgnoreCase( "ITALIC" ) )
-						style = Font.ITALIC;
-					else if ( flds[1].equalsIgnoreCase( "BOLDITALIC" ) )
-						style = Font.BOLD | Font.ITALIC;
-
-					result = new Font( flds[0], style, 12 );
-					}
+							("UserPrefs.getFont: [0] "
+							 + flds[0] + " [1] " + flds[1]);
 				}
+				try {
+					final int size = Integer.parseInt(flds[1]);
+					result = new Font(flds[0], Font.PLAIN, size);
+				} catch (final NumberFormatException ex) {
+					if (this.debug) {
+						System.err.println
+								("UserPrefs.getFont: SIZE NumberFormatException: "
+								 + ex.getMessage());
+					}
+					int style = Font.PLAIN;
+					if (flds[1].equalsIgnoreCase("BOLD")) {
+						style = Font.BOLD;
+					} else if (flds[1].equalsIgnoreCase("ITALIC")) {
+						style = Font.ITALIC;
+					} else if (flds[1].equalsIgnoreCase("BOLDITALIC")) {
+						style = Font.BOLD | Font.ITALIC;
+					}
+
+					result = new Font(flds[0], style, 12);
+				}
+				break;
 			}
+		}
 
 		return result;
-		}
+	}
 
 	/**
 	 * Retrieve a Color property.
@@ -1010,7 +908,7 @@ extends		Properties
 		final String val = this.getProperty( name, null );
 		if ( val != null )
 			{
-			final String[] flds = UserPrefs.splitString( val, this.delim );
+			final String[] flds = splitString( val, this.delim );
 			if ( flds.length == 2 )
 				{
 				try {
@@ -1027,21 +925,6 @@ extends		Properties
 			}
 
 		return result;
-		}
-
-	/**
-	 * Retrieve a Location property.
-	 * This is simply a cover for getPoint().
-	 *
-	 * @param name The name of the property to retrieve.
-	 * @param defval A default value.
-	 * @return The Point value of the named property.
-	 */
-
-	public Point
-	getLocation( final String name, final Point defval )
-		{
-		return this.getPoint( name, defval );
 		}
 
 	/**
@@ -1062,7 +945,7 @@ extends		Properties
 		final String val = this.getProperty( name, null );
 		if ( val != null )
 			{
-			final String[] flds = UserPrefs.splitString( val, this.delim );
+			final String[] flds = splitString( val, this.delim );
 			if ( flds.length == 2 )
 				{
 				try {
@@ -1100,7 +983,7 @@ extends		Properties
 
 		if ( val != null )
 			{
-			final String[] flds = UserPrefs.splitString( val, this.delim );
+			final String[] flds = splitString( val, this.delim );
 
 			if ( flds.length == 4 )
 				{
@@ -1138,11 +1021,11 @@ extends		Properties
 		{
 		String[] result = defval;
 
-		final Vector v = this.getStringVector( name, null );
+		final List<String> v = this.getStringVector( name, null );
 		if ( v != null )
 			{
 			result = new String[ v.size() ];
-			v.copyInto( result );
+			v.toArray( result );
 			}
 
 		return result;
@@ -1159,20 +1042,20 @@ extends		Properties
 	 * @return The Vector of strings of the named property.
 	 */
 
-	public Vector
-	getStringVector( final String name, final Vector defval )
+	public List<String>
+	getStringVector( final String name, final List<String> defval )
 		{
-		Vector result = defval;
+		List<String> result = defval;
 
 		final int size = this.getInteger( name + ".size", 0 );
 		if ( size > 0 )
 			{
-			result = new Vector();
+			result = new Vector<>();
 			for ( int i = 0 ; i < size ; ++i )
 				{
-				final String idxName = name + "." + i;
+				final String idxName = name + '.' + i;
 				final String val = this.getProperty( idxName, "" );
-				result.addElement( val );
+				result.add( val );
 				}
 			}
 
@@ -1187,7 +1070,7 @@ extends		Properties
 		final String val = this.getProperty( name, null );
 		if ( val != null )
 			{
-			result = UserPrefs.splitString( val, this.delim );
+			result = splitString( val, this.delim );
 			}
 
 		return result;
@@ -1198,12 +1081,12 @@ extends		Properties
 	 * return an empty ending token if the property ends with the
 	 * delimiter. Currently, splitString() does not do this.
 	 */
-	static public String[]
-	splitString( final String splitStr, final String delim )
+	private static String[]
+	splitString(final String splitStr, final String delim)
 		{
-		final Vector sv = StringUtilities.vectorString( splitStr, delim );
+		final List<String> sv = StringUtilities.vectorString( splitStr, delim );
 		final String[] result = new String[ sv.size() ];
-		sv.copyInto( result );
+		sv.toArray( result );
 		return result;
 		}
 
@@ -1222,22 +1105,22 @@ extends		Properties
 
 			for ( int row = 0 ; row < size ; ++row )
 				{
-				key = this.getProperty( name + "." + row + ".key", null );
+				key = this.getProperty(name + '.' + row + ".key", null );
 				final int rowSz =
-					this.getInteger( name + "." + row + ".size", 0 );
+					this.getInteger(name + '.' + row + ".size", 0 );
 
 				if ( key != null && rowSz > 0 )
 					{
-					final Vector tupV = new Vector();
+					final List<String> tupV = new Vector<>();
 					for ( int iv = 0 ; iv < rowSz ; ++iv )
 						{
 						val = this.getProperty
-								( name + "." + row + "." + iv, null );
+								(name + '.' + row + '.' + iv, null );
 
 						if ( val == null )
 							break;
 
-						tupV.addElement( val );
+						tupV.add( val );
 						}
 
 					final PrefsTuple tup = new PrefsTuple( key, tupV );
@@ -1246,12 +1129,12 @@ extends		Properties
 					}
 				else if ( key != null )
 					{
-					result.putTuple( new PrefsTuple( key, new Vector() ) );
+					result.putTuple( new PrefsTuple( key, emptyList() ) );
 					}
 				else
 					{
 					new Throwable
-						( "BAD tuple property '" + name + "'" ).
+						("BAD tuple property '" + name + '\'').
 							printStackTrace();
 					}
 				}
@@ -1260,66 +1143,12 @@ extends		Properties
 		return result;
 		}
 
-	public boolean
-	isModified( final String propName )
-		{
-		Object def = null;
-
-		if ( this.defaults != null )
-			def = this.defaults.getProperty( propName );
-
-		final Object obj = this.getProperty( propName );
-
-		if ( obj == null )
-			return false;
-
-		if ( def != null )
-			return ! obj.equals( def );
-
-		return true;
-		}
-
-	/**
-	 * Escape a property string. This will replace every occurence of
-	 * the delim character with "'\' + this.delim".
-	 *
-	 * @param name The name of the property to retrieve.
-	 * @param value The property's value.
-	 * @return The replaced value of the property if it exists.
-	 */
-
-	public String
-	escapeString( final String propStr )
-		{
-		final StringBuffer result =
-			new StringBuffer( propStr.length() );
-
-		for ( int offset = 0 ; ; )
-			{
-			final int idx = propStr.indexOf( this.delim, offset );
-			if ( idx == -1 )
-				{
-				result.append( propStr.substring( offset ) );
-				break;
-				}
-			else
-				{
-				result.append( propStr.substring( offset, idx ) );
-				result.append( '\\' );
-				result.append( this.delim );
-				offset = idx + 1;
-				}
-			}
-
-		return result.toString();
-		}
-
 	public void
 	addPropertyChangeListener
 			( final String propName, final PropertyChangeListener pL )
 		{
 		PropertyChangeSupport pList =
-			(PropertyChangeSupport) this.subScribers.get( propName );
+				this.subScribers.get( propName );
 
 		if ( pList == null )
 			{
@@ -1335,7 +1164,7 @@ extends		Properties
 			( final String propName, final PropertyChangeListener pL )
 		{
 		final PropertyChangeSupport pList =
-			(PropertyChangeSupport) this.subScribers.get( propName );
+				this.subScribers.get( propName );
 
 		if ( pList != null )
 			{
@@ -1343,11 +1172,11 @@ extends		Properties
 			}
 		}
 
-	protected void
-	firePropertyChange( final String propName, final String oldVal, final String newVal )
+	private void
+	firePropertyChange(final String propName, final String oldVal, final String newVal)
 		{
 		final PropertyChangeSupport pList =
-			(PropertyChangeSupport) this.subScribers.get( propName );
+				this.subScribers.get( propName );
 
 		if ( pList != null )
 			{
@@ -1363,13 +1192,11 @@ extends		Properties
 	 * @return The replaced value of the property if it exists.
 	 */
 
-	protected synchronized String
-	setPropertyNoFire( final String name, final String value )
-		{
+	private synchronized String
+	setPropertyNoFire(final String name, final String value) {
 		final String normName = this.normalizedPropertyName( name );
-		final String result = (String) this.put( normName, value );
-		return result;
-		}
+		return (String) super.setProperty(normName, value);
+	}
 
 	/**
 	 * Set a property value and fire property change event.
@@ -1380,13 +1207,12 @@ extends		Properties
 	 */
 
 	@Override
-	public Object
-	setProperty( final String name, final String value )
-		{
+	public synchronized Object
+	setProperty(final String name, final String value) {
 		final String result = this.setPropertyNoFire( name, value );
 		this.firePropertyChange( name, result, value );
 		return result;
-		}
+	}
 
 	/**
 	 * Set an int property.
@@ -1398,7 +1224,7 @@ extends		Properties
 	public void
 	setInteger( final String name, final int value )
 		{
-		final String valStr = "" + value;
+		final String valStr = String.valueOf(value);
 		this.setProperty( name, valStr );
 		}
 
@@ -1475,20 +1301,6 @@ extends		Properties
 		}
 
 	/**
-	 * Set a Location property.
-	 * This is simply a cover for setPoint().
-	 *
-	 * @param name The name of the property to set.
-	 * @param value The property's value.
-	 */
-
-	public void
-	setLocation( final String name, final Point value )
-		{
-		this.setPoint( name, value );
-		}
-
-	/**
 	 * Set a Dimension property.
 	 *
 	 * @param name The name of the property to set.
@@ -1540,10 +1352,10 @@ extends		Properties
 			: "BOLDITALIC";
 
 		final String valStr =
-			value.getName() + "-" +
-			( styleStr == null ? "" :
-				styleStr + "-" ) +
-			value.getSize();
+				value.getName() + '-' +
+				( styleStr == null ? "" :
+				  styleStr + '-') +
+				value.getSize();
 
 		this.setProperty( name, valStr );
 		}
@@ -1558,7 +1370,7 @@ extends		Properties
 	public void
 	setColor( final String name, final Color value )
 		{
-		final String valStr = "" + value.getRGB();
+		final String valStr = String.valueOf(value.getRGB());
 		this.setProperty( name, valStr );
 		}
 
@@ -1575,7 +1387,7 @@ extends		Properties
 		this.setInteger( name + ".size", strings.length );
 		for ( int i = 0 ; i < strings.length ; ++i )
 			{
-			this.setProperty( name + "." + i, strings[i] );
+			this.setProperty(name + '.' + i, strings[i] );
 			}
 		}
 
@@ -1590,7 +1402,7 @@ extends		Properties
 	public void
 	setTokens( final String name, final String[] tokes )
 		{
-		final StringBuffer buf = new StringBuffer();
+		final StringBuilder buf = new StringBuilder();
 
 		for ( int i = 0 ; i < tokes.length ; ++i )
 			{
@@ -1643,22 +1455,22 @@ extends		Properties
 	public void
 	setTupleTable( final String name, final PrefsTupleTable table )
 		{
-		final Vector kv = table.getKeyOrder();
+		final Vector<String> kv = table.getKeyOrder();
 		this.setInteger( name + ".size", kv.size() );
 
 		for ( int i = 0 ; i < kv.size() ; ++i )
 			{
 			final PrefsTuple tup =
-				table.getTuple( (String) kv.elementAt(i) );
+				table.getTuple(kv.elementAt(i));
 
-			this.setProperty( name + "." + i + ".key", tup.getKey() );
+			this.setProperty(name + '.' + i + ".key", tup.getKey() );
 
 			final String[] vals = tup.getValues();
-			this.setInteger( name + "." + i + ".size", vals.length );
+			this.setInteger(name + '.' + i + ".size", vals.length );
 
 			for ( int j = 0 ; j < vals.length ; ++j )
 				{
-				final String propName = name + "." + i + "." + j;
+				final String propName = name + '.' + i + '.' + j;
 				this.setProperty( propName, vals[j] );
 				}
 			}
@@ -1669,13 +1481,13 @@ extends		Properties
 	// Should this method also remove overrides? Should there be
 	// another method removeOverridableProperty() to do that?
 	//
-	public void
-	removeProperty( final String propName )
+	private void
+	removeProperty(final String propName)
 		{
 		String normName = this.normalizedPropertyName( propName );
-		if ( normName.endsWith( "." ) )
+		if (!normName.isEmpty() && normName.charAt(normName.length() - 1) == '.')
 			normName = normName.substring( 0, normName.length() - 1 );
-		final Object o = this.remove( normName );
+		this.remove( normName );
 		}
 
 	public void
@@ -1685,7 +1497,7 @@ extends		Properties
 		this.removeProperty( propName + ".size" );
 		for ( int i = 0 ; i < size ; ++i )
 			{
-			this.removeProperty( propName + "." + i );
+			this.removeProperty(propName + '.' + i );
 			}
 		}
 
@@ -1696,146 +1508,13 @@ extends		Properties
 		this.removeProperty( propName + ".size" );
 		for ( int row = 0 ; row < size ; ++row )
 			{
-			this.removeProperty( propName + "." + row + ".key" );
-			final int cols = this.getInteger( propName + "." + row + ".size", 0 );
-			this.removeProperty( propName + "." + row + ".size" );
+			this.removeProperty(propName + '.' + row + ".key" );
+			final int cols = this.getInteger(propName + '.' + row + ".size", 0 );
+			this.removeProperty(propName + '.' + row + ".size" );
 			for ( int col = 0 ; col < cols ; ++col )
 				{
-				this.removeProperty( propName + "." + row + "." + col );
+				this.removeProperty(propName + '.' + row + '.' + col );
 				}
-			}
-		}
-
-	/**
-	 * Load the properties from the given Properties into this
-	 * UserPrefs table.
-	 *
-	 * @param name The name of the property to set.
-	 * @param value The property's value.
-	 */
-
-	public synchronized void
-	loadProperties( final Properties ap )
-		{
-		for ( final String nm : ap.stringPropertyNames() )
-			{
-			final String val = ap.getProperty( nm );
-			this.put( nm, val );
-			}
-		}
-
-	/**
-	 * Load the properties from the given InputStream into this
-	 * UserPrefs table using the Properties load() method.
-	 *
-	 * @param name The name of the property to set.
-	 * @param value The property's value.
-	 */
-
-	public synchronized void
-	loadProperties( final InputStream in )
-		throws IOException
-		{
-		super.load( in );
-		}
-
-	/**
-	 * Store the properties into the provided OutputStream using the
-	 * Properties save() method.
-	 *
-	 * @param name The name of the property to set.
-	 * @param value The property's value.
-	 */
-
-	public synchronized void
-	storeProperties( final OutputStream out, final String header )
-		throws IOException
-		{
-		// REVIEW How do we know to call super.store() if JDK1.2 or later?
-		//
-		this.save( out, header );
-		}
-
-	public
-	class		Pair
-		{
-		private String		key;
-		private String		value;
-
-		public
-		Pair( final String key, final String value )
-			{
-			this.key = key;
-			this.value = value;
-			}
-
-		public String
-		getKey()
-			{
-			return this.key;
-			}
-
-		public void
-		setKey( final String key )
-			{
-			this.key = key;
-			}
-
-		public String
-		getValue()
-			{
-			return this.value;
-			}
-
-		public void
-		setValue( final String value )
-			{
-			this.value = value;
-			}
-		}
-
-	public
-	class		Tuple
-		{
-		private String		key;
-		private String[]	values;
-
-		public
-		Tuple( final String key, final String[] Values )
-			{
-			this.key = key;
-			this.values = values;
-			}
-
-		public String
-		getKey()
-			{
-			return this.key;
-			}
-
-		public void
-		setKey( final String key )
-			{
-			this.key = key;
-			}
-
-		public String[]
-		getValues()
-			{
-			return this.values;
-			}
-
-		public void
-		setValues( final String[] values )
-			{
-			this.values = values;
-			}
-
-		public void
-		setValues( final Vector values )
-			{
-			this.values = new String[ values.size() ];
-			Arrays.setAll(this.values, i -> (String) values.elementAt(i));
 			}
 		}
 
@@ -1843,31 +1522,30 @@ extends		Properties
 	 * Simple test program. Run with no arguments.
 	 * This code could be much more robust.
 	 */
-
 	public static void
-	main( final String[] args )
+	main( final String... args )
 		{
 		System.err.println( "UserPrefs.main: testing class..." );
 
-		final UserPrefs defPrefs = UserPrefs.getInstance();
+		final Properties defPrefs = getInstance();
 
 		defPrefs.setProperty
 			( "testPref.1.1", "Pref '1.1' set directly on 'DEFAULT'" );
-		UserPrefs.getInstance().setProperty
+		getInstance().setProperty
 			( "testPref.1.2", "Pref '1.2' set via getInstance" );
 
-		final UserPrefs prefsTwo = new UserPrefs( "TestTwo", defPrefs );
+		final Properties prefsTwo = new UserPrefs("TestTwo", defPrefs );
 
 		prefsTwo.setProperty
 			( "testPref.2.1", "Pref '2.1' set directly on 'TestTwo'" );
 
-		UserPrefs.getInstance().setProperty
+		getInstance().setProperty
 			( "testPref.2.2", "Pref '2.2' set via getInstance" );
 
 		System.out.println( "======== Preferences 'DEFAULT' ========" );
 
 		try {
-			defPrefs.storeProperties( System.out, "DEFAULT PROPERTIES" );
+			defPrefs.store( System.out, "DEFAULT PROPERTIES" );
 			}
 		catch ( final IOException ex )
 			{
@@ -1876,13 +1554,13 @@ extends		Properties
 
 		System.out.println( "======== ======= END 'DEFAULT' ========" );
 
-		System.out.println( "" );
-		System.out.println( "" );
+		System.out.println();
+		System.out.println();
 
 		System.out.println( "======== Preferences 'TestTwo' ========" );
 
 		try {
-			prefsTwo.storeProperties( System.out, "TestTwo PROPERTIES" );
+			prefsTwo.store( System.out, "TestTwo PROPERTIES" );
 			}
 		catch ( final IOException ex )
 			{

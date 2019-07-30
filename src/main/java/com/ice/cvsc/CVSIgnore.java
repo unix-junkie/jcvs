@@ -33,12 +33,11 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 
-public class CVSIgnore extends Object
-	{
-	static public final String		RCS_ID = "$Id: CVSIgnore.java,v 2.4 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.4 $";
+public class CVSIgnore {
+	public static final String		RCS_ID = "$Id: CVSIgnore.java,v 2.4 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.4 $";
 
-	static private final String		DEFAULT_IGNORE_SPEC =
+	private static final String		DEFAULT_IGNORE_SPEC =
 		"RCSLOG RCS SCCS CVS cvslog.*" +
 		"tags TAGS *~ #* ,*" +
 		"*.old *.bak *.orig *.rej .del-*" +
@@ -92,9 +91,10 @@ public class CVSIgnore extends Object
 			return;
 
 		String	toke;
-		int		i, count;
+		int		i;
+			final int count;
 
-		if ( this.specs == null )
+			if ( this.specs == null )
 			{
 			this.specs = new Vector();
 			}
@@ -177,8 +177,8 @@ public class CVSIgnore extends Object
 	 *
 	 * @param spec The string listing the specs to replace with.
 	 */
-	public void
-	setIgnoreSpec( final String spec )
+	private void
+	setIgnoreSpec(final String spec)
 		{
 		if ( this.specs != null )
 			{
@@ -245,10 +245,7 @@ public class CVSIgnore extends Object
 
 			if ( pIdx >= pLen )
 				{
-				if ( sIdx >= sLen )
-					return true;
-				else
-					return false;
+					return sIdx >= sLen;
 				}
 
 			if ( sIdx >= sLen && pattern.charAt(pIdx) != '*' )
@@ -362,7 +359,7 @@ public class CVSIgnore extends Object
 				(String) this.specs.elementAt(i);
 
 			CVSLog.logMsg
-				( "Ignore[" +i+ "] '" +spec+ "'" );
+				("Ignore[" + i + "] '" + spec + '\'');
 			}
 		}
 	}

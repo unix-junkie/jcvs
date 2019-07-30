@@ -1,9 +1,14 @@
 
 package com.ice.config;
 
+import static com.ice.config.ConfigureConstants.CFG_STRINGARRAY;
+import static com.ice.config.ConfigureConstants.CFG_TUPLETABLE;
+
+import java.io.Serializable;
+
 public
 class		ConfigureSpec
-implements	ConfigureConstants, java.io.Serializable
+implements	Serializable
 	{
 
 	private final String		key;
@@ -40,11 +45,8 @@ implements	ConfigureConstants, java.io.Serializable
 	public String
 	getName()
 		{
-		final int index = this.path.lastIndexOf( "." );
-		if ( index == -1 )
-			return this.path;
-		else
-			return this.path.substring( index + 1 );
+		final int index = this.path.lastIndexOf('.');
+			return index == -1 ? this.path : this.path.substring(index + 1);
 		}
 
 	public String
@@ -99,8 +101,8 @@ implements	ConfigureConstants, java.io.Serializable
 	public String
 	toString()
 		{
-		return "[" + this.type + "," + this.propName
-			+ "," + this.description + "]";
+		return '[' + this.type + ',' + this.propName
+		       + ',' + this.description + ']';
 		}
 
 	}

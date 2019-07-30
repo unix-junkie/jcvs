@@ -2,10 +2,11 @@
 package com.ice.config;
 
 
+@FunctionalInterface
 public
 interface	ConfigureEditorFactory
 	{
-	public ConfigureEditor
-		createEditor( String propertyType );
+	ConfigureEditor
+		createEditor(String propertyType);
 	}
 

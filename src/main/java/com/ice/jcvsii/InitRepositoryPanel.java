@@ -51,6 +51,7 @@ import com.ice.cvsc.CVSRequest;
 import com.ice.cvsc.CVSResponse;
 import com.ice.cvsc.CVSScramble;
 import com.ice.cvsc.CVSUserInterface;
+import com.ice.jcvsii.CVSThread.Monitor;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -60,12 +61,12 @@ class		InitRepositoryPanel
 extends		MainTabPanel
 implements	ActionListener, CVSUserInterface
 	{
-	protected CVSClient			client;
-	protected ConnectInfoPanel	info;
+	private CVSClient			client;
+	private ConnectInfoPanel	info;
 	protected JTextField		argumentsText;
-	protected JTextArea			outputText;
-	protected JLabel			feedback;
-	protected JButton			actionButton;
+	private JTextArea			outputText;
+	private JLabel			feedback;
+	private JButton			actionButton;
 
 
 	public
@@ -118,9 +119,9 @@ implements	ActionListener, CVSUserInterface
 		final UserPrefs prefs = Config.getPreferences();
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		CVSClient		client;
-		CVSProject		project;
-		CVSRequest		request;
+		final CVSClient		client;
+		final CVSProject		project;
+		final CVSRequest		request;
 		final Point			location;
 
 		final CVSEntryVector entries = new CVSEntryVector();
@@ -278,15 +279,15 @@ implements	ActionListener, CVSUserInterface
 
 		final CVSResponse response = new CVSResponse();
 
-		final CVSThread thread =
+		final Thread thread =
 			new CVSThread( "InitRep",
-				this.new MyRunner( project, client, request, response ),
+				       new MyRunner(project, client, request, response),
 					this.new MyMonitor( request, response ) );
 
 		thread.start();
 		}
 
-	private
+	private static final
 	class		MyRunner
 	implements	Runnable
 		{
@@ -295,9 +296,8 @@ implements	ActionListener, CVSUserInterface
 		private final CVSRequest request;
 		private final CVSResponse response;
 
-		public
-		MyRunner( final CVSProject project, final CVSClient client,
-					final CVSRequest request, final CVSResponse response )
+		private MyRunner(final CVSProject project, final CVSClient client,
+				 final CVSRequest request, final CVSResponse response)
 			{
 			this.client = client;
 			this.project = project;
@@ -314,15 +314,14 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	private
+	private final
 	class		MyMonitor
-	implements	CVSThread.Monitor
+	implements	Monitor
 		{
 		private final CVSRequest request;
 		private final CVSResponse response;
 
-		public
-		MyMonitor( final CVSRequest request, final CVSResponse response )
+		private MyMonitor(final CVSRequest request, final CVSResponse response)
 			{
 			this.request = request;
 			this.response = response;

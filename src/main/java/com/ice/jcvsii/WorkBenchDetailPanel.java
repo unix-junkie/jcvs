@@ -14,6 +14,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -30,28 +31,25 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		WorkBenchDetailPanel
 extends		JPanel
 implements	ActionListener, PropertyChangeListener
 	{
-	protected JLabel		title;
-	protected JLabel		projectToke;
+	private JLabel		title;
+	private JLabel		projectToke;
 
-	protected JLabel		repository;
-	protected JLabel		rootDirectory;
-	protected JLabel		localDirectory;
+	private JLabel		repository;
+	private JLabel		rootDirectory;
+	private JLabel		localDirectory;
 
-	protected JLabel		userName;
-	protected JLabel		hostName;
-	protected JLabel		connectMethod;
+	private JLabel		userName;
+	private JLabel		hostName;
+	private JLabel		connectMethod;
 
-	protected JPanel		descPan;
-	protected JTextArea		descText;
+		private JTextArea		descText;
 	protected int			descOffset = 10;
 
 
-	public
 	WorkBenchDetailPanel()
 		{
 		super();
@@ -92,26 +90,25 @@ implements	ActionListener, PropertyChangeListener
 		final String propName = evt.getPropertyName();
 
 		final UserPrefs p = (UserPrefs) evt.getSource();
-		if ( propName.equals( ConfigConstants.WB_DET_TITLE_BG ) )
-			{
-			title.setBackground( p.getColor
-				( ConfigConstants.WB_DET_TITLE_BG,
-					title.getBackground() ) );
-			}
-		else if ( propName.equals( ConfigConstants.WB_DET_TITLE_HEIGHT ) )
-			{
-			title.setPreferredSize
-				( new Dimension( 125, p.getInteger
-					( ConfigConstants.WB_DET_TITLE_HEIGHT,
-						title.getSize().height ) ) );
-			title.revalidate();
-			}
-		else if ( propName.equals( ConfigConstants.WB_DET_TITLE_FONT ) )
-			{
-			title.setFont( p.getFont
-				( ConfigConstants.WB_DET_TITLE_FONT,
-					title.getFont() ) );
-			title.revalidate();
+			switch (propName) {
+			case ConfigConstants.WB_DET_TITLE_BG:
+				title.setBackground(p.getColor
+						(ConfigConstants.WB_DET_TITLE_BG,
+						 title.getBackground()));
+				break;
+			case ConfigConstants.WB_DET_TITLE_HEIGHT:
+				title.setPreferredSize
+						(new Dimension(125, p.getInteger
+								(ConfigConstants.WB_DET_TITLE_HEIGHT,
+								 title.getSize().height)));
+				title.revalidate();
+				break;
+			case ConfigConstants.WB_DET_TITLE_FONT:
+				title.setFont(p.getFont
+						(ConfigConstants.WB_DET_TITLE_FONT,
+						 title.getFont()));
+				title.revalidate();
+				break;
 			}
 
 		title.repaint( 500 );
@@ -240,7 +237,7 @@ implements	ActionListener, PropertyChangeListener
 			( ConfigConstants.WB_DET_TITLE_HEIGHT, this );
 
 
-		final JPanel infoPan = new JPanel();
+		final JComponent infoPan = new JPanel();
 		infoPan.setLayout( new GridBagLayout() );
 		infoPan.setBorder( new EmptyBorder( 9, 9, 9, 9 ) );
 
@@ -254,7 +251,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.projectToke = this.new DetailLabel( "  " );
+		this.projectToke = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.projectToke,
 			GridBagConstraints.HORIZONTAL,
@@ -270,7 +267,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.repository = this.new DetailLabel( "  " );
+		this.repository = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.repository,
 			GridBagConstraints.HORIZONTAL,
@@ -286,7 +283,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.rootDirectory = this.new DetailLabel( "  " );
+		this.rootDirectory = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.rootDirectory,
 			GridBagConstraints.HORIZONTAL,
@@ -302,7 +299,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.localDirectory = this.new DetailLabel( "  " );
+		this.localDirectory = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.localDirectory,
 			GridBagConstraints.HORIZONTAL,
@@ -318,7 +315,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.userName = this.new DetailLabel( "  " );
+		this.userName = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.userName,
 			GridBagConstraints.HORIZONTAL,
@@ -334,7 +331,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.hostName = this.new DetailLabel( "  " );
+		this.hostName = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.hostName,
 			GridBagConstraints.HORIZONTAL,
@@ -350,7 +347,7 @@ implements	ActionListener, PropertyChangeListener
 			GridBagConstraints.WEST,
 			0, row, 1, 1, 0.0, 0.0 );
 
-		this.connectMethod = this.new DetailLabel( "  " );
+		this.connectMethod = new DetailLabel("  ");
 		AWTUtilities.constrain(
 			infoPan, this.connectMethod,
 			GridBagConstraints.HORIZONTAL,
@@ -373,10 +370,10 @@ implements	ActionListener, PropertyChangeListener
 		this.descText.setOpaque( false );
 
 		final String descTitle = rmgr.getUIString( "wb.detail.descpan.title" );
-		this.descPan = new JPanel();
-		this.descPan.setLayout( new BorderLayout() );
-		this.descPan.add( BorderLayout.CENTER, descText );
-		this.descPan.setBorder
+			final JComponent descPan = new JPanel();
+		descPan.setLayout(new BorderLayout() );
+		descPan.add(BorderLayout.CENTER, descText );
+		descPan.setBorder
 			( new CompoundBorder
 				( new TitledBorder
 					(	new EtchedBorder( EtchedBorder.RAISED ), descTitle ),
@@ -385,23 +382,22 @@ implements	ActionListener, PropertyChangeListener
 			);
 
 		AWTUtilities.constrain(
-			infoPan, this.descPan,
-			GridBagConstraints.BOTH,
-			GridBagConstraints.SOUTH,
-			0, row++, 2, 1, 1.0, 1.0,
-			new Insets( 10, 5, 5, 5 ) );
+				infoPan, descPan,
+				GridBagConstraints.BOTH,
+				GridBagConstraints.SOUTH,
+				0, row++, 2, 1, 1.0, 1.0,
+				new Insets( 10, 5, 5, 5 ) );
 
 		this.add( BorderLayout.NORTH, title );
 
 		this.add( BorderLayout.CENTER, infoPan );
 		}
 
-	private
+	private static final
 	class		DetailLabel
 	extends		JLabel
 		{
-		public
-		DetailLabel( final String text )
+		private DetailLabel(final String text)
 			{
 			super( text );
 

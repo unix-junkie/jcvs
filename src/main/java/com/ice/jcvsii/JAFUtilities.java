@@ -30,10 +30,12 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.activation.CommandInfo;
+import javax.activation.CommandObject;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -41,15 +43,17 @@ import javax.swing.border.EmptyBorder;
 import com.ice.pref.UserPrefs;
 
 
-public
-class		JAFUtilities
-extends		Object
-	{
-	static public void
+final
+class		JAFUtilities {
+	private JAFUtilities() {
+	}
+
+	public static void
 	openFile( final String entryName, final File entryFile, final String verb )
 		{
-		final int			i, index;
-		final String		argsel = null;
+		final int			i;
+			final int index;
+			final String		argsel = null;
 		final String		method = null;
 
 		final UserPrefs prefs = Config.getPreferences();
@@ -59,7 +63,7 @@ extends		Object
 
 		if ( prefs.getBoolean( "global.useJAF", false ) )
 			{
-			final Object viewer = JAFUtilities.getMailcapViewer( dh, verb );
+			final Object viewer = getMailcapViewer( dh, verb );
 
 			if ( viewer != null )
 				{
@@ -70,7 +74,7 @@ extends		Object
 					if ( title == null || title.length() < 1 )
 						title = entryName;
 
-					final ComponentFrame frame =
+					final Component frame =
 						new ComponentFrame
 							( (Component)viewer, title, dh.getDataSource() );
 
@@ -114,7 +118,7 @@ extends		Object
 			bean = dh.getBean( ci );
 			if ( bean == null )
 				{
-				final ExecViewer ev = new ExecViewer();
+				final CommandObject ev = new ExecViewer();
 				try {
 					ev.setCommandContext( verb, dh );
 					bean = ev;
@@ -132,7 +136,7 @@ extends		Object
 
 		if ( bean == null )
 			{
-			final JPanel msgPan = new JPanel();
+			final JComponent msgPan = new JPanel();
 			msgPan.setLayout( new BorderLayout() );
 			msgPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 

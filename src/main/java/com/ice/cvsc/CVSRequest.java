@@ -49,37 +49,34 @@ import java.util.Vector;
  */
 
 public class
-CVSRequest extends Object
-	{
-	static public final String	RCS_ID = "$Id: CVSRequest.java,v 2.9 2003/07/27 01:08:32 time Exp $";
-	static public final String	RCS_REV = "$Revision: 2.9 $";
+CVSRequest {
+	public static final String	RCS_ID = "$Id: CVSRequest.java,v 2.9 2003/07/27 01:08:32 time Exp $";
+	public static final String	RCS_REV = "$Revision: 2.9 $";
 
-	static public final int		METHOD_INETD = 1;
-	static public final int		METHOD_RSH = 2;
-	static public final int		METHOD_SSH = 3;
+	public static final int		METHOD_INETD = 1;
+	public static final int		METHOD_RSH = 2;
+	public static final int		METHOD_SSH = 3;
 
-	static private final int	ES_FIRST = 0;
+	private static final int	ES_FIRST = 0;
 
-	static public final int		ES_NONE = ES_FIRST;
-	static public final int		ES_ALL = ES_NONE + 1;
-	static public final int		ES_SEL = ES_ALL + 1;
-	static public final int		ES_SELALL = ES_SEL + 1;
-	static public final int		ES_ALLMOD = ES_SELALL + 1;
-	static public final int		ES_SELMOD = ES_ALLMOD + 1;
-	static public final int		ES_ALLLOST = ES_SELMOD + 1;
-	static public final int		ES_SELLOST = ES_ALLLOST + 1;
-	static public final int		ES_ALLUNC = ES_SELLOST + 1;
-	static public final int		ES_SELUNC = ES_ALLUNC + 1;
-	static public final int		ES_USER = ES_SELUNC + 1;
-	static public final int		ES_NEW = ES_USER + 1;
-	static public final int		ES_POPUP = ES_NEW + 1;
+	public static final int		ES_NONE = ES_FIRST;
+	private static final int		ES_ALL = ES_NONE + 1;
+	public static final int		ES_SEL = ES_ALL + 1;
+	public static final int		ES_SELALL = ES_SEL + 1;
+	public static final int		ES_ALLMOD = ES_SELALL + 1;
+	public static final int		ES_SELMOD = ES_ALLMOD + 1;
+	public static final int		ES_ALLLOST = ES_SELMOD + 1;
+	public static final int		ES_SELLOST = ES_ALLLOST + 1;
+	public static final int		ES_ALLUNC = ES_SELLOST + 1;
+	public static final int		ES_SELUNC = ES_ALLUNC + 1;
+	public static final int		ES_USER = ES_SELUNC + 1;
+	public static final int		ES_NEW = ES_USER + 1;
+	public static final int		ES_POPUP = ES_NEW + 1;
 
-	static private final int	ES_LAST = ES_POPUP;
+	private static final int	ES_LAST = ES_POPUP;
 
 
-	private final PrintStream			traceStream;
-
-	/**
+		/**
 	* If true, the request phase of the CVS command will be
 	* traced on stderr.
 	*/
@@ -240,16 +237,6 @@ CVSRequest extends Object
 	public boolean				saveTempFiles;
 
 	/**
-	* Reflects the current 'Sticky' setting in this request.
-	*/
-	public boolean				stickyIsSet;
-
-	/**
-	* Reflects the current 'Static-directory' setting in this request.
-	*/
-	public boolean				staticDirIsSet;
-
-	/**
 	* The 'Valid-requests' response string from the server.
 	*/
 	public String				validRequests;
@@ -350,9 +337,9 @@ CVSRequest extends Object
 	public static String
 	getConnMethodName( final int method )
 		{
-		return method == CVSRequest.METHOD_INETD
+		return method == METHOD_INETD
 			? "pserver"
-			: method == CVSRequest.METHOD_SSH
+			: method == METHOD_SSH
 				? "ssh"
 				: "rsh";
 		}
@@ -366,13 +353,13 @@ CVSRequest extends Object
 		super();
 
 		this.vfReason = null;
-		this.traceStream = null;
+			final PrintStream traceStream = null;
 		this.traceRequest = false;
 		this.traceResponse = false;
 		this.traceProcessing = false;
 		this.traceTCPData = false;
 
-		this.connMethod = CVSRequest.METHOD_INETD;
+		this.connMethod = METHOD_INETD;
 		this.rshProcess = null;
 
 		this.isPServer = false;
@@ -415,8 +402,14 @@ CVSRequest extends Object
 		this.queueResponse = true;
 		this.responseHandler = null;
 
-		this.stickyIsSet = false;
-		this.staticDirIsSet = false;
+			/**
+			 * Reflects the current 'Sticky' setting in this request.
+			 */
+			final boolean stickyIsSet = false;
+			/**
+			 * Reflects the current 'Static-directory' setting in this request.
+			 */
+			final boolean staticDirIsSet = false;
 
 		this.updateProg = null;
 		this.checkInProg = null;
@@ -431,7 +424,7 @@ CVSRequest extends Object
 		this.localDirectory = null;
 
 		this.command = null;
-		this.entrySelector = CVSRequest.ES_SEL;
+		this.entrySelector = ES_SEL;
 
 		this.ui = null;
 		this.dirEntry = null;
@@ -637,13 +630,13 @@ CVSRequest extends Object
 		{
 		final File result =
 			new File(
-				this.localDirectory + "/"
-				+ entry.getFullName() );
+					this.localDirectory + '/'
+					+ entry.getFullName() );
 
 		if ( false )
 		CVSTracer.traceIf( true,
-			"CVSRequest.getLocalFile: entry '" + entry.getFullName()
-			+ "' localFile '" + result.getPath() + "'" );
+				   "CVSRequest.getLocalFile: entry '" + entry.getFullName()
+				   + "' localFile '" + result.getPath() + '\'');
 
 		return result;
 		}
@@ -732,7 +725,7 @@ CVSRequest extends Object
 	/**
 	 * Sets the request's response handler.
 	 *
-	 * @param repository The request's response handler.
+	 * @param responseHandler The request's response handler.
 	 */
 	public void
 	setResponseHandler( final CVSResponseHandler responseHandler )
@@ -798,7 +791,7 @@ CVSRequest extends Object
 	/**
 	 * Appends an argument list to the request's argument list.
 	 *
-	 * @param arguments The list of arguments to append.
+	 * @param newArgs The list of arguments to append.
 	 */
 	public void
 	appendArguments( final CVSArgumentVector newArgs )
@@ -839,7 +832,7 @@ CVSRequest extends Object
 	/**
 	 * Appends an argument list to the request's global argument list.
 	 *
-	 * @param arguments The list of arguments to append.
+	 * @param newArgs The list of arguments to append.
 	 */
 	public void
 	appendGlobalArguments( final CVSArgumentVector newArgs )
@@ -894,7 +887,7 @@ CVSRequest extends Object
 	 * @param vars The new user set variables.
 	 */
 	public void
-	setSetVariables( final String[] vars )
+	setSetVariables( final String... vars )
 		{
 		this.setVars = vars;
 		}
@@ -1028,31 +1021,31 @@ CVSRequest extends Object
 			}
 		}
 
-	static public int
+	public static int
 	parseEntriesSelector( final char selectCh )
 		{
-		int		result = CVSRequest.ES_SEL;
+		int		result = ES_SEL;
 
 		switch ( selectCh )
 			{
-			case 'N': result = CVSRequest.ES_NONE; break;
-			case 'A': result = CVSRequest.ES_ALL; break;
-			case 'a': result = CVSRequest.ES_SEL; break;
-			case 'e': result = CVSRequest.ES_SELALL; break;
-			case 'M': result = CVSRequest.ES_ALLMOD; break;
-			case 'm': result = CVSRequest.ES_SELMOD; break;
-			case 'L': result = CVSRequest.ES_ALLLOST; break;
-			case 'l': result = CVSRequest.ES_SELLOST; break;
-			case 'U': result = CVSRequest.ES_ALLUNC; break;
-			case 'u': result = CVSRequest.ES_SELUNC; break;
-			case 'G': result = CVSRequest.ES_USER; break;
-			case 'g': result = CVSRequest.ES_NEW; break;
-			case 'p': result = CVSRequest.ES_POPUP; break;
+			case 'N': result = ES_NONE; break;
+			case 'A': result = ES_ALL; break;
+			case 'a': result = ES_SEL; break;
+			case 'e': result = ES_SELALL; break;
+			case 'M': result = ES_ALLMOD; break;
+			case 'm': result = ES_SELMOD; break;
+			case 'L': result = ES_ALLLOST; break;
+			case 'l': result = ES_SELLOST; break;
+			case 'U': result = ES_ALLUNC; break;
+			case 'u': result = ES_SELUNC; break;
+			case 'G': result = ES_USER; break;
+			case 'g': result = ES_NEW; break;
+			case 'p': result = ES_POPUP; break;
 			default:
-				result = CVSRequest.ES_SEL;
+				result = ES_SEL;
 				CVSLog.logMsg
-					( "CVSRequest.parseEntriesSelector: '"
-						+ "ERROR bad entries selector '" + selectCh + "'" );
+					("CVSRequest.parseEntriesSelector: '"
+					 + "ERROR bad entries selector '" + selectCh + '\'');
 				break;
 			}
 
@@ -1070,19 +1063,19 @@ CVSRequest extends Object
 	parseArgumentString( String argStr )
 		{
 		// Check for global options...
-		if ( argStr.startsWith( "[" ) )
+		if (!argStr.isEmpty() && argStr.charAt(0) == '[')
 			{
-			final int bktidx = argStr.indexOf( "]" );
+			final int bktidx = argStr.indexOf(']');
 			if ( bktidx > 0 )
 				{
 				final String gArgStr = argStr.substring( 1, bktidx ).trim();
 				argStr = argStr.substring( bktidx + 1 ).trim();
-				if ( gArgStr.length() > 0 )
+				if (!gArgStr.isEmpty())
 					{
 					final CVSArgumentVector gArgs =
 						CVSArgumentVector.parseArgumentString( gArgStr );
 
-					if ( gArgs != null && gArgs.size() > 0 )
+					if ( gArgs != null && !gArgs.isEmpty())
 						{
 						if ( this.globalargs == null )
 							this.globalargs = gArgs;
@@ -1096,7 +1089,7 @@ CVSRequest extends Object
 		final CVSArgumentVector args =
 			CVSArgumentVector.parseArgumentString( argStr );
 
-		if ( args != null && args.size() > 0 )
+		if ( args != null && !args.isEmpty())
 			{
 			if ( this.arguments == null )
 				this.arguments = args;
@@ -1128,8 +1121,9 @@ CVSRequest extends Object
 	public boolean
 	parseControlString( final String specification )
 		{
-		int			i, tokenCount;
-		boolean		result = true;
+		int			i;
+			final int tokenCount;
+			boolean		result = true;
 		String		commandStr = null;
 		String		selectorStr = null;
 		String		requestStr = null;
@@ -1172,7 +1166,7 @@ CVSRequest extends Object
 					{
 					final char selectCh = selectorStr.charAt(i);
 					this.entrySelector =
-						CVSRequest.parseEntriesSelector( selectCh );
+						parseEntriesSelector( selectCh );
 					}
 
 				// Process the REQUEST Flags
@@ -1206,8 +1200,8 @@ CVSRequest extends Object
 							break;
 						default:
 							CVSLog.logMsg
-								( "While parsing CVSRequest '" + specification
-								+ "', found invalid request flag '" +cmdChar+ "'" );
+								("While parsing CVSRequest '" + specification
+								 + "', found invalid request flag '" + cmdChar + '\'');
 							break;
 						}
 					}
@@ -1233,8 +1227,8 @@ CVSRequest extends Object
 							break;
 						default:
 							CVSLog.logMsg
-								( "While parsing CVSRequest '" + specification
-								+ "', found invalid response flag '" +cmdChar+ "'" );
+								("While parsing CVSRequest '" + specification
+								 + "', found invalid response flag '" + cmdChar + '\'');
 							break;
 						}
 					}
@@ -1274,8 +1268,8 @@ CVSRequest extends Object
 	 * @see CVSRequest#verifyRequest
 	 * @see CVSRequest#getVerifyFailReason
 	 */
-	public void
-	setVerifyFailReason( final String reason )
+	private void
+	setVerifyFailReason(final String reason)
 		{
 		this.vfReason = reason;
 		}
@@ -1347,8 +1341,8 @@ CVSRequest extends Object
 			return false;
 			}
 
-		if ( this.entrySelector < CVSRequest.ES_FIRST
-				|| this.entrySelector > CVSRequest.ES_LAST )
+		if ( this.entrySelector < ES_FIRST
+				|| this.entrySelector > ES_LAST )
 			{
 			this.setVerifyFailReason( "invalid entry selector" );
 			return false;

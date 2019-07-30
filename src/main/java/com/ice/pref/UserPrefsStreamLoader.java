@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 /**
  * This class extends the UserPrefsLoader to allow loading and storing
  * via InputStreams and OutputStreams.
@@ -36,57 +35,17 @@ import java.io.OutputStream;
  *    <a href="mailto:time@ice.com">time@ice.com</a>.
  *
  */
-
 public
 class       UserPrefsStreamLoader
 extends		UserPrefsLoader
     {
-	private InputStream		inStream = null;
-	private OutputStream	outStream = null;
-
-
-	public
-	UserPrefsStreamLoader()
-		{
-		super();
-		}
-
-	public
-	UserPrefsStreamLoader( final InputStream in, final OutputStream out )
-		{
-		super();
-		this.inStream = in;
-		this.outStream = out;
-		}
-
-	public
-	UserPrefsStreamLoader( final String appName, final String userName, final String prefsName )
-		{
-		super( appName, userName, prefsName );
-		}
-
-	public InputStream
-	getInputStream()
-		{
-		return this.inStream;
-		}
+	private InputStream		inStream;
+	private OutputStream	outStream;
 
 	public void
 	setInputStream( final InputStream in )
 		{
 		this.inStream = in;
-		}
-
-	public OutputStream
-	getOutputStream()
-		{
-		return this.outStream;
-		}
-
-	public void
-	setOutputStream( final OutputStream out )
-		{
-		this.outStream = out;
 		}
 
 	@Override
@@ -98,7 +57,7 @@ extends		UserPrefsLoader
 			throw new IOException
 				( "you have not yet called setInputStream()" );
 
-		prefs.loadProperties( this.inStream );
+		prefs.load( this.inStream );
 		}
 
 	@Override
@@ -111,8 +70,7 @@ extends		UserPrefsLoader
 				( "you have not yet called setOutputStream()" );
 
 		final String headerStr = "UserPrefsStreamLoader $Revision: 1.2 $";
-		prefs.storeProperties( this.outStream, headerStr );
+		prefs.store( this.outStream, headerStr );
 		}
-
 	}
 

@@ -43,33 +43,7 @@ public
 class       UserPrefsFileLoader
 extends		UserPrefsLoader
     {
-	private File		prefsFile = null;
-
-
-	public
-	UserPrefsFileLoader()
-		{
-		super();
-		}
-
-	public
-	UserPrefsFileLoader( final File f )
-		{
-		super();
-		this.prefsFile = f;
-		}
-
-	public
-	UserPrefsFileLoader( final String appName, final String userName, final String prefsName )
-		{
-		super( appName, userName, prefsName );
-		}
-
-	public File
-	getFile()
-		{
-		return this.prefsFile;
-		}
+	private File		prefsFile;
 
 	public void
 	setFile( final File f )
@@ -95,7 +69,7 @@ extends		UserPrefsLoader
 					+ "', " + ex.getMessage() );
 			}
 
-		prefs.loadProperties( fin );
+		prefs.load( fin );
 
 		fin.close();
 		}
@@ -111,7 +85,7 @@ extends		UserPrefsLoader
 
 		final String headerStr = "UserPrefsFileLoader $Revision: 1.2 $";
 
-		prefs.storeProperties( fout, headerStr );
+		prefs.store( fout, headerStr );
 
 		fout.close();
 		}

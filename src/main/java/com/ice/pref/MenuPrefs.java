@@ -1,6 +1,7 @@
 
 package com.ice.pref;
 
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
@@ -11,25 +12,26 @@ import javax.swing.JPopupMenu;
 import com.ice.util.StringUtilities;
 
 
-public
-class		MenuPrefs
-extends		Object
-	{
-	static public JPopupMenu
+public final
+class		MenuPrefs {
+	private MenuPrefs() {
+	}
+
+	public static JPopupMenu
     loadPopupMenu(
 			final UserPrefs prefs, final String menuPropertyName,
 			final ActionListener listener )
 		{
 		final JPopupMenu popup = new JPopupMenu();
 
-		MenuPrefs.addMenuItems
+		addMenuItems
 			( prefs, popup, menuPropertyName, listener );
 
 		return popup;
 		}
 
-	static public void
-	addGenericItem( final JComponent menu, final JComponent item )
+	private static void
+	addGenericItem(final JComponent menu, final Component item)
 		{
 		if ( menu instanceof JMenu )
 			{
@@ -51,14 +53,14 @@ extends		Object
 			}
 		}
 
-	static public void
+	private static void
 	addMenuItems(
 			final UserPrefs prefs, final JComponent menu,
-			final String menuPropertyName, final ActionListener listener )
+			final String menuPropertyName, final ActionListener listener)
 		{
-		String[]	itemList;
+		final String[]	itemList;
 		String		itemString;
-		String		menuString;
+		final String		menuString;
 		String		itemNameStr;
 		JMenuItem	mItem;
 
@@ -82,7 +84,7 @@ extends		Object
 			for ( final String item : itemList )
 				{
 				itemNameStr =
-					"item." + menuPropertyName + "." + item;
+						"item." + menuPropertyName + '.' + item;
 
 				itemString =
 					prefs.getProperty( itemNameStr, null );
@@ -101,7 +103,7 @@ extends		Object
 
 					if ( itemString.equals( "-" ) )
 						{
-						MenuPrefs.addGenericItem( menu, null );
+						addGenericItem( menu, null );
 						}
 					else if ( colonIdx < 0 )
 						{
@@ -121,19 +123,19 @@ extends		Object
 
 						if ( command.equals( "@" ) )
 							{
-							final JMenu subMenu = new JMenu( title );
+							final JComponent subMenu = new JMenu(title );
 
 							final String subMenuName =
-								menuPropertyName + "." + item;
+									menuPropertyName + '.' + item;
 
-							MenuPrefs.addMenuItems
+							addMenuItems
 								( prefs, subMenu, subMenuName, listener );
 
-							MenuPrefs.addGenericItem( menu, subMenu );
+							addGenericItem( menu, subMenu );
 							}
 						else if ( title.equals( "-" ) )
 							{
-							MenuPrefs.addGenericItem( menu, null );
+							addGenericItem( menu, null );
 							}
 						else
 							{
@@ -145,7 +147,7 @@ extends		Object
 								mItem.setActionCommand( command );
 								}
 
-							MenuPrefs.addGenericItem( menu, mItem );
+							addGenericItem( menu, mItem );
 							}
 						}
 					} // itemString != null

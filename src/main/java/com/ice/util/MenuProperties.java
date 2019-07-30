@@ -1,6 +1,7 @@
 
 package com.ice.util;
 
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
@@ -9,21 +10,23 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 
-public class
-MenuProperties extends Object
-	{
-	static public JPopupMenu
+final class
+MenuProperties {
+	private MenuProperties() {
+	}
+
+	public static JPopupMenu
     loadPopupMenu( final String menuPropertyName, final ActionListener listener )
 		{
 		final JPopupMenu popup = new JPopupMenu();
 
-		MenuProperties.addMenuItems( popup, menuPropertyName, listener );
+		addMenuItems( popup, menuPropertyName, listener );
 
 		return popup;
 		}
 
-	static public void
-	addGenericItem( final JComponent menu, final JComponent item )
+	private static void
+	addGenericItem(final JComponent menu, final Component item)
 		{
 		if ( menu instanceof JMenu )
 			{
@@ -45,14 +48,14 @@ MenuProperties extends Object
 			}
 		}
 
-	static public void
+	private static void
 	addMenuItems(
 			final JComponent menu, final String menuPropertyName,
-			final ActionListener listener )
+			final ActionListener listener)
 		{
-		String[]	itemList;
+		final String[]	itemList;
 		String		itemString;
-		String		menuString;
+		final String		menuString;
 		String		itemNameStr;
 		JMenuItem	mItem;
 
@@ -75,7 +78,7 @@ MenuProperties extends Object
 			for (final String item : itemList)
 				{
 				itemNameStr =
-					"item." + menuPropertyName + "." + item;
+						"item." + menuPropertyName + '.' + item;
 
 				itemString =
 					UserProperties.getProperty( itemNameStr, null );
@@ -93,7 +96,7 @@ MenuProperties extends Object
 
 					if ( itemString.equals( "-" ) )
 						{
-						MenuProperties.addGenericItem( menu, null );
+						addGenericItem( menu, null );
 						}
 					else if ( colonIdx < 0 )
 						{
@@ -112,19 +115,19 @@ MenuProperties extends Object
 
 						if ( command.equals( "@" ) )
 							{
-							final JMenu subMenu = new JMenu( title );
+							final JComponent subMenu = new JMenu(title );
 
 							final String subMenuName =
-								menuPropertyName + "." + item;
+									menuPropertyName + '.' + item;
 
-							MenuProperties.addMenuItems
+							addMenuItems
 								( subMenu, subMenuName, listener );
 
-							MenuProperties.addGenericItem( menu, subMenu );
+							addGenericItem( menu, subMenu );
 							}
 						else if ( title.equals( "-" ) )
 							{
-							MenuProperties.addGenericItem( menu, null );
+							addGenericItem( menu, null );
 							}
 						else
 							{
@@ -136,7 +139,7 @@ MenuProperties extends Object
 								mItem.setActionCommand( command );
 								}
 
-							MenuProperties.addGenericItem( menu, mItem );
+							addGenericItem( menu, mItem );
 							}
 						}
 					} // itemString != null

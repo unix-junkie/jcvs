@@ -6,6 +6,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 
 import com.ice.config.ConfigureEditor;
@@ -17,12 +18,11 @@ public
 class		LookAndFeelEditor
 extends		ConfigureEditor
 	{
-	protected JPanel			radioPanel;
-	protected ButtonGroup		group;
-	protected JRadioButton[]	choiceButtons;
+	private JPanel			radioPanel;
+		private JRadioButton[]	choiceButtons;
 
-	protected String[]			plafClassNames;
-	protected String[]			plafDisplayNames;
+	private String[]			plafClassNames;
+	private String[]			plafDisplayNames;
 
 
 	public
@@ -43,7 +43,7 @@ extends		ConfigureEditor
 
 		final String currPlaf = prefs.getProperty( propName, null );
 
-		this.group = new ButtonGroup();
+			final ButtonGroup group = new ButtonGroup();
 
 		this.getLookAndFeelInfo();
 		final String[] choices = this.plafDisplayNames;
@@ -55,7 +55,7 @@ extends		ConfigureEditor
 				new JRadioButton( this.plafDisplayNames[i] );
 
 			this.choiceButtons[i] = radio;
-			this.group.add( radio );
+			group.add(radio );
 			this.radioPanel.add( radio );
 			radio.setSelected( false );
 
@@ -114,7 +114,7 @@ extends		ConfigureEditor
 	private void
 	getLookAndFeelInfo()
 		{
-		final UIManager.LookAndFeelInfo[] lafi =
+		final LookAndFeelInfo[] lafi =
 			UIManager.getInstalledLookAndFeels();
 
 		this.plafClassNames = new String[ lafi.length + 1 ];

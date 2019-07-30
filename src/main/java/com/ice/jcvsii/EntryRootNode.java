@@ -29,8 +29,8 @@ public
 class		EntryRootNode
 extends		EntryNode
 	{
-	protected String		localRoot;
-	protected EntryTree		tree;
+	private final String		localRoot;
+	private EntryTree		tree;
 
 
 	public
@@ -72,7 +72,7 @@ extends		EntryNode
 	public String
 	toString()
 		{
-		return "[EntryRootNode tree=" +tree+ "]";
+		return "[EntryRootNode tree=" + tree + ']';
 		}
 
     }

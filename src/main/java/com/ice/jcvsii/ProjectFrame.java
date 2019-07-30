@@ -56,6 +56,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -84,6 +85,7 @@ import com.ice.cvsc.CVSRequest;
 import com.ice.cvsc.CVSResponse;
 import com.ice.cvsc.CVSTracer;
 import com.ice.cvsc.CVSUserInterface;
+import com.ice.jcvsii.CVSThread.Monitor;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 import com.ice.util.StringUtilities;
@@ -108,13 +110,13 @@ import com.ice.util.StringUtilities;
 // files and allows the user to delete or add them to the project.
 //
 
-public
+public final
 class		ProjectFrame
 extends		JFrame
 implements	ActionListener, CVSUserInterface
 	{
-	static public final String		RCS_ID = "$Id: ProjectFrame.java,v 1.12 2003/07/27 04:53:06 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.12 $";
+	public static final String		RCS_ID = "$Id: ProjectFrame.java,v 1.12 2003/07/27 04:53:06 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.12 $";
 
 	private CVSProject		project;
 	private OutputFrame		output;
@@ -128,8 +130,7 @@ implements	ActionListener, CVSUserInterface
 
 	private String			lastUserFileDir;
 
-	private boolean			briefArgs;
-	private JPanel			argumentsPan;
+		private JPanel			argumentsPan;
 	private JTextArea		argumentText;
 
 	private JLabel			feedback;
@@ -137,28 +138,24 @@ implements	ActionListener, CVSUserInterface
 	private EntryPanel		entryPanel;
 
 	private JMenuBar		mBar;
-	private JMenu			mFile;
 
-	private JCheckBoxMenuItem	traceCheckItem;
+		private JCheckBoxMenuItem	traceCheckItem;
 
-	private Cursor			saveCursor;
-
-	private boolean			traceReq = false;
-	private boolean			traceResp = false;
-	private boolean			traceProc = false;
-	private boolean			traceTCP = false;
+		private boolean			traceReq;
+	private boolean			traceResp;
+	private boolean			traceProc;
+	private boolean			traceTCP;
 
 	/**
 	 * We set this to true when we release so that we do not try to
 	 * save the preferences, which will fail because 'CVS/' is gone.
 	 */
-	private boolean			releasingProject = false;
+	private boolean			releasingProject;
 
-	private boolean			prettyDiffs = false;
+	private boolean			prettyDiffs;
 
 
-	public
-	ProjectFrame( final String title, final CVSProject project )
+	private ProjectFrame(final String title, final CVSProject project)
 		{
 		super( title );
 
@@ -198,11 +195,11 @@ implements	ActionListener, CVSUserInterface
 		this.entries = null;
 		this.popupEntries = null;
 
- 		this.briefArgs = true;
+			final boolean briefArgs = true;
 
 		this.feedback = null;
 		this.argumentsPan = null;
-		this.saveCursor = null;
+			final Cursor saveCursor = null;
 		this.displayStdout = "";
 		this.displayStderr = "";
 		this.lastUserFileDir = null;
@@ -225,7 +222,7 @@ implements	ActionListener, CVSUserInterface
 		this.traceTCP = this.traceReq;
 		}
 
-	public void
+	private void
 	windowBeingClosed()
 		{
 		ProjectFrameMgr.removeProject
@@ -258,7 +255,7 @@ implements	ActionListener, CVSUserInterface
 		return this.prefs;
 		}
 
-	public void
+	private void
 	loadPreferences()
 		{
 		this.entryPanel.loadPreferences( this.prefs );
@@ -271,7 +268,7 @@ implements	ActionListener, CVSUserInterface
 		this.setBounds( bounds );
 		}
 
-	public void
+	private void
 	savePreferences()
 		{
 		final Rectangle bounds = this.getBounds();
@@ -338,10 +335,10 @@ implements	ActionListener, CVSUserInterface
 		this.popupEntries = null;
         }
 
-	public void
-	performActionLine( final String command, final ActionEvent event )
+	private void
+	performActionLine(final String command, final ActionEvent event)
 		{
-		String	subCmd;
+		final String	subCmd;
 
 		if ( command.startsWith( "CVS:" ) )
 			{
@@ -362,11 +359,12 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	protected boolean
-	performJCVSCommand( final String command )
+	private void
+	performJCVSCommand(final String command)
 		{
-		final int		i, count;
-		final boolean	result = true;
+		final int		i;
+			final int count;
+			final boolean	result = true;
 
 		if ( command.startsWith( "FMSG:" ) )
 			{
@@ -559,7 +557,7 @@ implements	ActionListener, CVSUserInterface
 				else
 					{
 					new Throwable
-						( "NULL ENTRY["+eIdx+"] on command '" + command + "'" ).
+						("NULL ENTRY[" + eIdx + "] on command '" + command + '\'').
 							printStackTrace();
 					}
 				}
@@ -598,7 +596,7 @@ implements	ActionListener, CVSUserInterface
 				else
 					{
 					new Throwable
-						( "NULL ENTRY["+eIdx+"] on command '" + command + "'" ).
+						("NULL ENTRY[" + eIdx + "] on command '" + command + '\'').
 							printStackTrace();
 					}
 				}
@@ -637,7 +635,7 @@ implements	ActionListener, CVSUserInterface
 				else
 					{
 					new Throwable
-						( "NULL ENTRY["+eIdx+"] on command '" + command + "'" ).
+						("NULL ENTRY[" + eIdx + "] on command '" + command + '\'').
 							printStackTrace();
 					}
 				}
@@ -653,7 +651,6 @@ implements	ActionListener, CVSUserInterface
 			this.performAddDirectory( subCmd );
 			}
 
-		return result;
 		}
 
 	private void
@@ -662,7 +659,7 @@ implements	ActionListener, CVSUserInterface
 		JCVS.getMainFrame().addProjectToWorkBench( this.project );
 		}
 
-	public void
+	private void
 	displayProjectDetails()
 		{
 		final String type =
@@ -679,7 +676,7 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	public void
+	private void
 	displayProjectDetailsHTML()
 		{
 		final Object[] fmtArgs =
@@ -687,7 +684,7 @@ implements	ActionListener, CVSUserInterface
 			this.project.getRepository(),
 			this.project.getRootDirectory(),
 			this.project.getClient().getHostName(),
-			new Integer( this.project.getClient().getPort() ),
+			this.project.getClient().getPort(),
 			this.project.getLocalRootDirectory()
 			};
 
@@ -701,7 +698,7 @@ implements	ActionListener, CVSUserInterface
 		new HTMLDialog( this, title, true, msgStr ).show();
 		}
 
-	public void
+	private void
 	displayProjectDetailsPlain()
 		{
 		final Object[] fmtArgs =
@@ -709,7 +706,7 @@ implements	ActionListener, CVSUserInterface
 			this.project.getRepository(),
 			this.project.getRootDirectory(),
 			this.project.getClient().getHostName(),
-			new Integer( this.project.getClient().getPort() ),
+			this.project.getClient().getPort(),
 			this.project.getLocalRootDirectory()
 			};
 
@@ -724,14 +721,14 @@ implements	ActionListener, CVSUserInterface
 			( this, msgStr, title, JOptionPane.INFORMATION_MESSAGE );
 		}
 
-	public synchronized void
-	showFeedback( final String message )
+	private synchronized void
+	showFeedback(final String message)
 		{
 		this.feedback.setText( message );
 		this.feedback.repaint( 0 );
 		}
 
-	public void
+	private void
 	verifyLogin()
 		{
 		if ( ! this.project.isPServer()
@@ -747,14 +744,14 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	public void
+	private void
 	performLogin()
 		{
 		if ( ! this.project.isPServer()
 				&& ! this.project.isSSHServer() )
 			return;
 
-		String password;
+		final String password;
 		String userName = this.project.getUserName();
 
 		final PasswordDialog passDialog =
@@ -809,10 +806,10 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	protected void
-	performAddDirectory( final String commandSpec )
+	private void
+	performAddDirectory(final String commandSpec)
 		{
-		CVSResponse		result;
+		final CVSResponse		result;
 
 		final String prompt =
 			ResourceMgr.getInstance().getUIString
@@ -825,9 +822,9 @@ implements	ActionListener, CVSUserInterface
 			final CVSEntryVector entries =
 				this.getEntriesToActUpon( CVSRequest.ES_POPUP );
 
-			if ( entries != null && entries.size() > 0 )
+			if ( entries != null && !entries.isEmpty())
 				{
-				final StringBuffer addPath = new StringBuffer();
+				final StringBuilder addPath = new StringBuilder();
 				final CVSEntry dirEntry = entries.entryAt(0);
 
 				// The root entry has a 'bad' fullname.
@@ -838,17 +835,15 @@ implements	ActionListener, CVSUserInterface
 				//
 
 				if ( dirEntry == this.project.getRootEntry() )
-					addPath.append
-						( dirEntry.getLocalDirectory() + dirPath );
+					addPath.append(dirEntry.getLocalDirectory()).append(dirPath);
 				else
-					addPath.append
-						( dirEntry.getFullName() + "/" + dirPath );
+					addPath.append(dirEntry.getFullName()).append('/').append(dirPath);
 
-				if ( ! addPath.toString().endsWith( "/" ) )
+				if ( !(!addPath.toString().isEmpty() && addPath.toString().charAt(addPath.toString().length() - 1) == '/'))
 					{
-					addPath.append( "/" );
+					addPath.append('/');
 					}
-				addPath.append( "." );
+				addPath.append('.');
 
 				result =
 					this.project.ensureRepositoryPath
@@ -888,8 +883,8 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	protected void
-	performCVSCommandLine( final String commandSpec )
+	private void
+	performCVSCommandLine(final String commandSpec)
 		{
 		String command = null;
 
@@ -905,27 +900,27 @@ implements	ActionListener, CVSUserInterface
 			final CVSArgumentVector arguments =
 				CVSArgumentVector.parseArgumentString( commandLine );
 
-			if ( arguments.size() > 0 )
+			if (!arguments.isEmpty())
 				{
 				command = (String) arguments.elementAt(0);
 
 				arguments.removeElementAt(0);
 
 				this.commonCVSCommand
-					( command + ":" + commandSpec, null, arguments );
+					(command + ':' + commandSpec, null, arguments );
 				}
 			}
 
 		}
 
-	protected boolean
-	performCVSCommand( final String command )
+	private void
+	performCVSCommand(final String command)
 		{
 		final boolean result = true;
 
 		if ( false )
 		CVSTracer.traceIf( true,
-			"CVSProjectFrame.performCVSCommand: '" + command + "'" );
+				   "CVSProjectFrame.performCVSCommand: '" + command + '\'');
 
 		if ( command.startsWith( "Notify:" ) )
 			{
@@ -1029,7 +1024,6 @@ implements	ActionListener, CVSUserInterface
 			this.commonCVSCommand( command, null, null );
 			}
 
-		return result;
 		}
 
 	/**
@@ -1234,7 +1228,7 @@ CVSTracer.traceIf( true,
 
 			final CVSResponse response = new CVSResponse();
 
-			final CVSThread thread =
+			final Thread thread =
 				new CVSThread( request.getCommand(),
 					this.new MyRunner( request, response ),
 						this.new MyMonitor( request, response ) );
@@ -1249,15 +1243,14 @@ CVSTracer.traceIf( true,
 		return allok;
 		}
 
-	private
+	private final
 	class		MyRunner
 	implements	Runnable
 		{
 		private final CVSRequest request;
 		private final CVSResponse response;
 
-		public
-		MyRunner( final CVSRequest req, final CVSResponse resp )
+		private MyRunner(final CVSRequest req, final CVSResponse resp)
 			{
 			this.request = req;
 			this.response = resp;
@@ -1287,8 +1280,8 @@ CVSTracer.traceIf( true,
 
 					showFeedback( fdbkStr );
 					this.response.appendStderr
-						( "An error occurred while creating '"
-							+ entry.getFullName() + "'" );
+						("An error occurred while creating '"
+						 + entry.getFullName() + '\'');
 					}
 				else
 					{
@@ -1313,8 +1306,8 @@ CVSTracer.traceIf( true,
 
 						showFeedback( fdbkStr );
 						this.response.appendStderr
-							( "An error occurred while creating '"
-								+ entry.getFullName() + "'" );
+							("An error occurred while creating '"
+							 + entry.getFullName() + '\'');
 						}
 					else
 						{
@@ -1363,15 +1356,14 @@ CVSTracer.traceIf( true,
 			}
 		}
 
-	private
+	private final
 	class		MyMonitor
-	implements	CVSThread.Monitor
+	implements	Monitor
 		{
 		private final CVSRequest request;
 		private final CVSResponse response;
 
-		public
-		MyMonitor( final CVSRequest req, final CVSResponse resp )
+		private MyMonitor(final CVSRequest req, final CVSResponse resp)
 			{
 			this.request = req;
 			this.response = resp;
@@ -1442,71 +1434,71 @@ CVSTracer.traceIf( true,
 		}
 
 	// UNDONE This appears to not work / be broken
-	public void
-	setUIAvailable( final boolean avail )
+	private void
+	setUIAvailable(final boolean avail)
 		{
 	//	this.argumentText.setEnabled( avail );
 	//	this.entryPanel.setEnabled( avail );
 		}
 
-	protected void
+	private void
 	focusArguments()
 		{
 		this.argumentText.requestFocus();
 		}
 
-	protected void
+	private void
 	clearArgumentsText()
 		{
 		this.argumentText.setText( "" );
 		this.argumentText.requestFocus();
 		}
 
-	protected String
+	private String
 	getArgumentString()
 		{
 		return this.argumentText.getText();
 		}
 
-	protected void
+	private void
 	setWaitCursor()
 		{
 		this.setCursor
 			( Cursor.getPredefinedCursor( Cursor.WAIT_CURSOR ) );
 		}
 
-	protected void
+	private void
 	resetCursor()
 		{
 		this.setCursor
 			( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR ) );
 		}
 
-	public void
+	private void
 	selectNoEntries()
 		{
 		this.entryPanel.clearSelection();
 		}
 
-	public void
+	private void
 	selectAllEntries()
 		{
 		this.entryPanel.selectAll();
 		}
 
-	public void
+	private void
 	selectModifiedEntries()
 		{
 		this.entryPanel.selectModified();
 		}
 
-	public void
+	private void
 	openAllEntries()
 		{
 		this.entryPanel.expandAll( true );
 		}
 
-	public void
+	private void
 	closeAllEntries()
 		{
 		this.entryPanel.expandAll( false );
@@ -1520,8 +1512,8 @@ CVSTracer.traceIf( true,
 	 *        the directory is returned.
 	 */
 
-	protected CVSEntryVector
-	getSelectedEntries( final boolean expandDirEntries )
+	private CVSEntryVector
+	getSelectedEntries(final boolean expandDirEntries)
 		{
 		final CVSEntryVector entries = new CVSEntryVector();
 
@@ -1570,8 +1562,8 @@ CVSTracer.traceIf( true,
 		return entry;
 		}
 
-	public CVSEntryVector
-	getEntriesToActUpon( final int selector )
+	private CVSEntryVector
+	getEntriesToActUpon(final int selector)
 		{
 		int				i;
 		final int index;
@@ -1581,89 +1573,77 @@ CVSTracer.traceIf( true,
 		CVSEntryVector	entries = null;
 
 		// The 'User Selected File' selector is unique, handle it here.
-		if ( selector == CVSRequest.ES_USER )
-			{
-			entries = this.getUserSelectedFile();
-			}
-		else if ( selector == CVSRequest.ES_NEW )
-			{
-			entries = this.getNewlyAddedFiles();
-			}
-		else if ( selector == CVSRequest.ES_POPUP )
-			{
-			entries = this.popupEntries;
-			}
-		else
-			{
-			if (   selector == CVSRequest.ES_SEL
-				|| selector == CVSRequest.ES_SELALL
-				|| selector == CVSRequest.ES_SELMOD
-				|| selector == CVSRequest.ES_SELLOST
-				|| selector == CVSRequest.ES_SELUNC )
-				{
-				entries = this.getSelectedEntries( true );
-				if ( entries.size() == 0 )
-					{
-					this.project.getRootEntry().addAllSubTreeEntries
-						( entries = new CVSEntryVector() );
+			switch (selector) {
+			case CVSRequest.ES_USER:
+				entries = this.getUserSelectedFile();
+				break;
+			case CVSRequest.ES_NEW:
+				entries = this.getNewlyAddedFiles();
+				break;
+			case CVSRequest.ES_POPUP:
+				entries = this.popupEntries;
+				break;
+			default:
+				if (selector == CVSRequest.ES_SEL
+				    || selector == CVSRequest.ES_SELALL
+				    || selector == CVSRequest.ES_SELMOD
+				    || selector == CVSRequest.ES_SELLOST
+				    || selector == CVSRequest.ES_SELUNC) {
+					entries = this.getSelectedEntries(true);
+					if (entries.isEmpty()) {
+						this.project.getRootEntry().addAllSubTreeEntries
+								(entries = new CVSEntryVector());
 					}
-				}
-			else
-				{
-				this.project.getRootEntry().addAllSubTreeEntries
-					( entries = new CVSEntryVector() );
+				} else {
+					this.project.getRootEntry().addAllSubTreeEntries
+							(entries = new CVSEntryVector());
 				}
 
-			if ( entries != null )
-				{
-				for ( i = 0 ; i < entries.size() ; ++i )
-					{
-					entry = entries.entryAt(i);
-					entryFile = this.project.getEntryFile( entry );
+				if (entries != null) {
+					for (i = 0; i < entries.size(); ++i) {
+						entry = entries.entryAt(i);
+						entryFile = this.project.getEntryFile(entry);
 
-					if ( selector == CVSRequest.ES_ALLMOD
-							|| selector == CVSRequest.ES_SELMOD )
-						{
-						if ( ! this.project.isLocalFileModified( entry ) )
-							{
-							entries.removeElementAt(i);
-							--i;
+						switch (selector) {
+						case CVSRequest.ES_ALLMOD:
+						case CVSRequest.ES_SELMOD:
+							if (!this.project.isLocalFileModified(entry)) {
+								entries.removeElementAt(i);
+								--i;
 							}
-						}
-					else if ( selector == CVSRequest.ES_ALLLOST
-							|| selector == CVSRequest.ES_SELLOST )
-						{
-						if ( ! entryFile.exists() )
-							{
-							entries.removeElementAt(i);
-							--i;
+							break;
+						case CVSRequest.ES_ALLLOST:
+						case CVSRequest.ES_SELLOST:
+							if (!entryFile.exists()) {
+								entries.removeElementAt(i);
+								--i;
 							}
-						}
-					else if ( selector == CVSRequest.ES_ALLUNC
-							|| selector == CVSRequest.ES_SELUNC )
-						{
-						if ( ! entryFile.exists()
-								|| this.project.isLocalFileModified( entry ) )
-							{
-							entries.removeElementAt(i);
-							--i;
+							break;
+						case CVSRequest.ES_ALLUNC:
+						case CVSRequest.ES_SELUNC:
+							if (!entryFile.exists()
+							    || this.project.isLocalFileModified(entry)) {
+								entries.removeElementAt(i);
+								--i;
 							}
+							break;
 						}
 					} // for ( i... )
 				} // if ( entries != null )
-			} // if ( ! user file special case )
+				break;
+			}
 
 		return entries;
 		}
 
-	public CVSEntryVector
+	private CVSEntryVector
 	getNewlyAddedFiles()
 		{
 		CVSEntry dirEntry = null;
 
 		entries = this.getSelectedEntries( false );
 
-		if ( entries == null || entries.size() == 0 )
+		if ( entries == null || entries.isEmpty())
 			{
 			// No directory is selected. This is the only way
 			// for a user to add files to the top level of the
@@ -1692,20 +1672,13 @@ CVSTracer.traceIf( true,
 		final String entryRepos = dirEntry.getRepository();
 
 		File dirF = null;
-		if ( entryLocal.equals( "./" ) )
-			{
 			// Root Entry...
-			dirF = new File
-				( CVSCUtilities.exportPath
-					( this.project.getLocalRootDirectory() ) );
-			}
-		else
-			{
-			dirF = new File
-				( CVSCUtilities.exportPath
-						( this.project.getLocalRootDirectory() ),
-					CVSCUtilities.exportPath( entryLocal.substring(2) ) );
-			}
+			dirF = entryLocal.equals("./") ? new File
+					(CVSCUtilities.exportPath
+							(this.project.getLocalRootDirectory())) : new File
+					       (CVSCUtilities.exportPath
+							       (this.project.getLocalRootDirectory()),
+						CVSCUtilities.exportPath(entryLocal.substring(2)));
 
 		final String prompt = ResourceMgr.getInstance().getUIString
 			( "project.new.files.dialog.prompt" );
@@ -1734,7 +1707,7 @@ CVSTracer.traceIf( true,
 		return result;
 		}
 
-	public CVSEntryVector
+	private CVSEntryVector
 	getUserSelectedFile()
 		{
 		String localPath;
@@ -1747,16 +1720,8 @@ CVSTracer.traceIf( true,
 		final FileDialog dialog = new
 			FileDialog( this, prompt, FileDialog.LOAD );
 
-		if ( this.lastUserFileDir != null )
-			{
-			localPath = this.lastUserFileDir;
-			}
-		else
-			{
-			localPath =
-				CVSCUtilities.exportPath
-					( this.project.getLocalRootDirectory() );
-			}
+			localPath = this.lastUserFileDir != null ? this.lastUserFileDir : CVSCUtilities.exportPath
+					(this.project.getLocalRootDirectory());
 
 		dialog.setDirectory( localPath );
 
@@ -1817,39 +1782,32 @@ CVSTracer.traceIf( true,
 		return result;
 		}
 
-	protected void
-	displayFinalResults( final boolean ok )
+	private void
+	displayFinalResults(final boolean ok)
 		{
-		String resultLine;
-		final StringBuffer finalResult = new StringBuffer("");
+		final String resultLine;
+		final StringBuilder finalResult = new StringBuilder();
 
-		if ( ok )
-			{
-			resultLine = ResourceMgr.getInstance().getUIString
-				( "project.fdbk.result.ok" );
-			}
-		else
-			{
-			resultLine = ResourceMgr.getInstance().getUIString
-				( "project.fdbk.result.err" );
-			}
+			resultLine = ok ? ResourceMgr.getInstance().getUIString
+					("project.fdbk.result.ok") : ResourceMgr.getInstance().getUIString
+					("project.fdbk.result.err");
 
-		if ( ! ok || this.displayStderr.length() > 0
-				|| this.displayStdout.length() > 0 )
+		if (! ok || !this.displayStderr.isEmpty()
+		    || !this.displayStdout.isEmpty())
 			{
-			if ( this.displayStderr.length() > 0 )
+			if (!this.displayStderr.isEmpty())
 				{
 				finalResult.append( this.displayStderr );
-				if ( this.displayStdout.length() > 0 )
-					finalResult.append( "\n" );
+				if (!this.displayStdout.isEmpty())
+					finalResult.append('\n');
 				}
 
-			if ( this.displayStdout.length() > 0 )
+			if (!this.displayStdout.isEmpty())
 				{
 				finalResult.append( this.displayStdout );
 				}
 
-			finalResult.append( "\n" + resultLine );
+			finalResult.append('\n').append(resultLine);
 
 			this.ensureOutputAvailable();
 
@@ -1871,8 +1829,8 @@ CVSTracer.traceIf( true,
 		this.showFeedback( resultLine );
 		}
 
-	protected void
-	displayPrettyDiffs( final boolean ok )
+	private void
+	displayPrettyDiffs(final boolean ok)
 		{
 		String resultLine =
 			ResourceMgr.getInstance().getUIString( "project.fdbk.result.ok" );
@@ -1884,13 +1842,13 @@ CVSTracer.traceIf( true,
 		// both stdout and stderr are empty, then there were no diffs. In
 		// the case of an error, we will use the normal results display.
 
-		if ( ! ok || displayStderr.length() > 0 )
+		if (! ok || !displayStderr.isEmpty())
 			{
 			this.displayFinalResults( ok );
 			resultLine = ResourceMgr.getInstance().getUIString
 				( "project.fdbk.result.err" );
 			}
-		else if ( ok && this.displayStdout.length() > 0 )
+		else if (ok && !this.displayStdout.isEmpty())
 			{
 			final PrettyDiffFrame diffFrame =
 				new PrettyDiffFrame( this, "Diffs", null, this.displayStdout, null, null );
@@ -1950,7 +1908,7 @@ CVSTracer.traceIf( true,
 
 		final String lblStr = ResourceMgr.getInstance().getUIString
 			( "project.arguments.label" );
-		final JLabel argsLbl = new JLabel( lblStr );
+		final JComponent argsLbl = new JLabel(lblStr );
 		argsLbl.setFont( new Font( "Monospaced", Font.BOLD, 12 ) );
 		argsLbl.setForeground( Color.black );
 		AWTUtilities.constrain(
@@ -2015,7 +1973,7 @@ CVSTracer.traceIf( true,
 				( "projectWindow.feedback.font",
 					new Font( "Serif", Font.BOLD, 12 ) ) );
 
-		final JPanel feedPan = new JPanel();
+		final JComponent feedPan = new JPanel();
 		feedPan.setLayout( new BorderLayout( 0, 0 ) );
 		feedPan.setBorder( new EtchedBorder( EtchedBorder.RAISED ) );
 
@@ -2059,12 +2017,12 @@ CVSTracer.traceIf( true,
 		this.mBar = new JMenuBar();
 
 		name = rmgr.getUIString( "menu.projW.file.name" );
-		this.mFile = new JMenu( name );
-		this.mBar.add( this.mFile );
+			final JMenu mFile = new JMenu(name);
+		this.mBar.add(mFile);
 
 		name = rmgr.getUIString( "menu.projW.file.hide.name" );
 		mItem = new JMenuItem( name );
-		this.mFile.add( mItem );
+		mFile.add(mItem );
 		mItem.addActionListener( this );
 		mItem.setActionCommand( "JCVS:HideOutputWindow" );
 		mItem.setAccelerator
@@ -2073,18 +2031,18 @@ CVSTracer.traceIf( true,
 
 		name = rmgr.getUIString( "menu.projW.file.show.name" );
 		mItem = new JMenuItem( name );
-		this.mFile.add( mItem );
+		mFile.add(mItem );
 		mItem.addActionListener( this );
 		mItem.setActionCommand( "JCVS:ShowOutputWindow" );
 		mItem.setAccelerator
 			( KeyStroke.getKeyStroke
 				( KeyEvent.VK_S, Event.CTRL_MASK ) );
 
-		this.mFile.addSeparator();
+		mFile.addSeparator();
 
 		name = rmgr.getUIString( "menu.projW.file.trace.name" );
 		this.traceCheckItem = new JCheckBoxMenuItem( name );
-		this.mFile.add( this.traceCheckItem );
+		mFile.add(this.traceCheckItem );
 		this.traceCheckItem.setState( this.traceReq );
 		this.traceCheckItem.addActionListener( this );
 		this.traceCheckItem.setActionCommand( "JCVS:TRACE" );
@@ -2092,39 +2050,39 @@ CVSTracer.traceIf( true,
 			( KeyStroke.getKeyStroke
 				( KeyEvent.VK_T, Event.CTRL_MASK ) );
 
-		this.mFile.addSeparator();
+		mFile.addSeparator();
 
 		if ( this.project.isPServer() || this.project.isSSHServer() )
 			{
 			name = rmgr.getUIString( "menu.projW.file.login.name" );
 			mItem = new JMenuItem( name );
-			this.mFile.add( mItem );
+			mFile.add(mItem );
 			mItem.addActionListener( this );
 			mItem.setActionCommand( "JCVS:PerformLogin" );
 			mItem.setAccelerator
 				( KeyStroke.getKeyStroke
 					( KeyEvent.VK_L, Event.CTRL_MASK ) );
 
-			this.mFile.addSeparator();
+			mFile.addSeparator();
 			}
 
 		name = rmgr.getUIString( "menu.projW.file.details.name" );
 		mItem = new JMenuItem( name );
-		this.mFile.add( mItem );
+		mFile.add(mItem );
 		mItem.addActionListener( this );
 		mItem.setActionCommand( "JCVS:ShowDetails" );
 
 		name = rmgr.getUIString( "menu.projW.file.addto.name" );
 		mItem = new JMenuItem( name );
-		this.mFile.add( mItem );
+		mFile.add(mItem );
 		mItem.addActionListener( this );
 		mItem.setActionCommand( "JCVS:AddToWorkBench" );
 
-		this.mFile.addSeparator();
+		mFile.addSeparator();
 
 		name = rmgr.getUIString( "menu.projW.file.close.name" );
 		mItem = new JMenuItem( name );
-		this.mFile.add( mItem );
+		mFile.add(mItem );
 		mItem.addActionListener( this );
 		mItem.setActionCommand( "Close" );
 		mItem.setAccelerator
@@ -2145,18 +2103,19 @@ CVSTracer.traceIf( true,
 		}
 
 	// This is intended to be overwritten by subclasses!
-	public void
-	addAdditionalMenus( final JMenuBar menuBar )
+	private void
+	addAdditionalMenus(final JMenuBar menuBar)
 		{
 		}
 
 	private void
 	buildCommandMenus( final String menuBarSpec )
 		{
-		int			mIdx, iIdx;
-		String		itemString;
+		int			mIdx;
+			int iIdx;
+			String		itemString;
 		String		menuString;
-		String[]	menuList;
+		final String[]	menuList;
 		String[]	itemList;
 
 		final UserPrefs prefs = Config.getPreferences();
@@ -2189,15 +2148,15 @@ CVSTracer.traceIf( true,
 				{
 				itemString =
 					prefs.getProperty
-						( "projectMenuItem."
-							+ menuList[mIdx] + "." + itemList[iIdx], null );
+						("projectMenuItem."
+						 + menuList[mIdx] + '.' + itemList[iIdx], null );
 
 				if ( itemString == null )
 					{
 					CVSLog.logMsg
-						( "ProjectFrame.buildCommandMenus: Menu '"
-							+ menuList[mIdx] + "' is missing item string '"
-							+ itemList[iIdx] + "'" );
+						("ProjectFrame.buildCommandMenus: Menu '"
+						 + menuList[mIdx] + "' is missing item string '"
+						 + itemList[iIdx] + '\'');
 					continue;
 					}
 
@@ -2235,13 +2194,12 @@ CVSTracer.traceIf( true,
 			}
 		}
 
-	private
+	private final
 	class		PJInvoker
 	implements	Runnable
 		{
 		private final ActionEvent event;
-		public
-		PJInvoker( final ActionEvent e )
+		private PJInvoker(final ActionEvent e)
 			{
 			this.event = e;
 			}
@@ -2293,7 +2251,7 @@ CVSTracer.traceIf( true,
 		if ( this.output == null )
 			{
 			final String name =
-				ProjectFrame.getProjectDisplayName
+				getProjectDisplayName
 					( this.project, this.project.getLocalRootDirectory() );
 
 			this.output =
@@ -2315,8 +2273,8 @@ CVSTracer.traceIf( true,
 		this.output = null;
 		}
 
-	public boolean
-	setRedirectWriter( final CVSRequest request )
+	private boolean
+	setRedirectWriter(final CVSRequest request)
 		{
 		boolean result = true;
 
@@ -2371,8 +2329,8 @@ CVSTracer.traceIf( true,
 		return result;
 		}
 
-	protected String
-	requestMessageArgument( final String prompt )
+	private String
+	requestMessageArgument(final String prompt)
 		{
 		final MessageDialog dlg =
 			new MessageDialog( this, true, prompt );
@@ -2397,7 +2355,7 @@ CVSTracer.traceIf( true,
 			String path = localRootPath;
 
 			if ( path.endsWith( "/." )
-					|| path.endsWith( File.separator + "." ) )
+					|| path.endsWith(File.separator + '.') )
 				{
 				path = path.substring( 0, path.length() - 2 );
 				}
@@ -2461,7 +2419,7 @@ CVSTracer.traceIf( true,
 					( project.getClient().getHostName() ) );
 
 			final String name =
-				ProjectFrame.getProjectDisplayName
+				getProjectDisplayName
 					( project, rootDirFile.getPath() );
 
 			final String title = name + " Project";
@@ -2578,8 +2536,8 @@ CVSTracer.traceIf( true,
 	 *
 	 */
 
-	public void
-	processUnknownFiles( final String cvsCommandSpec )
+	private void
+	processUnknownFiles(final String cvsCommandSpec)
 		{
 		final Vector unks = new Vector();
 		final Vector mods = new Vector();
@@ -2595,7 +2553,7 @@ CVSTracer.traceIf( true,
 		// this finds all the unknown files
 		this.project.checkReleaseStatus( ignore, mods, adds, rems, unks );
 
-		if ( unks.size() > 0 )
+		if (!unks.isEmpty())
 			{
 			String root = this.project.getLocalRootDirectory();
 			if ( root == null )
@@ -2604,7 +2562,7 @@ CVSTracer.traceIf( true,
 			root = root.trim();
 			final char ch = root.charAt( root.length()-1 );
 			if ( ch != '/' && ch != '\\' && ch != File.separatorChar )
-				root = root + File.separatorChar;
+				root += File.separatorChar;
 
 			// sift out directories and files from the unknowns list
 			final int size = unks.size();
@@ -2613,7 +2571,7 @@ CVSTracer.traceIf( true,
 				{
 				String nextStr = (String) unks.elementAt(i);
 				if ( nextStr.startsWith( "./" ) )
-					nextStr = nextStr.substring( 2, nextStr.length() );
+					nextStr = nextStr.substring( 2);
 
 				final File f = new File( root + nextStr );
 				if ( f.exists() && ! f.isDirectory() )
@@ -2622,7 +2580,7 @@ CVSTracer.traceIf( true,
 					}
 				}
 
-			if ( unkFiles.size() > 0 )
+			if (!unkFiles.isEmpty())
 				{
 				// this displays a dialog for the user to choose which ones to delete
 				final UnknownFilesDialog dialog =
@@ -2654,8 +2612,8 @@ CVSTracer.traceIf( true,
 							else
 								{
 								final String msg =
-									"Failed to delete file "
-									+ element.getAbsolutePath() + ".";
+										"Failed to delete file "
+										+ element.getAbsolutePath() + '.';
 
 								this.showFeedback( msg );
 								}
@@ -2694,7 +2652,7 @@ CVSTracer.traceIf( true,
 			}
 		}
 
-	public void
+	private void
 	processUnknownDirs()
 		{
 		final Vector unks = new Vector();
@@ -2712,7 +2670,7 @@ CVSTracer.traceIf( true,
 		// this finds all the unknown files
 		this.project.checkReleaseStatus( ignore, mods, adds, rems, unks );
 
-		if ( unks.size() > 0 )
+		if (!unks.isEmpty())
 			{
 			String root = this.project.getLocalRootDirectory();
 			if ( root == null )
@@ -2721,7 +2679,7 @@ CVSTracer.traceIf( true,
 			root = root.trim();
 			final char ch = root.charAt( root.length()-1 );
 			if ( ch != '/' && ch != '\\' && ch != File.separatorChar )
-				root = root + File.separatorChar;
+				root += File.separatorChar;
 
 			// sift out directories and files from the unknowns list
 			final int size = unks.size();
@@ -2730,7 +2688,7 @@ CVSTracer.traceIf( true,
 				{
 				String nextStr = (String) unks.elementAt(i);
 				if ( nextStr.startsWith( "./" ) )
-					nextStr = nextStr.substring( 2, nextStr.length() );
+					nextStr = nextStr.substring( 2);
 
 				final File f = new File( root + nextStr );
 				if ( f.exists() && f.isDirectory() )
@@ -2742,7 +2700,7 @@ CVSTracer.traceIf( true,
 			//
 			// DIRECTORIES
 			//
-			if ( unkDirs.size() > 0 )
+			if (!unkDirs.isEmpty())
 				{
 				// this displays a dialog for the user to choose which ones to delete
 				final UnknownFilesDialog dialog =
@@ -2777,7 +2735,7 @@ CVSTracer.traceIf( true,
 									"Directory " + path
 									+ " not under root directory!";
 
-								resultBuffer.append( msg ).append( "\n" );
+								resultBuffer.append( msg ).append('\n');
 								this.showFeedback( msg );
 								}
 							}
@@ -2807,22 +2765,22 @@ CVSTracer.traceIf( true,
 			}
 		}
 
-	protected void
-	addUnknownDirectory( final StringBuffer resultBuffer, final String dirPath )
+	private void
+	addUnknownDirectory(final StringBuffer resultBuffer, final String dirPath)
 		{
-		CVSResponse		result;
-		final StringBuffer	addPath = new StringBuffer();
+		final CVSResponse		result;
+		final StringBuilder addPath = new StringBuilder();
 
 		final CVSEntry dirEntry = this.project.getRootEntry();
 
 		// The root entry has a 'bad' fullname, so we use getLocalDirectory().
-		addPath.append( dirEntry.getLocalDirectory() + dirPath );
+		addPath.append(dirEntry.getLocalDirectory()).append(dirPath);
 		// Make sure that it ends with "/."
 		if ( addPath.charAt( addPath.length() - 1 ) != '/' )
 			{
-			addPath.append( "/" );
+			addPath.append('/');
 			}
-		addPath.append( "." );
+		addPath.append('.');
 
 		result =
 			this.project.ensureRepositoryPath
@@ -2835,8 +2793,8 @@ CVSTracer.traceIf( true,
 	 * Given a local file, return a CVSEntry describing it.
 	 */
 
-	public CVSEntry
-	toCVSEntry( final File f )
+	private CVSEntry
+	toCVSEntry(final File f)
 		{
 		CVSEntry result = null;
 		final String fileName = f.getName();
@@ -2860,7 +2818,7 @@ CVSTracer.traceIf( true,
 			if ( CVSCUtilities.isSubpathInPath( localRootDir, localPath ) )
 				{
 				String entryLocal = localPath.substring( localRootDir.length() );
-				final String entryRepos = rootDir + repos + "/" + entryLocal;
+				final String entryRepos = rootDir + repos + '/' + entryLocal;
 
 				entryLocal =
 					CVSCUtilities.ensureFinalSlash

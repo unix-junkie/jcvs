@@ -22,15 +22,15 @@
 
 package com.ice.pref;
 
-import java.util.Vector;
+import java.util.Collection;
 
 import com.ice.util.StringUtilities;
 
 public
 class		PrefsTuple
 	{
-	protected String		key = null;
-	protected String[]		values = null;
+	private String		key;
+	private String[]		values;
 
 	private
 	PrefsTuple()
@@ -38,7 +38,7 @@ class		PrefsTuple
 		}
 
 	public
-	PrefsTuple( final String key, final String[] values )
+	PrefsTuple( final String key, final String... values )
 		{
 		super();
 		this.key = key;
@@ -46,12 +46,12 @@ class		PrefsTuple
 		}
 
 	public
-	PrefsTuple( final String key, final Vector values )
+	PrefsTuple( final String key, final Collection<String> values )
 		{
 		super();
 		this.key = key;
 		this.values = new String[ values.size() ];
-		values.copyInto( this.values );
+		values.toArray( this.values );
 		}
 
 	public boolean
@@ -83,7 +83,7 @@ class		PrefsTuple
 		}
 
 	public void
-	setValues( final String[] values )
+	setValues( final String... values )
 		{
 		this.values = values;
 		}

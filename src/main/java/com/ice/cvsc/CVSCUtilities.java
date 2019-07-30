@@ -25,12 +25,14 @@
 package com.ice.cvsc;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Vector;
 
 
@@ -42,24 +44,26 @@ import java.util.Vector;
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
-public class
-CVSCUtilities extends Object
-	{
-	static public final String		RCS_ID = "$Id: CVSCUtilities.java,v 2.11 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.11 $";
+public final class
+CVSCUtilities {
+	public static final String		RCS_ID = "$Id: CVSCUtilities.java,v 2.11 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.11 $";
 
-	static private boolean			redirectOutErr;
-	static private PrintStream		out;
-	static private PrintStream		err;
+	private static boolean			redirectOutErr;
+	private static PrintStream		out;
+	private static PrintStream		err;
 
 	static
 		{
-		CVSCUtilities.redirectOutErr = false;
-		CVSCUtilities.out = null;
-		CVSCUtilities.err = null;
+		redirectOutErr = false;
+		out = null;
+		err = null;
 		}
 
-	static public boolean
+	private CVSCUtilities() {
+	}
+
+	public static boolean
 	caseSensitivePathNames()
 		{
 		boolean result = true;
@@ -89,12 +93,12 @@ CVSCUtilities extends Object
 	 * on the file system. This method is an attempt to
 	 * normalize all of this.
 	 *
-	 * @param path The shorter or <em>parent</em> path.
-	 * @param path The longer or <em>child</em> path.
+	 * @param rootPath The shorter or <em>parent</em> path.
+	 * @param subPath The longer or <em>child</em> path.
 	 * @return True if subPath is a subdirectory of path.
 	 */
 
-	static public boolean
+	public static boolean
 	isSubpathInPath( String rootPath, String subPath )
 		{
 		boolean		result = false;
@@ -105,10 +109,10 @@ CVSCUtilities extends Object
 			}
 		else
 			{
-			subPath = CVSCUtilities.importPath( subPath );
-			rootPath = CVSCUtilities.importPath( rootPath );
+			subPath = importPath( subPath );
+			rootPath = importPath( rootPath );
 
-			if ( ! CVSCUtilities.caseSensitivePathNames() )
+			if ( ! caseSensitivePathNames() )
 				{
 				subPath = subPath.toLowerCase();
 				rootPath = rootPath.toLowerCase();
@@ -120,22 +124,22 @@ CVSCUtilities extends Object
 		if ( ! result )
 			{
 			CVSTracer.traceIf( true,
-				"CVSCUtilities.isSubpathInPath: FALSE result\n"
-				+ "  adjusted rootPath '" + rootPath + "'\n"
-				+ "  adjusted subPath  '" + subPath + "'" );
+					   "CVSCUtilities.isSubpathInPath: FALSE result\n"
+					   + "  adjusted rootPath '" + rootPath + "'\n"
+					   + "  adjusted subPath  '" + subPath + '\'');
 			}
 
 		return result;
 		}
 
-	static public int
+	public static int
 	computeTranslation( final CVSEntry entry )
 		{
 		final String options = entry.getOptions();
 
 		int trans = CVSClient.TRANSLATE_ASCII;
 
-		if ( options != null && options.length() > 0 )
+		if ( options != null && !options.isEmpty())
 			{
 			// REVIEW
 			// UNDONE You know this needs more sophisitication...
@@ -155,41 +159,41 @@ CVSCUtilities extends Object
 	// However, for our simply purposes, these translations
 	// appear to be adequate.
 	//
-	static public String
+	public static String
 	exportPath( final String path )
 		{
 		return path.replace( '/', File.separatorChar );
 		}
 
-	static public String
+	public static String
 	importPath( final String path )
 		{
 		return path.replace( File.separatorChar, '/' );
 		}
 
-	static public String
+	public static String
 	ensureFinalSlash( final String path )
 		{
 		return
-			path.endsWith( "/" )
-			? path : path + "/";
+				!path.isEmpty() && path.charAt(path.length() - 1) == '/'
+			? path : path + '/';
 		}
 
-	static public String
+	public static String
 	stripFinalSlash( final String path )
 		{
 		return
-			path.endsWith( "/" )
+				!path.isEmpty() && path.charAt(path.length() - 1) == '/'
 			? path.substring( 0, path.length() - 1 )
 			: path;
 		}
 
-	static public String
+	public static String
 	stripFinalSeparator( String path )
 		{
 		for ( ; ; )
 			{
-			if ( path.endsWith( "/" ) )
+			if (!path.isEmpty() && path.charAt(path.length() - 1) == '/')
 				path = path.substring( 0, path.length() - 1 );
 			else if ( path.endsWith( File.separator ) )
 				path = path.substring( 0, path.length() - 1 );
@@ -204,10 +208,10 @@ CVSCUtilities extends Object
 	 * Given a localDirectory from a CVSEntry, get the
 	 * parent directory of the localDirectory.
 	 */
-	static public String
+	public static String
 	getLocalParent( String localDir )
 		{
-		localDir = CVSCUtilities.stripFinalSlash( localDir );
+		localDir = stripFinalSlash( localDir );
 		final int index = localDir.lastIndexOf( '/' );
 		if ( index > 0 )
 			{
@@ -216,8 +220,8 @@ CVSCUtilities extends Object
 		return localDir;
 		}
 
-	static public int
-	slashCount( final String s )
+	public static int
+	slashCount( final CharSequence s )
 		{
 		int result = 0;
 		for ( int cIdx = 0 ; cIdx < s.length() ; ++cIdx )
@@ -228,13 +232,13 @@ CVSCUtilities extends Object
 		return result;
 		}
 
-	static public boolean
+	public static void
 	createEmptyFile( final File f )
 		{
 		boolean result = true;
 
 		try {
-			final FileWriter writer = new FileWriter( f );
+			final Closeable writer = new FileWriter(f );
 			writer.close();
 			}
 		catch ( final IOException ex )
@@ -245,31 +249,21 @@ CVSCUtilities extends Object
 					+ "' - " + ex.getMessage() );
 			}
 
-		return result;
 		}
 
-	static public void
+	public static void
 	writeStringFile( final File f, final String str )
 		throws IOException
 		{
-		FileWriter writer = null;
-
-		try {
-			writer = new FileWriter( f );
-
+		try (final Writer writer = new FileWriter(f )) {
 			if ( str != null )
 				{
 				writer.write( str );
 				}
 			}
-		finally
-			{
-			if ( writer != null )
-				writer.close();
-			}
 		}
 
-	static public String
+	public static String
 	readStringFile( final File f )
 		throws IOException
 		{
@@ -293,18 +287,18 @@ CVSCUtilities extends Object
 		return result;
 		}
 
-	static public void
+	public static void
 	endRedirectOutput()
 		{
-		if ( CVSCUtilities.redirectOutErr )
+		if ( redirectOutErr )
 			{
-			CVSCUtilities.redirectOutErr = false;
+			redirectOutErr = false;
 			System.out.flush();
 			System.out.close();
-			System.setOut( CVSCUtilities.out );
-			System.setErr( CVSCUtilities.err );
-			CVSCUtilities.out = null;
-			CVSCUtilities.err = null;
+			System.setOut( out );
+			System.setErr( err );
+			out = null;
+			err = null;
 			}
 		}
 
@@ -346,7 +340,7 @@ CVSCUtilities extends Object
 					continue;
 
 				final int begIdx = ch == 'D' ? 2 : 1;
-				final int idx = inLine.indexOf( "/", begIdx );
+				final int idx = inLine.indexOf('/', begIdx );
 				if ( idx == -1 )
 					continue;
 
@@ -384,7 +378,7 @@ CVSCUtilities extends Object
 				final char ch = inLine.charAt(2);
 
 				final int begIdx = ch == 'D' ? 4 : 3;
-				int idx = inLine.indexOf( "/", begIdx );
+				int idx = inLine.indexOf('/', begIdx );
 				if ( idx == -1 )
 					continue;
 
@@ -450,8 +444,8 @@ CVSCUtilities extends Object
 			else
 				{
 				throw new IOException
-					( "RENAME FAILED from '" + bakF.getPath()
-						+ "' to '" + entF.getPath() + "'" );
+					("RENAME FAILED from '" + bakF.getPath()
+					 + "' to '" + entF.getPath() + '\'');
 				}
 
 		//	System.err.println( "DONE" );

@@ -23,6 +23,7 @@
 package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -55,7 +57,6 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		NewFilesDialog
 extends		JDialog
 implements	ActionListener, ListSelectionListener
@@ -64,14 +65,12 @@ implements	ActionListener, ListSelectionListener
 
 	private File		dirFile;
 	private CVSEntry	dirEntry;
-	private Vector		fileV;
-	private JList		fileList;
+		private JList		fileList;
 	private JTextField	ignoreText;
 	private JButton		okButton;
 	private String		ignoreStr;
 
 
-	public
 	NewFilesDialog
 			( final Frame parent, final boolean modal, final String prompt )
 		{
@@ -115,7 +114,7 @@ implements	ActionListener, ListSelectionListener
 		this.dirFile = dirF;
 		this.dirEntry = dirEntry;
 
-		this.fileV = new Vector();
+			final Vector fileV = new Vector();
 		final String[] files = this.dirFile.list();
 
 		final UserPrefs prefs = Config.getPreferences();
@@ -164,10 +163,10 @@ implements	ActionListener, ListSelectionListener
 			if ( this.dirEntry.locateEntry( fileName ) != null )
 				continue;
 
-			this.fileV.addElement( fileName );
+			fileV.addElement(fileName );
 			}
 
-		this.fileList.setListData( this.fileV );
+		this.fileList.setListData(fileV);
 		}
 
 	public String[]
@@ -220,15 +219,15 @@ implements	ActionListener, ListSelectionListener
 			}
         }
 
-	public void
-	establishDialogContents( final String prompt )
+	private void
+	establishDialogContents(final String prompt)
 		{
 		JButton		button;
-		JPanel		controlPanel;
+		final JPanel		controlPanel;
 
 		final UserPrefs prefs = Config.getPreferences();
 
- 		final JLabel promptLabel = new JLabel( prompt );
+ 		final JComponent promptLabel = new JLabel(prompt );
 		promptLabel.setBorder( new EmptyBorder( 2, 2, 0, 0 ) );
 		promptLabel.setFont(
 			prefs.getFont(
@@ -242,13 +241,13 @@ implements	ActionListener, ListSelectionListener
 				"newFileDialog.text.font",
 				new Font( "Dialog", Font.BOLD, 12 ) ) );
 
-		final JScrollPane scroller = new JScrollPane( this.fileList );
+		final Component scroller = new JScrollPane(this.fileList );
 
-		final JPanel ignorePanel = new JPanel();
+		final JComponent ignorePanel = new JPanel();
 		ignorePanel.setLayout( new BorderLayout() );
 		ignorePanel.setBorder( new EmptyBorder( 1, 2, 8, 2 ) );
 
-		final JLabel ignoreLbl = new JLabel( "Ignore:" );
+		final JComponent ignoreLbl = new JLabel("Ignore:" );
 		ignoreLbl.setBorder( new EmptyBorder( 1, 1, 1, 4 ) );
 		this.ignoreText = new JTextField( this.ignoreStr );
 		this.ignoreText.addActionListener
@@ -281,12 +280,12 @@ implements	ActionListener, ListSelectionListener
 		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		final JPanel contPan = new JPanel();
+		final JComponent contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 3, 3, 3 ) );
 		content.add( BorderLayout.CENTER, contPan );
 
-		final JPanel southPan = new JPanel();
+		final JComponent southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.NORTH, ignorePanel );
 		southPan.add( BorderLayout.WEST, button );

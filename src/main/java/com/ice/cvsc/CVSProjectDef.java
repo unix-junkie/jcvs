@@ -45,11 +45,9 @@ import java.io.IOException;
  */
 
 public
-class		CVSProjectDef
-extends		Object
-	{
-	static public final String		RCS_ID = "$Id: CVSProjectDef.java,v 2.4 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.4 $";
+class		CVSProjectDef {
+	public static final String		RCS_ID = "$Id: CVSProjectDef.java,v 2.4 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.4 $";
 
 	/**
 	 * True if this definition is parsed and valid.
@@ -202,7 +200,7 @@ extends		Object
 	public String
 	getRootDirectorySpec()
 		{
-		String connMethod;
+		final String connMethod;
 
 		if ( this.connectMethod == CVSRequest.METHOD_RSH )
 			{
@@ -221,19 +219,19 @@ extends		Object
 			connMethod = "direct";
 			}
 
-		final StringBuffer rootDirStr = new StringBuffer( 128 );
+		final StringBuilder rootDirStr = new StringBuilder(128 );
 
 		if ( ! this.noModeRoot )
 			{
-			rootDirStr.append( ":" );
+			rootDirStr.append(':');
 			rootDirStr.append( connMethod );
-			rootDirStr.append( ":" );
+			rootDirStr.append(':');
 			}
 
-		if ( this.userName.length() > 0 )
+		if (!this.userName.isEmpty())
 			{
 			rootDirStr.append( this.userName );
-			rootDirStr.append( "@" );
+			rootDirStr.append('@');
 			}
 
 		rootDirStr.append( this.hostName );
@@ -254,21 +252,22 @@ extends		Object
 	**
 	*/
 
-		rootDirStr.append( ":" );
+		rootDirStr.append(':');
 		rootDirStr.append( this.rootDirectory );
 
 		return rootDirStr.toString();
 		}
 
-	public synchronized boolean
-	parseRootDirectory( final String specification, final String repos )
+	private synchronized void
+	parseRootDirectory(final String specification, final String repos)
 		{
-		String		tempStr;
-		String		methodStr;
+		final String		tempStr;
+		final String		methodStr;
 		final String		userNameStr = "";
 		final String		hostNameStr = "";
-		int			index, subidx;
-		final int			connMethod;
+		int			index;
+			final int subidx;
+			final int			connMethod;
 		boolean		isOk = true;
 
 		this.isValid = false;
@@ -276,11 +275,11 @@ extends		Object
 		this.repository = repos;
 		this.noModeRoot = false;
 
-		this.reason = "parsed '" + specification + "'";
+		this.reason = "parsed '" + specification + '\'';
 
 		String rootDirSpec = specification;
 
-		if ( rootDirSpec.startsWith( ":" ) )
+		if (!rootDirSpec.isEmpty() && rootDirSpec.charAt(0) == ':')
 			{
 			rootDirSpec = rootDirSpec.substring( 1 );
 
@@ -305,30 +304,27 @@ extends		Object
 
 					if ( index > 0 )
 						{
-						if ( methodStr.equals( "pserver" ) )
-							{
-							this.isPServer = true;
-							this.connectMethod = CVSRequest.METHOD_INETD;
-							}
-						else if ( methodStr.equals( "server" ) )
-							{
-							this.isPServer = false;
-							this.connectMethod = CVSRequest.METHOD_RSH;
-							}
-						else if ( methodStr.equals( "ext" ) )
-							{
-							this.isPServer = false;
-							this.connectMethod = CVSRequest.METHOD_SSH;
-							}
-						else if ( methodStr.equals( "direct" ) )
-							{
-							this.isPServer = false;
-							this.connectMethod = CVSRequest.METHOD_INETD;
-							}
-						else
-							{
-							this.isPServer = false;
-							this.connectMethod = CVSRequest.METHOD_RSH;
+							switch (methodStr) {
+							case "pserver":
+								this.isPServer = true;
+								this.connectMethod = CVSRequest.METHOD_INETD;
+								break;
+							case "server":
+								this.isPServer = false;
+								this.connectMethod = CVSRequest.METHOD_RSH;
+								break;
+							case "ext":
+								this.isPServer = false;
+								this.connectMethod = CVSRequest.METHOD_SSH;
+								break;
+							case "direct":
+								this.isPServer = false;
+								this.connectMethod = CVSRequest.METHOD_INETD;
+								break;
+							default:
+								this.isPServer = false;
+								this.connectMethod = CVSRequest.METHOD_RSH;
+								break;
 							}
 
 						subidx = tempStr.indexOf( '@' );
@@ -410,10 +406,9 @@ extends		Object
 		if ( this.isValid
 				&& ! this.repository.startsWith( this.rootDirectory ) )
 			{
-			this.repository = this.rootDirectory + "/" + this.repository;
+			this.repository = this.rootDirectory + '/' + this.repository;
 			}
 
-		return this.isValid;
 		}
 
 	/**

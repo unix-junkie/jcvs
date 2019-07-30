@@ -26,94 +26,94 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Vector;
 
 
-public class
-TempFileManager extends Object
-	{
-	private static int			tempDocCounter = 0;
+public final class
+TempFileManager {
+	private static int			tempDocCounter;
 
-	private static String		temnpDirName = null;
-	private static String		tempFilePrefix = null;
-	private static String		tempFileSuffix = null;
+	private static String		temnpDirName;
+	private static String		tempFilePrefix;
+	private static String		tempFileSuffix;
 
-	private static Vector		tempFiles = new Vector();
+	private static final Vector		tempFiles = new Vector();
+
+	private TempFileManager() {
+	}
 
 
 	public static void
 	initialize( final String dirName, final String prefix, final String suffix )
 		{
-		TempFileManager.temnpDirName = dirName;
-		TempFileManager.tempFilePrefix = prefix;
-		TempFileManager.tempFileSuffix = suffix;
+		temnpDirName = dirName;
+		tempFilePrefix = prefix;
+		tempFileSuffix = suffix;
 		}
 
 	public static void
 	setTemporaryDirectory( final String dirName )
 		{
-		TempFileManager.temnpDirName = dirName;
+		temnpDirName = dirName;
 		}
 
 	public static void
 	setFilenamePrefix( final String prefix )
 		{
-		TempFileManager.tempFilePrefix = prefix;
+		tempFilePrefix = prefix;
 		}
 
 	public static void
 	setFilenameSuffix( final String suffix )
 		{
-		TempFileManager.tempFileSuffix = suffix;
+		tempFileSuffix = suffix;
 		}
 
-	public static void
-	addTemporaryFile( final String filename )
+	private static void
+	addTemporaryFile(final String filename)
 		{
-		TempFileManager.tempFiles.addElement( filename );
+		tempFiles.addElement( filename );
 		}
 
 	public static String
 	getTemporaryDirectory()
 		{
-		return TempFileManager.temnpDirName;
+		return temnpDirName;
 		}
 
 	public static String
 	getTemporaryFilename()
 		{
-		TempFileManager.tempDocCounter++;
+		tempDocCounter++;
 
 		return
-			TempFileManager.getTemporaryFilename
-				( TempFileManager.tempFileSuffix );
+			getTemporaryFilename
+				( tempFileSuffix );
 		}
 
-	public static String
-	getTemporaryFilename( final String suffix )
+	private static String
+	getTemporaryFilename(final String suffix)
 		{
-		TempFileManager.tempDocCounter++;
+		tempDocCounter++;
 
-		final String tempFileName =
-			TempFileManager.temnpDirName
-			+ File.separator
-			+ TempFileManager.tempFilePrefix
-			+ "-" + TempFileManager.tempDocCounter
-			+ suffix;
-
-		return tempFileName;
+			return temnpDirName
+		       + File.separator
+		       + tempFilePrefix
+		       + '-' + tempDocCounter
+		       + suffix;
 		}
 
 	public static void
 	clearTemporaryFiles()
 		{
 		int count = 0;
-		final int numFiles = TempFileManager.tempFiles.size();
+		final int numFiles = tempFiles.size();
 
 		for ( int idx = 0 ; idx < numFiles ; ++idx )
 			{
 			final String fileName =
-				(String) TempFileManager.tempFiles.elementAt( idx );
+				(String) tempFiles.elementAt( idx );
 
 			final File f = new File( fileName );
 
@@ -132,7 +132,7 @@ TempFileManager extends Object
 	writeTemporaryFile( final InputStream source, final String tempFileName )
 		throws IOException
 		{
-		final FileOutputStream out =
+		final OutputStream out =
 			new FileOutputStream( tempFileName );
 
 		final byte[] buf = new byte[ 32 * 1024 ];
@@ -147,7 +147,7 @@ TempFileManager extends Object
 
 		out.close();
 
-		TempFileManager.addTemporaryFile( tempFileName );
+		addTemporaryFile( tempFileName );
 		}
 
 	}

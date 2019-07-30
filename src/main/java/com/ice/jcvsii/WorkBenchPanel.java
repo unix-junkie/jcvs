@@ -28,16 +28,14 @@ class		WorkBenchPanel
 extends		MainTabPanel
 implements	TreeSelectionListener
 	{
-	private final JToolBar					toolBar;
-	protected JSplitPane				splitter;
-	protected WorkBenchTreePanel		treePanel;
-	protected WorkBenchDetailPanel		detailPanel;
+		private final JSplitPane				splitter;
+	private final WorkBenchTreePanel		treePanel;
 
-	protected AbstractAction			newFolderAction;
-	protected AbstractAction			newProjectAction;
-	protected AbstractAction			openProjectAction;
-	protected AbstractAction			deleteAction;
-	protected AbstractAction			browseAction;
+		private AbstractAction			newFolderAction;
+	private AbstractAction			newProjectAction;
+	private AbstractAction			openProjectAction;
+	private AbstractAction			deleteAction;
+	private AbstractAction			browseAction;
 
 
 	public
@@ -50,26 +48,26 @@ implements	TreeSelectionListener
 
 		this.establishActions();
 
-		this.toolBar = new JToolBar();
-		this.toolBar.setFloatable( true );
+			final JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(true );
 
-		this.populateToolbar( this.toolBar );
+		this.populateToolbar(toolBar);
 
-		this.detailPanel = new WorkBenchDetailPanel();
-		this.detailPanel.setPreferredSize( new Dimension( 350, 250 ) );
+			final WorkBenchDetailPanel detailPanel = new WorkBenchDetailPanel();
+		detailPanel.setPreferredSize(new Dimension(350, 250 ) );
 
 		this.treePanel =
-			new WorkBenchTreePanel( this.detailPanel );
+			new WorkBenchTreePanel(detailPanel);
 
 		this.treePanel.addTreeSelectionListener( this );
 		this.treePanel.setPreferredSize( new Dimension( 175, 125 ) );
 
 		this.splitter =
 			new JSplitPane
-				( JSplitPane.HORIZONTAL_SPLIT,
-					true, this.treePanel, this.detailPanel );
+				(JSplitPane.HORIZONTAL_SPLIT,
+				 true, this.treePanel, detailPanel);
 
-		this.add( BorderLayout.NORTH, this.toolBar );
+		this.add(BorderLayout.NORTH, toolBar);
 
 		this.add( BorderLayout.CENTER, this.splitter );
 		}

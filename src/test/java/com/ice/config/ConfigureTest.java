@@ -3,6 +3,8 @@ package com.ice.config;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
@@ -14,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,19 +33,17 @@ import com.ice.pref.UserPrefsFileLoader;
 import com.ice.pref.UserPrefsLoader;
 
 
-public
-class		ConfigureTest
+final class		ConfigureTest
 extends		JPanel
 implements	ActionListener
 	{
-	protected JButton			ok, cancel;
-	protected ConfigurePanel	configure;
-	protected UserPrefs			prefs;
-	protected UserPrefs			specs;
+	private final JButton			ok;
+		private final JButton cancel;
+	private final ConfigurePanel	configure;
+	private final UserPrefs			prefs;
 
 
-	public
-	ConfigureTest()
+		private ConfigureTest()
 		throws IOException
 		{
 		File f;
@@ -61,7 +62,7 @@ implements	ActionListener
 		if ( f.exists() && f.isFile() && f.canRead() )
 			{
 			System.err.println
-				( "Loading properties file '" + f.getPath() + "'" );
+				("Loading properties file '" + f.getPath() + '\'');
 			loader.setFile( f );
 			loader.loadPreferences( prefs );
 			}
@@ -71,21 +72,21 @@ implements	ActionListener
 			this.setDefaultProperties( prefs );
 			}
 
-		this.specs = new UserPrefs( "ConfigSpecs", null );
-		this.specs.setPropertyPrefix( "" );
+			final UserPrefs specs = new UserPrefs("ConfigSpecs", null);
+		specs.setPropertyPrefix("" );
 
 		f = new File( dir, "testspecs.txt" );
 		if ( f.exists() && f.isFile() && f.canRead() )
 			{
 			System.err.println
-				( "Loading specifications file '" + f.getPath() + "'" );
+				("Loading specifications file '" + f.getPath() + '\'');
 			loader.setFile( f );
-			loader.loadPreferences( specs );
+			loader.loadPreferences(specs);
 			}
 		else
 			{
 			System.err.println( "Loading default specifications." );
-			this.setDefaultSpecifications( specs );
+			this.setDefaultSpecifications(specs);
 			}
 
 		//
@@ -95,22 +96,22 @@ implements	ActionListener
 		// P R O P E R T Y    S P E C I F I C A T I O N S
 		//
 
-		this.configure = new ConfigurePanel( prefs, specs );
+		this.configure = new ConfigurePanel(prefs, specs);
 
 		this.add("Center", configure);
 
-		final JPanel buttons = new JPanel();
+		final Container buttons = new JPanel();
 		buttons.setLayout( new GridLayout( 1, 2 ) );
 		buttons.add( buttonPanel( ok = new JButton( "OK" ) ) );
 		buttons.add( buttonPanel( cancel = new JButton( "Cancel" ) ) );
 		ok.addActionListener( this );
 		cancel.addActionListener( this );
 
-		final JPanel butPan = new JPanel();
+		final Container butPan = new JPanel();
 		butPan.setLayout( new BorderLayout() );
 		butPan.add( "East", buttons );
 
-		final JPanel south = new JPanel();
+		final Container south = new JPanel();
 		south.setLayout( new BorderLayout() );
 		south.add( "North", new JSeparator( SwingConstants.HORIZONTAL ) );
 		south.add( "Center", butPan );
@@ -201,7 +202,7 @@ implements	ActionListener
 		}
 
 	private void
-	setDefaultSpecifications( final UserPrefs specs )
+	setDefaultSpecifications( final Properties specs )
 		{
 		specs.setProperty
 			( "spec.client.misc.choice",
@@ -287,7 +288,7 @@ implements	ActionListener
 		}
 
 	private JPanel
-	buttonPanel( final JButton button )
+	buttonPanel( final Component button )
 		{
 		final JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(4, 4, 4, 4));
@@ -320,7 +321,7 @@ implements	ActionListener
 			}
 		}
 
-	public void
+	private void
 	saveProperties()
 		{
 		this.configure.saveCurrentEdit();
@@ -362,7 +363,7 @@ implements	ActionListener
 		}
 
 	public static void
-	main( final String[] args )
+	main( final String... args )
 		throws IOException
 		{
 		final JFrame frame = new JFrame("Configure Test");

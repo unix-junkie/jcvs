@@ -81,13 +81,12 @@ package com.ice.cvsc;
 *
 */
 
-public class
-CVSScramble extends Object
-	{
-	static public final String		RCS_ID = "$Id: CVSScramble.java,v 2.2 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+public final class
+CVSScramble {
+	public static final String		RCS_ID = "$Id: CVSScramble.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.2 $";
 
-	static private int[]	shifts;
+	private static final int[]	shifts;
 
 	static
 		{
@@ -161,22 +160,25 @@ CVSScramble extends Object
 		sh[i++] = 245; sh[i++] = 235; sh[i++] = 163; sh[i++] = 242;
 		sh[i++] = 178; sh[i++] = 152;
 
-		CVSScramble.shifts = sh;
+		shifts = sh;
 		}
 
+	private CVSScramble() {
+	}
+
 	public static String
-	scramblePassword( final String password, final char selector )
+	scramblePassword(final CharSequence password, final char selector )
 		{
 		if ( selector == 'A' )
 			{
-			final StringBuffer buf = new StringBuffer( "A" );
+			final StringBuilder buf = new StringBuilder("A" );
 
 			for ( int i = 0 ; i < password.length() ; ++i )
 				{
 				final char ch = password.charAt(i);
 
 				final byte newCh = (byte)
-					(CVSScramble.shifts[ ch & 255 ] & 255);
+					(shifts[ch & 255 ] & 255);
 
 				buf.append( (char)newCh );
 				}
@@ -198,7 +200,7 @@ CVSScramble extends Object
 			{
 			// This method is symmetrical.
 			final String pass =
-				CVSScramble.scramblePassword
+				scramblePassword
 					( scramble.substring( 1 ), 'A' );
 
 			return pass.substring( 1 ); // Drop the 'A' spec...

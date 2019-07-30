@@ -16,9 +16,8 @@ public
 class		ConfigChoiceEditor
 extends		ConfigureEditor
 	{
-	protected JPanel			radioPanel;
-	protected ButtonGroup		group;
-	protected JRadioButton[]	choiceButtons;
+	private JPanel			radioPanel;
+		private JRadioButton[]	choiceButtons;
 
 
 	public
@@ -39,7 +38,7 @@ extends		ConfigureEditor
 
 		final String choice = prefs.getProperty( propName, null );
 
-		this.group = new ButtonGroup();
+			final ButtonGroup group = new ButtonGroup();
 
 		final String[] choices = spec.getChoices();
 		this.choiceButtons = new JRadioButton[ choices.length ];
@@ -47,7 +46,7 @@ extends		ConfigureEditor
 			{
 			final JRadioButton radio = new JRadioButton( choices[i] );
 			this.choiceButtons[i] = radio;
-			this.group.add( radio );
+			group.add(radio );
 			this.radioPanel.add( radio );
 			radio.setSelected( false );
 			if ( choice != null )

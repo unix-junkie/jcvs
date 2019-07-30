@@ -38,8 +38,8 @@ import java.util.ResourceBundle;
 public
 class		ResourceMgr
 	{
-	static public final String		RCS_ID = "$Id: ResourceMgr.java,v 1.2 1999/04/01 19:41:11 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.2 $";
+	public static final String		RCS_ID = "$Id: ResourceMgr.java,v 1.2 1999/04/01 19:41:11 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.2 $";
 
 	/**
 	 * The instance of the ONLY ResourceMgr.
@@ -66,14 +66,14 @@ class		ResourceMgr
 	public static ResourceMgr
 	getInstance()
 		{
-		return ResourceMgr.instance;
+		return instance;
 		}
 
 	public static void
 	initializeResourceManager( final String name )
 		{
-		ResourceMgr.instance = new ResourceMgr( name );
-		ResourceMgr.instance.initializeResources();
+		instance = new ResourceMgr( name );
+		instance.initializeResources();
 		}
 
 	public
@@ -82,8 +82,7 @@ class		ResourceMgr
 		this.name = "DEFAULT";
 		}
 
-	public
-	ResourceMgr( final String name )
+	private ResourceMgr(final String name)
 		{
 		this.name = name;
 		}
@@ -112,10 +111,10 @@ class		ResourceMgr
 	//		( "   " + name + ".Locale = " + rb.getLocale() );
 		}
 
-	public void
+	private void
 	initializeResources()
 		{
-		String rbnm;
+		final String rbnm;
 		try {
 			// USER INTERFACE BUNDLE
 			rbnm = "com.ice.jcvsii.rsrcui";

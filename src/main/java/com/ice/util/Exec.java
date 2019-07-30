@@ -36,7 +36,6 @@ import java.io.StringWriter;
  *  <a href="mailto:time@gjt.org">time@gjt.org</a>
  */
 
-public
 class		Exec
 extends		Thread
 	{
@@ -45,12 +44,10 @@ extends		Thread
 	private final StringBuffer	results;
 
 	private BufferedReader	errRdr;
-	private BufferedReader	outRdr;
-	private Process			proc;
+		private Process			proc;
 	private final String			lnSep;
 
-	public
-	Exec( final StringBuffer resultBuf, final String[] argv, final String[] envp )
+	Exec( final StringBuffer resultBuf, final String[] argv, final String... envp )
 		{
 		this.argv = argv;
 		this.envp = envp;
@@ -143,20 +140,19 @@ extends		Thread
 			t.start();
 
 			// STDOUT
-			this.outRdr =
-				new BufferedReader
-					( new InputStreamReader
-						( this.proc.getInputStream() ) );
+			final BufferedReader outRdr = new BufferedReader
+					(new InputStreamReader
+							 (this.proc.getInputStream()));
 
 			for ( ; this.results != null ; )
 				{
-				final String ln = this.outRdr.readLine();
+				final String ln = outRdr.readLine();
 				if ( ln == null )
 					break;
 				this.append( "o " + ln );
 				}
 
-			this.outRdr.close();
+			outRdr.close();
 
 			try { t.join(); }
 			catch ( final InterruptedException ex )
@@ -174,19 +170,19 @@ extends		Thread
 	append( final String str )
 		{
 		if ( this.results != null )
-			this.results.append( str + this.lnSep );
+			this.results.append(str).append(this.lnSep);
 		}
 
 	private void
-	appendEx( final Exception ex, final String msg )
+	appendEx(final Throwable ex, final String msg )
 		{
 		if ( this.results != null )
 			{
 			final StringWriter sW = new StringWriter();
 			final PrintWriter pW = new PrintWriter( sW );
 			ex.printStackTrace( pW );
-			this.results.append( "* " + msg + this.lnSep );
-			this.results.append( sW.toString() );
+			this.results.append("* ").append(msg).append(this.lnSep);
+			this.results.append(sW);
 			}
 		}
 
@@ -197,21 +193,21 @@ extends		Thread
 
 		for ( int i = 0 ; i < this.argv.length ; ++i )
 			System.err.println
-				( "   ARGS["+i+"] '" + this.argv[i] + "'" );
+				("   ARGS[" + i + "] '" + this.argv[i] + '\'');
 
 		for ( int i = 0 ; i < this.envp.length ; ++i )
 			System.err.println
-				( "   ENVP["+i+"] '" + this.envp[i] + "'" );
+				("   ENVP[" + i + "] '" + this.envp[i] + '\'');
 		}
 
 	public void
 	debugExec( final StringBuffer buf )
 		{
-		buf.append( "EXEC PARAMETERS: ----------------------" + this.lnSep );
+		buf.append("EXEC PARAMETERS: ----------------------").append(this.lnSep);
 		for ( int i = 0 ; i < this.argv.length ; ++i )
-			buf.append( "   ARGS["+i+"] '"+this.argv[i]+"'" + this.lnSep );
+			buf.append("   ARGS[").append(i).append("] '").append(this.argv[i]).append('\'').append(this.lnSep);
 		for ( int i = 0 ; i < this.envp.length ; ++i )
-			buf.append( "   ENVP["+i+"] '"+this.envp[i]+"'" + this.lnSep );
+			buf.append("   ENVP[").append(i).append("] '").append(this.envp[i]).append('\'').append(this.lnSep);
 		}
 
 	}

@@ -23,15 +23,19 @@
 package com.ice.util;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 
-public class
+public final class
 StringUtilities
 	{
-	static public String[]
+		private StringUtilities() {
+		}
+
+		public static String[]
 	vectorToStringArray( final Vector sV )
 		{
 		final int			sz = sV.size();
@@ -53,15 +57,16 @@ StringUtilities
 	 * token at the end of the array that is returned, if the string
 	 * ends with the delimiter. If you wish to have a property string
 	 * array that ends with the delimiter return an empty string at
-	 * the end of the array, use <code>vectorString()</code>.
+	 * the end of the array, use {@code vectorString()}.
 	 */
 
-	static public String[]
+	public static String[]
 	splitString( final String splitStr, final String delim )
 		{
-		int				i, count;
-		String[]		result;
-		StringTokenizer toker;
+		int				i;
+			final int count;
+			String[]		result;
+		final StringTokenizer toker;
 
 		toker = new StringTokenizer( splitStr, delim );
 
@@ -91,21 +96,22 @@ StringUtilities
 	 * ends with the delimiter.
 	 */
 
-	static public Vector
+	public static List<String>
 	vectorString( final String splitStr, final String delim )
 		{
 		boolean		tokeWasDelim = false;
-		int			i, count;
-		StringTokenizer toker;
+		int			i;
+			final int count;
+			final StringTokenizer toker;
 
-		final Vector			result = new Vector();
+		final List<String> result = new Vector<>();
 
 		toker = new StringTokenizer( splitStr, delim, true );
 		count = toker.countTokens();
 
 		for ( i = 0 ; i < count ; ++i )
 			{
-			String toke;
+			final String toke;
 
 			try { toke = toker.nextToken(); }
 			catch ( final NoSuchElementException ex )
@@ -114,18 +120,18 @@ StringUtilities
 			if ( toke.equals( delim ) )
 				{
 				if ( tokeWasDelim )
-					result.addElement( "" );
+					result.add( "" );
 				tokeWasDelim = true;
 				}
 			else
 				{
-				result.addElement( toke );
+				result.add( toke );
 				tokeWasDelim = false;
 				}
 			}
 
 		if ( tokeWasDelim )
-			result.addElement( "" );
+			result.add( "" );
 
 		return result;
 		}
@@ -133,7 +139,7 @@ StringUtilities
 	public static String
 	join( final String[] strings, final String sep )
 		{
-		final StringBuffer result = new StringBuffer();
+		final StringBuilder result = new StringBuilder();
 
 		for ( int i = 0 ; strings != null && i < strings.length ; ++i )
 			{
@@ -147,7 +153,7 @@ StringUtilities
 	public static String[]
 	argumentSubstitution( final String[] args, final Hashtable vars )
 		{
-		final StringBuffer argBuf = new StringBuffer();
+		final StringBuilder argBuf = new StringBuilder();
 
 		final String[] result = new String[ args.length ];
 
@@ -157,25 +163,16 @@ StringUtilities
 
 			final int index = argStr.indexOf( '$' );
 
-			if ( index < 0 )
-				{
-				result[ aIdx ] = argStr;
-				continue;
-				}
-			else
-				{
-				result[ aIdx ] =
-					StringUtilities.stringSubstitution( argStr, vars );
-				}
+				result[aIdx] = index < 0 ? argStr : stringSubstitution(argStr, vars);
 			}
 
 		return result;
 		}
 
-	public static String
-	stringSubstitution( final String argStr, final Hashtable vars )
+	private static String
+	stringSubstitution(final CharSequence argStr, final Hashtable vars)
 		{
-		final StringBuffer argBuf = new StringBuffer();
+		final StringBuilder argBuf = new StringBuilder();
 
 		for ( int cIdx = 0 ; cIdx < argStr.length() ; )
 			{
@@ -184,7 +181,7 @@ StringUtilities
 			switch ( ch )
 				{
 				case '$':
-					final StringBuffer nameBuf = new StringBuffer();
+					final StringBuilder nameBuf = new StringBuilder();
 					for ( ++cIdx ; cIdx < argStr.length() ; ++cIdx )
 						{
 						ch = argStr.charAt( cIdx );
@@ -217,13 +214,13 @@ StringUtilities
 		}
 
 	public static String[]
-	parseArgumentString( final String argStr )
+	parseArgumentString( final CharSequence argStr )
 		{
 		String[] result = null;
 
-		final Vector vector = StringUtilities.parseArgumentVector( argStr );
+		final Vector vector = parseArgumentVector( argStr );
 
-		if ( vector != null && vector.size() > 0 )
+		if ( vector != null && !vector.isEmpty())
 			{
 			result = new String[ vector.size() ];
 			vector.copyInto( result );
@@ -232,11 +229,11 @@ StringUtilities
 		return result;
 		}
 
-	public static Vector
-	parseArgumentVector( final String argStr )
+	private static Vector
+	parseArgumentVector(final CharSequence argStr)
 		{
 		final Vector			result = new Vector();
-		final StringBuffer	argBuf = new StringBuffer();
+		final StringBuilder argBuf = new StringBuilder();
 
 		boolean backSlash = false;
 		boolean matchSglQuote = false;
@@ -274,7 +271,7 @@ StringUtilities
 				case '\\':
 					if ( backSlash )
 						{
-						argBuf.append( "\\" );
+						argBuf.append('\\');
 						}
 					backSlash = ! backSlash;
 					break;
@@ -282,7 +279,7 @@ StringUtilities
 				case '\'':
 					if ( backSlash )
 						{
-						argBuf.append( "'" );
+						argBuf.append('\'');
 						backSlash = false;
 						}
 					else if ( matchSglQuote )
@@ -300,7 +297,7 @@ StringUtilities
 				case '"':
 					if ( backSlash )
 						{
-						argBuf.append( "\"" );
+						argBuf.append('"');
 						backSlash = false;
 						}
 					else if ( matchDblQuote )

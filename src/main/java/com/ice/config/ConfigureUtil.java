@@ -5,13 +5,14 @@ import java.util.Vector;
 
 import com.ice.pref.UserPrefs;
 
-
-public
+final
 class		ConfigureUtil
-implements	ConfigureConstants
 	{
 
-	public static Vector
+		private ConfigureUtil() {
+		}
+
+		public static Vector
 	readConfigSpecification( final UserPrefs specs )
 		throws InvalidSpecificationException
 		{
@@ -69,7 +70,7 @@ implements	ConfigureConstants
 					{
 					final String item =
 						specs.getProperty
-							( keyBase + "." + type + "." + ci, null );
+							(keyBase + '.' + type + '.' + ci, null );
 					if ( item == null )
 						break;
 					sV.addElement( item );

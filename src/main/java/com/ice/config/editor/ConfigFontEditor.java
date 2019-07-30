@@ -15,6 +15,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 
 import com.ice.config.ConfigureEditor;
 import com.ice.config.ConfigureSpec;
@@ -37,11 +39,11 @@ class		ConfigFontEditor
 extends		ConfigureEditor
 implements	FocusListener, ItemListener, ChangeListener
 	{
-	protected JComboBox		fontName;
-	protected JTextField	sizeField;
-	protected JCheckBox		boldCheck;
-	protected JCheckBox		italicCheck;
-	protected JLabel		exLabel;
+	private JComboBox		fontName;
+	private JTextField	sizeField;
+	private JCheckBox		boldCheck;
+	private JCheckBox		italicCheck;
+	private JLabel		exLabel;
 
 
 	public
@@ -50,7 +52,7 @@ implements	FocusListener, ItemListener, ChangeListener
 		super( "Text Font" );
 		}
 
-	protected Font
+	private Font
 	getConfiguredFont()
 		throws NumberFormatException
 		{
@@ -160,7 +162,7 @@ implements	FocusListener, ItemListener, ChangeListener
 
 		final Component comp = event.getComponent();
 		if ( comp instanceof JTextField )
-			((JTextField) comp).selectAll();
+			((JTextComponent) comp).selectAll();
 		}
 
 	@Override
@@ -220,7 +222,7 @@ implements	FocusListener, ItemListener, ChangeListener
 
 		col = 0;
 
-		final JPanel chkPan = new JPanel();
+		final JComponent chkPan = new JPanel();
 		chkPan.setLayout( new GridBagLayout() );
 		chkPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 		AWTUtilities.constrain(
@@ -257,7 +259,7 @@ implements	FocusListener, ItemListener, ChangeListener
 			GridBagConstraints.CENTER,
 			1, 0, 1, 1, 0.5, 0.0 );
 
-		final JPanel exPan = new JPanel();
+		final JComponent exPan = new JPanel();
 		exPan.setLayout( new BorderLayout() );
 		exPan.setBorder(
 			new CompoundBorder(

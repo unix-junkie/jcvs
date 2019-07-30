@@ -15,8 +15,8 @@ public
 class		ConfigComboEditor
 extends		ConfigureEditor
 	{
-	protected JPanel			comboPanel;
-	protected JComboBox			combo;
+	private JPanel			comboPanel;
+	private JComboBox			combo;
 
 
 	public

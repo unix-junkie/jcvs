@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -25,6 +26,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.JTextComponent;
 
 import com.ice.config.ConfigureEditor;
 import com.ice.config.ConfigureSpec;
@@ -37,10 +39,10 @@ class		ConfigColorEditor
 extends		ConfigureEditor
 implements	FocusListener, ActionListener
 	{
-	protected JTextField	rField;
-	protected JTextField	gField;
-	protected JTextField	bField;
-	protected JColorButton	color;
+	private JTextField	rField;
+	private JTextField	gField;
+	private JTextField	bField;
+	private JColorButton	color;
 
 	public
 	ConfigColorEditor()
@@ -104,7 +106,7 @@ implements	FocusListener, ActionListener
 
 		if ( cmdStr.equals( "COLORBUTTON" ) )
 			{
-			final JComponent cb = (JComponent) event.getSource();
+			final Component cb = (Component) event.getSource();
 			final Color c = cb.getBackground();
 			this.rField.setText( Integer.toString( c.getRed() ) );
 			this.gField.setText( Integer.toString( c.getGreen() ) );
@@ -163,7 +165,7 @@ implements	FocusListener, ActionListener
 	focusGained( final FocusEvent event )
 		{
 		this.computeColor();
-		((JTextField) event.getComponent()).selectAll();
+		((JTextComponent) event.getComponent()).selectAll();
 		}
 
 	@Override
@@ -240,14 +242,14 @@ implements	FocusListener, ActionListener
 			GridBagConstraints.WEST,
 			col++, row++, 1, 1, 1.0, 0.0 );
 
-		this.color = this.new JColorButton( Color.red );
+		this.color = new JColorButton(Color.red);
 		AWTUtilities.constrain(
 			result, this.color,
 			GridBagConstraints.BOTH,
 			GridBagConstraints.CENTER,
 			2, 0, 1, 3, 1.0, 1.0 );
 
-		final JPanel btnPan = new JPanel();
+		final JComponent btnPan = new JPanel();
 		btnPan.setLayout( new GridBagLayout() );
 		btnPan.setBorder
 				( new CompoundBorder
@@ -269,65 +271,65 @@ implements	FocusListener, ActionListener
 
 		JColorButton cb;
 
-		cb = this.new JColorButton( Color.black );
+		cb = new JColorButton(Color.black);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.darkGray );
+		cb = new JColorButton(Color.darkGray);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton(
-			new Color( (Color.darkGray.getRed()+Color.gray.getRed())/2,
-						(Color.darkGray.getGreen()+Color.gray.getGreen())/2,
-						(Color.darkGray.getBlue()+Color.gray.getBlue())/2 ) );
+		cb = new JColorButton(
+				new Color((Color.darkGray.getRed() + Color.gray.getRed()) / 2,
+					  (Color.darkGray.getGreen() + Color.gray.getGreen()) / 2,
+					  (Color.darkGray.getBlue() + Color.gray.getBlue()) / 2));
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.gray );
+		cb = new JColorButton(Color.gray);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton(
-			new Color( (Color.lightGray.getRed()+Color.gray.getRed())/2,
-						(Color.lightGray.getGreen()+Color.gray.getGreen())/2,
-						(Color.lightGray.getBlue()+Color.gray.getBlue())/2 ) );
+		cb = new JColorButton(
+				new Color((Color.lightGray.getRed() + Color.gray.getRed()) / 2,
+					  (Color.lightGray.getGreen() + Color.gray.getGreen()) / 2,
+					  (Color.lightGray.getBlue() + Color.gray.getBlue()) / 2));
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.lightGray );
+		cb = new JColorButton(Color.lightGray);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton(
-			new Color( (Color.lightGray.getRed()+Color.white.getRed())/2,
-						(Color.lightGray.getGreen()+Color.white.getGreen())/2,
-						(Color.lightGray.getBlue()+Color.white.getBlue())/2 ) );
+		cb = new JColorButton(
+				new Color((Color.lightGray.getRed() + Color.white.getRed()) / 2,
+					  (Color.lightGray.getGreen() + Color.white.getGreen()) / 2,
+					  (Color.lightGray.getBlue() + Color.white.getBlue()) / 2));
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.white );
+		cb = new JColorButton(Color.white);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
@@ -338,56 +340,56 @@ implements	FocusListener, ActionListener
 		++row;
 		col = 0;
 
-		cb = this.new JColorButton( Color.red );
+		cb = new JColorButton(Color.red);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.blue );
+		cb = new JColorButton(Color.blue);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.green );
+		cb = new JColorButton(Color.green);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.cyan );
+		cb = new JColorButton(Color.cyan);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.magenta );
+		cb = new JColorButton(Color.magenta);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.pink );
+		cb = new JColorButton(Color.pink);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.orange );
+		cb = new JColorButton(Color.orange);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
 			GridBagConstraints.NONE,
 			GridBagConstraints.CENTER,
 			col++, row, 1, 1, 0.0, 0.0 );
-		cb = this.new JColorButton( Color.yellow );
+		cb = new JColorButton(Color.yellow);
 		cb.addActionListener( this );
 		AWTUtilities.constrain(
 			btnPan, cb,
@@ -398,7 +400,7 @@ implements	FocusListener, ActionListener
 		return result;
 		}
 
-	private
+	private static final
 	class		JColorButton
 	extends		JPanel
 		{
@@ -406,16 +408,14 @@ implements	FocusListener, ActionListener
 		private int		green;
 		private int		blue;
 		private final JButton	color;
-		private final Vector	listeners;
+		private final List listeners;
 
-		public
-		JColorButton( final Color c )
+		private JColorButton(final Color c)
 			{
 			this( c.getRed(), c.getGreen(), c.getBlue() );
 			}
 
-		public
-		JColorButton( final int r, final int g, final int b )
+		private JColorButton(final int r, final int g, final int b)
 			{
 			this.red = r;
 			this.green = g;
@@ -448,8 +448,8 @@ implements	FocusListener, ActionListener
 			this.setColor( c.getRed(), c.getGreen(), c.getBlue() );
 			}
 
-		public void
-		setColor( final int r, final int g, final int b )
+		void
+		setColor(final int r, final int g, final int b)
 			{
 			this.red = r;
 			this.green = g;
@@ -485,8 +485,8 @@ implements	FocusListener, ActionListener
 			this.color.setActionCommand( cmd );
 			}
 
-		public synchronized void
-		addActionListener( final ActionListener listener )
+		synchronized void
+		addActionListener(final ActionListener listener)
 			{
 			this.color.addActionListener( listener );
 			}

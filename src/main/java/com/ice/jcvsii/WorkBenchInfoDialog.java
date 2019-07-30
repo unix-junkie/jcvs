@@ -37,7 +37,9 @@ import java.awt.event.WindowEvent;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -53,7 +55,6 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		WorkBenchInfoDialog
 extends		JDialog
 implements	ActionListener
@@ -69,7 +70,6 @@ implements	ActionListener
 	private final WorkBenchTreeNode		parentNode;
 
 
-	public
 	WorkBenchInfoDialog
 			( final Frame parFrame, final WorkBenchTreeNode parNode, final boolean isFolder,
 				String defaultName, final String path, final String localRoot  )
@@ -123,7 +123,7 @@ implements	ActionListener
 		}
 
 	private boolean
-	checkName( final String name )
+	checkName( final CharSequence name )
 		{
 		for ( int i = 0, sz = name.length() ; i < sz ; ++i )
 			{
@@ -186,19 +186,10 @@ implements	ActionListener
 				final String display = this.displayField.getText();
 				final String desc = this.descField.getText();
 
-				if ( this.isFolder )
-					{
-					this.wDef =
-						new WorkBenchDefinition
-							( name, this.path, display, desc );
-					}
-				else
-					{
-					this.wDef =
-						new WorkBenchDefinition
-							( name, this.path, display,
-								desc, this.localRoot );
-					}
+					this.wDef = this.isFolder ? new WorkBenchDefinition
+							(name, this.path, display, desc) : new WorkBenchDefinition
+								    (name, this.path, display,
+								     desc, this.localRoot);
 
 				doDispose = true;
 				}
@@ -215,8 +206,8 @@ implements	ActionListener
 			}
         }
 
-	public void
-	establishDialogContents( final String toke )
+	private void
+	establishDialogContents(final String toke)
 		{
 		JLabel		label;
 		final JButton		button;
@@ -227,7 +218,7 @@ implements	ActionListener
 		//
 		// INFORMATION PANEL
 		//
-		final JPanel infoPan = new JPanel();
+		final JComponent infoPan = new JPanel();
 		infoPan.setLayout( new GridBagLayout() );
 		infoPan.setBorder( new EmptyBorder( 4, 4, 4, 4 ) );
 
@@ -297,25 +288,25 @@ implements	ActionListener
 		//
 		// CONTROL BUTTONS
 		//
-		final JPanel btnPan = new JPanel();
+		final Container btnPan = new JPanel();
 		btnPan.setLayout( new GridLayout( 1, 2, 5, 5 ) );
 
-		final JButton okBtn = new JButton( rmgr.getUIString( "name.for.ok" ) );
+		final AbstractButton okBtn = new JButton(rmgr.getUIString("name.for.ok" ) );
 		okBtn.addActionListener( this );
 		okBtn.setActionCommand( "OK" );
 		btnPan.add( okBtn );
 
-		final JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
+		final AbstractButton canBtn = new JButton(rmgr.getUIString("name.for.cancel" ) );
 		canBtn.addActionListener( this );
 		canBtn.setActionCommand( "CANCEL" );
 		btnPan.add( canBtn );
 
-		final JPanel eastPan = new JPanel();
+		final JComponent eastPan = new JPanel();
 		eastPan.setLayout( new BorderLayout() );
 		eastPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 		eastPan.add( BorderLayout.EAST, btnPan );
 
-		final JPanel ctlPan = new JPanel();
+		final Container ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 		ctlPan.add( BorderLayout.NORTH, new JSeparator( SwingConstants.HORIZONTAL ) );
 		ctlPan.add( BorderLayout.CENTER, eastPan );

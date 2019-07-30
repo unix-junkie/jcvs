@@ -22,28 +22,33 @@
 
 package com.ice.jcvsii;
 
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
 
 import javax.swing.JOptionPane;
 
+import com.ice.cvsc.CVSLog;
 
-public
+
+final
 class		CVSUserDialog
 	{
-	static public final int		NOTE = 1;
-	static public final int		ERROR = 2;
+	public static final int		NOTE = 1;
+	public static final int		ERROR = 2;
 
-
-	static public void
-	Note( final String message )
-		{
-		CVSUserDialog.Note( null, message );
+		private CVSUserDialog() {
 		}
 
-	static public void
-	Note( final Frame parent, final String message )
+
+		public static void
+	Note( final String message )
+		{
+		Note( null, message );
+		}
+
+	public static void
+	Note(final Component parent, final String message )
 		{
 		final Point location =
 			Config.getPreferences().getPoint
@@ -53,34 +58,34 @@ class		CVSUserDialog
 			Config.getPreferences().getDimension
 				( "noteDialog.size", new Dimension( 480, 200 ) );
 
-		CVSUserDialog.Note( parent, message, location, size );
+		Note( parent, message, location, size );
 		}
 
-	static public void
-	Note( final Frame parent, final String message, final Point location )
+	public static void
+	Note(final Component parent, final String message, final Point location )
 		{
 		final Dimension size =
 			Config.getPreferences().getDimension
 				( "noteDialog.size", new Dimension( 480, 200 ) );
 
-		CVSUserDialog.Note( parent, message, location, size );
+		Note( parent, message, location, size );
 		}
 
-	static public void
-	Note( final Frame parent, final String message, final Point location, final Dimension size )
+	private static void
+	Note(final Component parent, final String message, final Point location, final Dimension size)
 		{
 		JOptionPane.showMessageDialog
 			( parent, message, "Note", JOptionPane.INFORMATION_MESSAGE );
 		}
 
-	static public void
+	public static void
 	Error( final String message )
 		{
-		CVSUserDialog.Note( null, message );
+		Note( null, message );
 		}
 
-	static public void
-	Error( final Frame parent, final String message )
+	public static void
+	Error(final Component parent, final String message )
 		{
 		final Point loc =
 			Config.getPreferences().getPoint
@@ -90,23 +95,23 @@ class		CVSUserDialog
 			Config.getPreferences().getDimension
 				( "errorDialog.size", new Dimension( 480, 200 ) );
 
-		CVSUserDialog.Note( parent, message, loc, size );
+		Note( parent, message, loc, size );
 		}
 
-	static public void
-	Error( final Frame parent, final String message, final Point location )
+	public static void
+	Error(final Component parent, final String message, final Point location )
 		{
 		final Dimension size =
 			Config.getPreferences().getDimension
 				( "errorDialog.size", new Dimension( 480, 200 ) );
 
-		CVSUserDialog.Note( parent, message, location, size );
+		Note( parent, message, location, size );
 		}
 
-	static public void
-	Error( final Frame parent, final String message, final Point location, final Dimension size )
+	public static void
+	Error(final Component parent, final String message, final Point location, final Dimension size )
 		{
-		com.ice.cvsc.CVSLog.logMsg( "ERROR_DIALOG: '" + message + "'" );
+		CVSLog.logMsg("ERROR_DIALOG: '" + message + '\'');
 
 		JOptionPane.showMessageDialog
 			( parent, message, "Error", JOptionPane.ERROR_MESSAGE );

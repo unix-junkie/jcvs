@@ -40,11 +40,10 @@ import java.util.Vector;
 public class
 CVSEntryVector extends Vector
 	{
-	static public final String		RCS_ID = "$Id: CVSEntryVector.java,v 2.3 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	public static final String		RCS_ID = "$Id: CVSEntryVector.java,v 2.3 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.3 $";
 
-	static public  boolean			traceLocate = false;
-	static public  boolean			traceLocatePath = false;
+	private static final boolean			traceLocate = false;
 
 	/**
 	 * Indicates if this entry vector is 'dirty'. If this
@@ -118,7 +117,7 @@ CVSEntryVector extends Vector
 	private boolean
 	removeEntry( final CVSEntry entry )
 		{
-		boolean result;
+		final boolean result;
 
 		result = this.removeElement( entry );
 		if ( result )
@@ -197,7 +196,7 @@ CVSEntryVector extends Vector
 	public CVSEntry
 	locateEntry( final String name )
 		{
-		CVSTracer.traceIf( CVSEntryVector.traceLocate,
+		CVSTracer.traceIf( traceLocate,
 			"===== CVSEntryVector.locateEntry: "
 			+ "name '" + name + "' =====" );
 
@@ -205,21 +204,21 @@ CVSEntryVector extends Vector
 			{
 			final CVSEntry entry = (CVSEntry)this.elementAt(i);
 
-			CVSTracer.traceIf( CVSEntryVector.traceLocate,
-				"CVSEntryVector.locateEntry: ENTRY '"
-				+ entry.getFullName()
-				+ "' isDir '" + entry.isDirectory() + "'" );
+			CVSTracer.traceIf( traceLocate,
+					   "CVSEntryVector.locateEntry: ENTRY '"
+					   + entry.getFullName()
+					   + "' isDir '" + entry.isDirectory() + '\'');
 
 			if ( name.equals( entry.getName() ) )
 				{
-				CVSTracer.traceIf( CVSEntryVector.traceLocate,
+				CVSTracer.traceIf( traceLocate,
 					"CVSEntryVector.locateEntry: '"
 					+ entry.getFullName() + "' FOUND." );
 				return entry;
 				}
 			}
 
-		CVSTracer.traceIf( CVSEntryVector.traceLocate,
+		CVSTracer.traceIf( traceLocate,
 			"CVSEntryVector.locateEntry: '" + name + "' NOT FOUND." );
 
 		return null;

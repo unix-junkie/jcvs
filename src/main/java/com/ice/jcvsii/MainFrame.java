@@ -37,7 +37,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URL;
 
-import javax.help.CSH;
+import javax.help.CSH.DisplayHelpFromSource;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.swing.JFrame;
@@ -61,12 +61,10 @@ extends		JFrame
 implements	ActionListener
 	{
 	private final JCVS			app;
-	private JMenuBar		menuBar;
-	private JMenu			fileMenu;
-	private JMenu			helpMenu;
+		private JMenu			helpMenu;
 	private final MainPanel		mainPanel;
 
-	private String			lastBrowseDirectory = null;
+	private String			lastBrowseDirectory;
 
 
 	public
@@ -133,64 +131,58 @@ implements	ActionListener
 		{
 		final String command = event.getActionCommand();
 
-		if ( command.equals( "QUIT" ) )
-			{
-			SwingUtilities.invokeLater(app::performShutDown);
-			}
-		else if ( command.equals( "ABOUT" ) )
-			{
-			SwingUtilities.invokeLater(() ->
-						{
-						final AboutDialog dlg =
-							new AboutDialog( MainFrame.this );
-						dlg.show();
-						}
+			switch (command) {
+			case "QUIT":
+				SwingUtilities.invokeLater(app::performShutDown);
+				break;
+			case "ABOUT":
+				SwingUtilities.invokeLater(() ->
+							   {
+								   final Component dlg =
+										   new AboutDialog(MainFrame.this);
+								   dlg.show();
+							   }
 				);
-			}
-		else if ( command.equals( "BUGREPORT" ) )
-			{
-			SwingUtilities.invokeLater(() ->
-						showHTMLDialog
-							( "info.howto.report.bug.title",
-								"info.howto.report.bug.html" )
+				break;
+			case "BUGREPORT":
+				SwingUtilities.invokeLater(() ->
+									   showHTMLDialog
+											   ("info.howto.report.bug.title",
+											    "info.howto.report.bug.html")
 				);
-			}
-		else if ( command.equals( "HOMEPAGE" ) )
-			{
-			SwingUtilities.invokeLater(() ->
-						showHTMLDialog
-							( "info.homepage.title",
-								"info.homepage.html" )
+				break;
+			case "HOMEPAGE":
+				SwingUtilities.invokeLater(() ->
+									   showHTMLDialog
+											   ("info.homepage.title",
+											    "info.homepage.html")
 				);
-			}
-		else if ( command.equals( "MAILLIST" ) )
-			{
-			SwingUtilities.invokeLater(() ->
-						showHTMLDialog
-							( "info.maillist.title",
-								"info.maillist.html" )
+				break;
+			case "MAILLIST":
+				SwingUtilities.invokeLater(() ->
+									   showHTMLDialog
+											   ("info.maillist.title",
+											    "info.maillist.html")
 				);
-			}
-		else if ( command.equals( "BROWSE" ) )
-			{
-			this.performBrowse();
-			}
-		else if ( command.equals( "CONFIG" ) )
-			{
-			SwingUtilities.invokeLater(() ->
-						Config.getInstance().editConfiguration
-							( MainFrame.this )
+				break;
+			case "BROWSE":
+				this.performBrowse();
+				break;
+			case "CONFIG":
+				SwingUtilities.invokeLater(() ->
+									   Config.getInstance().editConfiguration
+											   (MainFrame.this)
 				);
-			}
-		else
-			{
-			System.err.println
-				( "UNKNOWN Command '" + command + "'" );
+				break;
+			default:
+				System.err.println
+						("UNKNOWN Command '" + command + '\'');
+				break;
 			}
 		}
 
-	public void
-	showHTMLDialog( final String titleKey, final String msgKey )
+	private void
+	showHTMLDialog(final String titleKey, final String msgKey)
 		{
 		final String msgStr =
 			ResourceMgr.getInstance().getUIString( msgKey );
@@ -198,7 +190,7 @@ implements	ActionListener
 		final String title =
 			ResourceMgr.getInstance().getUIString( titleKey );
 
-		final HTMLDialog dlg =
+		final Component dlg =
 			new HTMLDialog
 				( null, title, true, msgStr );
 
@@ -211,7 +203,7 @@ implements	ActionListener
 		dlg.show();
 		}
 
-	public void
+	private void
 	performBrowse()
 		{
 		final Config cfg = Config.getInstance();
@@ -247,13 +239,13 @@ implements	ActionListener
 		{
 		final JMenuItem	item;
 
-		this.menuBar = new JMenuBar();
+			final JMenuBar menuBar = new JMenuBar();
 
-		this.addFileMenu( this.menuBar );
+		this.addFileMenu(menuBar);
 
-		this.addHelpMenu( this.menuBar );
+		this.addHelpMenu(menuBar);
 
-		this.setJMenuBar( this.menuBar );
+		this.setJMenuBar(menuBar);
 		}
 
 	private void
@@ -263,28 +255,28 @@ implements	ActionListener
 
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		this.fileMenu = new JMenu( rmgr.getUIString( "menu.file.name" ) );
-		mbar.add( this.fileMenu );
+			final JMenu fileMenu = new JMenu(rmgr.getUIString("menu.file.name"));
+		mbar.add(fileMenu);
 
 		item = new JMenuItem( rmgr.getUIString( "menu.file.open.name" ) );
-		this.fileMenu.add( item );
+		fileMenu.add(item );
 		item.addActionListener( this );
 		item.setActionCommand( "BROWSE" );
 		item.setAccelerator
 			( KeyStroke.getKeyStroke
 				( KeyEvent.VK_O, Event.CTRL_MASK ) );
 
-		this.fileMenu.addSeparator();
+		fileMenu.addSeparator();
 
 		item = new JMenuItem( rmgr.getUIString( "menu.file.edit.name" ) );
-		this.fileMenu.add( item );
+		fileMenu.add(item );
 		item.addActionListener( this );
 		item.setActionCommand( "CONFIG" );
 
-		this.fileMenu.addSeparator();
+		fileMenu.addSeparator();
 
 		item = new JMenuItem( rmgr.getUIString( "menu.file.quit.name" ) );
-		this.fileMenu.add( item );
+		fileMenu.add(item );
 		item.addActionListener( this );
 		item.setActionCommand( "QUIT" );
 		item.setAccelerator
@@ -304,7 +296,7 @@ implements	ActionListener
 
 		boolean haveJH = false;
 		try {
-			final Class cls = Class.forName( "javax.help.HelpSet" );
+			final Class<?> cls = Class.forName("javax.help.HelpSet" );
 			haveJH = true;
 			}
 		catch ( final ClassNotFoundException ex )
@@ -351,7 +343,7 @@ implements	ActionListener
 	private void
 	addJavaHelpItem()
 		{
-		JMenuItem	item;
+		final JMenuItem	item;
 		final String helpSetUrlName = "com/ice/jcvsii/doc/help/help.hs";
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
@@ -375,7 +367,7 @@ implements	ActionListener
 
 			item = new JMenuItem( rmgr.getUIString( "menu.help.javahelp.name" ) );
 			this.helpMenu.add( item );
-			item.addActionListener( new CSH.DisplayHelpFromSource( hb ) );
+			item.addActionListener( new DisplayHelpFromSource( hb ) );
 
 			this.helpMenu.addSeparator();
 			}
@@ -402,11 +394,11 @@ implements	ActionListener
 		for ( int i = 0, sz = cont.getComponentCount() ; i < sz ; ++i )
 			{
 			final Component comp = cont.getComponent( i );
-			final Class contCls = Container.class;
-			final Class compCls = comp.getClass();
+			final Class<Container> contCls = Container.class;
+			final Class<? extends Component> compCls = comp.getClass();
 			if ( contCls.isAssignableFrom( compCls ) )
 				{
-				MainFrame.setWaitCursor( (Container)comp, busy );
+				setWaitCursor( (Container)comp, busy );
 				}
 			else
 				{

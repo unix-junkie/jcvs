@@ -51,23 +51,16 @@ import com.ice.util.StringUtilities;
 // to them be in native format. Thus, we normalize...
 //
 
-public
 class		ExecViewer
 extends		Thread
 implements	CommandObject
 	{
-	private Process			proc = null;
+	private Process			proc;
 
-	BufferedReader errRdr;
-	BufferedReader outRdr;
+	private BufferedReader errRdr;
 
 
-	public
-	ExecViewer()
-		{
-		}
-
-	/**
+		/**
 	 * the CommandObject method to accept our DataHandler
 	 * @param dh The datahandler used to get the content.
 	 */
@@ -132,7 +125,7 @@ implements	CommandObject
 
 		final Config cfg = Config.getInstance();
 
-		final int index = name.lastIndexOf( "." );
+		final int index = name.lastIndexOf('.');
 		if ( index != -1 && index < name.length() - 1 )
 			{
 			extension = name.substring( index );
@@ -141,8 +134,8 @@ implements	CommandObject
 			}
 		else
 			{
-			envSpec = cfg.getExecCommandEnv( verb, "."+name );
-			argSpec = cfg.getExecCommandArgs( verb, "."+name );
+			envSpec = cfg.getExecCommandEnv(verb, '.' + name );
+			argSpec = cfg.getExecCommandArgs(verb, '.' + name );
 			}
 
 		if ( argSpec == null )
@@ -197,14 +190,7 @@ implements	CommandObject
 			System.err.println( "EXECVIEWER:  env["+ei+"] =" + env[ei] );
 
 		try {
-			if ( env.length < 1 )
-				{
-				this.proc = Runtime.getRuntime().exec( args );
-				}
-			else
-				{
-				this.proc = Runtime.getRuntime().exec( args, env );
-				}
+			this.proc = env.length < 1 ? Runtime.getRuntime().exec(args) : Runtime.getRuntime().exec(args, env);
 
 			this.start();
 			}
@@ -220,20 +206,20 @@ implements	CommandObject
 			}
 		}
 
-	public String[]
-	parseCommandArgs( final String argStr, final Hashtable subHash )
+	private String[]
+	parseCommandArgs(final String argStr, final Hashtable subHash)
 		{
-		if ( argStr == null || argStr.length() == 0 )
+		if ( argStr == null || argStr.isEmpty())
 			return new String[0];
 
 		final String[] args = StringUtilities.parseArgumentString( argStr );
 		return StringUtilities.argumentSubstitution( args, subHash );
 		}
 
-	public String[]
-	parseCommandEnv( final String envStr, final Hashtable subHash )
+	private String[]
+	parseCommandEnv(final String envStr, final Hashtable subHash)
 		{
-		if ( envStr == null || envStr.length() == 0 )
+		if ( envStr == null || envStr.isEmpty())
 			return new String[0];
 
 		final String[] env = StringUtilities.parseArgumentString( envStr );
@@ -276,19 +262,18 @@ implements	CommandObject
 			t.start();
 
 			// STDOUT
-			this.outRdr =
-				new BufferedReader
-					( new InputStreamReader
-						( this.proc.getInputStream() ) );
+			final BufferedReader outRdr = new BufferedReader
+					(new InputStreamReader
+							 (this.proc.getInputStream()));
 
 			for ( ; ; )
 				{
-				final String ln = this.outRdr.readLine();
+				final String ln = outRdr.readLine();
 				if ( ln == null )
 					break;
 				}
 
-			this.outRdr.close();
+			outRdr.close();
 
 			try { t.join(); }
 			catch ( final InterruptedException ex )

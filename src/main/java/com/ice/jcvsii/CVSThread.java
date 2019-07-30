@@ -1,12 +1,11 @@
 
 package com.ice.jcvsii;
 
-public
 class		CVSThread
 extends		Thread
 	{
-	protected Monitor		monitor;
-	protected Runnable		subRunner;
+	private Monitor		monitor;
+	private Runnable		subRunner;
 
 
 	/**
@@ -23,7 +22,6 @@ extends		Thread
 	private CVSThread( final ThreadGroup group, final Runnable runner, final String name ) { }
 
 
-	public
 	CVSThread( final String name, final Runnable runner, final Monitor monitor )
 		{
 		super( name );
@@ -45,13 +43,13 @@ extends		Thread
 	public
 	interface	Monitor
 		{
-		public void
+		void
 			threadStarted();
 
-		public void
+		void
 			threadCanceled();
 
-		public void
+		void
 			threadFinished();
 		}
 

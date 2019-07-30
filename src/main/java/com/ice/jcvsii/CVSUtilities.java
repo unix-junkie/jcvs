@@ -38,11 +38,13 @@ import com.ice.pref.PrefsTupleTable;
 import com.ice.pref.UserPrefs;
 
 
-public class
-CVSUtilities extends Object
-	{
+final class
+CVSUtilities {
 
-	static public CVSClient
+	private CVSUtilities() {
+	}
+
+	public static CVSClient
 	createCVSClient()
 		{
 		final CVSClient client = new CVSClient();
@@ -54,10 +56,10 @@ CVSUtilities extends Object
 		return client;
 		}
 
-	static public CVSClient
+	public static CVSClient
 	createCVSClient( final String cvsHost, final int cvsPort )
 		{
-		final CVSClient client = CVSUtilities.createCVSClient();
+		final CVSClient client = createCVSClient();
 
 		client.setHostName( cvsHost );
 		client.setPort( cvsPort );
@@ -65,7 +67,7 @@ CVSUtilities extends Object
 		return client;
 		}
 
-	static public String
+	public static String
 	establishServerCommand( final String hostname, final int connMethod, final boolean pServer )
 		{
 		PrefsTuple tup;
@@ -122,7 +124,7 @@ CVSUtilities extends Object
 		return command;
 		}
 
-	static public void
+	public static void
 	establishRSHProcess( final CVSRequest request )
 		{
 		final UserPrefs prefs = Config.getPreferences();
@@ -130,13 +132,13 @@ CVSUtilities extends Object
 		final String rshCommand =
 			prefs.getProperty( ConfigConstants.GLOBAL_RSH_COMMAND, null );
 
-		if ( rshCommand != null && rshCommand.length() > 0 )
+		if ( rshCommand != null && !rshCommand.isEmpty())
 			{
 			request.setRshProcess( rshCommand );
 			}
 		}
 
-	static public void
+	public static void
 	establishRSHProcess( final CVSProject project )
 		{
 		final UserPrefs prefs = Config.getPreferences();
@@ -144,21 +146,21 @@ CVSUtilities extends Object
 		final String rshCommand =
 			prefs.getProperty( ConfigConstants.GLOBAL_RSH_COMMAND, null );
 
-		if ( rshCommand != null && rshCommand.length() > 0 )
+		if ( rshCommand != null && !rshCommand.isEmpty())
 			{
 			project.setRshProcess( rshCommand );
 			}
 		}
 
-	static public int
+	public static int
 	computePortNum( final String hostname, final int connMethod, final boolean isPServer )
 		{
 		int defPort;
-		int cvsPort;
+		final int cvsPort;
 
 		final UserPrefs prefs = Config.getPreferences();
 
-		final StringBuffer prefName = new StringBuffer( "portNum." );
+		final StringBuilder prefName = new StringBuilder("portNum." );
 
 		if ( connMethod == CVSRequest.METHOD_RSH )
 			{
@@ -194,7 +196,7 @@ CVSUtilities extends Object
 		return cvsPort;
 		}
 
-	static public String[]
+	public static String[]
 	getUserSetVariables( final String hostname )
 		{
 		int		i;
@@ -213,8 +215,8 @@ CVSUtilities extends Object
 
 		for ( i = 0 ; ; ++i, ++count )
 			{
-			if ( prefs.getProperty
-					( prefix + hostname + "." + i, null ) == null )
+			if (prefs.getProperty
+					(prefix + hostname + '.' + i, null ) == null )
 				break;
 			}
 
@@ -237,7 +239,7 @@ CVSUtilities extends Object
 			{
 			prop =
 				prefs.getProperty
-					( prefix + hostname + "." + i, null );
+					(prefix + hostname + '.' + i, null );
 			if ( prop == null )
 				break;
 			result[idx++] = prop;
@@ -246,8 +248,8 @@ CVSUtilities extends Object
 		return result;
 		}
 
-	static public String
-	getFilePath( final File file )
+	private static String
+	getFilePath(final File file)
 		{
 		int		index;
 		final String	newName;
@@ -272,13 +274,13 @@ CVSUtilities extends Object
 		return parent;
 		}
 
-	static public String
-	getFileName( final File file )
+	private static String
+	getFileName(final File file)
 		{
-		return CVSUtilities.getFileName( file.getPath() );
+		return getFileName( file.getPath() );
 		}
 
-	static public String
+	public static String
 	getFileName( final String path )
 		{
 		int		index;
@@ -301,35 +303,27 @@ CVSUtilities extends Object
 		return newName;
 		}
 
-	static public boolean
+	public static boolean
 	renameFile( final File entryFile, final String pattern, final boolean overWrite )
 		{
 		final int		i;
-		boolean	result;
-		String	newName;
-		String	fileName;
-		String	rootPath;
+		final boolean	result;
+		final String	newName;
+		final String	fileName;
+		final String	rootPath;
 
-		rootPath = CVSUtilities.getFilePath( entryFile );
-		fileName = CVSUtilities.getFileName( entryFile );
+		rootPath = getFilePath( entryFile );
+		fileName = getFileName( entryFile );
 
 		final int index = pattern.indexOf( '@' );
-		if ( index < 0 )
-			{
 			// If there is no '@', pattern is a suffix.
-			newName = fileName + pattern;
-			}
-		else
-			{
 			// Otherwise, replace the '@' with the filename.
-			newName =
-				pattern.substring( 0, index )
-				+ fileName
-				+ pattern.substring( index + 1 );
-			}
+			newName = index < 0 ? fileName + pattern : pattern.substring(0, index)
+								   + fileName
+								   + pattern.substring(index + 1);
 
 		final File backFile = // UNDONE separator
-			new File( rootPath + "/" + newName );
+			new File(rootPath + '/' + newName );
 
 		if ( overWrite && backFile.exists() )
 			backFile.delete();
@@ -339,40 +333,32 @@ CVSUtilities extends Object
 		return result;
 		}
 
-	static public boolean
+	public static boolean
 	copyFile( final File entryFile, final String pattern )
 		{
 		final int		i;
 		int		bytes;
 		long	length;
-		long	fileSize;
+		final long	fileSize;
 		boolean	result = true;
-		String	newName;
-		String	fileName;
-		String	rootPath;
+		final String	newName;
+		final String	fileName;
+		final String	rootPath;
  		BufferedInputStream		in = null;
 		BufferedOutputStream	out = null;
 
-		rootPath = CVSUtilities.getFilePath( entryFile );
-		fileName = CVSUtilities.getFileName( entryFile );
+		rootPath = getFilePath( entryFile );
+		fileName = getFileName( entryFile );
 
 		final int index = pattern.indexOf( '@' );
-		if ( index < 0 )
-			{
 			// If there is no '@', pattern is a suffix.
-			newName = fileName + pattern;
-			}
-		else
-			{
 			// Otherwise, replace the '@' with the filename.
-			newName =
-				pattern.substring( 0, index )
-				+ fileName
-				+ pattern.substring( index + 1 );
-			}
+			newName = index < 0 ? fileName + pattern : pattern.substring(0, index)
+								   + fileName
+								   + pattern.substring(index + 1);
 
 		final File copyFile = // UNDONE separator
-			new File( rootPath + "/" + newName );
+			new File(rootPath + '/' + newName );
 
 		try {
 			in = new BufferedInputStream(
@@ -405,13 +391,13 @@ CVSUtilities extends Object
 			{
 			result = false;
 			CVSLog.logMsg
-				( "CVSUtilities.copyFile: failed creating '"
-					+ (out == null ? "output writer" : "input reader") + "'" );
+				("CVSUtilities.copyFile: failed creating '"
+				 + (out == null ? "output writer" : "input reader") + '\'');
 			}
 
 		if ( result )
 			{
-			byte[]	buffer;
+			final byte[]	buffer;
 			buffer = new byte[8192];
 
 			fileSize = entryFile.length();

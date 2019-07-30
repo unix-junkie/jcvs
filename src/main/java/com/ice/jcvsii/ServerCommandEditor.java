@@ -31,7 +31,7 @@ public
 class		ServerCommandEditor
 extends		ConfigTupleTableEditor
 	{
-	private static int cntr = 0;
+	private static int cntr;
 
 	public
 	ServerCommandEditor()
@@ -104,8 +104,7 @@ extends		ConfigTupleTableEditor
 		{
 		if ( this.model.getData() == null )
 			return;
-		else
-			super.deleteElement();
+		super.deleteElement();
 		}
 
 	}

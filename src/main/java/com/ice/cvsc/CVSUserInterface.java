@@ -41,15 +41,12 @@ package com.ice.cvsc;
 public interface
 CVSUserInterface
 	{
-	static public final String		RCS_ID = "$Id: CVSUserInterface.java,v 2.3 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	void
+		uiDisplayProgressMsg(String message);
 
-	abstract public void
-		uiDisplayProgressMsg( String message );
+	void
+		uiDisplayProgramError(String error);
 
-	abstract public void
-		uiDisplayProgramError( String error );
-
-	abstract public void
-		uiDisplayResponse( CVSResponse response );
+	void
+		uiDisplayResponse(CVSResponse response);
 	}

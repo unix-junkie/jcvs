@@ -25,11 +25,14 @@ package com.ice.util;
 import java.net.URL;
 
 
-public class
+final class
 URLUtilities
 	{
 
-	static public int
+		private URLUtilities() {
+		}
+
+		public static int
 	urlDepth( final URL url )
 		{
 		int		result = 0;

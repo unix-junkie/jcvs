@@ -37,13 +37,11 @@ package com.ice.cvsc;
  *
  */
 
+@FunctionalInterface
 public interface
 CVSResponseHandler
 	{
-	static public final String		RCS_ID = "$Id: CVSResponseHandler.java,v 2.3 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
-
-	abstract public boolean
+	boolean
 		handleResponseItem(
-			CVSRequest request, CVSResponse response, CVSResponseItem item );
+			CVSRequest request, CVSResponse response, CVSResponseItem item);
 	}

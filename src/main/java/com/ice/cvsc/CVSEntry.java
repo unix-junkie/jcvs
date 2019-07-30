@@ -49,11 +49,10 @@ import java.util.Vector;
 
 public
 class		CVSEntry
-extends		Object
-implements	Cloneable
+		implements	Cloneable
 	{
-	static public final String		RCS_ID = "$Id: CVSEntry.java,v 2.11 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.11 $";
+	public static final String		RCS_ID = "$Id: CVSEntry.java,v 2.11 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.11 $";
 
 	/**
 	 * True if this entry is valid.
@@ -246,10 +245,7 @@ implements	Cloneable
 	public String
 	getFullName()
 		{
-		if ( this.isDirectory() )
-			return this.getLocalDirectory();
-		else
-			return this.getLocalDirectory() + this.getName();
+			return this.isDirectory() ? this.getLocalDirectory() : this.getLocalDirectory() + this.getName();
 		}
 
 	private String
@@ -317,7 +313,7 @@ implements	Cloneable
 			( this.new ChildEvent( this.entryList.size() - 1, entry ) );
 		}
 
-	public boolean
+	public void
 	removeEntry( final CVSEntry entry )
 		{
 		boolean result = false;
@@ -333,7 +329,6 @@ implements	Cloneable
 				( this.new ChildEvent( index, child ) );
 			}
 
-		return result;
 		}
 
 	public boolean
@@ -416,17 +411,17 @@ implements	Cloneable
 		this.isToBeRemoved = false;
 
 		if ( version == null
-				|| version.length() == 0 )
+		     || version.isEmpty())
 			{
 			this.isNoUserFile = true;
 			this.version = "";
 			}
-		else if ( version.startsWith( "-" ) )
+		else if (!version.isEmpty() && version.charAt(0) == '-')
 			{
 			this.isToBeRemoved = true;
 			this.version = version.substring( 1 );
 			}
-		else if ( version.startsWith( "0" ) )  // that's a zero
+		else if (!version.isEmpty() && version.charAt(0) == '0')  // that's a zero
 			{
 			this.isNewUserFile = true;
 			this.version = version.substring( 1 );
@@ -492,7 +487,7 @@ implements	Cloneable
 			this.timestamp
 			+ ( this.conflict == null
 				? ""
-				: "+" + this.conflict
+				: '+' + this.conflict
 				);
 		}
 
@@ -562,22 +557,22 @@ implements	Cloneable
 			timeStamp = "";
 			}
 
-		String tstamp = new String( timeStamp );
+		final String tstamp;
 
 		this.cfCache = null;
 		this.conflict = null;
 
-		if ( tstamp.length() < 1 )
+		if (timeStamp.length() < 1 )
 			{
 			this.timestamp = "";
 			this.tsCache = null;
 			}
-		else if ( tstamp.startsWith( "+" ) )
+		else if (!timeStamp.isEmpty() && timeStamp.charAt(0) == '+')
 			{
 			// REVIEW - leave the timestamp in place...
 			// We have received a "+conflict" format, which
 			// typically only comes from the server.
-			this.conflict = tstamp.substring( 1 );
+			this.conflict = timeStamp.substring(1 );
 			if ( this.conflict.equals( "=" ) )
 				{
 				// In this case, the server is indicating that the
@@ -592,28 +587,28 @@ implements	Cloneable
 			}
 		else
 			{
-			final int index = tstamp.indexOf( '+' );
+			final int index = timeStamp.indexOf('+' );
 			if ( index < 0 )
 				{
 				// Only the timestamp is provided (no '+').
-				if ( tstamp.startsWith( "Initial " ) )
+				if ( timeStamp.startsWith("Initial " ) )
 					{
 					// This file was "added" but not committed,
 					// timestamp is irrelevant
 					this.timestamp = "";
 					this.tsCache = null;
 					}
-				else if ( tstamp.equals( "Result of merge" ) )
+				else if ( timeStamp.equals("Result of merge" ) )
 					{
 					// This file was "merged" timestamp must show modified
 					this.timestamp = "";
 					this.tsCache = null;
 					}
-				else if ( ! tstamp.equals( this.timestamp ) )
+				else if ( ! timeStamp.equals(this.timestamp ) )
 					{
 					// Only update these if it is different
 					this.tsCache = null; // signal need to parse!
-					this.timestamp = tstamp;
+					this.timestamp = timeStamp;
 					}
 				}
 			else
@@ -621,8 +616,8 @@ implements	Cloneable
 				// The "timestamp+conflict" case.
 				// This should <em>only</em> comes from an Entries
 				// file, and should never come from the server.
-				this.conflict = tstamp.substring( index + 1 );
-				tstamp = tstamp.substring( 0, index );
+				this.conflict = timeStamp.substring(index + 1 );
+				tstamp = timeStamp.substring(0, index );
 				if ( ! tstamp.equals( this.timestamp ) )
 					{
 					// Only update these if it is different
@@ -637,9 +632,9 @@ implements	Cloneable
 						{
 						// REVIEW should we always set to conflict?
 						// If timestamp is empty, use the conflict...
-						if ( ( this.timestamp == null ||
-								this.timestamp.length() == 0 )
-									&& this.conflict.length() > 0 )
+						if (( this.timestamp == null ||
+						      this.timestamp.isEmpty())
+						    && !this.conflict.isEmpty())
 							{
 							this.timestamp = this.conflict;
 							}
@@ -657,7 +652,7 @@ implements	Cloneable
 
 		// If tsCache is set to null, we need to update it...
 		if ( this.tsCache == null
-				&& this.timestamp.length() > 0 )
+		     && !this.timestamp.isEmpty())
 			{
 			try {
 				this.tsCache = stamper.parse( this.timestamp );
@@ -674,7 +669,7 @@ implements	Cloneable
 
 		// If conflict is not null, we need to update cfCache...
 		if ( this.conflict != null
-				&& this.conflict.length() > 0 )
+		     && !this.conflict.isEmpty())
 			{
 			try {
 				this.cfCache = stamper.parse( this.conflict );
@@ -690,15 +685,15 @@ implements	Cloneable
 			}
 if ( false )
 CVSTracer.traceIf( true,
-	"CVSEntry.setTimestamp: '"
-	+ this.getName() + "' - '" + timeStamp
-	+ "'\n   timestamp '" + this.timestamp + "' tsCache '"
-	+ ( this.tsCache == null ? "(not set)" : "(set)" )
-	+ "'\n   conflict  '"
-	+ ( this.conflict == null ? "(null)" : this.conflict )
-	+ "' cfCache '"
-	+ ( this.cfCache == null ? "(not set)" : "(set)" )
-	+ "'" );
+		   "CVSEntry.setTimestamp: '"
+		   + this.getName() + "' - '" + timeStamp
+		   + "'\n   timestamp '" + this.timestamp + "' tsCache '"
+		   + ( this.tsCache == null ? "(not set)" : "(set)" )
+		   + "'\n   conflict  '"
+		   + ( this.conflict == null ? "(null)" : this.conflict )
+		   + "' cfCache '"
+		   + ( this.cfCache == null ? "(not set)" : "(set)" )
+		   + '\'');
 		}
 
 	/**
@@ -720,9 +715,7 @@ CVSTracer.traceIf( true,
 		final CVSTimestampFormat	stamper =
 			CVSTimestampFormat.getInstance();
 
-		final String stampStr = stamper.format( stamp );
-
-		this.conflict = stampStr;
+			this.conflict = stamper.format(stamp );
 		}
 
 	public String
@@ -740,7 +733,7 @@ CVSTracer.traceIf( true,
 	public boolean
 	isBinary()
 		{
-		return this.options.indexOf( "-kb" ) != -1;
+		return this.options.contains("-kb");
 		}
 
 	public String
@@ -790,7 +783,7 @@ CVSTracer.traceIf( true,
 			: this.mode.getModeLine();
 		}
 
-	public boolean
+	private boolean
 	isNoUserFile()
 		{
 		return this.isNoUserFile;
@@ -871,7 +864,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		return token;
 		}
 
-	public boolean
+	public void
 	parseEntryLine( final String parseLine, final boolean fromServer )
 		throws ParseException
 		{
@@ -901,8 +894,8 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		if ( tokeCount < 6 )
 			{
 			throw new ParseException
-				( "not enough tokens in entries line "
-					+ "(min 6, parsed " +tokeCount+ ")", 0 );
+				("not enough tokens in entries line "
+				 + "(min 6, parsed " + tokeCount + ')', 0 );
 			}
 
 		token = this.parseAToken( toker );
@@ -991,8 +984,8 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 
 		this.valid = true;
 
-		if ( fromServer && conflictToke.length() > 0
-				&& ! conflictToke.startsWith( "+" ) )
+		if (fromServer && !conflictToke.isEmpty()
+		    && !(!conflictToke.isEmpty() && conflictToke.charAt(0) == '+'))
 			{
 			// We silently ignore conflicts that don't start with '+'
 			// when they come from the server.
@@ -1010,7 +1003,7 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			}
 		else
 			{
-			if ( tagToke.startsWith( "D" ) )
+			if (!tagToke.isEmpty() && tagToke.charAt(0) == 'D')
 				{
 				this.setDate( tagToke.substring( 1 ) );
 				}
@@ -1020,19 +1013,18 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 				}
 			}
 
-		return this.valid;
 		}
 
 	public String
 	padString( final String str, final int width )
 		{
 		int		i;
-		final StringBuffer result =
-			new StringBuffer( width );
+		final StringBuilder result =
+			new StringBuilder(width );
 
 		result.append( str );
 		for ( i = result.length()-1 ; i < width ; ++i )
-			result.append( " " );
+			result.append(' ');
 
 		return result.toString();
 		}
@@ -1046,31 +1038,31 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			return "D/" + this.name + "////";
 			}
 
-		final StringBuffer result = new StringBuffer("");
+		final StringBuilder result = new StringBuilder();
 
-		result.append( "/" + this.name + "/" );
+		result.append('/').append(this.name).append('/');
 
 		if ( ! this.isNoUserFile() )
 			{
 			if ( this.isNewUserFile() )
 				{
-				result.append( "0" ); // that's a zero
+				result.append('0'); // that's a zero
 				}
 			else
 				{
 				if ( this.isToBeRemoved() )
-					result.append( "-" );
+					result.append('-');
 
 				if ( this.version != null )
 					result.append( this.version );
 				}
 			}
 
-		result.append( "/" );
+		result.append('/');
 
 		if ( this.isNewUserFile() )
 			{
-			result.append( "Initial " + this.getName() );
+			result.append("Initial ").append(this.getName());
 			}
 		else
 			{
@@ -1078,24 +1070,24 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 
 			if ( this.isInConflict() )
 				{
-				result.append( "+" + this.conflict );
+				result.append('+').append(this.conflict);
 				}
 			}
 
-		result.append( "/" );
+		result.append('/');
 
 		if ( this.options != null )
 			result.append( this.options );
 
-		result.append( "/" );
+		result.append('/');
 
 		if ( this.tag != null )
 			{
-			result.append( "T" + this.tag );
+			result.append('T').append(this.tag);
 			}
 		else if ( this.date != null )
 			{
-			result.append( "D" + this.date );
+			result.append('D').append(this.date);
 			}
 
 		return result.toString();
@@ -1107,62 +1099,62 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 		if ( this.isDirectory() )
 			{
 			// REVIEW should we be carrying along options & tags?!
-			return "/" + this.name + "////";
+			return '/' + this.name + "////";
 			}
 
-		final StringBuffer result = new StringBuffer("");
+		final StringBuilder result = new StringBuilder();
 
-		result.append( "/" + this.name + "/" );
+		result.append('/').append(this.name).append('/');
 
 		if ( ! this.isNoUserFile() )
 			{
 			if ( this.isNewUserFile() )
 				{
-				result.append( "0" ); // that's a zero
+				result.append('0'); // that's a zero
 				}
 			else
 				{
 				if ( this.isToBeRemoved() )
-					result.append( "-" );
+					result.append('-');
 
 				if ( this.version != null && ! this.forceNoExistence )
 					result.append( this.version );
 				}
 			}
 
-		result.append( "/" );
+		result.append('/');
 
 		if ( this.isNewUserFile() )
 			{
-			result.append( "Initial " + this.getName() );
+			result.append("Initial ").append(this.getName());
 			}
 		else if ( exists && ! this.forceNoExistence )
 			{
 			if ( this.isInConflict() )
 				{
-				result.append( "+" );
+				result.append('+');
 				}
 
 			if ( isModified || forceModified )
 				result.append( "modified" );
 			else
-				result.append( "=" );
+				result.append('=');
 			}
 
-		result.append( "/" );
+		result.append('/');
 
 		if ( this.options != null )
 			result.append( this.options );
 
-		result.append( "/" );
+		result.append('/');
 
 		if ( this.tag != null && ! this.forceNoExistence )
-			result.append( "T" + this.tag );
+			result.append('T').append(this.tag);
 		else if ( this.date != null && ! this.forceNoExistence  )
-			result.append( "D" + this.date );
+			result.append('D').append(this.date);
 
 		 CVSTracer.traceIf( false,
-			"getServerEntryLine: '" + result.toString() + "'" );
+				    "getServerEntryLine: '" + result + '\'');
 
 		return result.toString();
 		}
@@ -1172,10 +1164,10 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 	toString()
 		{
 		return
-			"[ " +
-			this.getFullName() + "," +
-			this.getAdminEntryLine() +
-			" ]";
+				"[ " +
+				this.getFullName() + ',' +
+				this.getAdminEntryLine() +
+				" ]";
 		}
 
 	/**
@@ -1231,16 +1223,15 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 	class		ChildEvent
 		{
 		CVSEntry	entry;
-		CVSEntry	childEntry;
-		int			childIndex;
+		final CVSEntry	childEntry;
+		final int			childIndex;
 
 		/**
 		 * The source is the CVSEntry that parent's the child.
 		 * The index is the index of the affected child.
 		 */
 
-		public
-		ChildEvent( final int index, final CVSEntry child )
+		ChildEvent(final int index, final CVSEntry child)
 			{
 			this.childIndex = index;
 			this.childEntry = child;
@@ -1269,12 +1260,12 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 	public
 	interface	ChildEventListener
 		{
-		public void cvsEntryAddedChild( CVSEntry.ChildEvent event );
-		public void cvsEntryRemovedChild( CVSEntry.ChildEvent event );
+		void cvsEntryAddedChild(ChildEvent event);
+		void cvsEntryRemovedChild(ChildEvent event);
 		}
 
-	protected void
-	fireChildAddedEvent( final ChildEvent event )
+	private void
+	fireChildAddedEvent(final ChildEvent event)
 		{
 		// Process the listeners last to first, notifying
 		// those that are interested in this event
@@ -1285,8 +1276,8 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 			}
 		}
 
-	protected void
-	fireChildRemovedEvent( final ChildEvent event )
+	private void
+	fireChildRemovedEvent(final ChildEvent event)
 		{
 		// Process the listeners last to first, notifying
 		// those that are interested in this event
@@ -1319,13 +1310,13 @@ System.err.println( "CVSENTRY: force MOD? " + this.forceModified );
 	dumpString( final String prefix )
 		{
 		return
-			prefix + "CVSEntry: " + super.toString() + "\n" +
-			prefix + "   Name: " + this.getName() + "\n" +
-			prefix + "   FullName: " + this.getFullName() + "\n" +
-			prefix + "   LocalDir: " + this.getLocalDirectory() + "\n" +
-			prefix + "   Repository: " + this.getRepository() + "\n" +
-			prefix + "   Timestamp: " + this.getTimestamp() + "\n" +
-			prefix + "   Conflict: " + this.getConflict();
+				prefix + "CVSEntry: " + super.toString() + '\n' +
+				prefix + "   Name: " + this.getName() + '\n' +
+				prefix + "   FullName: " + this.getFullName() + '\n' +
+				prefix + "   LocalDir: " + this.getLocalDirectory() + '\n' +
+				prefix + "   Repository: " + this.getRepository() + '\n' +
+				prefix + "   Timestamp: " + this.getTimestamp() + '\n' +
+				prefix + "   Conflict: " + this.getConflict();
 		}
 
 	}

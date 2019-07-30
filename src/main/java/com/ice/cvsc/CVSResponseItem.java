@@ -39,40 +39,39 @@ import java.io.File;
  */
 
 public class
-CVSResponseItem extends Object
-	{
-	static public final String	RCS_ID = "$Id: CVSResponseItem.java,v 2.5 2003/07/27 01:08:32 time Exp $";
-	static public final String	RCS_REV = "$Revision: 2.5 $";
+CVSResponseItem {
+	public static final String	RCS_ID = "$Id: CVSResponseItem.java,v 2.5 2003/07/27 01:08:32 time Exp $";
+	public static final String	RCS_REV = "$Revision: 2.5 $";
 
-	static public final int		CHECKED_IN			= 1;
-	static public final int		CHECKSUM			= 2;
-	static public final int		CLEAR_STATIC_DIR	= 3;
-	static public final int		CLEAR_STICKY		= 4;
-	static public final int		COPY_FILE			= 5;
-	static public final int		CREATED				= 6;
-	static public final int		MERGED				= 7;
-	static public final int		MODULE_EXPANSION	= 8;
-	static public final int		NEW_ENTRY			= 9;
-	static public final int		NOTIFIED			= 10;
-	static public final int		PATCHED				= 11;
-	static public final int		REMOVED				= 12;
-	static public final int		REMOVE_ENTRY		= 13;
-	static public final int		UPDATED				= 14;
-	static public final int		UPDATE_EXISTING		= 15;
-	static public final int		VALID_REQUESTS		= 16;
-	static public final int		SET_CHECKIN_PROG	= 17;
-	static public final int		SET_STATIC_DIR		= 18;
-	static public final int		SET_STICKY			= 19;
-	static public final int		SET_UPDATE_PROG		= 20;
+	public static final int		CHECKED_IN			= 1;
+	public static final int		CHECKSUM			= 2;
+	public static final int		CLEAR_STATIC_DIR	= 3;
+	public static final int		CLEAR_STICKY		= 4;
+	public static final int		COPY_FILE			= 5;
+	public static final int		CREATED				= 6;
+	public static final int		MERGED				= 7;
+	public static final int		MODULE_EXPANSION	= 8;
+	public static final int		NEW_ENTRY			= 9;
+	public static final int		NOTIFIED			= 10;
+	public static final int		PATCHED				= 11;
+	public static final int		REMOVED				= 12;
+	public static final int		REMOVE_ENTRY		= 13;
+	public static final int		UPDATED				= 14;
+	public static final int		UPDATE_EXISTING		= 15;
+	public static final int		VALID_REQUESTS		= 16;
+	public static final int		SET_CHECKIN_PROG	= 17;
+	public static final int		SET_STATIC_DIR		= 18;
+	public static final int		SET_STICKY			= 19;
+	public static final int		SET_UPDATE_PROG		= 20;
 
 	// These are temporaries use in the
-	static public final int		GET_FULL_PATH		= 1;
-	static public final int		GET_ENTRIES_LINE	= 2;
-	static public final int		GET_MODE_LINE		= 3;
-	static public final int		GET_NEW_NAME		= 4;
-	static public final int		GET_TAG_SPEC		= 5;
-	static public final int		GET_PROGRAM			= 6;
-	static public final int		GET_FILE			= 7;
+	public static final int		GET_FULL_PATH		= 1;
+	public static final int		GET_ENTRIES_LINE	= 2;
+	public static final int		GET_MODE_LINE		= 3;
+	public static final int		GET_NEW_NAME		= 4;
+	public static final int		GET_TAG_SPEC		= 5;
+	public static final int		GET_PROGRAM			= 6;
+	public static final int		GET_FILE			= 7;
 
 
 	private boolean			valid;
@@ -207,8 +206,8 @@ CVSResponseItem extends Object
 					{
 					result = false;
 					CVSLog.logMsg
-						( "ERROR deleting temp file '"
-							+ this.file.getPath() + "'" );
+						("ERROR deleting temp file '"
+						 + this.file.getPath() + '\'');
 					}
 				}
 			}
@@ -233,10 +232,8 @@ CVSResponseItem extends Object
 		{
 		final int index = this.reposName.lastIndexOf( '/' );
 
-		if ( index < 0 )
-			return ".";	// REVIEW
-		else
-			return this.reposName.substring( 0, index );
+			// REVIEW
+			return index < 0 ? "." : this.reposName.substring(0, index);
 		}
 
 	public String
@@ -290,16 +287,13 @@ CVSResponseItem extends Object
 	public String
 	getChecksum()
 		{
-		if ( this.type != CVSResponseItem.CHECKSUM )
-			return null;
-		else
-			return this.text;
+			return this.type != CHECKSUM ? null : this.text;
 		}
 
 	public void
 	setChecksum( final String sumStr )
 		{
-		if ( this.type == CVSResponseItem.CHECKSUM )
+		if ( this.type == CHECKSUM )
 			{
 			this.text = sumStr;
 			}
@@ -308,16 +302,13 @@ CVSResponseItem extends Object
 	public String
 	getValidRequests()
 		{
-		if ( this.type != CVSResponseItem.VALID_REQUESTS )
-			return null;
-		else
-			return this.text;
+			return this.type != VALID_REQUESTS ? null : this.text;
 		}
 
 	public void
 	setValidRequests( final String requests )
 		{
-		if ( this.type == CVSResponseItem.VALID_REQUESTS )
+		if ( this.type == VALID_REQUESTS )
 			{
 			this.text = requests;
 			}
@@ -328,16 +319,16 @@ CVSResponseItem extends Object
 	toString()
 		{
 		return "[ "
-			+ "type=" + this.type + ","
-			+ "pathName=" + this.pathName + ","
-			+ "reposName=" + this.reposName + ","
-			+ "modeLine=" + this.modeLine + ","
-			+ "entriesLine=" + this.entriesLine + ","
-			+ "newName=" + this.newName + ","
-			+ "tagSpec=" + this.tagSpec + ","
-			+ "useProgram=" + this.useProgram + ","
-			+ "file=" + this.file
-			+ " ]";
+		       + "type=" + this.type + ','
+		       + "pathName=" + this.pathName + ','
+		       + "reposName=" + this.reposName + ','
+		       + "modeLine=" + this.modeLine + ','
+		       + "entriesLine=" + this.entriesLine + ','
+		       + "newName=" + this.newName + ','
+		       + "tagSpec=" + this.tagSpec + ','
+		       + "useProgram=" + this.useProgram + ','
+		       + "file=" + this.file
+		       + " ]";
 		}
 	}
 

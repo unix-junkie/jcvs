@@ -12,7 +12,7 @@ public
 class		ConfigureTreeNode
 extends		DefaultMutableTreeNode
 	{
-	private ConfigureSpec		spec = null;
+	private ConfigureSpec		spec;
 
 	public
 	ConfigureTreeNode( final String name )
@@ -56,7 +56,7 @@ extends		DefaultMutableTreeNode
 	public String
 	getPathName()
 		{
-		final StringBuffer result = new StringBuffer();
+		final StringBuilder result = new StringBuilder();
 
 		final TreeNode[] path = this.getPath();
 		// We start at 1 to avoid the root
@@ -64,7 +64,7 @@ extends		DefaultMutableTreeNode
 			{
 			result.append( ((ConfigureTreeNode) path[i]).getName() );
 			if ( i < path.length - 1 )
-				result.append( "." );
+				result.append('.');
 			}
 
 		return result.toString();

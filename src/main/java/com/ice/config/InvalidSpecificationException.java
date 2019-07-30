@@ -27,17 +27,14 @@ package com.ice.config;
  * with a TAR archive header.
  */
 
-public
 class		InvalidSpecificationException
 extends		Exception
 	{
-	public
 	InvalidSpecificationException()
 		{
 		super();
 		}
 
-	public
 	InvalidSpecificationException( final String msg )
 		{
 		super( msg );

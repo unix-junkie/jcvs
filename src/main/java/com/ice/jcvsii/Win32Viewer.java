@@ -13,23 +13,12 @@ import com.ice.jni.dde.DDEException;
 import com.ice.jni.dde.JNIDDE;
 
 
-public
 class		Win32Viewer
-extends		Object
-implements	CommandObject
+		implements	CommandObject
 	{
-    private final boolean			debug = false;
 
 
-    public
-	Win32Viewer()
-		{
-	//	this.debug =
-	//		UserProperties.getProperty
-	//			( "Win32ShellViewer.debug", false );
-		}
-
-	/**
+		/**
 	 * the CommandObject method to accept our DataHandler
 	 * @param dh The datahandler used to get the content.
 	 */
@@ -44,8 +33,8 @@ implements	CommandObject
 	/**
 	 * sets the current message to be displayed in the viewer
 	 */
-	public void
-	viewContent( final String verb, final DataHandler dh )
+	private void
+	viewContent(final String verb, final DataHandler dh)
 		{
 		final DataSource ds = dh.getDataSource();
 
@@ -64,10 +53,11 @@ implements	CommandObject
 
 			final String execDir = System.getProperty( "user.dir", "" );
 
-			if ( this.debug )
+			final boolean debug = false;
+			if (debug)
 				System.err.println
-					( "Win32Shell: Verb = '" + verb + "' Filename = '"
-						+ fileName + "'" );
+					("Win32Shell: Verb = '" + verb + "' Filename = '"
+					 + fileName + '\'');
 
 			JNIDDE.shellExecute
 				( verb, fileName, null, execDir, JNIDDE.SW_SHOWNORMAL );
@@ -75,12 +65,12 @@ implements	CommandObject
 		catch ( final UnsatisfiedLinkError er )
 			{
 			final String msg =
-				"It appears that you have not installed the\n"
-				+ "Windows DDE native library, 'ICE_JNIDDE.dll'.\n"
-				+ "Consult the documentation about Win32 installation.\n"
-				+ "\n"
-				+ er.getMessage()
-				+ "\n";
+					"It appears that you have not installed the\n"
+					+ "Windows DDE native library, 'ICE_JNIDDE.dll'.\n"
+					+ "Consult the documentation about Win32 installation.\n"
+					+ '\n'
+					+ er.getMessage()
+					+ '\n';
 
 			JOptionPane.showMessageDialog
 				( null, msg, "Error", JOptionPane.ERROR_MESSAGE );
@@ -88,13 +78,13 @@ implements	CommandObject
 		catch ( final DDEException ex )
 			{
 			final String msg =
-				"Win32Viewer had trouble with the DDE communications.\n"
-				+ "The most likely reason is that you have not defined an\n"
-				+ "action for the verb '" + verb + "'.\n"
-				+ "Consult the documentation about Win32 installation.\n"
-				+ "\n"
-				+ ex.getMessage()
-				+ "\n";
+					"Win32Viewer had trouble with the DDE communications.\n"
+					+ "The most likely reason is that you have not defined an\n"
+					+ "action for the verb '" + verb + "'.\n"
+					+ "Consult the documentation about Win32 installation.\n"
+					+ '\n'
+					+ ex.getMessage()
+					+ '\n';
 
 			JOptionPane.showMessageDialog
 				( null, msg, "Error", JOptionPane.ERROR_MESSAGE );

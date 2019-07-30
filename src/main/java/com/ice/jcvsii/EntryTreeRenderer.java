@@ -51,43 +51,36 @@ import com.ice.cvsc.CVSTracer;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		EntryTreeRenderer
 extends		JComponent
 implements	TreeCellRenderer
 	{
-	protected EntryColumnModel model;
+	private final EntryColumnModel model;
 
-	protected String	localRoot;
+	private final String	localRoot;
 
-	protected boolean	isLeaf;
-	protected boolean	isExpanded;
-	protected boolean	isSelected;
-	protected boolean	hasFocus;
-	protected boolean	hasTreeFocus;
+	private boolean	isLeaf;
+		private boolean	isSelected;
+	private boolean	hasFocus;
 
-	protected int		iconWidth;
-	protected int		iconHeight;
-	protected int		nameOffset = 2;
-	protected int		handleIndent = 8;
+		private int		iconWidth;
+		private int		handleIndent = 8;
 
-	protected Icon		icon;
-	protected CVSEntry	entry;
-	protected EntryNode	node;
+	private Icon		icon;
+	private CVSEntry	entry;
+	private EntryNode	node;
 
-	protected Icon		openFolder;
-	protected Icon		closedFolder;
+	private Icon		openFolder;
+	private Icon		closedFolder;
 
-	protected Icon		addedFile;
-	protected Icon		conflictFile;
-	protected Icon		conModFile;
-	protected Icon		lostFile;
-	protected Icon		removedFile;
-	protected Icon		modifiedFile;
-	protected Icon		unchangedFile;
+	private Icon		addedFile;
+	private Icon		conflictFile;
+		private Icon		lostFile;
+	private Icon		removedFile;
+	private Icon		modifiedFile;
+	private Icon		unchangedFile;
 
 
-	public
 	EntryTreeRenderer( final String localRoot, final EntryColumnModel columnModel )
 		{
 		this.model = columnModel;
@@ -107,10 +100,9 @@ implements	TreeCellRenderer
 			final int row, final boolean hasFocus )
 		{
 		this.isLeaf = leaf;
-		this.isExpanded = expanded;
-		this.isSelected = selected;
+			this.isSelected = selected;
 		this.hasFocus = hasFocus;
-		this.hasTreeFocus = tree.hasFocus();
+			final boolean hasTreeFocus = tree.hasFocus();
 
 		this.node = (EntryNode) value;
         this.entry = node.getEntry();
@@ -135,8 +127,8 @@ implements	TreeCellRenderer
 		return this.localRoot;
 		}
 
-	public void
-	setIcon( final Icon icon )
+	private void
+	setIcon(final Icon icon)
 		{
 		this.icon = icon;
 		}
@@ -260,10 +252,7 @@ implements	TreeCellRenderer
 			{
 			final int iconH = this.icon.getIconHeight();
 
-			if ( iconH <= baseLine - ins.top )
-				iconR.y = baseLine - iconH;
-			else
-				iconR.y = ins.top + (bounds.height - iconH) / 2;
+				iconR.y = iconH <= baseLine - ins.top ? baseLine - iconH : ins.top + (bounds.height - iconH) / 2;
 
 			iconR.width = this.iconWidth;
 			}
@@ -278,8 +267,9 @@ implements	TreeCellRenderer
 
 		if ( this.icon != null )
 			{
-			final int tl = iconR.x + this.nameOffset
-						 + this.icon.getIconWidth();
+				final int nameOffset = 2;
+				final int tl = iconR.x + nameOffset
+					       + this.icon.getIconWidth();
 
 			if ( tl > nameR.x )
 				nameR.x = tl;
@@ -406,17 +396,6 @@ implements	TreeCellRenderer
 				final int textX = modfR.x + 1; // REVIEW should be property
 				final int textY = modfR.y + baseLine;
 
-				if ( false && this.isSelected )
-					{
-					final int w = fm.stringWidth( text ) + 3;
-					final Rectangle hiR =
-						new Rectangle
-							( modfR.x, textY - fAscent, w, fHeight );
-
-					g.setColor( Color.lightGray );
-					g.fillRect( hiR.x, hiR.y, hiR.width, hiR.height );
-					}
-
 				g.setColor( Color.black );
 				g.drawString( text, textX, textY );
 
@@ -473,7 +452,7 @@ implements	TreeCellRenderer
 			return this.unchangedFile;
 		}
 
-	public void
+	private void
 	loadIconImages()
 		{
 		final Vector		names = new Vector();
@@ -496,9 +475,10 @@ implements	TreeCellRenderer
 
 		int maxWidth = 0;
 		int maxHeight = 0;
-		int width, height;
+		int width;
+			int height;
 
-		final MediaTracker tracker = new MediaTracker( this );
+			final MediaTracker tracker = new MediaTracker( this );
 
 		for ( int i = 0 ; i < names.size() ; ++i )
 			{
@@ -529,9 +509,9 @@ implements	TreeCellRenderer
 			else
 				{
 				CVSTracer.traceIf( true,
-					"EntryTreeRenderer.loadIconImages: ERROR "
-						+ "icon '" + iconName + " failed to load "
-						+ "from URL '" +imageURLName+ "'" );
+						   "EntryTreeRenderer.loadIconImages: ERROR "
+						   + "icon '" + iconName + " failed to load "
+						   + "from URL '" + imageURLName + '\'');
 				}
 			}
 
@@ -564,14 +544,14 @@ implements	TreeCellRenderer
 			}
 
 		this.iconWidth = maxWidth;
-		this.iconHeight = maxHeight;
+			final int iconHeight = maxHeight;
 
 		this.openFolder		= new ImageIcon( iconTable.get( "openFolder" ) );
 		this.closedFolder	= new ImageIcon( iconTable.get( "closedFolder" ) );
 
 		this.addedFile		= new ImageIcon( iconTable.get( "addedFile" ) );
 		this.conflictFile	= new ImageIcon( iconTable.get( "conflictFile" ) );
-		this.conModFile		= new ImageIcon( iconTable.get( "conModFile" ) );
+			final Icon conModFile = new ImageIcon(iconTable.get("conModFile"));
 		this.lostFile		= new ImageIcon( iconTable.get( "lostFile" ) );
 		this.removedFile	= new ImageIcon( iconTable.get( "removedFile" ) );
 		this.modifiedFile	= new ImageIcon( iconTable.get( "modifiedFile" ) );

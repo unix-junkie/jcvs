@@ -23,6 +23,7 @@
 package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -31,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -51,19 +53,17 @@ import com.ice.pref.UserPrefs;
  *  <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
-public
 class		ConfigDialog
 extends		JDialog
 implements	ActionListener
 	{
-	static public final String		RCS_ID = "$Id: ConfigDialog.java,v 1.4 2000/06/11 00:18:53 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.4 $";
+	public static final String		RCS_ID = "$Id: ConfigDialog.java,v 1.4 2000/06/11 00:18:53 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.4 $";
 
 	private boolean				okClicked;
 	private final ConfigurePanel		configPan;
 
 
-	public
 	ConfigDialog( final Frame parent, final String title, final UserPrefs prefs, final UserPrefs specs )
 		{
 		super( parent, title, true );
@@ -85,26 +85,26 @@ implements	ActionListener
 
 		content.add( BorderLayout.CENTER, this.configPan );
 
-		final JPanel buttons = new JPanel();
+		final Container buttons = new JPanel();
 		buttons.setLayout( new GridLayout( 1, 2 ) );
 
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		final JButton okBtn = new JButton( rmgr.getUIString( "name.for.save" ) );
+		final AbstractButton okBtn = new JButton(rmgr.getUIString("name.for.save" ) );
 		okBtn.addActionListener( this );
 		okBtn.setActionCommand( "SAVE" );
 		buttons.add( buttonPanel( okBtn ) );
 
-		final JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
+		final AbstractButton canBtn = new JButton(rmgr.getUIString("name.for.cancel" ) );
 		canBtn.addActionListener( this );
 		canBtn.setActionCommand( "CANCEL" );
 		buttons.add( buttonPanel( canBtn ) );
 
-		final JPanel butPan = new JPanel();
+		final Container butPan = new JPanel();
 		butPan.setLayout( new BorderLayout() );
 		butPan.add( "East", buttons );
 
-		final JPanel southPan = new JPanel();
+		final Container southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.NORTH, new JSeparator( SwingConstants.HORIZONTAL ) );
 		southPan.add( BorderLayout.CENTER, butPan );
@@ -126,7 +126,7 @@ implements	ActionListener
 		}
 
 	private JPanel
-	buttonPanel( final JButton button )
+	buttonPanel( final Component button )
 		{
 		final JPanel panel = new JPanel();
 		panel.setBorder(new EmptyBorder(4, 4, 4, 4));
@@ -142,7 +142,7 @@ implements	ActionListener
 		}
 
 	public void
-	editProperties( final String[] props )
+	editProperties( final String... props )
 		{
 		this.configPan.editProperties( props );
 		}
@@ -154,7 +154,7 @@ implements	ActionListener
 		}
 
 	public void
-	editPaths( final String[] paths )
+	editPaths( final String... paths )
 		{
 		this.configPan.editPaths( paths );
 		}

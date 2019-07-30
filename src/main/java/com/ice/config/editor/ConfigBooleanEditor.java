@@ -19,12 +19,11 @@ public
 class		ConfigBooleanEditor
 extends		ConfigureEditor
 	{
-	protected JRadioButton	tButton;
-	protected JRadioButton	fButton;
-	protected ButtonGroup	group;
+	private JRadioButton	tButton;
+	private JRadioButton	fButton;
 
 
-	public
+		public
 	ConfigBooleanEditor()
 		{
 		super( "Boolean" );
@@ -96,9 +95,9 @@ extends		ConfigureEditor
 			GridBagConstraints.WEST,
 			0, row++, 1, 1,  1.0, 0.0 );
 
-		this.group = new ButtonGroup();
-		this.group.add( this.tButton );
-		this.group.add( this.fButton );
+			final ButtonGroup group = new ButtonGroup();
+		group.add(this.tButton );
+		group.add(this.fButton );
 
 		return result;
 		}

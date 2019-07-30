@@ -19,7 +19,7 @@ public
 class		ConfigStringEditor
 extends		ConfigureEditor
 	{
-	protected JTextField	strField;
+	private JTextField	strField;
 
 
 	public

@@ -20,10 +20,10 @@ public
 class		ConfigRectangleEditor
 extends		ConfigureEditor
 	{
-	protected JTextField	xField;
-	protected JTextField	yField;
-	protected JTextField	wField;
-	protected JTextField	hField;
+	private JTextField	xField;
+	private JTextField	yField;
+	private JTextField	wField;
+	private JTextField	hField;
 
 
 	public

@@ -20,8 +20,8 @@ public
 class		ConfigPointEditor
 extends		ConfigureEditor
 	{
-	protected JTextField	xField;
-	protected JTextField	yField;
+	private JTextField	xField;
+	private JTextField	yField;
 
 
 	public

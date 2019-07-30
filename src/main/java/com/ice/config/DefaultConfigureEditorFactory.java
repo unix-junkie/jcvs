@@ -1,6 +1,24 @@
 
 package com.ice.config;
 
+import static com.ice.config.ConfigureConstants.CFG_BOOLEAN;
+import static com.ice.config.ConfigureConstants.CFG_CHOICE;
+import static com.ice.config.ConfigureConstants.CFG_COLOR;
+import static com.ice.config.ConfigureConstants.CFG_COMBO;
+import static com.ice.config.ConfigureConstants.CFG_DEFAULT;
+import static com.ice.config.ConfigureConstants.CFG_DIMENSION;
+import static com.ice.config.ConfigureConstants.CFG_DOUBLE;
+import static com.ice.config.ConfigureConstants.CFG_FLOAT;
+import static com.ice.config.ConfigureConstants.CFG_FONT;
+import static com.ice.config.ConfigureConstants.CFG_INTEGER;
+import static com.ice.config.ConfigureConstants.CFG_LONG;
+import static com.ice.config.ConfigureConstants.CFG_POINT;
+import static com.ice.config.ConfigureConstants.CFG_RECTANGLE;
+import static com.ice.config.ConfigureConstants.CFG_STRING;
+import static com.ice.config.ConfigureConstants.CFG_STRINGARRAY;
+import static com.ice.config.ConfigureConstants.CFG_TOKENS;
+import static com.ice.config.ConfigureConstants.CFG_TUPLETABLE;
+
 import java.util.Hashtable;
 
 import com.ice.config.editor.ConfigBooleanEditor;
@@ -21,22 +39,18 @@ import com.ice.config.editor.ConfigTokenEditor;
 import com.ice.config.editor.ConfigTupleTableEditor;
 import com.ice.pref.UserPrefs;
 
-
 public
 class		DefaultConfigureEditorFactory
-extends		Object
-implements	ConfigureEditorFactory, ConfigureConstants
+		implements	ConfigureEditorFactory
 	{
-	protected Hashtable		editors;
-	protected UserPrefs		editSpecs;
+	private final Hashtable		editors;
 
 
-	public
+		public
 	DefaultConfigureEditorFactory( final UserPrefs specs )
 		{
-		this.editSpecs = specs;
 
-		this.editors = new Hashtable();
+			this.editors = new Hashtable();
 
 		this.editors.put
 			( CFG_DEFAULT, this.createDefaultEditor( CFG_STRING ) );

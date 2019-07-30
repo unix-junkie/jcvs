@@ -7,24 +7,23 @@ import java.util.Vector;
 import javax.swing.tree.DefaultTreeModel;
 
 
-public
 class		ConfigureTreeModel
 extends		DefaultTreeModel
 	{
-	public
 	ConfigureTreeModel()
 		{
 		super( new ConfigureTreeNode( "Prefs" ) );
 		}
 
-	public ConfigureTreeNode
+	public void
 	addPath( final String path, final ConfigureSpec spec )
 		{
 		final StringTokenizer tokenizer =
 			new StringTokenizer( path, ".", false );
 
-		ConfigureTreeNode node, next;
-		node = (ConfigureTreeNode) getRoot();
+		ConfigureTreeNode node;
+			ConfigureTreeNode next;
+			node = (ConfigureTreeNode) getRoot();
 
 		for ( ; tokenizer.hasMoreTokens() ; )
 			{
@@ -42,7 +41,6 @@ extends		DefaultTreeModel
 
 		node.setPropertySpec( spec );
 
-		return node;
 		}
 
 	public ConfigureTreeNode
@@ -72,7 +70,7 @@ extends		DefaultTreeModel
 		}
 
 	private void
-	getAllPaths( final String path, final Vector vector, final ConfigureTreeNode node )
+	getAllPaths(final String path, final Vector vector, final ConfigureTreeNode node )
 		{
 		ConfigureTreeNode child;
 		final int count = node.getChildCount();
@@ -83,10 +81,7 @@ extends		DefaultTreeModel
 			child = (ConfigureTreeNode) node.getChildAt(i);
 			final String name = child.getName();
 
-			if ( path.length() == 0 )
-				next = name;
-			else
-				next = path + "." + name;
+				next = path.isEmpty() ? name : path + '.' + name;
 
 			vector.addElement( next );
 

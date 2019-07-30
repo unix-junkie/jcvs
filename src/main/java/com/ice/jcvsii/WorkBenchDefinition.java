@@ -2,9 +2,11 @@
 package com.ice.jcvsii;
 
 
+import java.io.Serializable;
+
 public
 class		WorkBenchDefinition
-implements	java.io.Serializable
+implements	Serializable
 	{
 	private final boolean		leaf;
 	private final String		name;
@@ -68,10 +70,7 @@ implements	java.io.Serializable
 	public String
 	getFullPath()
 		{
-		if ( this.path != null && this.path.length() > 0 )
-			return this.path + "." + this.name;
-		else
-			return this.name;
+			return this.path != null && !this.path.isEmpty() ? this.path + '.' + this.name : this.name;
 		}
 
 	public String

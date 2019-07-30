@@ -43,8 +43,8 @@ import java.util.Vector;
 public class
 CVSRespItemVector extends Vector
 	{
-	static public final String		RCS_ID = "$Id: CVSRespItemVector.java,v 2.2 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+	public static final String		RCS_ID = "$Id: CVSRespItemVector.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.2 $";
 
 	public CVSRespItemVector()
 		{
@@ -82,7 +82,7 @@ CVSRespItemVector extends Vector
 
 			out.print( prefix + "ITEM " );
 			out.print( "type '" + item.getType() + "' " );
-			out.println( "" );
+			out.println();
 			}
 		}
 

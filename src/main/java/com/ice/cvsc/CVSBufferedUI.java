@@ -28,7 +28,7 @@ public
 class		CVSBufferedUI
 implements	CVSUserInterface
 	{
-	StringBuffer buf = new StringBuffer();
+	private final StringBuffer buf = new StringBuffer();
 
 	@Override
 	public void

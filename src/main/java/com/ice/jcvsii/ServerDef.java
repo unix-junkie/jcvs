@@ -57,7 +57,7 @@ class		ServerDef
 		return this.name;
 		}
 
-	public String
+	private String
 	getName()
 		{
 		return this.name;

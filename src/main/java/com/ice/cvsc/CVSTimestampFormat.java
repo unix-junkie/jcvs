@@ -52,69 +52,62 @@ import java.util.TimeZone;
 public class
 CVSTimestampFormat	extends Format
 	{
-	static public final String		RCS_ID = "$Id: CVSTimestampFormat.java,v 2.5 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.5 $";
+	public static final String		RCS_ID = "$Id: CVSTimestampFormat.java,v 2.5 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.5 $";
 
-	static public final String		DEFAULT_GMT_TZID = "GMT";
+	private static final String		DEFAULT_GMT_TZID = "GMT";
 
-	static private TimeZone		tz;
-	static private String		timezoneID;
+	private static TimeZone		tz;
+	private static String		timezoneID;
 
 
 	static
 		{
-		CVSTimestampFormat.timezoneID =
-			CVSTimestampFormat.DEFAULT_GMT_TZID;
+		timezoneID =
+			DEFAULT_GMT_TZID;
 
-		CVSTimestampFormat.tz =
+		tz =
 			TimeZone.getTimeZone
-				( CVSTimestampFormat.timezoneID );
+				( timezoneID );
 		}
 
-    static public final CVSTimestampFormat
+    public static CVSTimestampFormat
 	getInstance()
 		{
 		return new CVSTimestampFormat();
 		}
 
-    static public final void
+    public static void
 	setTimeZoneID( final String timezoneID )
 		{
 		CVSTimestampFormat.timezoneID = timezoneID;
-		CVSTimestampFormat.tz =
+		tz =
 			TimeZone.getTimeZone( CVSTimestampFormat.timezoneID );
 		}
 
-	public
-	CVSTimestampFormat()
-		{
-		super();
-		}
-
-	public String
-	format( final CVSTimestamp stamp )
+		public String
+	format( final Date stamp )
 		throws IllegalArgumentException
 		{
 		return
 			this.formatTimeZone
-				( stamp, CVSTimestampFormat.tz );
+				( stamp, tz );
 		}
 
-	public String
-	formatTimeZone( final CVSTimestamp stamp, final TimeZone tz )
+	private String
+	formatTimeZone(final Date stamp, final TimeZone tz)
 		throws IllegalArgumentException
 		{
 		final Locale loc = Locale.US;
-		SimpleDateFormat dateFormat;
+		final SimpleDateFormat dateFormat;
 
 		dateFormat =
 			new SimpleDateFormat
 				( "EEE MMM dd HH:mm:ss yyyy", loc );
 
 		dateFormat.setTimeZone( tz );
-		final String result = dateFormat.format( stamp );
 
-		return result;
+			return dateFormat.format(stamp );
 		}
 
 	@Override
@@ -123,32 +116,30 @@ CVSTimestampFormat	extends Format
 		throws IllegalArgumentException
 		{
 		// UNDONE - handle fieldPos!
-		final String tmpFormat = this.format( (CVSTimestamp)stamp );
+		final String tmpFormat = this.format((Date) stamp);
 		appendTo.append( tmpFormat );
 		return appendTo;
 		}
 
 	public String
-	formatTerse( final CVSTimestamp stamp )
+	formatTerse( final Date stamp )
 		{
 		return
 			this.formatTerseTimeZone
-				( stamp, CVSTimestampFormat.tz );
+				( stamp, tz );
 		}
 
-	public String
-	formatTerseTimeZone( final CVSTimestamp stamp, final TimeZone tz )
+	private String
+	formatTerseTimeZone(final Date stamp, final TimeZone tz)
 		{
 		final Locale loc = Locale.US;
-		SimpleDateFormat dateFormat;
+		final SimpleDateFormat dateFormat;
 
 		dateFormat = new SimpleDateFormat( "yyMMdd HH:mm", loc );
 
 		dateFormat.setTimeZone( CVSTimestampFormat.tz );
 
-		final String result = dateFormat.format( stamp );
-
-		return result;
+			return dateFormat.format(stamp );
 		}
 
 	public CVSTimestamp
@@ -175,26 +166,26 @@ CVSTimestampFormat	extends Format
 		return stamp;
 		}
 
-	public CVSTimestamp
-	parseTimestamp( final String source )
+	private CVSTimestamp
+	parseTimestamp(final String source)
 		throws ParseException
 		{
 		final ParsePosition pos = new ParsePosition(0);
 		return this.parseTimestamp( source, pos );
 		}
 
-	public CVSTimestamp
-	parseTimestamp( final String source, final ParsePosition pos )
+	private CVSTimestamp
+	parseTimestamp(final String source, final ParsePosition pos)
 		throws ParseException
 		{
 		final Locale loc = Locale.US;
-		SimpleDateFormat dateFormat;
+		final SimpleDateFormat dateFormat;
 
 		dateFormat =
 			new SimpleDateFormat
 				( "EEE MMM dd HH:mm:ss yyyy", loc );
 
-		dateFormat.setTimeZone( CVSTimestampFormat.tz );
+		dateFormat.setTimeZone( tz );
 
 		final Date result = dateFormat.parse( source, pos );
 
@@ -202,15 +193,15 @@ CVSTimestampFormat	extends Format
 		//      of throwing a ParseException
 		if ( result == null )
 			throw new ParseException
-				( "invalid timestamp '" + source + "'", 0 );
+				("invalid timestamp '" + source + '\'', 0 );
 
 		return new CVSTimestamp( result );
 		}
 
 	public static void
-	main( final String[] args )
+	main( final String... args )
 		{
-		final CVSTimestampFormat fmt = CVSTimestampFormat.getInstance();
+		final CVSTimestampFormat fmt = getInstance();
 
 		try {
 			final CVSTimestamp ts =

@@ -30,15 +30,19 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 
-public class
+public final class
 ResourceUtilities
 	{
-	/**
+		private ResourceUtilities() {
+		}
+
+		/**
 	 * Copies a named resource to a File.
 	 *
 	 * @param resourceURL The name of the resource to copy.
@@ -49,12 +53,12 @@ ResourceUtilities
 	copyResourceToFile( final String resourceURL, final File destFile )
 		throws IOException
 		{
-		final BufferedInputStream in =
+		final InputStream in =
 			new BufferedInputStream(
-				ResourceUtilities.openNamedResource
+				openNamedResource
 					( resourceURL ) );
 
-		final BufferedOutputStream out =
+		final OutputStream out =
 			new BufferedOutputStream(
 				new FileOutputStream( destFile ) );
 
@@ -92,7 +96,7 @@ ResourceUtilities
 
 	public static InputStream
 	openNamedResource( final String resourceURL )
-		throws java.io.IOException
+		throws IOException
 		{
 		InputStream	in = null;
 		final boolean		result = false;
@@ -152,7 +156,7 @@ ResourceUtilities
 						{
 						if ( ! code.equals( "200" ) )
 							{
-							throw new java.io.IOException
+							throw new IOException
 								( "status code = " + code );
 							}
 						}
@@ -163,9 +167,9 @@ ResourceUtilities
 			}
 
 		if ( in == null )
-			throw new java.io.IOException
-				( "could not locate resource '"
-					+ resourceURL + "'" );
+			throw new IOException
+				("could not locate resource '"
+				 + resourceURL + '\'');
 
 		return in;
 		}

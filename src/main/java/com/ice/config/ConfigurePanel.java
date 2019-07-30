@@ -1,8 +1,11 @@
 
 package com.ice.config;
 
+import static com.ice.config.ConfigureConstants.CFG_DEFAULT;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -25,29 +28,27 @@ import javax.swing.tree.TreePath;
 
 import com.ice.pref.UserPrefs;
 
-
 public
 class		ConfigurePanel
 extends		JPanel
-implements	ConfigureConstants, TreeSelectionListener
+implements	TreeSelectionListener
 	{
-	protected JTree			tree = null;
-	protected JLabel		title = null;
-	protected JPanel		editorPanel = null;
-	protected JSplitPane	splitter = null;
+	private final JTree			tree;
+	private final JLabel		title;
+	private final JPanel		editorPanel;
+	private final JSplitPane	splitter;
 
-	protected UserPrefs		specs;
-	protected Vector<ConfigureSpec>	specVector;
+		private Vector<ConfigureSpec>	specVector;
 
-	protected UserPrefs		prefs;
-	protected UserPrefs		origPrefs;
+	private final UserPrefs		prefs;
+	private final UserPrefs		origPrefs;
 
-	protected ConfigureTreeModel	model = null;
-	protected ConfigureEditor		currEditor = null;
-	protected ConfigureTreeNode		currSelection = null;
+	private final ConfigureTreeModel	model;
+	private ConfigureEditor		currEditor;
+	private ConfigureTreeNode		currSelection;
 	protected Properties			template = new Properties();
 
-	protected ConfigureEditorFactory	factory = null;
+	private ConfigureEditorFactory	factory;
 
 
 	public
@@ -68,9 +69,7 @@ implements	ConfigureConstants, TreeSelectionListener
 			cfgPrefs.createWorkingCopy
 				( "Configuration Working Copy" );
 
-		this.specs = specs;
-
-		this.setLayout( new BorderLayout() );
+			this.setLayout( new BorderLayout() );
 		this.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 
 		this.model = new ConfigureTreeModel();
@@ -93,7 +92,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		this.tree = new ConfigureTree( model );
 		this.tree.addTreeSelectionListener( this );
 
-		final JScrollPane treeScroller = new JScrollPane( this.tree );
+		final Component treeScroller = new JScrollPane(this.tree );
 
 		final JPanel pan = new JPanel();
 		pan.setLayout( new BorderLayout() );
@@ -229,7 +228,7 @@ implements	ConfigureConstants, TreeSelectionListener
 							this.currEditor =
 								this.factory.createEditor( CFG_DEFAULT );
 
-						final StringBuffer sb = new StringBuffer();
+						final StringBuilder sb = new StringBuilder();
 
 						sb.append( spec.getName() );
 
@@ -295,13 +294,13 @@ implements	ConfigureConstants, TreeSelectionListener
 		{
 		ConfigureTreeNode node;
 		final Object[] list = treePath.getPath();
-		final StringBuffer path = new StringBuffer();
+		final StringBuilder path = new StringBuilder();
 
 		for ( int i = 1 ; i < list.length ; i++ )
 			{
 			node = (ConfigureTreeNode) list[i];
 			if ( i > 1 )
-				path.append(".");
+				path.append('.');
 			path.append( node.getName() );
 			}
 
@@ -316,7 +315,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	editProperties( final String[] propNames )
+	editProperties( final String... propNames )
 		{
 		final int numSpecs = this.specVector.size();
 
@@ -338,7 +337,7 @@ implements	ConfigureConstants, TreeSelectionListener
 				}
 			}
 
-		if ( pathV.size() > 0 )
+		if (!pathV.isEmpty())
 			{
 			final String[] paths = new String[ pathV.size() ];
 			pathV.copyInto( paths );
@@ -354,7 +353,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		}
 
 	public void
-	editPaths( final String[] paths )
+	editPaths( final String... paths )
 		{
 		for ( int i = paths.length - 1 ; i >= 0 ; --i )
 			{
@@ -378,7 +377,7 @@ implements	ConfigureConstants, TreeSelectionListener
 	 * viewport. This essentially eliminates horizontal scrolling
 	 * which is quite ugly in this context.
 	 */
-	private
+	private static
 	class		EditorPanel
 	extends		JPanel
 	implements	Scrollable
@@ -395,10 +394,7 @@ implements	ConfigureConstants, TreeSelectionListener
 		getScrollableBlockIncrement
 				( final Rectangle visibleRect, final int orientation, final int direction )
 			{
-			if ( orientation == SwingConstants.VERTICAL )
-				return visibleRect.height - 10;
-			else
-				return visibleRect.width - 10;
+				return orientation == SwingConstants.VERTICAL ? visibleRect.height - 10 : visibleRect.width - 10;
 			}
 
 		@Override

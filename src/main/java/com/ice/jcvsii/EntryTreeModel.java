@@ -25,15 +25,15 @@ package com.ice.jcvsii;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 
-public
 class		EntryTreeModel
 extends		DefaultTreeModel
 	{
-    public
-	EntryTreeModel( final EntryRootNode rootEntry )
+    EntryTreeModel( final TreeNode rootEntry )
 		{
 		super( rootEntry );
 		}
@@ -49,7 +49,7 @@ extends		DefaultTreeModel
     //
 
 	public void
-	fireStructureChanged( final EntryNode source )
+	fireStructureChanged( final DefaultMutableTreeNode source )
 		{
 		final Object[] path = source.getPath();
 		this.fireTreeStructureChanged( source, path, null, null );
@@ -61,8 +61,8 @@ extends		DefaultTreeModel
 		this.fireColumnsResized( getEntryRootNode(), isResizing );
 		}
 
-	public void
-	fireColumnsResized( final EntryNode source, final boolean isResizing )
+	private void
+	fireColumnsResized(final EntryNode source, final boolean isResizing)
 		{
 		if ( ! isResizing )
 			System.err.println( "listenerList: " + this.listenerList );
@@ -91,7 +91,7 @@ extends		DefaultTreeModel
 	 * @param child The CVSEntry belonging to the child node being inserted.
 	 */
 	public void
-	fireEntryNodeInserted( final EntryNode source, final int idx, final EntryNode child )
+	fireEntryNodeInserted(final DefaultMutableTreeNode source, final int idx, final EntryNode child )
 		{
 		final int[] indices = { idx };
 		final Object[] children = { child };
@@ -105,7 +105,7 @@ extends		DefaultTreeModel
 	 * @param child The CVSEntry belonging to the child node being deleted.
 	 */
 	public void
-	fireEntryNodeRemoved( final EntryNode source, final int idx, final EntryNode child )
+	fireEntryNodeRemoved(final DefaultMutableTreeNode source, final int idx, final EntryNode child )
 		{
 		final int[] indices = { idx };
 		final Object[] children = { child };

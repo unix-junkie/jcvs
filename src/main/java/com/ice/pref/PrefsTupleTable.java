@@ -32,13 +32,7 @@ extends		Hashtable<String, PrefsTuple>
 	{
 	private final Vector<String>		keyOrder = new Vector<>();
 
-	public
-	PrefsTupleTable()
-		{
-		super();
-		}
-
-	public boolean
+		public boolean
 	equals( final PrefsTupleTable that )
 		{
 		if ( this.size() != that.size() )
@@ -81,7 +75,7 @@ extends		Hashtable<String, PrefsTuple>
 		return this.get(this.keyOrder.elementAt(idx ) );
 		}
 
-	public PrefsTuple
+	public void
 	setTupleAt( final PrefsTuple tup, final int idx )
 		{
 		final String key = this.keyOrder.elementAt(idx );
@@ -92,7 +86,6 @@ extends		Hashtable<String, PrefsTuple>
 
 		this.put( tup.getKey(), tup );
 
-		return remTup;
 		}
 
 	public void
@@ -154,8 +147,8 @@ extends		Hashtable<String, PrefsTuple>
 	public String
 	toSting()
 		{
-		return "[PrefsTupleTable [size=" +this.size() + ","
-				+ super.toString() + "]";
+		return "[PrefsTupleTable [size=" + this.size() + ','
+		       + super.toString() + ']';
 		}
 
 	}

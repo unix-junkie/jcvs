@@ -34,77 +34,77 @@ import java.io.StringWriter;
  * @author Timothy Gerard Endres,
  *    <a href="mailto:time@ice.com">time@ice.com</a>.
  *
- * @see com.ice.util.UserProperties
+ * @see UserProperties
  *
  */
 
-public class
-ICETracer extends Object
-	{
-	static public final String		RCS_ID = "$Id: ICETracer.java,v 1.4 1998/04/29 16:30:13 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.4 $";
+final class
+ICETracer {
+	public static final String		RCS_ID = "$Id: ICETracer.java,v 1.4 1998/04/29 16:30:13 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.4 $";
 
-	static private PrintWriter		out = null;
+	private static PrintWriter		out;
 
-	static private boolean			state = false;
-	static private boolean			ifOverOn = true;
+	private static boolean			state;
+	private static final boolean			ifOverOn = true;
 
-	static private int				traceState = 0;
+	private static boolean			outIsSystem;
 
-	static private boolean			outIsSystem = false;
+	private static boolean			echoAccum;
+	private static StringBuffer		outBuffer;
 
-	static private boolean			echoAccum = false;
-	static private StringBuffer		outBuffer = null;
+	private ICETracer() {
+	}
 
 
-	static public void
+	public static void
 	setTraceState( final boolean state )
 		{
 		ICETracer.state = state;
 		}
 
-	static public void
+	public static void
 	setEchoAccumulation( final boolean state )
 		{
-		ICETracer.echoAccum = state;
+		echoAccum = state;
 		}
 
-	static public void
+	public static void
 	accumulateInBuffer( final StringBuffer buffer )
 		{
-		ICETracer.outBuffer = buffer;
+		outBuffer = buffer;
 		}
 
-	static public void
+	public static void
 	turnOffAccumulation()
 		{
-		ICETracer.outBuffer = null;
+		outBuffer = null;
 		}
 
-	static public StringBuffer
+	public static StringBuffer
 	getAccumulationBuffer()
 		{
-		return ICETracer.outBuffer;
+		return outBuffer;
 		}
 
-	static public void
-	println( final String line )
+	private static void
+	println(final String line)
 		{
 		if ( line == null )
 			return;
 
-		if ( ICETracer.outBuffer != null )
+		if ( outBuffer != null )
 			{
-			ICETracer.outBuffer.append( line );
-			ICETracer.outBuffer.append( "\n" );
+			outBuffer.append( line );
+			outBuffer.append('\n');
 
-			if ( ! ICETracer.echoAccum )
+			if ( ! echoAccum )
 				return;
 			}
 
 		if ( out != null )
 			{
-			ICETracer.out.println( line );
+			out.println( line );
 			}
 		else
 			{
@@ -112,31 +112,31 @@ ICETracer extends Object
 			}
 		}
 
-	static public void
+	public static void
 	trace( final String line )
 		{
 		if ( line == null )
 			return;
 
-		if ( ICETracer.state )
+		if ( state )
 			{
-			ICETracer.println( line );
+			println( line );
 			}
 		}
 
-	static public void
+	public static void
 	traceIf( final boolean flag, final String line )
 		{
 		if ( ! flag || line == null )
 			return;
 
-		if ( ICETracer.ifOverOn )
+		if ( ifOverOn )
 			{
-			ICETracer.println( line );
+			println( line );
 			}
 		}
 
-	static public void
+	public static void
 	traceWithStack( final String line )
 		{
 		if ( line == null )
@@ -144,19 +144,19 @@ ICETracer extends Object
 
 		final Throwable thrower = new Throwable( line );
 
-		if ( ICETracer.state )
+		if ( state )
 			{
-			ICETracer.println( line );
+			println( line );
 			}
 
-		if ( ICETracer.out == null )
+		if ( out == null )
 			thrower.printStackTrace( System.err );
 		else
-			thrower.printStackTrace( ICETracer.out );
+			thrower.printStackTrace( out );
 		}
 
-	static public String
-	getStackLines( final Throwable thrower )
+	private static String
+	getStackLines(final Throwable thrower)
 		{
 		final StringWriter sWrtr = new StringWriter();
 		final PrintWriter pWrtr = new PrintWriter( sWrtr );
@@ -164,11 +164,11 @@ ICETracer extends Object
 		return sWrtr.toString();
 		}
 
-	static public String
-	getStackLines( final Throwable thrower, final int maxLines )
+	private static String
+	getStackLines(final Throwable thrower, final int maxLines)
 		{
 		if ( maxLines == 0 )
-			return ICETracer.getStackLines( thrower );
+			return getStackLines( thrower );
 
 		final StringWriter sWrtr = new StringWriter();
 		final PrintWriter pWrtr = new PrintWriter( sWrtr );
@@ -194,7 +194,7 @@ ICETracer extends Object
 		return trcStr.substring( 0, index );
 		}
 
-	static public void
+	public static void
 	traceWithStack( final int maxPrintLines, final String line )
 		{
 		if ( line == null || maxPrintLines < 1 )
@@ -202,65 +202,65 @@ ICETracer extends Object
 
 		final Throwable thrower = new Throwable( line );
 
-		if ( ICETracer.state )
+		if ( state )
 			{
-			ICETracer.println( line );
+			println( line );
 			}
 
 		final String outStr =
-			ICETracer.getStackLines( thrower, maxPrintLines );
+			getStackLines( thrower, maxPrintLines );
 
-		if ( ICETracer.out == null )
+		if ( out == null )
 			System.err.println( outStr );
 		else
-			ICETracer.out.println( outStr );
+			out.println( outStr );
 		}
 
-	static public void
+	public static void
 	traceWithStack( final Throwable thrower, final String line )
 		{
 		if ( thrower == null && line == null )
 			return;
 
 		if ( line != null )
-			ICETracer.println( line );
+			println( line );
 
-		final String outStr = ICETracer.getStackLines( thrower, 0 );
+		final String outStr = getStackLines( thrower, 0 );
 
-		if ( ICETracer.out == null )
+		if ( out == null )
 			System.err.println( outStr );
 		else
-			ICETracer.out.println( outStr );
+			out.println( outStr );
 		}
 
-	static public void
+	public static void
 	traceWithStack( final Throwable thrower, final int lines, final String line )
 		{
 		if ( thrower == null && line == null )
 			return;
 
 		if ( line != null )
-			ICETracer.println( line );
+			println( line );
 
 		final String outStr =
-			ICETracer.getStackLines( thrower, lines );
+			getStackLines( thrower, lines );
 
-		if ( ICETracer.out == null )
+		if ( out == null )
 			System.err.println( outStr );
 		else
-			ICETracer.out.println( outStr );
+			out.println( outStr );
 		}
 
-	static private void
+	private static void
 	checkClose()
 		{
-		if ( ICETracer.out != null )
+		if ( out != null )
 			{
-			if ( ! ICETracer.outIsSystem )
+			if ( ! outIsSystem )
 				{
-				ICETracer.out.close();
-				ICETracer.out = null;
-				ICETracer.outIsSystem = false;
+				out.close();
+				out = null;
+				outIsSystem = false;
 				}
 			}
 		}
@@ -274,18 +274,18 @@ ICETracer extends Object
 	 * @param newOut The new buffered writer to send trace output to.
 	 */
 
-	static public void
+	public static void
 	setWriter( final PrintWriter newOut )
 		{
-		ICETracer.checkClose();
+		checkClose();
 
-		ICETracer.out = newOut;
-		ICETracer.outIsSystem = false;
+		out = newOut;
+		outIsSystem = false;
 
-		ICETracer.outBuffer = null;
+		outBuffer = null;
 		}
 
-	static public void
+	public static void
 	setWriterToStdout()
 		{
 		final PrintWriter newOut =
@@ -294,15 +294,15 @@ ICETracer extends Object
 
 		if ( newOut != null )
 			{
-			ICETracer.checkClose();
-			ICETracer.out = newOut;
-			ICETracer.outIsSystem = true;
+			checkClose();
+			out = newOut;
+			outIsSystem = true;
 
-			ICETracer.outBuffer = null;
+			outBuffer = null;
 			}
 		}
 
-	static public void
+	public static void
 	setWriterToStderr()
 		{
 		final PrintWriter newOut =
@@ -311,11 +311,11 @@ ICETracer extends Object
 
 		if ( newOut != null )
 			{
-			ICETracer.checkClose();
-			ICETracer.out = newOut;
-			ICETracer.outIsSystem = true;
+			checkClose();
+			out = newOut;
+			outIsSystem = true;
 
-			ICETracer.outBuffer = null;
+			outBuffer = null;
 			}
 		}
 

@@ -3,14 +3,14 @@ package com.ice.config.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,15 +31,12 @@ class		ConfigArrayEditor
 extends		ConfigureEditor
 implements	FocusListener
 	{
-	protected JButton		insertButton;
-	protected JButton		appendButton;
-	protected JButton		deleteButton;
-	protected JTable		table;
-	protected SAETableModel	model;
+	private JButton		insertButton;
+		JTable		table;
+	SAETableModel	model;
 
 
-	public
-	ConfigArrayEditor( final String typeName )
+	ConfigArrayEditor(final String typeName)
 		{
 		super( typeName );
 		}
@@ -95,7 +92,7 @@ implements	FocusListener
 
 		this.insertButton = new JButton( "Insert" );
 
-		this.model = this.new SAETableModel();
+		this.model = new SAETableModel();
 		this.table = new JTable( this.model )
 			{
 			@Override
@@ -106,56 +103,32 @@ implements	FocusListener
 
 		this.table.setIntercellSpacing( new Dimension( 3, 3 ) );
 
-		final JScrollPane scroller = new JScrollPane( this.table );
+		final Component scroller = new JScrollPane(this.table );
 
 		result.add( "Center", scroller );
 
-		final JPanel ctlPan = new JPanel();
+		final Container ctlPan = new JPanel();
 		ctlPan.setLayout( new GridLayout( 1, 3, 5, 5 ) );
 
 		result.add( "South", ctlPan );
 
-		this.insertButton.addActionListener(
-			this.new ActionAdapter()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{ insertElement(); }
-				}
-			);
+		this.insertButton.addActionListener(e -> insertElement());
 		ctlPan.add( this.insertButton );
 
-		this.appendButton = new JButton( "Append" );
-		this.appendButton.addActionListener(
-			this.new ActionAdapter()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{ appendElement(); }
-				}
-			);
-		ctlPan.add( this.appendButton );
+			final AbstractButton appendButton = new JButton("Append");
+		appendButton.addActionListener(e -> appendElement());
+		ctlPan.add(appendButton);
 
-		this.deleteButton = new JButton( "Delete" );
-		this.deleteButton.addActionListener(
-			this.new ActionAdapter()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{ deleteElement(); }
-				}
-			);
-		ctlPan.add( this.deleteButton );
+			final AbstractButton deleteButton = new JButton("Delete");
+		deleteButton.addActionListener(e -> deleteElement());
+		ctlPan.add(deleteButton);
 
 		this.descOffset = 5;
 
 		return result;
 		}
 
-	public void
+	private void
 	insertElement()
 		{
 		final int row = this.table.getSelectedRow();
@@ -164,7 +137,7 @@ implements	FocusListener
 		this.table.repaint( 250 );
 		}
 
-	public void
+	private void
 	appendElement()
 		{
 		this.model.appendElement( "New String" );
@@ -173,7 +146,7 @@ implements	FocusListener
 		this.table.repaint( 250 );
 		}
 
-	public void
+	private void
 	deleteElement()
 		{
 		this.table.removeEditor();
@@ -188,7 +161,7 @@ implements	FocusListener
 			}
 		}
 
-	public
+	static
 	class		SAETableModel
 	extends		AbstractTableModel
 		{
@@ -204,20 +177,19 @@ implements	FocusListener
 		private List<String>			data;
 
 
-		public
 		SAETableModel()
 			{
 			this.data = null;
 			}
 
-		public List<String>
+		List<String>
 		getData()
 			{
 			return this.data;
 			}
 
-		public void
-		setData( final List<String> data )
+		void
+		setData(final List<String> data)
 			{
 			this.data = data;
 
@@ -225,23 +197,23 @@ implements	FocusListener
 				( new TableModelEvent( this ) );
 			}
 
-		public void
-		insertElement( final String val, final int row )
+		void
+		insertElement(final String val, final int row)
 			{
 			this.data.add(row, val);
 			this.fireTableRowsInserted( row, row );
 			}
 
-		public void
-		appendElement( final String val )
+		void
+		appendElement(final String val)
 			{
 			this.data.add( val );
 			this.fireTableRowsInserted
 				( this.data.size(), this.data.size() );
 			}
 
-		public void
-		deleteElement( final int row )
+		void
+		deleteElement(final int row)
 			{
 			this.data.remove( row );
 			this.fireTableRowsDeleted( row, row );
@@ -303,17 +275,5 @@ implements	FocusListener
 			return true;
 			}
 		}
-
-	private
-	class		ActionAdapter
-	implements	ActionListener
-		{
-		@Override
-		public void
-		actionPerformed( final ActionEvent event )
-			{
-			}
-		}
-
 	}
 

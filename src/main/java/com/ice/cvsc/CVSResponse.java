@@ -43,14 +43,12 @@ import java.io.PrintStream;
  */
 
 public
-class		CVSResponse
-extends		Object
-	{
-	static public final String		RCS_ID = "$Id: CVSResponse.java,v 2.3 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+class		CVSResponse {
+	public static final String		RCS_ID = "$Id: CVSResponse.java,v 2.3 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.3 $";
 
-	static public final int			OK		= 0;
-	static public final int			ERROR	= 1;
+	public static final int			OK		= 0;
+	public static final int			ERROR	= 1;
 
 
 	private boolean			valid;
@@ -135,7 +133,7 @@ extends		Object
 	public void
 	setErrorStatus( final String codeStr, final String textStr )
 		{
-		this.status = CVSResponse.ERROR;
+		this.status = ERROR;
 
 		this.errorCode = codeStr;
 		this.errorText = textStr;
@@ -240,12 +238,12 @@ extends		Object
 		out.println( "=============================================================" );
 
 		out.println( "RESPONSE has " + this.itemList.size() + " items:" );
-		if ( this.itemList.size() > 0 )
+		if (!this.itemList.isEmpty())
 			{
 			this.itemList.printResponseItemList( out, "   " );
 			}
 
-		out.println( "\n" + this.getStderr() + "\n" + this.getStdout() );
+		out.println('\n' + this.getStderr() + '\n' + this.getStdout() );
 
 		out.println( "=============================================================" );
 		}
@@ -253,7 +251,7 @@ extends		Object
 	//
 	// For now we just clean up the temporary files...
 	//
-	public boolean
+	public void
 	deleteTempFiles()
 		{
 		boolean	err;
@@ -269,38 +267,34 @@ extends		Object
 				result = false;
 			}
 
-		return result;
 		}
 
 	public String
 	getDisplayResults()
 		{
-		final StringBuffer finalResult = new StringBuffer( 1024 );
 
-		finalResult.append( this.getResultText() );
-		finalResult.append( this.getResultStatus() );
-
-		return finalResult.toString();
+			return this.getResultText() +
+			       this.getResultStatus();
 		}
 
 	public String
 	getResultText()
 		{
-		final StringBuffer resultBuf = new StringBuffer( 1024 );
+		final StringBuilder resultBuf = new StringBuilder(1024 );
 
 		final String stdout = this.getStdout();
 		final String stderr = this.getStderr();
 
-		if ( stderr.length() > 0 || stdout.length() > 0 )
+		if (!stderr.isEmpty() || !stdout.isEmpty())
 			{
-			if ( stderr.length() > 0 )
+			if (!stderr.isEmpty())
 				{
 				resultBuf.append( stderr );
-				if ( stdout.length() > 0 )
-					resultBuf.append( "\n" );
+				if (!stdout.isEmpty())
+					resultBuf.append('\n');
 				}
 
-			if ( stdout.length() > 0 )
+			if (!stdout.isEmpty())
 				{
 				resultBuf.append( stdout );
 				}
@@ -313,31 +307,17 @@ extends		Object
 	public String
 	getResultStatus()
 		{
-		if ( this.getStatus() == CVSResponse.OK )
-			{
-			return "\n** The command completed successfully.";
-			}
-		else
-			{
-			return "\n** The command completed with an error status.";
-			}
+			return this.getStatus() == OK ? "\n** The command completed successfully." : "\n** The command completed with an error status.";
 		}
 
 	@Override
 	public String
 	toString()
 		{
-		if ( this.valid )
-			{
-			return "CVSResponse: "
-				+ this.itemList.size() + " items.\n"
-				+ this.stdErrStr + "\n"
-				+ this.stdOutStr;
-			}
-		else
-			{
-			return "CVSResponse: not valid";
-			}
+			return this.valid ? "CVSResponse: "
+					    + this.itemList.size() + " items.\n"
+					    + this.stdErrStr + '\n'
+					    + this.stdOutStr : "CVSResponse: not valid";
 		}
 	}
 

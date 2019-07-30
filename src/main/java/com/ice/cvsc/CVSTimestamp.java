@@ -41,8 +41,8 @@ public class
 CVSTimestamp extends Date
 		implements Cloneable
 	{
-	static public final String		RCS_ID = "$Id: CVSTimestamp.java,v 2.6 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.6 $";
+	public static final String		RCS_ID = "$Id: CVSTimestamp.java,v 2.6 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.6 $";
 
 	public
 	CVSTimestamp()
@@ -91,7 +91,7 @@ CVSTimestamp extends Date
 	 * because we can not be sure of the rounding.
 	 */
 	public boolean
-	equalsTimestamp( final CVSTimestamp stamp )
+	equalsTimestamp( final Date stamp )
 		{
 		return
 			this.getTime() > stamp.getTime()

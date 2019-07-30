@@ -6,10 +6,13 @@ import java.util.Vector;
 import com.ice.util.StringUtilities;
 
 
-public
+final
 class		HTMLHelper
 	{
-	public static StringBuffer
+		private HTMLHelper() {
+		}
+
+		public static StringBuffer
 	generateHTMLDiff( final StringBuffer buf, final String rawDiff, final String fileName, final String rev1, final String rev2 )
 		{
 		final String lnSep = "\r\n";
@@ -194,7 +197,7 @@ class		HTMLHelper
 			else
 				{
 				final char diffCode = ln.charAt(0);
-				final String remStr = HTMLHelper.escapeHTML( ln.substring(1) );
+				final String remStr = escapeHTML( ln.substring(1) );
 
 				//########
 				// ZZ
@@ -246,7 +249,7 @@ class		HTMLHelper
 				else
 					{
 					// ZZ empty diffcode
-					HTMLHelper.appendDiffLines( buf, state, ltColV, rtColV );
+					appendDiffLines( buf, state, ltColV, rtColV );
 
 					buf.append( "<tr>" + lnSep );
 
@@ -271,7 +274,7 @@ class		HTMLHelper
 				}
 			}
 
-		HTMLHelper.appendDiffLines( buf, state, ltColV, rtColV );
+		appendDiffLines( buf, state, ltColV, rtColV );
 
 		// UNDONE
 		/*
@@ -366,14 +369,14 @@ class		HTMLHelper
 		buf.append( "<a name=\"RAW\"></a>" + lnSep );
 		buf.append( "<a href=\"#TOP\">Back To Top</a><br>" + lnSep );
 		buf.append( "<pre>" + lnSep );
-		buf.append( HTMLHelper.adjustPlainText( rawDiff ) );
+		buf.append( adjustPlainText( rawDiff ) );
 		buf.append( lnSep );
 		buf.append( "</pre>" + lnSep );
 
 		return buf;
 		}
 
-	private static StringBuffer
+	private static void
 	appendDiffLines( final StringBuffer buf, final char state, final Vector ltColV, final Vector rtColV )
 		{
 		final String lnSep = "\r\n";
@@ -474,36 +477,29 @@ class		HTMLHelper
 				}
 			}
 
-		return buf;
 		}
 
-	public static String
-	adjustPlainText( final String text )
+	private static String
+	adjustPlainText(final CharSequence text)
 		{
 		final int saveIdx = 0;
 
 		final int textLen = text.length();
 
-		final StringBuffer result = new StringBuffer( textLen + 2048 );
-
-		result.append( "<pre>\n" );
-
-		result.append( HTMLHelper.escapeHTML( text ) );
-
-		result.append( "\n</pre>\n" );
-
-		return result.toString();
+			return "<pre>\n" +
+				       escapeHTML(text) +
+				       "\n</pre>\n";
 		}
 
-	public static String
-	escapeHTML( final String text )
+	private static String
+	escapeHTML(final CharSequence text)
 		{
 		final int saveIdx = 0;
 		final int textLen = text.length();
 		boolean sendNBSP = false;
 
-		final StringBuffer result =
-			new StringBuffer( textLen + 2048 );
+		final StringBuilder result =
+			new StringBuilder(textLen + 2048 );
 
 		if ( textLen == 0 )
 			result.append( "&nbsp;" );
@@ -512,29 +508,38 @@ class		HTMLHelper
 			{
 			final char ch = text.charAt(i);
 
-			if ( ch == '<' )
-				result.append( "&lt;" );
-			else if ( ch == '>' )
-				result.append( "&gt;" );
-			else if ( ch == '&' )
-				result.append( "&amp;" );
-			else if ( ch == '"' )
-				result.append( "&quot;" );
-			else if ( ch == ' ' ) // UNDONE
-				{
-				sendNBSP = ! sendNBSP;
-				if ( sendNBSP )
-					result.append( "&nbsp;" );
-				else
-					result.append( " " );
+				switch (ch) {
+				case '<':
+					result.append("&lt;");
+					break;
+				case '>':
+					result.append("&gt;");
+					break;
+				case '&':
+					result.append("&amp;");
+					break;
+				case '"':
+					result.append("&quot;");
+					break;
+				case ' ':
+// UNDONE
+
+					sendNBSP = !sendNBSP;
+					if (sendNBSP)
+						result.append("&nbsp;");
+					else
+						result.append(' ');
+					break;
+				case '\t':
+// UNDONE
+
+					sendNBSP = false;
+					result.append("&nbsp;&nbsp;&nbsp; ");
+					break;
+				default:
+					result.append(ch);
+					break;
 				}
-			else if ( ch == '\t' ) // UNDONE
-				{
-				sendNBSP = false;
-				result.append( "&nbsp;&nbsp;&nbsp; " );
-				}
-			else
-				result.append( ch );
 			}
 
 		return result.toString();

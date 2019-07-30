@@ -36,8 +36,8 @@ public
 interface	UserPrefsConstants
     {
 
-	public static final String		FILE_LOADER = "FileLoader";
-	public static final String		STREAM_LOADER = "StreamLoader";
-	public static final String		SERVLET_LOADER = "ServletLoader";
+	String		FILE_LOADER = "FileLoader";
+	String		STREAM_LOADER = "StreamLoader";
+	String		SERVLET_LOADER = "ServletLoader";
 
 	}

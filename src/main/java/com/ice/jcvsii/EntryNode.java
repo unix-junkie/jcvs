@@ -34,6 +34,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.ice.cvsc.CVSCUtilities;
 import com.ice.cvsc.CVSEntry;
+import com.ice.cvsc.CVSEntry.ChildEvent;
+import com.ice.cvsc.CVSEntry.ChildEventListener;
 import com.ice.cvsc.CVSEntryVector;
 import com.ice.cvsc.CVSTimestamp;
 
@@ -41,31 +43,29 @@ import com.ice.cvsc.CVSTimestamp;
 public
 class		EntryNode
 extends		DefaultMutableTreeNode
-implements	CVSEntry.ChildEventListener
+implements	ChildEventListener
 	{
-	private static String	tsFormatStr = null;
-	private static SimpleDateFormat	timeStampFormat = null;
+		private static SimpleDateFormat	timeStampFormat;
 
-	protected boolean		hasLoaded;
-	protected CVSEntry		entry;
+	private boolean		hasLoaded;
+	private final CVSEntry		entry;
 
-	protected String		tsCache;
+	private String		tsCache;
 
 
 	public static void
 	setTimestampFormat( final String fmtStr )
 		{
-		EntryNode.tsFormatStr = fmtStr;
-		if ( EntryNode.tsFormatStr == null )
+			if (fmtStr == null )
 			{
-			EntryNode.timeStampFormat = null;
+			timeStampFormat = null;
 			}
 		else
 			{
 			final SimpleDateFormat format =
 				new SimpleDateFormat( fmtStr, Locale.US ); // UNDONE
 			format.setTimeZone( TimeZone.getDefault() );
-			EntryNode.timeStampFormat = format;
+			timeStampFormat = format;
 			}
 		}
 
@@ -162,7 +162,7 @@ implements	CVSEntry.ChildEventListener
 			if ( ts != null )
 				{
 				this.tsCache =
-					EntryNode.timeStampFormat.format( ts );
+					timeStampFormat.format( ts );
 				}
 
 			if ( this.tsCache == null )
@@ -225,7 +225,7 @@ implements	CVSEntry.ChildEventListener
 	/**
 	 * Creates the children of the receiver.
 	 */
-	protected void
+	private void
 	loadChildren()
 		{
 		if ( ! this.isLeaf() )
@@ -298,7 +298,7 @@ implements	CVSEntry.ChildEventListener
 
 	@Override
 	public void
-	cvsEntryAddedChild( final CVSEntry.ChildEvent event )
+	cvsEntryAddedChild( final ChildEvent event )
 		{
 		final int idx = event.getChildIndex();
 
@@ -333,7 +333,7 @@ implements	CVSEntry.ChildEventListener
 
 	@Override
 	public void
-	cvsEntryRemovedChild( final CVSEntry.ChildEvent event )
+	cvsEntryRemovedChild( final ChildEvent event )
 		{
 		int idx = event.getChildIndex();
 

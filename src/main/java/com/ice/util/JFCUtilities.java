@@ -35,10 +35,13 @@ import javax.swing.JPopupMenu;
  * to the JFC (Swing).
  */
 
-public class
+public final class
 JFCUtilities
 	{
-	/**
+		private JFCUtilities() {
+		}
+
+		/**
 	 * Swing 1.0 and 1.1 have a horrible bug with respect to popup menus.
 	 * Namely that they are not adjusted to be kept on-screen.
 	 * Here, we ensure that the popup is properly located.
@@ -48,7 +51,7 @@ JFCUtilities
 	 * when the bug is finally fixed.
 	 */
 
-	static public Point
+		public static Point
 	computePopupLocation( final MouseEvent event, final Component rel, final JPopupMenu popup )
 		{
 		final Dimension psz = popup.getSize();

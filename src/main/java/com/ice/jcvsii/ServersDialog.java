@@ -24,6 +24,7 @@ package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -38,7 +39,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -59,37 +62,27 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		ServersDialog
 extends		JDialog
 implements	ActionListener, ListSelectionListener
 	{
-	private JList				serverList;
+	private JList<ServerDef>		serverList;
 
 	private JTextArea			descText;
-	private JPanel				descPan;
-	private JPanel				infoPanel;
-	private JLabel				userNameLbl;
+		private JLabel				userNameLbl;
 	private JLabel				hostNameLbl;
 	private JLabel				repositoryLbl;
 	private JLabel				moduleLbl;
 	private JLabel				connMethodLbl;
 
-	private final UserPrefs			prefs;
-	private final ConnectInfoPanel	info;
-	private ServerDef			definition;
-
-	private final int					descOffset = 15;
+		private ServerDef			definition;
 
 
-	public
-	ServersDialog( final Frame parent, final UserPrefs prefs, final ConnectInfoPanel info )
+		ServersDialog( final Frame parent, final UserPrefs prefs, final ConnectInfoPanel info )
 		{
 		super( parent, "CVS Servers", true );
 
-		this.info = info;
-		this.prefs = prefs;
-		this.definition = null;
+			this.definition = null;
 
 		this.establishDialogContents
 			( Config.getInstance().getServerDefinitions() );
@@ -145,7 +138,7 @@ implements	ActionListener, ListSelectionListener
 		if ( ! evt.getValueIsAdjusting() )
 			{
 			this.definition =
-				(ServerDef) this.serverList.getSelectedValue();
+				this.serverList.getSelectedValue();
 
 			if ( this.definition == null )
 				{
@@ -200,8 +193,8 @@ implements	ActionListener, ListSelectionListener
 			}
         }
 
-	public void
-	establishDialogContents( final Vector defs )
+	private void
+	establishDialogContents(final Vector<ServerDef> defs)
 		{
 		JLabel		lbl;
 
@@ -210,17 +203,17 @@ implements	ActionListener, ListSelectionListener
 		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		final JPanel mainPan = new JPanel();
+		final JComponent mainPan = new JPanel();
 		mainPan.setLayout( new BorderLayout() );
 		mainPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 
 		this.serverList = new JList( defs );
 		this.serverList.addListSelectionListener( this );
 
-		final JScrollPane scroller = new JScrollPane( this.serverList );
+		final Component scroller = new JScrollPane(this.serverList );
 		scroller.setPreferredSize( new Dimension( 150, 75 ) );
 
-		final JPanel scrollerPanel = new JPanel();
+		final JComponent scrollerPanel = new JPanel();
 		scrollerPanel.setLayout( new BorderLayout() );
 		scrollerPanel.add( scroller );
 		scrollerPanel.setBorder
@@ -228,86 +221,86 @@ implements	ActionListener, ListSelectionListener
 				( new EtchedBorder( EtchedBorder.RAISED ),
 					new EmptyBorder( 2, 2, 2, 2 ) ) );
 
-		this.infoPanel = new JPanel();
-		this.infoPanel.setLayout( new GridBagLayout() );
-		this.infoPanel.setBorder( new EmptyBorder( 5, 10, 0, 5 ) );
+			final JComponent infoPanel = new JPanel();
+		infoPanel.setLayout(new GridBagLayout() );
+		infoPanel.setBorder(new EmptyBorder(5, 10, 0, 5 ) );
 
 		int row = 0;
 
 		lbl = new JLabel( rmgr.getUIString( "name.for.user.name" ) );
 		AWTUtilities.constrain(
-			this.infoPanel, lbl,
-			GridBagConstraints.NONE,
-			GridBagConstraints.WEST,
-			0, row, 1, 1, 0.0, 0.0 );
+				infoPanel, lbl,
+				GridBagConstraints.NONE,
+				GridBagConstraints.WEST,
+				0, row, 1, 1, 0.0, 0.0 );
 
-		this.userNameLbl = this.new DetailLabel( " " );
+		this.userNameLbl = new DetailLabel(" ");
 		AWTUtilities.constrain(
-			this.infoPanel, this.userNameLbl,
-			GridBagConstraints.HORIZONTAL,
-			GridBagConstraints.WEST,
-			1, row++, 1, 1, 1.0, 0.0,
-			new Insets( 1, 4, 2, 4 ) );
+				infoPanel, this.userNameLbl,
+				GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST,
+				1, row++, 1, 1, 1.0, 0.0,
+				new Insets( 1, 4, 2, 4 ) );
 
 		lbl = new JLabel( rmgr.getUIString( "name.for.cvsserver" ) );
 		AWTUtilities.constrain(
-			this.infoPanel, lbl,
-			GridBagConstraints.NONE,
-			GridBagConstraints.WEST,
-			0, row, 1, 1, 0.0, 0.0 );
+				infoPanel, lbl,
+				GridBagConstraints.NONE,
+				GridBagConstraints.WEST,
+				0, row, 1, 1, 0.0, 0.0 );
 
-		this.hostNameLbl = this.new DetailLabel( " " );
+		this.hostNameLbl = new DetailLabel(" ");
 		AWTUtilities.constrain(
-			this.infoPanel, this.hostNameLbl,
-			GridBagConstraints.HORIZONTAL,
-			GridBagConstraints.WEST,
-			1, row++, 1, 1, 1.0, 0.0,
-			new Insets( 1, 4, 2, 4 ) );
+				infoPanel, this.hostNameLbl,
+				GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST,
+				1, row++, 1, 1, 1.0, 0.0,
+				new Insets( 1, 4, 2, 4 ) );
 
 		lbl = new JLabel( rmgr.getUIString( "name.for.cvsrepos" ) );
 		AWTUtilities.constrain(
-			this.infoPanel, lbl,
-			GridBagConstraints.NONE,
-			GridBagConstraints.WEST,
-			0, row, 1, 1, 0.0, 0.0 );
+				infoPanel, lbl,
+				GridBagConstraints.NONE,
+				GridBagConstraints.WEST,
+				0, row, 1, 1, 0.0, 0.0 );
 
-		this.repositoryLbl = this.new DetailLabel( " " );
+		this.repositoryLbl = new DetailLabel(" ");
 		AWTUtilities.constrain(
-			this.infoPanel, this.repositoryLbl,
-			GridBagConstraints.HORIZONTAL,
-			GridBagConstraints.WEST,
-			1, row++, 1, 1, 1.0, 0.0,
-			new Insets( 1, 4, 2, 4 ) );
+				infoPanel, this.repositoryLbl,
+				GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST,
+				1, row++, 1, 1, 1.0, 0.0,
+				new Insets( 1, 4, 2, 4 ) );
 
 		lbl = new JLabel( rmgr.getUIString( "name.for.cvsmodule" ) );
 		AWTUtilities.constrain(
-			this.infoPanel, lbl,
-			GridBagConstraints.NONE,
-			GridBagConstraints.WEST,
-			0, row, 1, 1, 0.0, 0.0 );
+				infoPanel, lbl,
+				GridBagConstraints.NONE,
+				GridBagConstraints.WEST,
+				0, row, 1, 1, 0.0, 0.0 );
 
-		this.moduleLbl = this.new DetailLabel( " " );
+		this.moduleLbl = new DetailLabel(" ");
 		AWTUtilities.constrain(
-			this.infoPanel, this.moduleLbl,
-			GridBagConstraints.HORIZONTAL,
-			GridBagConstraints.WEST,
-			1, row++, 1, 1, 1.0, 0.0,
-			new Insets( 1, 4, 2, 4 ) );
+				infoPanel, this.moduleLbl,
+				GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST,
+				1, row++, 1, 1, 1.0, 0.0,
+				new Insets( 1, 4, 2, 4 ) );
 
 		lbl = new JLabel( rmgr.getUIString( "name.for.connect.method" ) );
 		AWTUtilities.constrain(
-			this.infoPanel, lbl,
-			GridBagConstraints.NONE,
-			GridBagConstraints.WEST,
-			0, row, 1, 1, 0.0, 0.0 );
+				infoPanel, lbl,
+				GridBagConstraints.NONE,
+				GridBagConstraints.WEST,
+				0, row, 1, 1, 0.0, 0.0 );
 
-		this.connMethodLbl = this.new DetailLabel( " " );
+		this.connMethodLbl = new DetailLabel(" ");
 		AWTUtilities.constrain(
-			this.infoPanel, this.connMethodLbl,
-			GridBagConstraints.HORIZONTAL,
-			GridBagConstraints.WEST,
-			1, row++, 1, 1, 1.0, 0.0,
-			new Insets( 1, 4, 2, 4 ) );
+				infoPanel, this.connMethodLbl,
+				GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST,
+				1, row++, 1, 1, 1.0, 0.0,
+				new Insets( 1, 4, 2, 4 ) );
 
 		this.descText =
 			new JTextArea()
@@ -323,12 +316,13 @@ implements	ActionListener, ListSelectionListener
 		this.descText.setWrapStyleWord( true );
 		this.descText.setOpaque( false );
 
-		this.descPan = new JPanel();
-		this.descPan.setLayout( new BorderLayout() );
-		this.descPan.add( "Center", descText );
-		this.descPan.setBorder(
+			final JComponent descPan = new JPanel();
+		descPan.setLayout(new BorderLayout() );
+		descPan.add("Center", descText );
+			final int descOffset = 15;
+			descPan.setBorder(
 			new CompoundBorder(
-				new EmptyBorder( this.descOffset, 5, 0, 5 ),
+				new EmptyBorder(descOffset, 5, 0, 5 ),
 				new CompoundBorder(
 					new TitledBorder(
 						new EtchedBorder( EtchedBorder.RAISED ),
@@ -337,31 +331,31 @@ implements	ActionListener, ListSelectionListener
 			) ) );
 
 		AWTUtilities.constrain(
-			this.infoPanel, this.descPan,
-			GridBagConstraints.BOTH,
-			GridBagConstraints.SOUTH,
-			0, row++, 2, 1, 1.0, 1.0 );
+				infoPanel, descPan,
+				GridBagConstraints.BOTH,
+				GridBagConstraints.SOUTH,
+				0, row++, 2, 1, 1.0, 1.0 );
 
-		mainPan.add( BorderLayout.CENTER, this.infoPanel );
+		mainPan.add(BorderLayout.CENTER, infoPanel);
 
-		final JPanel ctlPan = new JPanel();
+		final Container ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 
-		final JPanel btnPan = new JPanel();
+		final JComponent btnPan = new JPanel();
 		btnPan.setLayout( new GridLayout( 1, 2, 20, 5 ) );
 		btnPan.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 
-		final JButton okBtn = new JButton( rmgr.getUIString( "name.for.ok" ) );
+		final AbstractButton okBtn = new JButton(rmgr.getUIString("name.for.ok" ) );
 		okBtn.addActionListener( this );
 		okBtn.setActionCommand( "OK" );
 		btnPan.add( okBtn );
 
-		final JButton canBtn = new JButton( rmgr.getUIString( "name.for.cancel" ) );
+		final AbstractButton canBtn = new JButton(rmgr.getUIString("name.for.cancel" ) );
 		canBtn.addActionListener( this );
 		canBtn.setActionCommand( "CANCEL" );
 		btnPan.add( canBtn );
 
-		final JSeparator sep = new JSeparator( SwingConstants.HORIZONTAL );
+		final Component sep = new JSeparator(SwingConstants.HORIZONTAL );
 
 		ctlPan.add( BorderLayout.NORTH, sep );
 		ctlPan.add( BorderLayout.EAST, btnPan );
@@ -373,12 +367,11 @@ implements	ActionListener, ListSelectionListener
 		content.add( BorderLayout.CENTER, mainPan );
 		}
 
-	private
+	private static final
 	class		DetailLabel
 	extends		JLabel
 		{
-		public
-		DetailLabel( final String text )
+		private DetailLabel(final String text)
 			{
 			super( text );
 

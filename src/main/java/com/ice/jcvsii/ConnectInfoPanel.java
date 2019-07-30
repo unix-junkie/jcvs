@@ -24,6 +24,8 @@
 package com.ice.jcvsii;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,7 +53,6 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		ConnectInfoPanel
 extends		JPanel
 implements	ItemListener, ActionListener
@@ -72,7 +74,6 @@ implements	ItemListener, ActionListener
 	private JPasswordField	passwordText;
 
 
-	public
 	ConnectInfoPanel( final String operation )
 		{
 		super();
@@ -86,7 +87,7 @@ implements	ItemListener, ActionListener
 
 		final String connMethod =
 			prefs.getProperty
-			( panName + "." + ConfigConstants.INFOPAN_METHOD, "" );
+			(panName + '.' + ConfigConstants.INFOPAN_METHOD, "" );
 
 		if ( connMethod != null )
 			{
@@ -97,22 +98,22 @@ implements	ItemListener, ActionListener
 
 		this.setUserName
 			( prefs.getProperty
-				( panName + "." + ConfigConstants.INFOPAN_USER_NAME, "" ) );
+				(panName + '.' + ConfigConstants.INFOPAN_USER_NAME, "" ) );
 		this.setServer
 			( prefs.getProperty
-				( panName + "." + ConfigConstants.INFOPAN_SERVER_NAME, "" ) );
+				(panName + '.' + ConfigConstants.INFOPAN_SERVER_NAME, "" ) );
 		this.setModule
 			( prefs.getProperty
-				( panName + "." + ConfigConstants.INFOPAN_MODULE_NAME, "" ) );
+				(panName + '.' + ConfigConstants.INFOPAN_MODULE_NAME, "" ) );
 		this.setRepository
 			( prefs.getProperty
-				( panName + "." + ConfigConstants.INFOPAN_REPOS_NAME, "" ) );
+				(panName + '.' + ConfigConstants.INFOPAN_REPOS_NAME, "" ) );
 		this.setExportDirectory
 			( prefs.getProperty
-				( panName + "." + ConfigConstants.INFOPAN_EXPDIR_NAME, "" ) );
+				(panName + '.' + ConfigConstants.INFOPAN_EXPDIR_NAME, "" ) );
 		this.setArguments
 			( prefs.getProperty
-				( panName + "." + ConfigConstants.INFOPAN_ARGS_NAME, "" ) );
+				(panName + '.' + ConfigConstants.INFOPAN_ARGS_NAME, "" ) );
 		}
 
 	public void
@@ -121,41 +122,41 @@ implements	ItemListener, ActionListener
 		final UserPrefs prefs = Config.getPreferences();
 
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_METHOD,
+			(panName + '.' + ConfigConstants.INFOPAN_METHOD,
 				  this.inetdRadio.isSelected() ? "INET"
 				: this.sshRadio.isSelected() ? "SSH"
 				: "RSH" );
 
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_USER_NAME,
+			(panName + '.' + ConfigConstants.INFOPAN_USER_NAME,
 				this.getUserName() );
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_SERVER_NAME,
+			(panName + '.' + ConfigConstants.INFOPAN_SERVER_NAME,
 				this.getServer() );
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_MODULE_NAME,
+			(panName + '.' + ConfigConstants.INFOPAN_MODULE_NAME,
 				this.getModule() );
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_REPOS_NAME,
+			(panName + '.' + ConfigConstants.INFOPAN_REPOS_NAME,
 				this.getRepository() );
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_EXPDIR_NAME,
+			(panName + '.' + ConfigConstants.INFOPAN_EXPDIR_NAME,
 				this.getExportDirectory() );
 		prefs.setProperty
-			( panName + "." + ConfigConstants.INFOPAN_ARGS_NAME,
+			(panName + '.' + ConfigConstants.INFOPAN_ARGS_NAME,
 				this.getArguments() );
 		}
 
-	public void
-	setServerMode( final boolean state )
+	private void
+	setServerMode(final boolean state)
 		{
 		this.rshRadio.setSelected( state );
 		this.sshRadio.setSelected( ! state );
 		this.inetdRadio.setSelected( ! state );
 		}
 
-	public void
-	setSecureServerMode( final boolean state )
+	private void
+	setSecureServerMode(final boolean state)
 		{
 		this.rshRadio.setSelected( ! state );
 		this.sshRadio.setSelected( state );
@@ -206,8 +207,8 @@ implements	ItemListener, ActionListener
 		return this.userNameText.getText();
 		}
 
-	public void
-	setUserName( final String name )
+	private void
+	setUserName(final String name)
 		{
 		this.userNameText.setText( name );
 		}
@@ -225,8 +226,8 @@ implements	ItemListener, ActionListener
 					? "" : this.moduleText.getText();
 		}
 
-	public void
-	setModule( final String name )
+	private void
+	setModule(final String name)
 		{
 		if ( this.moduleText != null )
 			this.moduleText.setText( name );
@@ -238,8 +239,8 @@ implements	ItemListener, ActionListener
 		return this.hostNameText.getText();
 		}
 
-	public void
-	setServer( final String name )
+	private void
+	setServer(final String name)
 		{
 		this.hostNameText.setText( name );
 		}
@@ -252,15 +253,15 @@ implements	ItemListener, ActionListener
 
 		String repositorty = this.repositoryText.getText();
 
-		if ( repositorty.endsWith( "/" ) )
+		if (!repositorty.isEmpty() && repositorty.charAt(repositorty.length() - 1) == '/')
 			repositorty =
 				repositorty.substring( 0, repositorty.length() - 1 );
 
 		return repositorty;
 		}
 
-	public void
-	setRepository( final String name )
+	private void
+	setRepository(final String name)
 		{
 		if ( repositoryText != null )
 			this.repositoryText.setText( name );
@@ -273,8 +274,8 @@ implements	ItemListener, ActionListener
 					? "" : this.argumentsText.getText();
 		}
 
-	public void
-	setArguments( final String args )
+	private void
+	setArguments(final String args)
 		{
 		if ( argumentsText != null )
 			this.argumentsText.setText( args );
@@ -287,8 +288,8 @@ implements	ItemListener, ActionListener
 					? "" : this.exportDirText.getText();
 		}
 
-	public void
-	setExportDirectory( final String dir )
+	private void
+	setExportDirectory(final String dir)
 		{
 		if ( exportDirText != null )
 			this.exportDirText.setText( dir );
@@ -426,15 +427,14 @@ implements	ItemListener, ActionListener
 
 		// ============== INPUT FIELDS PANEL ================
 
-		final JPanel fldPan = new JPanel();
+		final Container fldPan = new JPanel();
 		fldPan.setLayout( new GridBagLayout() );
 
 		// ------------------- Module -------------------
 		if ( ! operation.equals( "test" )
 				&& ! operation.equals( "initrep" ) )
 			{
- 			lbl = this.new MyLabel
-				( rmgr.getUIString( "name.for.cvsmodule" ) );
+ 			lbl = new MyLabel(rmgr.getUIString("name.for.cvsmodule"));
 			AWTUtilities.constrain(
 				fldPan, lbl,
 				GridBagConstraints.NONE,
@@ -450,8 +450,7 @@ implements	ItemListener, ActionListener
 			}
 
 		// ------------------- Server -------------------
- 		lbl = this.new MyLabel
-			( rmgr.getUIString( "name.for.cvsserver" ) );
+ 		lbl = new MyLabel(rmgr.getUIString("name.for.cvsserver"));
 		AWTUtilities.constrain(
 			fldPan, lbl,
 			GridBagConstraints.NONE,
@@ -466,8 +465,7 @@ implements	ItemListener, ActionListener
 			1, row++, 1, 1, 1.0, 0.0 );
 
 		// ------------------- Repository -------------------
- 		lbl = this.new MyLabel
-			( rmgr.getUIString( "name.for.cvsrepos" ) );
+ 		lbl = new MyLabel(rmgr.getUIString("name.for.cvsrepos"));
 		AWTUtilities.constrain(
 			fldPan, lbl,
 			GridBagConstraints.NONE,
@@ -486,15 +484,17 @@ implements	ItemListener, ActionListener
 				|| operation.equals( "import" )
 				|| operation.equals( "checkout" ) )
 			{
-			if ( operation.equals( "export" ) )
- 				lbl = this.new MyLabel
-					( rmgr.getUIString( "name.for.exportdir" ) );
-			else if ( operation.equals( "import" ) )
- 				lbl = this.new MyLabel
-					( rmgr.getUIString( "name.for.importdir" ) );
-			else if ( operation.equals( "checkout" ) )
- 				lbl = this.new MyLabel
-					( rmgr.getUIString( "name.for.checkoutdir" ) );
+				switch (operation) {
+				case "export":
+					lbl = new MyLabel(rmgr.getUIString("name.for.exportdir"));
+					break;
+				case "import":
+					lbl = new MyLabel(rmgr.getUIString("name.for.importdir"));
+					break;
+				case "checkout":
+					lbl = new MyLabel(rmgr.getUIString("name.for.checkoutdir"));
+					break;
+				}
 
 			AWTUtilities.constrain(
 				fldPan, lbl,
@@ -515,8 +515,7 @@ implements	ItemListener, ActionListener
 				|| operation.equals( "checkout" )
 				|| operation.equals( "import" ) )
 			{
- 			lbl = this.new MyLabel
-				( rmgr.getUIString( "name.for.arguments" ) );
+ 			lbl = new MyLabel(rmgr.getUIString("name.for.arguments"));
 			AWTUtilities.constrain(
 				fldPan, lbl,
 				GridBagConstraints.NONE,
@@ -534,7 +533,7 @@ implements	ItemListener, ActionListener
 
 		// ============== SERVER DEFINES DIALOG BUTTON ================
 
-		final JButton defBtn =
+		final AbstractButton defBtn =
 			new JButton( rmgr.getUIString( "name.for.servers.button" ) );
 		defBtn.addActionListener(evt ->
 					{
@@ -590,10 +589,10 @@ implements	ItemListener, ActionListener
 
 		// ============== USER LOGIN INFO PANEL ================
 
-		final JPanel infoPan = new JPanel();
+		final Container infoPan = new JPanel();
 		infoPan.setLayout( new GridBagLayout() );
 
-		final JPanel buttonPan = new JPanel();
+		final Container buttonPan = new JPanel();
 		buttonPan.setLayout( new GridBagLayout() );
 		AWTUtilities.constrain(
 			infoPan, buttonPan,
@@ -601,7 +600,7 @@ implements	ItemListener, ActionListener
 			GridBagConstraints.WEST,
 			0, 0, 1, 1, 0.0, 0.0 );
 
-		final JPanel inputPan = new JPanel();
+		final Container inputPan = new JPanel();
 		inputPan.setLayout( new GridBagLayout() );
 		AWTUtilities.constrain(
 			infoPan, inputPan,
@@ -646,8 +645,7 @@ implements	ItemListener, ActionListener
 
 		row = 0;
 
-		this.userNameLbl = this.new MyLabel
-				( rmgr.getUIString( "name.for.user.name" ) );
+		this.userNameLbl = new MyLabel(rmgr.getUIString("name.for.user.name"));
 		this.userNameLbl.setForeground( Color.black );
 		AWTUtilities.constrain(
 			inputPan, this.userNameLbl,
@@ -690,7 +688,7 @@ implements	ItemListener, ActionListener
 
 		row = 0;
 
-		final JPanel topPan = new JPanel();
+		final Container topPan = new JPanel();
 		topPan.setLayout( new GridBagLayout() );
 
 		defBtn.setMargin( new Insets( 4, 8, 4, 8 ) ) ;
@@ -722,7 +720,7 @@ implements	ItemListener, ActionListener
 			GridBagConstraints.CENTER,
 			0, row++, 1, 1, 1.0, 0.0 );
 
-		final JSeparator sep = new JSeparator( SwingConstants.HORIZONTAL );
+		final Component sep = new JSeparator(SwingConstants.HORIZONTAL );
 
 		AWTUtilities.constrain(
 			this, sep,
@@ -738,12 +736,11 @@ implements	ItemListener, ActionListener
 			0, row++, 1, 1, 1.0, 0.0 );
 		}
 
-	private
+	private static final
 	class		MyLabel
 	extends		JLabel
 		{
-		public
-		MyLabel( final String text )
+		private MyLabel(final String text)
 			{
 			super( text );
 			this.setBorder( new EmptyBorder( 0, 3, 0, 5 ) );

@@ -26,10 +26,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -39,15 +41,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import com.ice.cvsc.CVSIgnore;
@@ -60,30 +65,27 @@ import com.ice.cvsc.CVSIgnore;
  * @author Sherali Karimov <sher@mailandnews.com>
  */
 
-public
 class		UnknownFilesDialog
 extends		JDialog
 	{
-	JList			lstFiles = new JList();
-	MyListModel		mdlList = new MyListModel();
+	private final JList			lstFiles = new JList();
+	private final MyListModel		mdlList = new MyListModel();
 
-	JPanel			pnlControl = new JPanel();
-	JButton			btnCancel = new JButton();
-	JButton			btnDelete = new JButton();
-	JButton			btnSelectAll = new JButton();
-	BorderLayout	borderLayout1 = new BorderLayout();
-	GridBagLayout	gridBagLayout1 = new GridBagLayout();
-	JScrollPane		scrlList = new JScrollPane();
-	TitledBorder	titledBorder1;
+	private final JComponent pnlControl = new JPanel();
+	private final AbstractButton btnCancel = new JButton();
+	private final AbstractButton btnDelete = new JButton();
+	private final AbstractButton btnSelectAll = new JButton();
+	private final LayoutManager borderLayout1 = new BorderLayout();
+	private final LayoutManager gridBagLayout1 = new GridBagLayout();
+	private final JScrollPane		scrlList = new JScrollPane();
 
-	Vector			selectedList = new Vector();
-	JButton			btnAdd = new JButton();
+		private final Vector			selectedList = new Vector();
+	private final AbstractButton btnAdd = new JButton();
 
-	boolean			cancelled = false;
-	boolean			deleted = false;
+	private boolean			cancelled;
+	private boolean			deleted;
 
 
-	public
 	UnknownFilesDialog( final Frame owner, final Vector vct, final String title, final boolean dirs )
 		{
 		super( owner, title, true );
@@ -98,8 +100,8 @@ extends		JDialog
 			}
 		}
 
-	public void
-	setData( final Vector data )
+	private void
+	setData(final Vector data)
 		{
 		this.selectedList.clear();
 		this.mdlList.setData( data );
@@ -109,9 +111,9 @@ extends		JDialog
 	jbInit( final boolean dirs )
 		throws Exception
 		{
-		this.titledBorder1 = new TitledBorder
-			( BorderFactory.createEtchedBorder
-				( Color.white,new Color(148, 145, 140) ), "Unknown Files" );
+			final Border titledBorder1 = new TitledBorder
+					(BorderFactory.createEtchedBorder
+							(Color.white, new Color(148, 145, 140)), "Unknown Files");
 
 		this.getContentPane().setLayout( this.borderLayout1 );
 		this.btnCancel.setText("Cancel");
@@ -121,7 +123,7 @@ extends		JDialog
 
 		if ( ! dirs )
 			{
-			this.btnDelete.setFont( new java.awt.Font( "Dialog", 1, 12 ) );
+			this.btnDelete.setFont( new Font( "Dialog", 1, 12 ) );
 			this.btnDelete.setForeground( Color.red );
 			this.btnDelete.setText( "Delete" );
 			this.btnDelete.addActionListener(
@@ -137,7 +139,7 @@ extends		JDialog
 			);
 
 		this.scrlList.setBorder(titledBorder1);
-		this.btnAdd.setFont(new java.awt.Font("Dialog", 1, 12));
+		this.btnAdd.setFont(new Font("Dialog", 1, 12));
 		this.btnAdd.setForeground(Color.blue);
 		this.btnAdd.setText("Add to project");
 		this.btnAdd.addActionListener(
@@ -192,15 +194,14 @@ extends		JDialog
 			}
 		}
 
-	private
+	private final
 	class		MyCellRenderer
 	extends		JCheckBox
 	implements	ListCellRenderer
 		{
-		Color selColor;
+		final Color selColor;
 
-		public
-		MyCellRenderer()
+		private MyCellRenderer()
 			{
 			// UNDONE - configurable
 			this.selColor = new Color( 208, 224, 240 );
@@ -251,39 +252,38 @@ extends		JDialog
 //			}
 //		}
 
-	private
+	private final
 	class		MyListModel
 	extends		AbstractListModel
 	implements Iterable<MyItem>
 		{
-		Vector<MyItem>	listItems = new Vector<>();
-		CVSIgnore	ignore = new CVSIgnore();
+		final Vector<MyItem>	listItems = new Vector<>();
+		final CVSIgnore	ignore = new CVSIgnore();
 
-		public
-		MyListModel()
+		private MyListModel()
 			{
 			this.ignore.addIgnoreSpec
 				( Config.getPreferences().getProperty
 					( ConfigConstants.GLOBAL_USER_IGNORES, null ) );
 			}
 
-		public void
-		setData( final Vector ukns )
+		void
+		setData(final Vector ukns)
 			{
 			this.listItems.clear();
-			if ( ukns != null && ukns.size() > 0 )
+			if ( ukns != null && !ukns.isEmpty())
 				{
 				for( int i=0 ; i < ukns.size() ; i++ )
 					{
 					final Object obj = ukns.elementAt( i );
-					if ( obj != null && obj instanceof File )
+					if (obj instanceof File)
 						{
 						final File f = (File) obj;
 
 						if ( this.ignore.isFileToBeIgnored( f.getName() ) )
 							continue;
 
-						listItems.add( new MyItem( f ) );
+						listItems.add(new MyItem(f));
 						}
 					}
 				}
@@ -298,8 +298,8 @@ extends		JDialog
 			return this.listItems.size();
 			}
 
-		public void
-		toggleItemAt( final int index )
+		void
+		toggleItemAt(final int index)
 			{
 			if ( index > -1 && index < this.listItems.size() )
 				{
@@ -309,7 +309,7 @@ extends		JDialog
 				}
 			}
 
-		public void
+		void
 		selectAllItems()
 			{
 			final int size = this.listItems.size();
@@ -341,12 +341,12 @@ extends		JDialog
 			return true;
 			}
 
-		public void
-		addElementAt( final Object obj, final int pos )
+		void
+		addElementAt(final Object obj, final int pos)
 			{
-			if ( obj != null && obj instanceof File )
+			if (obj instanceof File)
 				{
-				this.listItems.add( pos, new MyItem((File) obj) );
+				this.listItems.add(pos, new MyItem((File) obj));
 				this.fireContentsChanged( this, pos, pos + 1 );
 				}
 			}
@@ -354,7 +354,7 @@ extends		JDialog
 		public Object
 		deleteElementAt( final int i )
 			{
-			if ( this.listItems.size() == 0 )
+			if (this.listItems.isEmpty())
 				return null;
 			final Object ret = this.listItems.remove(i);
 			this.fireContentsChanged( this, i, i + 1 );
@@ -365,10 +365,7 @@ extends		JDialog
 		containsElement( final Object obj )
 			{
 			final int i = this.listItems.indexOf(obj);
-			if ( i >= 0 )
-				return true;
-			else
-				return false;
+			return i >= 0;
 			}
 
 		public Object
@@ -389,15 +386,14 @@ extends		JDialog
 			}
 		}
 
-	private
+	private static final
 	class		MyItem
 		{
-		String		label = null;
-		boolean		isSelected = false;
-		File		file = null;
+		final String		label;
+		boolean		isSelected;
+		final File		file;
 
-		public
-		MyItem( final File newFile )
+		private MyItem(final File newFile)
 			{
 			this.label = newFile.getAbsolutePath();
 			this.file = newFile;

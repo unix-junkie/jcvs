@@ -31,6 +31,7 @@ import com.ice.cvsc.CVSResponse;
 import com.ice.cvsc.CVSScramble;
 import com.ice.cvsc.CVSTracer;
 import com.ice.cvsc.CVSUserInterface;
+import com.ice.jcvsii.CVSThread.Monitor;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -40,14 +41,13 @@ class		TestConnectPanel
 extends		MainTabPanel
 implements	ActionListener, CVSUserInterface
 	{
-	protected ConnectInfoPanel	info;
-	protected CVSClient			client;
-	protected CVSRequest		request;
-	protected JTextField		argumentsText;
+	private ConnectInfoPanel	info;
+	private CVSClient			client;
+		protected JTextField		argumentsText;
 	protected JTextField		exportDirText;
-	protected JTextArea			outputText;
-	protected JLabel			feedback;
-	protected JButton			actionButton;
+	private JTextArea			outputText;
+	private JLabel			feedback;
+	private JButton			actionButton;
 
 
 	public
@@ -99,7 +99,7 @@ implements	ActionListener, CVSUserInterface
 		final UserPrefs prefs = Config.getPreferences();
 
 		final CVSProject		project;
-		Point			location;
+		final Point			location;
 
 		location = this.getLocationOnScreen();
 
@@ -150,57 +150,57 @@ implements	ActionListener, CVSUserInterface
 
 		this.client = CVSUtilities.createCVSClient( hostname, cvsPort );
 
-		this.request = new CVSRequest();
+			final CVSRequest request = new CVSRequest();
 
-		request.setPServer( isPServer );
-		request.setUserName( userName );
-		request.setHostName( client.getHostName() );
+		request.setPServer(isPServer );
+		request.setUserName(userName );
+		request.setHostName(client.getHostName() );
 
 		if ( isPServer )
 			{
 			final String scrambled =
 				CVSScramble.scramblePassword
-					( new String( passWord ), 'A' );
+					(passWord, 'A' );
 
-			request.setPassword( scrambled );
+			request.setPassword(scrambled );
 			}
 		else if ( connMethod == CVSRequest.METHOD_SSH )
 			{
-			request.setPassword( passWord );
+			request.setPassword(passWord );
 			}
 
-		request.setConnectionMethod( connMethod );
+		request.setConnectionMethod(connMethod );
 		request.setServerCommand
 			( CVSUtilities.establishServerCommand
 				( hostname, connMethod, isPServer ) );
 
 		if ( connMethod == CVSRequest.METHOD_RSH )
 			{
-			CVSUtilities.establishRSHProcess( request );
+			CVSUtilities.establishRSHProcess(request);
 			}
 
-		request.setPort( client.getPort() );
+		request.setPort(client.getPort() );
 
-		request.setRepository( "" );
-		request.setRootDirectory( rootDirectory );
-		request.setRootRepository( rootDirectory );
-		request.setLocalDirectory( "" );
+		request.setRepository("" );
+		request.setRootDirectory(rootDirectory );
+		request.setRootRepository(rootDirectory );
+		request.setLocalDirectory("" );
 
-		request.setCommand( "noop" );
+		request.setCommand("noop" );
 
-		request.includeNotifies = false;
+			request.includeNotifies = false;
 
 		// This will avoid the 'Directory' reset before the noop command
-		request.execInCurDir = true;
+			request.execInCurDir = true;
 		// This will avoid the 'Directory' to the 'execInCurDir directory'
-		request.setDirEntry( null );
+		request.setDirEntry(null );
 
-		request.traceRequest = true;
-		request.traceResponse = true;
-		request.traceProcessing = true;
-		request.traceTCPData = true;
+			request.traceRequest = true;
+			request.traceResponse = true;
+			request.traceProcessing = true;
+			request.traceTCPData = true;
 
-		request.allowGzipFileMode =
+			request.allowGzipFileMode =
 			prefs.getBoolean( ConfigConstants.GLOBAL_ALLOWS_FILE_GZIP, true );
 
 		request.setGzipStreamLevel
@@ -209,15 +209,15 @@ implements	ActionListener, CVSUserInterface
 		if ( connMethod == CVSRequest.METHOD_SSH )
 			{
 			// UNDONE Inform user!
-			request.setGzipStreamLevel( 0 );
-			request.allowGzipFileMode = false;
+			request.setGzipStreamLevel(0 );
+				request.allowGzipFileMode = false;
 			}
 
-		request.setEntries( new CVSEntryVector() );
+		request.setEntries(new CVSEntryVector() );
 
-		request.setArguments( new CVSArgumentVector() );
+		request.setArguments(new CVSArgumentVector() );
 
-		request.setUserInterface( this );
+		request.setUserInterface(this );
 
 		this.setWaitCursor();
 
@@ -229,15 +229,15 @@ implements	ActionListener, CVSUserInterface
 
 		final CVSResponse response = new CVSResponse();
 
-		final CVSThread thread =
+		final Thread thread =
 			new CVSThread( "TestConnect",
-				this.new MyRunner( client, request, response ),
-					this.new MyMonitor( request, response, outputBuf ) );
+				       new MyRunner(client, request, response),
+					this.new MyMonitor(request, response, outputBuf ) );
 
 		thread.start();
 		}
 
-	private
+	private static final
 	class		MyRunner
 	implements	Runnable
 		{
@@ -245,8 +245,7 @@ implements	ActionListener, CVSUserInterface
 		private final CVSRequest request;
 		private final CVSResponse response;
 
-		public
-		MyRunner( final CVSClient client, final CVSRequest request, final CVSResponse response )
+		private MyRunner(final CVSClient client, final CVSRequest request, final CVSResponse response)
 			{
 			this.client = client;
 			this.request = request;
@@ -261,16 +260,15 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	private
+	private final
 	class		MyMonitor
-	implements	CVSThread.Monitor
+	implements	Monitor
 		{
 		private final StringBuffer buf;
 		private final CVSRequest request;
 		private final CVSResponse response;
 
-		public
-		MyMonitor( final CVSRequest request, final CVSResponse response, final StringBuffer buf )
+		private MyMonitor(final CVSRequest request, final CVSResponse response, final StringBuffer buf)
 			{
 			this.buf = buf;
 			this.request = request;

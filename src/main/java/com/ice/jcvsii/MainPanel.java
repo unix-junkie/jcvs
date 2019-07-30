@@ -11,24 +11,22 @@ import javax.swing.JTabbedPane;
 import com.ice.cvsc.CVSProject;
 
 
-public
 class		MainPanel
 extends		JPanel
 implements	ActionListener
 	{
-	MainFrame				mainFrame = null;
+	private final MainFrame				mainFrame;
 
-	WorkBenchPanel			wbPanel = null;
-	CheckOutPanel			coPanel = null;
-	ExportPanel				expPanel = null;
-	ImportPanel				impPanel = null;
-	CreatePanel				crtPanel = null;
-	InitRepositoryPanel		initPanel = null;
-	TestConnectPanel		testPanel = null;
-	JTabbedPane				tabbedPane = null;
+	private final WorkBenchPanel			wbPanel;
+	private final CheckOutPanel			coPanel;
+	private final ExportPanel				expPanel;
+	private final ImportPanel				impPanel;
+	private final CreatePanel				crtPanel;
+	private final InitRepositoryPanel		initPanel;
+	private final TestConnectPanel		testPanel;
+	private final JTabbedPane				tabbedPane;
 
 
-	public
 	MainPanel( final MainFrame mainFrame )
 		{
 		super();
@@ -127,7 +125,7 @@ implements	ActionListener
 		final String command = event.getActionCommand();
 
 		System.err.println
-			( "UNKNOWN Command '" + command + "'" );
+			("UNKNOWN Command '" + command + '\'');
 		}
 
 	}

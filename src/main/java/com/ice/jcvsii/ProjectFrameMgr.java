@@ -22,35 +22,38 @@
 
 package com.ice.jcvsii;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map.Entry;
 
 import com.ice.cvsc.CVSLog;
 
 
-public
+final
 class		ProjectFrameMgr
 	{
-	private static boolean			debug = false;
-	private static Hashtable<String, ProjectFrame>	frames = new Hashtable<>();
+	private static final boolean			debug = false;
+	private static final Hashtable<String, ProjectFrame>	frames = new Hashtable<>();
+
+		private ProjectFrameMgr() {
+		}
 
 
-	public static void
+		public static void
 	addProject( final ProjectFrame frame, final String localRootPath )
 		{
-		if ( ProjectFrameMgr.debug )
+		if ( debug )
 			{
 			CVSLog.logMsgStderr
 				( "PROJECT_FRAME_MGR: ADD: " + localRootPath );
 			}
 
-		ProjectFrameMgr.frames.put( localRootPath, frame );
+		frames.put( localRootPath, frame );
 		}
 
 	public static void
 	removeProject( final ProjectFrame frame, final String localRootPath )
 		{
-		if ( ProjectFrameMgr.debug )
+		if ( debug )
 			{
 			CVSLog.logMsgStderr
 				( "PROJECT_FRAME_MGR: REMOVE: " + localRootPath );
@@ -63,21 +66,18 @@ class		ProjectFrameMgr
 		// at the root of the module. Ergo, we must remove by direct
 		// comparison over the entire Hashtable.
 		//
-		final Enumeration keys = ProjectFrameMgr.frames.keys();
-		for ( ; keys.hasMoreElements() ; )
+		for (final Entry<String, ProjectFrame> stringProjectFrameEntry : frames.entrySet())
 			{
-			final String key = (String) keys.nextElement();
-
-			final ProjectFrame frm = ProjectFrameMgr.frames.get( key );
+			final ProjectFrame frm = stringProjectFrameEntry.getValue();
 
 			if ( frm == frame )
 				{
-				if ( ProjectFrameMgr.debug )
+				if ( debug )
 					{
 					CVSLog.logMsgStderr
-						( "PROJECT_FRAME_MGR: REMOVE: Matched " + key );
+						("PROJECT_FRAME_MGR: REMOVE: Matched " + stringProjectFrameEntry.getKey());
 					}
-				ProjectFrameMgr.frames.remove( key );
+				frames.remove(stringProjectFrameEntry.getKey());
 				break;
 				}
 			}
@@ -86,13 +86,13 @@ class		ProjectFrameMgr
 	public static boolean
 	checkProjectOpen( final String localRootPath )
 		{
-		if ( ProjectFrameMgr.debug )
+		if ( debug )
 			{
 			CVSLog.logMsgStderr
 				( "PROJECT_FRAME_MGR: CHECK: " + localRootPath );
 			}
 
-		final ProjectFrame frame = ProjectFrameMgr.frames.get( localRootPath );
+		final ProjectFrame frame = frames.get( localRootPath );
 
 		if ( frame != null )
 			{
@@ -109,22 +109,22 @@ class		ProjectFrameMgr
 	public static Iterable<ProjectFrame>
 	enumerateProjectFrames()
 		{
-		return ProjectFrameMgr.frames.values();
+		return frames.values();
 		}
 
 	public static void
 	closeAllProjects()
 		{
-		for ( final String key : ProjectFrameMgr.frames.keySet() )
+		for (final Entry<String, ProjectFrame> stringProjectFrameEntry : frames.entrySet())
 			{
-			if ( ProjectFrameMgr.debug )
+			if ( debug )
 				{
 				CVSLog.logMsgStderr
-					( "PROJECT_FRAME_MGR: CLOSE: " + key );
+					("PROJECT_FRAME_MGR: CLOSE: " + stringProjectFrameEntry.getKey());
 				}
 
 			final ProjectFrame frame =
-				ProjectFrameMgr.frames.get( key );
+					stringProjectFrameEntry.getValue();
 
 			frame.dispose();
 			}

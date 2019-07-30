@@ -17,13 +17,13 @@ public
 class		TreePopupMouseAdapter
 extends		MouseAdapter
 	{
-	private boolean		isPopupClick = false;
+	private boolean		isPopupClick;
 
-	private Action		action = null;
+	private final Action		action;
 	private String		actionCommand = "DoubleClick";
-	private JTree		tree = null;
-	private JPopupMenu	nodePopup = null;
-	private JPopupMenu	leafPopup = null;
+	private final JTree		tree;
+	private final JPopupMenu	nodePopup;
+	private final JPopupMenu	leafPopup;
 
 
 	public

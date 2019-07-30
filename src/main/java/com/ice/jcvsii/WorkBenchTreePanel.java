@@ -26,7 +26,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.MutableTreeNode;
 
 import com.ice.cvsc.CVSCUtilities;
 import com.ice.cvsc.CVSProject;
@@ -35,22 +37,20 @@ import com.ice.event.TreePopupMouseAdapter;
 import com.ice.pref.UserPrefs;
 
 
-public
 class		WorkBenchTreePanel
 extends		JPanel
 implements	ActionListener, FocusListener, TreeSelectionListener
 	{
-	protected JTree			tree;
-	protected Border		actBorder;
-	protected Border		deActBorder;
-	protected JScrollPane	scroller;
+	private JTree			tree;
+	private Border		actBorder;
+	private Border		deActBorder;
+	private JScrollPane	scroller;
 
-	protected WorkBenchTreeModel	model;
-	protected WorkBenchDetailPanel	detailPan;
-	protected AbstractAction		dblClickAction;
+	private WorkBenchTreeModel	model;
+	private final WorkBenchDetailPanel	detailPan;
+	private AbstractAction		dblClickAction;
 
 
-	public
 	WorkBenchTreePanel( final WorkBenchDetailPanel detailPan )
 		{
 		super();
@@ -114,7 +114,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 
 		if ( wDef != null )
 			{
-			final WorkBenchTreeNode child =
+			final MutableTreeNode child =
 				new WorkBenchTreeNode( wDef );
 
 			parent.add( child );
@@ -149,8 +149,8 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		this.addNewProject( parent, localRootDir );
 		}
 
-	public void
-	addNewProject( final WorkBenchTreeNode parent, String localRootDir )
+	private void
+	addNewProject(final WorkBenchTreeNode parent, String localRootDir)
 		{
 		localRootDir = CVSCUtilities.importPath( localRootDir );
 
@@ -186,7 +186,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 			final String nodePath = parent.getPathString();
 
 			String defName = pDef.getRepository();
-			final int index = defName.lastIndexOf( "/" );
+			final int index = defName.lastIndexOf('/');
 			if ( index > 0 && index < defName.length() - 1 )
 				defName = defName.substring( index + 1 );
 
@@ -202,7 +202,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 
 			if ( wDef != null )
 				{
-				final WorkBenchTreeNode child =
+				final MutableTreeNode child =
 					new WorkBenchTreeNode( wDef );
 
 				parent.add( child );
@@ -251,8 +251,7 @@ implements	ActionListener, FocusListener, TreeSelectionListener
 		{
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		final WorkBenchTreeNode node = (WorkBenchTreeNode)
-			this.tree.getLastSelectedPathComponent();
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
 
 		if ( ! node.isLeaf() )
 			{

@@ -2,13 +2,14 @@
 package com.ice.config.editor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,8 +31,7 @@ class		ConfigTupleTableEditor
 extends		ConfigureEditor
 implements	FocusListener
 	{
-	protected JButton			insertButton;
-	protected JTable			table;
+		protected JTable			table;
 	protected TupleTableModel	model;
 
 
@@ -41,8 +41,7 @@ implements	FocusListener
 		super( "Tuple Table" );
 		}
 
-	public
-	ConfigTupleTableEditor( final String typeName )
+	protected ConfigTupleTableEditor(final String typeName)
 		{
 		super( typeName );
 		}
@@ -123,55 +122,31 @@ implements	FocusListener
 
 		result.setPreferredSize( new Dimension( 150, 225 ) );
 
-		this.insertButton = new JButton( "Insert" );
+			final AbstractButton insertButton = new JButton("Insert");
 
-		this.model = this.new TupleTableModel();
+		this.model = new TupleTableModel();
 		this.table = new JTable( this.model );
 
 		this.table.setIntercellSpacing( new Dimension( 1, 1 ) );
 
-		final JScrollPane scroller = new JScrollPane( this.table );
+		final Component scroller = new JScrollPane(this.table );
 
 		result.add( "Center", scroller );
 
-		final JPanel ctlPan = new JPanel();
+		final Container ctlPan = new JPanel();
 		ctlPan.setLayout( new GridLayout( 1, 3, 5, 5 ) );
 
 		result.add( "South", ctlPan );
 
-		this.insertButton.addActionListener(
-			this.new ActionAdapter()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{ insertElement(); }
-				}
-			);
-		ctlPan.add( this.insertButton );
+		insertButton.addActionListener(e -> insertElement());
+		ctlPan.add(insertButton);
 
 		JButton btn = new JButton( "Append" );
-		btn.addActionListener(
-			this.new ActionAdapter()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{ appendElement(); }
-				}
-			);
+		btn.addActionListener(e -> appendElement());
 		ctlPan.add( btn );
 
 		btn = new JButton( "Delete" );
-		btn.addActionListener(
-			this.new ActionAdapter()
-				{
-				@Override
-				public void
-				actionPerformed( final ActionEvent e )
-					{ deleteElement(); }
-				}
-			);
+		btn.addActionListener(e -> deleteElement());
 		ctlPan.add( btn );
 
 		this.descOffset = 5;
@@ -179,7 +154,7 @@ implements	FocusListener
 		return result;
 		}
 
-	public void
+	protected void
 	insertElement()
 		{
 		final int row = this.table.getSelectedRow();
@@ -188,7 +163,7 @@ implements	FocusListener
 		this.table.repaint( 250 );
 		}
 
-	public void
+	protected void
 	appendElement()
 		{
 		this.model.appendElement( "New Key" );
@@ -212,15 +187,14 @@ implements	FocusListener
 			}
 		}
 
-	public
+	public static
 	class		TupleTableModel
 	extends		AbstractTableModel
 		{
-		private int					colCount = 0;
+		private int					colCount;
 
-		private PrefsTupleTable		table = null;
+		private PrefsTupleTable		table;
 
-		public
 		TupleTableModel()
 			{
 			this.table = null;
@@ -254,8 +228,8 @@ implements	FocusListener
 			this.fireTableStructureChanged();
 			}
 
-		public void
-		insertElement( final String key, final int row )
+		void
+		insertElement(final String key, final int row)
 			{
 			final String[] vals = new String[ this.colCount - 1 ];
 			for ( int i = 0 ; i < this.colCount - 1 ; ++i ) vals[i] = "";
@@ -270,8 +244,8 @@ implements	FocusListener
 			this.fireTableRowsInserted( row, row );
 			}
 
-		public void
-		appendElement( final String key )
+		void
+		appendElement(final String key)
 			{
 			final String[] vals = new String[ this.colCount - 1 ];
 			for ( int i = 0 ; i < this.colCount - 1 ; ++i ) vals[i] = "";
@@ -287,8 +261,8 @@ implements	FocusListener
 			this.fireTableRowsInserted( sz, sz );
 			}
 
-		public void
-		deleteElement( final int row )
+		void
+		deleteElement(final int row)
 			{
 			this.table.removeTupleAt( row );
 			this.fireTableRowsDeleted( row, row );
@@ -305,7 +279,7 @@ implements	FocusListener
 			return
 				column == 0
 				? "Key"
-				: "Value["+(column-1)+"]";
+				: "Value[" + (column-1) + ']';
 			}
 
 		@Override
@@ -400,17 +374,5 @@ implements	FocusListener
 			return true;
 			}
 		}
-
-	private
-	class		ActionAdapter
-	implements	ActionListener
-		{
-		@Override
-		public void
-		actionPerformed( final ActionEvent event )
-			{
-			}
-		}
-
 	}
 

@@ -30,20 +30,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class
+final class
 FileUtilities
 	{
-	static public final String		RCS_ID = "$Id: FileUtilities.java,v 1.4 1999/03/09 19:44:39 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.4 $";
-	static public final String		RCS_NAME = "$Name:  $";
+	public static final String		RCS_ID = "$Id: FileUtilities.java,v 1.4 1999/03/09 19:44:39 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.4 $";
+	public static final String		RCS_NAME = "$Name:  $";
 
-	public static void
+		private FileUtilities() {
+		}
+
+		public static void
 	copyFile( final File from, final File to )
 		throws IOException
 		{
 		int		bytes;
 		long	length;
-		long	fileSize;
+		final long	fileSize;
 
 		BufferedInputStream		in = null;
 		BufferedOutputStream	out = null;
@@ -72,7 +75,7 @@ FileUtilities
 					+ to.getPath() + "', " + ex.getMessage() );
 			}
 
-		byte[]	buffer;
+		final byte[]	buffer;
 		buffer = new byte[8192];
 		fileSize = from.length();
 
@@ -130,20 +133,13 @@ FileUtilities
 			final String fileSuffix =
 				fileName.substring( fnLen - exLen );
 
-			if ( FileUtilities.caseSensitivePathNames() )
-				{
-				result = fileSuffix.equals( extension );
-				}
-			else
-				{
-				result = fileSuffix.equalsIgnoreCase( extension );
-				}
+				result = caseSensitivePathNames() ? fileSuffix.equals(extension) : fileSuffix.equalsIgnoreCase(extension);
 			}
 
 		return result;
 		}
 
-	static public boolean
+	private static boolean
 	caseSensitivePathNames()
 		{
 		boolean result = true;
@@ -177,21 +173,19 @@ FileUtilities
 	public static boolean
 	isPatternString( final String pattern )
 		{
-		if ( pattern.indexOf( "*" ) >= 0 ) return true;
-		if ( pattern.indexOf( "?" ) >= 0 ) return true;
+		if (pattern.indexOf('*') >= 0 ) return true;
+		if (pattern.indexOf('?') >= 0 ) return true;
 
-		final int index = pattern.indexOf( "[" );
-		if ( index >= 0 && pattern.indexOf( "]" ) > index + 1 )
-			return true;
+		final int index = pattern.indexOf('[');
+			return index >= 0 && pattern.indexOf(']') > index + 1;
 
-		return false;
 		}
 
 	public static boolean
 	matchPattern( final String fileName, final String pattern )
 		{
 		return
-			FileUtilities.recurseMatchPattern
+			recurseMatchPattern
 				( fileName, pattern, 0, 0 );
 		}
 
@@ -215,10 +209,7 @@ FileUtilities
 			{
 			if ( pIdx >= pLen )
 				{
-				if ( sIdx >= sLen )
-					return true;
-				else
-					return false;
+					return sIdx >= sLen;
 				}
 
 			if ( sIdx >= sLen && pattern.charAt(pIdx) != '*' )
@@ -236,7 +227,7 @@ FileUtilities
 
 				for ( ; ; )
 					{
-					if ( FileUtilities.recurseMatchPattern
+					if ( recurseMatchPattern
 							( string, pattern, sIdx, pIdx ) )
 						return true;
 

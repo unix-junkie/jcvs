@@ -24,7 +24,6 @@ package com.ice.util;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -34,6 +33,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.ImageProducer;
+import java.io.IOException;
 import java.net.URL;
 import java.util.StringTokenizer;
 
@@ -43,11 +43,14 @@ import java.util.StringTokenizer;
  */
 
 
-public class
+public final class
 AWTUtilities
 	{
-	static public Point
-	centerDialogInParent( final Dialog dialog, final Component parent )
+		private AWTUtilities() {
+		}
+
+		public static Point
+	centerDialogInParent(final Component dialog, final Component parent )
 		{
 		final Point parLoc = parent.getLocationOnScreen();
 
@@ -60,8 +63,8 @@ AWTUtilities
 		return new Point( x, y );
 		}
 
-	static public Point
-	computeDialogLocation( final Dialog dialog, final int w, final int h )
+	public static Point
+	computeDialogLocation(final Component dialog, final int w, final int h )
 		{
 		final Dimension scrnSz =
 			dialog.getToolkit().getScreenSize();
@@ -72,8 +75,8 @@ AWTUtilities
 		return new Point( x, y );
 		}
 
-	static public Point
-	computeDialogLocation( final Dialog dialog )
+	public static Point
+	computeDialogLocation( final Component dialog )
 		{
 		final Dimension dlgSz = dialog.getSize();
 		final Dimension scrnSz =
@@ -85,8 +88,8 @@ AWTUtilities
 		return new Point( x, y );
 		}
 
-	static public Point
-	computeDialogLocation( final Dialog dialog, final Component rel )
+	public static Point
+	computeDialogLocation(final Component dialog, final Component rel )
 		{
 		final Dimension dlgSz = dialog.getSize();
 		final Dimension scrnSz = dialog.getToolkit().getScreenSize();
@@ -110,7 +113,7 @@ AWTUtilities
 		return new Point( x, y );
 		}
 
-	static public void
+	public static void
 	constrain(
 			final Container container, final Component component,
 			final int fill, final int anchor,
@@ -134,7 +137,7 @@ AWTUtilities
 		container.add( component );
 		}
 
-	static public void
+	public static void
 	constrain(
 			final Container container, final Component component,
 			final int fill, final int anchor,
@@ -160,7 +163,7 @@ AWTUtilities
 		container.add( component );
 		}
 
-	static public void
+	public static void
 	constrain(
 			final Container container, final Component component,
 			final int fill, final int anchor,
@@ -188,7 +191,7 @@ AWTUtilities
 		container.add( component );
 		}
 
-	static public Font
+	public static Font
 	getFont( final String fontName )
 		{
 		final StringTokenizer toker =
@@ -246,16 +249,16 @@ AWTUtilities
 
 	public static Image
 	getImageResource( final String name )
-		throws java.io.IOException
+		throws IOException
 		{
 		return
-			AWTUtilities.getImageResource
+			getImageResource
 				( AWTUtilities.class, name );
 		}
 
-	public static Image
-	getImageResource( final Class base, final String name )
-		throws java.io.IOException
+	private static Image
+	getImageResource(final Class base, final String name)
+		throws IOException
 		{
 		Image	result = null;
 
@@ -274,7 +277,7 @@ AWTUtilities
 
 	public static Image
 	getSystemImageResource( final String name )
-		throws java.io.IOException
+		throws IOException
 		{
 		Image	result = null;
 

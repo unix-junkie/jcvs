@@ -3,11 +3,11 @@ package com.ice.viewer;
 
 import java.awt.Adjustable;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,7 +36,6 @@ import com.ice.text.HexNumberFormat;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		HexViewer
 extends		JComponent
 implements	CommandObject
@@ -46,40 +45,35 @@ implements	CommandObject
 	private static final int			HEXLINES = 16;
 	private static final int			PAGEINCR = 8;
 
-    private String			verb = null;
-    private DataHandler		dataHandler = null;
-	private final JScrollPane		scroller = null;
+		private final JScrollPane		scroller = null;
 
 	private final JEditorPane		editorPane = null;
 	private final EditorKit		editor = null;
 	private final Document		doc = null;
 
-	private boolean			hitEOF = false;
-	private boolean			closeStream = false;
+	private boolean			hitEOF;
+	private boolean			closeStream;
 	private int				dataLength = -1;
-	private InputStream		dataStream = null;
+	private InputStream		dataStream;
 
-	private int				currentBlkIdx = 0;
-	private Vector			blockCache = null;
-	private HexNumberFormat	hexFmt = null;
+		private final Vector			blockCache;
+	private HexNumberFormat	hexFmt;
 
-	private HexCanvas		hexCanvas = null;
-	private JScrollBar		scrollBar = null;
-	private JTextField		blkHexField = null;
-	private JTextField		blkDecField = null;
-	private JTextField		offHexField = null;
-	private JTextField		offDecField = null;
-	private Cursor			saveCursor = null;
+	private HexCanvas		hexCanvas;
+	private JScrollBar		scrollBar;
+	private JTextField		blkHexField;
+	private JTextField		blkDecField;
+	private JTextField		offHexField;
+	private JTextField		offDecField;
+	private Cursor			saveCursor;
 
 
-    public
-	HexViewer()
+    HexViewer()
 		{
 		this( null, -1 );
 		}
 
-    public
-	HexViewer( final InputStream content, final int length )
+    private HexViewer(final InputStream content, final int length)
 		{
 		this.hitEOF = false;
 		this.dataStream = null;
@@ -102,7 +96,7 @@ implements	CommandObject
 		this.checkClose();
 		}
 
-	protected void
+	private void
 	checkClose()
 		{
 		if ( this.dataStream != null )
@@ -137,10 +131,8 @@ implements	CommandObject
 	setCommandContext( final String verb, final DataHandler dh )
 		throws IOException
 		{
-		this.verb = verb;
-		this.dataHandler = dh;
 
-		final InputStream content = dh.getInputStream();
+			final InputStream content = dh.getInputStream();
 
 		this.setMessage( content, -1 );
 		}
@@ -148,8 +140,8 @@ implements	CommandObject
     /**
      * sets the current message to be displayed in the viewer
      */
-    public void
-	setMessage( final InputStream content, final int length )
+    private void
+	setMessage(final InputStream content, final int length)
 		{
 		this.dataStream = content;
 		this.dataLength = length;
@@ -165,18 +157,18 @@ implements	CommandObject
 		this.validate();
 		}
 
-	public void
+	private void
 	adjustScroller()
 		{
 		if ( this.dataLength < 0 )
 			{
-			this.scrollBar.setMaximum( HexViewer.PAGEINCR );
+			this.scrollBar.setMaximum( PAGEINCR );
 			}
 		else
 			{
 			this.scrollBar.setMaximum
-				( (this.dataLength + HexViewer.BLOCKSIZE - 1)
-					/ HexViewer.BLOCKSIZE );
+				( (this.dataLength + BLOCKSIZE - 1)
+					/ BLOCKSIZE );
 			}
 		}
 
@@ -185,7 +177,7 @@ implements	CommandObject
 		{
 		this.setWaitCursor();
 
-		int blkNum = offset / HexViewer.BLOCKSIZE;
+		int blkNum = offset / BLOCKSIZE;
 
 		if ( blkNum >= this.blockCache.size() )
 			{
@@ -205,23 +197,23 @@ implements	CommandObject
 				}
 			}
 
-		this.currentBlkIdx = blkNum;
+			final int currentBlkIdx = blkNum;
 
-		if ( this.currentBlkIdx < this.blockCache.size() )
+		if (currentBlkIdx < this.blockCache.size() )
 			{
 			byte[] dispData =
 				(byte[]) this.blockCache.elementAt( blkNum );
 
-			if ( this.hitEOF
-					&& this.dataLength >= 0
-					&& this.currentBlkIdx
-						== this.blockCache.size() - 1 )
+			if (this.hitEOF
+			    && this.dataLength >= 0
+			    && currentBlkIdx
+			       == this.blockCache.size() - 1 )
 				{
 				final int rem =
-					this.dataLength
-						- this.currentBlkIdx * HexViewer.BLOCKSIZE;
+						this.dataLength
+						- currentBlkIdx * BLOCKSIZE;
 
-				if ( rem != HexViewer.BLOCKSIZE )
+				if ( rem != BLOCKSIZE )
 					{
 					final byte[] remData = new byte[ rem ];
 					System.arraycopy( dispData, 0, remData, 0, rem );
@@ -238,34 +230,34 @@ implements	CommandObject
 
 		if ( this.dataLength < 0 )
 			{
-			if ( this.currentBlkIdx >
+			if (currentBlkIdx >
 					this.scrollBar.getMaximum()
-						- HexViewer.PAGEINCR )
+						- PAGEINCR )
 				{
 				this.scrollBar.setMaximum
-					( this.currentBlkIdx + HexViewer.PAGEINCR );
+					(currentBlkIdx + PAGEINCR );
 				}
 			}
 
-		int hexVal = this.currentBlkIdx;
+		int hexVal = currentBlkIdx;
 		String fldStr = this.hexFmt.format(hexVal);
 		this.blkHexField.setText( fldStr );
-		fldStr = "" + hexVal;
+		fldStr = String.valueOf(hexVal);
 		this.blkDecField.setText( fldStr );
 
-		hexVal = this.currentBlkIdx * HexViewer.BLOCKSIZE;
+		hexVal = currentBlkIdx * BLOCKSIZE;
 		fldStr = this.hexFmt.format(hexVal);
 		this.offHexField.setText( fldStr );
-		fldStr = "" + hexVal;
+		fldStr = String.valueOf(hexVal);
 		this.offDecField.setText( fldStr );
 
-		this.scrollBar.setValue( this.currentBlkIdx );
+		this.scrollBar.setValue(currentBlkIdx);
 
 		this.resetCursor();
 		}
 
-	public int
-	readBlock( final int blkNum )
+	private int
+	readBlock(final int blkNum)
 		throws IOException
 		{
 		int result = 0;
@@ -273,7 +265,7 @@ implements	CommandObject
 
 		for ( ; curBlk <= blkNum ; ++curBlk )
 			{
-			final byte[] buf = new byte[ HexViewer.BLOCKSIZE ];
+			final byte[] buf = new byte[ BLOCKSIZE ];
 
 			int off = 0;
 			int need = buf.length;
@@ -287,7 +279,7 @@ implements	CommandObject
 					if ( this.dataLength < 0 )
 						{
 						this.dataLength =
-							curBlk * HexViewer.BLOCKSIZE + off;
+							curBlk * BLOCKSIZE + off;
 						}
 					break;
 					}
@@ -305,7 +297,7 @@ implements	CommandObject
 		return result;
 		}
 
-	public void
+	private void
 	establishContents()
 		{
 		int row = 0;
@@ -313,7 +305,7 @@ implements	CommandObject
 
 		this.hexFmt = new HexNumberFormat( "XXXXXXXX" );
 
-		final JPanel ctlPanel = new JPanel();
+		final JComponent ctlPanel = new JPanel();
 		ctlPanel.setLayout( new GridBagLayout() );
 		ctlPanel.setBorder( new EmptyBorder( 2, 2, 2, 2 ) );
 		AWTUtilities.constrain(
@@ -371,7 +363,7 @@ implements	CommandObject
 			GridBagConstraints.CENTER,
 			ctlCol++, ctlRow++, 1, 1, 0.35, 0.0 );
 
-		final JPanel dataPanel = new JPanel();
+		final JComponent dataPanel = new JPanel();
 		dataPanel.setLayout( new GridBagLayout() );
 		dataPanel.setBorder( new EmptyBorder( 2, 2, 2, 2 ) );
 		AWTUtilities.constrain(
@@ -384,7 +376,7 @@ implements	CommandObject
 			new JScrollBar
 				( Adjustable.HORIZONTAL, 0, 1, 0, 1 );
 
-		this.scrollBar.setBlockIncrement( HexViewer.PAGEINCR );
+		this.scrollBar.setBlockIncrement( PAGEINCR );
 		this.scrollBar.getModel().addChangeListener
 			( this.new ScrollerChangeListener() );
 
@@ -394,7 +386,7 @@ implements	CommandObject
 			GridBagConstraints.CENTER,
 			0, 0, 1, 1, 1.0, 0.0 );
 
-		this.hexCanvas = this.new HexCanvas();
+		this.hexCanvas = new HexCanvas();
 		this.hexCanvas.setOpaque( true );
 		this.hexCanvas.setBackground( Color.white );
 		this.hexCanvas.setBorder( new EmptyBorder( 0, 8, 0, 2 ) );
@@ -408,7 +400,7 @@ implements	CommandObject
 			0, 1, 1, 1, 1.0, 1.0 );
 		}
 
-	private
+	private static final
 	class		HexCanvas
 	extends		JComponent
 		{
@@ -431,8 +423,7 @@ implements	CommandObject
 		private final HexNumberFormat	format;
 
 
-		public
-		HexCanvas()
+		private HexCanvas()
 			{
 			super();
 			this.data = null;
@@ -449,7 +440,7 @@ implements	CommandObject
 			return false;
 			}
 
-		public void
+		void
 		displayEOF()
 			{
 			this.data = null;
@@ -457,8 +448,8 @@ implements	CommandObject
 			this.repaint( 500 );
 			}
 
-		public void
-		displayData( final byte[] data )
+		void
+		displayData(final byte[] data)
 			{
 			this.data = data;
 			this.displayEOF = false;
@@ -476,12 +467,16 @@ implements	CommandObject
 		public synchronized void
 		paint( final Graphics g )
 			{
-			int         i, j;
-			final int			top, left;
-			final int			width, height;
-			int			x, y;
+			int         i;
+				int j;
+				final int			top;
+				final int left;
+				final int			width;
+				final int height;
+				int			x;
+				int y;
 
-			final Dimension   sz = this.getSize();
+				final Dimension   sz = this.getSize();
 
 			if ( this.isOpaque() )
 				{
@@ -518,24 +513,24 @@ implements	CommandObject
 			int cnt = 0;
 			g.setFont( fHex );
 			for ( i = 0
-					; i < HexViewer.HEXLINES
+					; i < HEXLINES
 							&& cnt < this.data.length
 						; ++i )
 				{
 				final StringBuffer buf = new StringBuffer();
-				final StringBuffer chBuf = new StringBuffer();
+				final StringBuilder chBuf = new StringBuilder();
 				final FieldPosition pos = new FieldPosition(0);
 
 				this.format.format
-					( new Integer(i * HexViewer.HEXBYTES), buf, pos );
+					(i * HEXBYTES, buf, pos );
 				buf.append( ": " );
 
 				for ( j = 0
-						; j < HexViewer.HEXBYTES
+						; j < HEXBYTES
 								&& cnt < this.data.length
 							; ++j, ++cnt )
 					{
-					final int index = i * HexViewer.HEXBYTES + j;
+					final int index = i * HEXBYTES + j;
 
 					if ( index >= this.data.length )
 						break;
@@ -545,17 +540,17 @@ implements	CommandObject
 						(ch >= 32 && ch < 127 ? ch : '.' );
 
 					this.format.format
-						( new Integer( this.data[index] ), buf, pos );
+						((int) this.data[index], buf, pos );
 
-					buf.append( " " );
+					buf.append(' ');
 					}
 
-				for ( ; j < HexViewer.HEXBYTES ; ++j )
+				for ( ; j < HEXBYTES ; ++j )
 					{
 					buf.append( "   " );
 					}
 
-				buf.append( " " );
+				buf.append(' ');
 				buf.append( chBuf );
 
 				g.drawString( buf.toString(), x, y );
@@ -609,17 +604,18 @@ implements	CommandObject
 					+ this.hexSepW + this.hexCharW;
 			}
 
-		public void
+		void
 		computeDimensions()
 			{
-			int			width, height;
-			final Dimension	sz = this.getSize();
+			final int			width;
+				final int height;
+				final Dimension	sz = this.getSize();
 			final Graphics	g = this.getGraphics();
 
 			this.establishFontMetrics( g, this.getFont() );
 
 			width = this.hexLineW + 2;
-			height = HexViewer.HEXLINES * this.hexHeight + 2;
+			height = HEXLINES * this.hexHeight + 2;
 
 			this.mDim.width = width;
 			this.mDim.height = height;
@@ -644,19 +640,19 @@ implements	CommandObject
 
 		}
 
-	public void
+	private void
 	resetCursor()
 		{
-		final Frame f = (Frame)this.getTopLevelAncestor();
+		final Component f = this.getTopLevelAncestor();
 		if ( f != null && this.saveCursor != null )
 			f.setCursor( this.saveCursor );
 		this.saveCursor = null;
 		}
 
-	public void
+	private void
 	setWaitCursor()
 		{
-		final Frame f = (Frame)this.getTopLevelAncestor();
+		final Component f = this.getTopLevelAncestor();
 		if ( f != null )
 			{
 			this.saveCursor = f.getCursor();

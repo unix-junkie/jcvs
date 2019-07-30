@@ -32,12 +32,12 @@ class		ExecCommandEditor
 extends		ConfigureEditor
 implements	ActionListener, ItemListener
 	{
-	protected PrefsTupleTable	cmdTable;
+	private PrefsTupleTable	cmdTable;
 
-	protected JTextField		cmdText;
-	protected JTextField		envText;
+	private JTextField		cmdText;
+	private JTextField		envText;
 
-	protected JComboBox			cmdBox;
+	private JComboBox			cmdBox;
 
 
 	public
@@ -106,19 +106,8 @@ implements	ActionListener, ItemListener
 		final PrefsTupleTable ot =
 			orig.getTupleTable( propName, null );
 
-		if ( nt != null && ot != null )
-			{
-			if ( ! nt.equals( ot ) )
-				{
-				return true;
-				}
-			}
-		else if ( nt != null || ot != null )
-			{
-			return true;
-			}
+			return nt != null && ot != null ? !nt.equals(ot) : nt != null || ot != null;
 
-		return false;
 		}
 
 	@Override
@@ -128,8 +117,8 @@ implements	ActionListener, ItemListener
 		this.cmdBox.requestFocus();
 		}
 
-	public void
-	saveCurrentCommand( final String extVerb )
+	private void
+	saveCurrentCommand(final String extVerb)
 		{
 		if ( extVerb != null )
 			{
@@ -146,7 +135,7 @@ implements	ActionListener, ItemListener
 			}
 		}
 
-	public void
+	private void
 	newCommand()
 		{
 		String extVerb = null;
@@ -160,7 +149,7 @@ implements	ActionListener, ItemListener
 			if ( extVerb == null )
 				break;
 
-			if ( extVerb.indexOf( "." ) == -1 )
+			if (extVerb.indexOf('.') == -1 )
 				{
 				JOptionPane.showMessageDialog
 					( null, "The key '" + extVerb + "' is not valid.\n" +
@@ -197,7 +186,7 @@ implements	ActionListener, ItemListener
 			}
 		}
 
-	public void
+	private void
 	deleteCommand()
 		{
 		final String extVerb =

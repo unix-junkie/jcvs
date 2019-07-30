@@ -1,10 +1,13 @@
 
 package com.ice.util;
 
-public class
+final class
 ClassUtilities
 	{
-	public static boolean
+		private ClassUtilities() {
+		}
+
+		public static boolean
 	implementsInterface( final Class aClass, final String interfaceName )
 		{
 		int ii;

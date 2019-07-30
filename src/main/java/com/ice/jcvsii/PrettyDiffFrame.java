@@ -22,8 +22,12 @@
 
 package com.ice.jcvsii;
 
+import static javax.swing.SwingConstants.CENTER;
+import static javax.swing.SwingConstants.HORIZONTAL;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Event;
 import java.awt.Font;
@@ -36,9 +40,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -49,7 +56,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -58,11 +64,9 @@ import javax.swing.border.EtchedBorder;
 import com.ice.util.AWTUtilities;
 import com.ice.util.StringUtilities;
 
-
-public
 class		PrettyDiffFrame
 extends		JFrame
-implements	ActionListener, SwingConstants
+implements	ActionListener
 	{
 	private int					dCol;
 	private int					dRow;
@@ -70,25 +74,22 @@ implements	ActionListener, SwingConstants
 	private final ProjectFrame		projectFrame;
 	private final JPanel				mainPanel;
 	private JPanel				diffPanel;
-	private final JScrollPane			scroller;
 
-	private final Font				lblFont;
+		private final Font				lblFont;
 	private final Font				rawFont;
 	private final Font				timeFont;
 	private final Font				titleFont;
 	private final Font				headerFont;
 
-	private Color				clrRmv = null;
-	private Color				clrChg = null;
-	private Color				clrChgDk = null;
-	private Color				clrAdd = null;
-	private Color				clrNil = null;
-	private Color				clrHeader = null;
-	private Color				clrTitle = null;
-	private Color				clrBack = null;
+	private final Color				clrRmv;
+	private final Color				clrChg;
+	private final Color				clrChgDk;
+	private final Color				clrAdd;
+		private final Color				clrHeader;
+	private final Color				clrTitle;
+	private final Color				clrBack;
 
 
-	public
 	PrettyDiffFrame(
 			final ProjectFrame projectFrame, final String title, final String fileName,
 			final String diffs, final String rev1, final String rev2 )
@@ -101,7 +102,7 @@ implements	ActionListener, SwingConstants
 		this.clrChg   = new Color( 153, 255, 153 );
 		this.clrChgDk = new Color(  68, 204,  68 );
 		this.clrAdd   = new Color( 204, 204, 255 );
-		this.clrNil   = new Color( 204, 204, 204 );
+			final Color clrNil = new Color(204, 204, 204);
 		this.clrTitle = new Color( 224, 224, 224 );
 		this.clrHeader = new Color( 240, 240, 255 );
 		this.clrBack  = Color.white;
@@ -111,7 +112,7 @@ implements	ActionListener, SwingConstants
 		this.mainPanel.setOpaque( true );
 		this.mainPanel.setBackground( this.clrBack );
 
-		this.scroller = new JScrollPane( this.mainPanel );
+			final Component scroller = new JScrollPane(this.mainPanel);
 
  		this.timeFont =
 			Config.getPreferences().getFont
@@ -142,7 +143,7 @@ implements	ActionListener, SwingConstants
 
 		content.setLayout( new BorderLayout( 0, 0 ) );
 
-		content.add( "Center", this.scroller );
+		content.add("Center", scroller);
 
 		this.establishMenuBar();
 
@@ -179,7 +180,7 @@ implements	ActionListener, SwingConstants
 				( ConfigConstants.PRETTY_WINDOW_BOUNDS, defBounds ) );
 		}
 
-	public void
+	private void
 	savePreferences()
 		{
 		final Rectangle bounds = this.getBounds();
@@ -192,7 +193,7 @@ implements	ActionListener, SwingConstants
 			}
 		}
 
-	public void
+	private void
 	windowBeingClosed()
 		{
 		this.savePreferences();
@@ -212,10 +213,10 @@ implements	ActionListener, SwingConstants
 		}
 
 	private String
-	spaceTabs( final String text )
+	spaceTabs( final CharSequence text )
 		{
 		final int len = text.length();
-		final StringBuffer buf = new StringBuffer( len * 2 );
+		final StringBuilder buf = new StringBuilder(len * 2 );
 
 		for ( int i = 0 ; i < len ; ++i )
 			{
@@ -277,7 +278,7 @@ implements	ActionListener, SwingConstants
 		// will assume that there was an error, and display it as such.
 		//
 
-		final Vector errV = new Vector();
+		final Collection<String> errV = new ArrayList<>();
 		boolean gotDiffLines = false;
 		for ( ; lnIdx < numLines ; ++lnIdx )
 			{
@@ -349,7 +350,7 @@ implements	ActionListener, SwingConstants
 		//
 		if ( fileName != null )
 			{
-			lbl = new JLabel( "Diffs for '" + fileName + "'", CENTER );
+			lbl = new JLabel("Diffs for '" + fileName + '\'', CENTER );
 
 			lbl.setFont( this.titleFont );
 			lbl.setOpaque( true );
@@ -534,7 +535,7 @@ implements	ActionListener, SwingConstants
 						lbl.setBackground( this.clrBack );
 						this.diffPanel.add( lbl );
 
-						lbl = this.createDiffLabel( remStr.length()==0?" ":remStr );
+						lbl = this.createDiffLabel(remStr.isEmpty() ? " " : remStr );
 						lbl.setBackground( this.clrAdd );
 						this.diffPanel.add( lbl );
 						}
@@ -670,11 +671,11 @@ implements	ActionListener, SwingConstants
 		}
 
 	private void
-	appendLegend( final String[] revStrs )
+	appendLegend( final String... revStrs )
 		{
 		JLabel lbl = null;
 
-		final JPanel outerPan = new JPanel();
+		final JComponent outerPan = new JPanel();
 		outerPan.setOpaque( true );
 		outerPan.setBackground( this.clrBack );
 		outerPan.setLayout( new GridBagLayout() );
@@ -690,7 +691,7 @@ implements	ActionListener, SwingConstants
 			0, this.dRow++, 2, 1, 1.0, 0.0,
 			new Insets( 0,0,0,0 ) );
 
-		final JPanel legendPan = new JPanel();
+		final JComponent legendPan = new JPanel();
 		legendPan.setOpaque( true );
 		legendPan.setBackground( this.clrTitle );
 		legendPan.setLayout( new GridBagLayout() );
@@ -735,7 +736,7 @@ implements	ActionListener, SwingConstants
 				? "current version"
 				: "version " + revStrs[0];
 
-		lbl = new JLabel( "Removed from " + verStr + ".", CENTER );
+		lbl = new JLabel("Removed from " + verStr + '.', CENTER );
 		lbl.setOpaque( true );
 		lbl.setBackground( this.clrRmv );
 		lbl.setForeground( Color.black );
@@ -788,7 +789,7 @@ implements	ActionListener, SwingConstants
 				? "current version"
 				: "version " + revStrs[1];
 
-		lbl = new JLabel( "Inserted into " + verStr + ".", CENTER );
+		lbl = new JLabel("Inserted into " + verStr + '.', CENTER );
 		lbl.setOpaque( true );
 		lbl.setBackground( this.clrAdd );
 		lbl.setForeground( Color.black );
@@ -806,7 +807,7 @@ implements	ActionListener, SwingConstants
 	private void
 	establishMenuBar()
 		{
-		JMenuItem		mItem;
+		final JMenuItem		mItem;
 
 		final JMenuBar mBar = new JMenuBar();
 

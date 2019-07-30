@@ -24,6 +24,7 @@ package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Event;
 import java.awt.FileDialog;
@@ -54,7 +55,6 @@ import javax.swing.SwingUtilities;
 import com.ice.pref.UserPrefs;
 
 
-public
 class		OutputFrame
 extends		JFrame
 implements	ActionListener
@@ -62,9 +62,8 @@ implements	ActionListener
 	private ProjectFrame		projectFrame;
 
 	private final JTextArea			outputText;
-	private final JScrollPane			scroller;
 
-	private boolean				isRedirecting;
+		private boolean				isRedirecting;
 	private File				redirectFile;
 	private BufferedWriter		redirectWriter;
 
@@ -74,7 +73,6 @@ implements	ActionListener
 	private String				fileDialogDefaultPath;
 
 
-	public
 	OutputFrame( final ProjectFrame projectFrame, final String title )
 		{
 		super( title );
@@ -82,7 +80,7 @@ implements	ActionListener
 		this.projectFrame = projectFrame;
 
 		this.outputText = new JTextArea();
-		this.scroller = new JScrollPane( this.outputText );
+			final Component scroller = new JScrollPane(this.outputText);
 
 		this.isRedirecting = false;
 		this.redirectFile = null;
@@ -104,7 +102,7 @@ implements	ActionListener
 
 		content.setLayout( new BorderLayout( 0, 0 ) );
 
-		content.add( "Center", this.scroller );
+		content.add("Center", scroller);
 
 		this.establishMenuBar();
 
@@ -151,7 +149,7 @@ implements	ActionListener
 			}
 		}
 
-	public void
+	private void
 	windowBeingClosed()
 		{
 		this.savePreferences();
@@ -256,7 +254,7 @@ implements	ActionListener
 			}
 		}
 
-	public void
+	private void
 	saveToFile()
 		{
 		final FileDialog dialog = new
@@ -305,14 +303,14 @@ implements	ActionListener
 			}
 		}
 
-	public void
+	private void
 	redirectToFile()
 		{
 		if ( this.isRedirecting )
 			{
 			CVSUserDialog.Note
-				( "Output is already redirected to '"
-					+ this.redirectFile.getPath() + "'" );
+				("Output is already redirected to '"
+				 + this.redirectFile.getPath() + '\'');
 
 			return;
 			}
@@ -362,7 +360,7 @@ implements	ActionListener
 			}
 		}
 
-	public void
+	private void
 	endRedirection()
 		{
 		if ( ! this.isRedirecting )

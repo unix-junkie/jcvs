@@ -23,6 +23,7 @@
 package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,6 +37,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,7 +49,6 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		MessageDialog
 extends		JDialog
 implements	ActionListener
@@ -56,7 +57,6 @@ implements	ActionListener
 	private JTextArea	messageText;
 
 
-	public
 	MessageDialog( final Frame parent, final boolean modal, final String prompt )
 		{
 		super( parent, "Message Argument", modal );
@@ -110,16 +110,16 @@ implements	ActionListener
 		this.dispose();
         }
 
-	public void
-	establishDialogContents( final String prompt )
+	private void
+	establishDialogContents(final String prompt)
 		{
 		JButton		button;
-		JPanel		controlPanel;
+		final JPanel		controlPanel;
 
 		final UserPrefs prefs = Config.getPreferences();
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
- 		final JLabel promptLabel = new JLabel( prompt );
+ 		final JComponent promptLabel = new JLabel(prompt );
 		promptLabel.setBorder( new EmptyBorder( 2, 2, 0, 0 ) );
 		promptLabel.setFont(
 			prefs.getFont(
@@ -134,7 +134,7 @@ implements	ActionListener
 				"messageDialog.text.font",
 				new Font( "Serif", Font.PLAIN, 14 ) ) );
 
-		final JScrollPane scroller = new JScrollPane( this.messageText );
+		final Component scroller = new JScrollPane(this.messageText );
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 20, 20 ) );
@@ -152,12 +152,12 @@ implements	ActionListener
 		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		final JPanel contPan = new JPanel();
+		final JComponent contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 5, 5, 5 ) );
 		content.add( BorderLayout.CENTER, contPan );
 
-		final JPanel southPan = new JPanel();
+		final JComponent southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.EAST, controlPanel );
 		southPan.setBorder( new EmptyBorder( 8, 0, 5, 0 ) );

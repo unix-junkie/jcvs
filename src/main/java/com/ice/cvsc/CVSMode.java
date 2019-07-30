@@ -36,23 +36,23 @@ package com.ice.cvsc;
  */
 
 public class
-CVSMode extends Object
+CVSMode
 		implements Cloneable
 	{
-	static public final String		RCS_ID = "$Id: CVSMode.java,v 2.2 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.2 $";
+	public static final String		RCS_ID = "$Id: CVSMode.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.2 $";
 
-	public boolean		userRead;
-	public boolean		userWrite;
-	public boolean		userExecute;
+	private final boolean		userRead;
+	private final boolean		userWrite;
+	private final boolean		userExecute;
 
-	public boolean		groupRead;
-	public boolean		groupWrite;
-	public boolean		groupExecute;
+	private final boolean		groupRead;
+	private final boolean		groupWrite;
+	private final boolean		groupExecute;
 
-	public boolean		otherRead;
-	public boolean		otherWrite;
-	public boolean		otherExecute;
+	private final boolean		otherRead;
+	private final boolean		otherWrite;
+	private final boolean		otherExecute;
 
 
 	public CVSMode()
@@ -75,27 +75,27 @@ CVSMode extends Object
 	public String
 	getModeLine()
 		{
-		final StringBuffer	result =
-			new StringBuffer( "" );
+		final StringBuilder result =
+			new StringBuilder();
 
 		result.append( "u=" );
-		if ( this.userRead ) result.append( "r" );
-		if ( this.userWrite ) result.append( "w" );
-		if ( this.userExecute ) result.append( "x" );
+		if ( this.userRead ) result.append('r');
+		if ( this.userWrite ) result.append('w');
+		if ( this.userExecute ) result.append('x');
 
-		result.append( "," );
+		result.append(',');
 
 		result.append( "g=" );
-		if ( this.groupRead ) result.append( "r" );
-		if ( this.groupWrite ) result.append( "w" );
-		if ( this.groupExecute ) result.append( "x" );
+		if ( this.groupRead ) result.append('r');
+		if ( this.groupWrite ) result.append('w');
+		if ( this.groupExecute ) result.append('x');
 
-		result.append( "," );
+		result.append(',');
 
 		result.append( "o=" );
-		if ( this.otherRead ) result.append( "r" );
-		if ( this.otherWrite ) result.append( "w" );
-		if ( this.otherExecute ) result.append( "x" );
+		if ( this.otherRead ) result.append('r');
+		if ( this.otherWrite ) result.append('w');
+		if ( this.otherExecute ) result.append('x');
 
 		return result.toString();
 		}

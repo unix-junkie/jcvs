@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 
-public class
+final class
 HexDump
 	{
 	private static final int		ROW_BYTES = 16;
@@ -14,22 +14,28 @@ HexDump
 	private static final int		ROW_HALF = 7;
 	private static final int		ROW_QTR2 = 11;
 
-	public static void
-	dumpHexData( final PrintStream out, final String title, final byte[] buf, final int numBytes )
+		private HexDump() {
+		}
+
+		private static void
+	dumpHexData(final PrintStream out, final String title, final byte[] buf, final int numBytes)
 		{
 		final PrintWriter wrtr =
 			new PrintWriter( new OutputStreamWriter( out ) );
 
-		HexDump.dumpHexData( wrtr, title, buf, 0, numBytes );
+		dumpHexData( wrtr, title, buf, 0, numBytes );
 		}
 
-	public static void
+	private static void
 	dumpHexData(
 			final PrintWriter out, final String title,
-			final byte[] buf, final int offset, final int numBytes )
+			final byte[] buf, final int offset, final int numBytes)
 		{
-		int			rows, residue, i, j;
-		final byte[]		save_buf= new byte[ ROW_BYTES+2 ];
+		final int			rows;
+			final int residue;
+			int i;
+			int j;
+			final byte[]		save_buf= new byte[ ROW_BYTES+2 ];
 		final char[]		hex_buf = new char[ 4 ];
 		final char[]		idx_buf = new char[ 8 ];
 		final char[]		hex_chars = new char[20];
@@ -129,13 +135,13 @@ HexDump
 			}
 		}
 
-	static public void
-	main( final String[] args )
+	public static void
+	main( final String... args )
 		{
 		final byte[] data = new byte[132];
 		for ( int i = 0 ; i < 132 ; ++i ) data[i] = (byte)i;
 
-		HexDump.dumpHexData( System.err, "Test HexDump", data, 132 );
+		dumpHexData( System.err, "Test HexDump", data, 132 );
 		}
 
 	}

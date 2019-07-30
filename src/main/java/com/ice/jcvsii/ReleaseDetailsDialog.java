@@ -23,6 +23,7 @@
 package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -35,7 +36,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -48,50 +51,36 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		ReleaseDetailsDialog
 extends		JDialog
 implements	ActionListener
 	{
 	private boolean		okClicked;
 
-	private final Vector		adds;
-	private final Vector		mods;
-	private final Vector		rems;
-	private final Vector		unks;
 
-	private JTextArea	detailsText;
-	private JButton		okButton;
-
-
-	public
-	ReleaseDetailsDialog
+		ReleaseDetailsDialog
 			( final Frame parent, final Vector adds, final Vector mods, final Vector rems, final Vector unks )
 		{
 		super( parent, "ReleaseDetails", true );
 
 		this.okClicked = false;
-		this.adds = adds;
-		this.mods = mods;
-		this.rems = rems;
-		this.unks = unks;
 
-		final StringBuffer buf = new StringBuffer();
+			final StringBuilder buf = new StringBuilder();
 
 		for ( int i = adds.size()-1 ; i >= 0 ; --i )
-			buf.append( "New  " + adds.elementAt(i) + "\n" );
-		if ( adds.size() > 0 ) buf.append( "\n" );
+			buf.append("New  ").append(adds.elementAt(i)).append('\n');
+		if (!adds.isEmpty()) buf.append('\n');
 
 		for ( int i = mods.size()-1 ; i >= 0 ; --i )
-			buf.append( "Mod  " + mods.elementAt(i) + "\n" );
-		if ( mods.size() > 0 ) buf.append( "\n" );
+			buf.append("Mod  ").append(mods.elementAt(i)).append('\n');
+		if (!mods.isEmpty()) buf.append('\n');
 
 		for ( int i = rems.size()-1 ; i >= 0 ; --i )
-			buf.append( "Rem  " + rems.elementAt(i) + "\n" );
-		if ( rems.size() > 0 ) buf.append( "\n" );
+			buf.append("Rem  ").append(rems.elementAt(i)).append('\n');
+		if (!rems.isEmpty()) buf.append('\n');
 
 		for ( int i = unks.size()-1 ; i >= 0 ; --i )
-			buf.append( "Unk  " + unks.elementAt(i) + "\n" );
+			buf.append("Unk  ").append(unks.elementAt(i)).append('\n');
 
 		this.establishDialogContents
 			( "Details of Project Release", buf.toString() );
@@ -143,39 +132,39 @@ implements	ActionListener
 			}
         }
 
-	public void
-	establishDialogContents( final String prompt, final String details )
+	private void
+	establishDialogContents(final String prompt, final String details)
 		{
-		JButton		button;
-		JPanel		controlPanel;
+		final JButton		button;
+		final JPanel		controlPanel;
 
 		final UserPrefs prefs = Config.getPreferences();
 
- 		final JLabel promptLabel = new JLabel( prompt );
+ 		final JComponent promptLabel = new JLabel(prompt );
 		promptLabel.setBorder( new EmptyBorder( 2, 2, 0, 0 ) );
 		promptLabel.setFont(
 			prefs.getFont(
 				"releaseDialog.prompt.font",
 				new Font( "Dialog", Font.BOLD, 14 ) ) );
 
-		this.detailsText = new JTextArea();
-		this.detailsText.setText( details );
-		this.detailsText.setFont(
+			final JTextArea detailsText = new JTextArea();
+		detailsText.setText(details );
+		detailsText.setFont(
 			prefs.getFont(
 				"releaseDialog.details.font",
 				new Font( "Monospaced", Font.PLAIN, 12 ) ) );
 
-		final JScrollPane scroller = new JScrollPane( this.detailsText );
+		final Component scroller = new JScrollPane(detailsText);
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 20, 20 ) );
 
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		this.okButton = new JButton( rmgr.getUIString( "name.for.ok" ) );
-		this.okButton.addActionListener( this );
-		this.okButton.setActionCommand( "OK" );
-		controlPanel.add( this.okButton );
+			final AbstractButton okButton = new JButton(rmgr.getUIString("name.for.ok"));
+		okButton.addActionListener(this );
+		okButton.setActionCommand("OK" );
+		controlPanel.add(okButton);
 
 		button = new JButton( rmgr.getUIString( "name.for.cancel" ) );
 		button.addActionListener( this );
@@ -185,7 +174,7 @@ implements	ActionListener
 		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		final JPanel contPan = new JPanel();
+		final JComponent contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 3, 3, 3 ) );
 

@@ -13,10 +13,6 @@ package com.ice.jni.dde;
 public class
 DDEException extends Exception
 	{
-	static public final String	RCS_ID = "$Id: DDEException.java,v 1.2 1999/04/01 17:31:04 time Exp $";
-	static public final String	RCS_REV = "$Revision: 1.2 $";
-	static public final String	RCS_NAME = "$Name:  $";
-
 	public
 	DDEException()
 		{

@@ -40,8 +40,8 @@ import java.util.Vector;
 
 public class CVSArgumentVector extends Vector
 	{
-	static public final String		RCS_ID = "$Id: CVSArgumentVector.java,v 2.3 2003/07/27 01:08:32 time Exp $";
-	static public final String		RCS_REV = "$Revision: 2.3 $";
+	public static final String		RCS_ID = "$Id: CVSArgumentVector.java,v 2.3 2003/07/27 01:08:32 time Exp $";
+	public static final String		RCS_REV = "$Revision: 2.3 $";
 
 	public CVSArgumentVector()
 		{
@@ -90,7 +90,7 @@ public class CVSArgumentVector extends Vector
 			if ( argStr.equals( argument ) )
 				return true;
 
-			if ( argStr.startsWith( "-" ) )
+			if (!argStr.isEmpty() && argStr.charAt(0) == '-')
 				{
 				++i; // skip this argument's parameter
 				}
@@ -130,7 +130,7 @@ public class CVSArgumentVector extends Vector
 			new StringTokenizer( argStr, " '\"", true );
 
 		boolean startArg = true;
-		final StringBuffer argBuf = new StringBuffer( argStr.length() );
+		final StringBuilder argBuf = new StringBuilder(argStr.length() );
 
 		for ( ; toker.hasMoreTokens() ; )
 			{
@@ -147,48 +147,38 @@ public class CVSArgumentVector extends Vector
 				break;
 				}
 
-			if ( token.equals( " " ) )
-				{
-				if ( ! startArg )
-					{
-					result.addElement( argBuf.toString() );
-					argBuf.setLength( 0 );
+				switch (token) {
+				case " ":
+					if (!startArg) {
+						result.addElement(argBuf.toString());
+						argBuf.setLength(0);
 					}
-				startArg = true;
-				continue;
-				}
-			else if ( token.equals( "'" ) )
-				{
-				startArg = false;
-				if ( matchQuote )
-					{
-					newDelim = " '\"";
-					matchQuote = false;
+					startArg = true;
+					break;
+				case "'":
+					startArg = false;
+					if (matchQuote) {
+						newDelim = " '\"";
+						matchQuote = false;
+					} else {
+						newDelim = "'";
+						matchQuote = true;
 					}
-				else
-					{
-					newDelim = "'";
-					matchQuote = true;
+					break;
+				case "\"":
+					startArg = false;
+					if (matchQuote) {
+						newDelim = " '\"";
+						matchQuote = false;
+					} else {
+						newDelim = "\"";
+						matchQuote = true;
 					}
-				}
-			else if ( token.equals( "\"" ) )
-				{
-				startArg = false;
-				if ( matchQuote )
-					{
-					newDelim = " '\"";
-					matchQuote = false;
-					}
-				else
-					{
-					newDelim = "\"";
-					matchQuote = true;
-					}
-				}
-			else
-				{
-				startArg = false;
-				argBuf.append( token );
+					break;
+				default:
+					startArg = false;
+					argBuf.append(token);
+					break;
 				}
 			}
 

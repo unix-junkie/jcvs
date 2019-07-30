@@ -3,6 +3,8 @@ package com.ice.config;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -12,10 +14,12 @@ import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JViewport;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -31,36 +35,34 @@ abstract
 class		ConfigureEditor
 extends		JPanel
 	{
-	protected UserPrefs			prefs = null;
-	protected ConfigureSpec		spec = null;
+	protected UserPrefs			prefs;
+	protected ConfigureSpec		spec;
 
-	protected boolean			helpIsShowing = false;
+	private boolean			helpIsShowing;
 
-	protected JPanel			helpPanel = null;
-	protected JTextArea			helpText = null;
-	protected JButton			helpButton = null;
+	private JPanel			helpPanel;
+	private JTextArea			helpText;
+	private JButton			helpButton;
 
-	protected JPanel			editPanel = null;
-	protected JScrollPane		editScroller = null;
+	private JPanel			editPanel;
+	private JScrollPane		editScroller;
 
-	protected JPanel			editorPanel = null;
-	protected JPanel			descPan = null;
-	protected JTextArea			descText = null;
+		private JPanel			descPan;
+	private JTextArea			descText;
 	protected int				descOffset = 25;
 
 
-	abstract public void
+	public abstract void
 		saveChanges( UserPrefs prefs, ConfigureSpec spec );
 
-	abstract public void
+	public abstract void
 		requestInitialFocus();
 
-	abstract protected JPanel
+	protected abstract JPanel
 		createEditPanel();
 
 
-	public
-	ConfigureEditor( final String type )
+	protected ConfigureEditor(final String type)
 		{
 		super();
 		this.establishContents( type );
@@ -77,7 +79,7 @@ extends		JPanel
 			this.toggleHelp();
 			}
 
-		if ( desc != null && desc.length() > 0 )
+		if ( desc != null && !desc.isEmpty())
 			{
 			this.descText.setText( desc );
 			this.descPan.setVisible( true );
@@ -89,7 +91,7 @@ extends		JPanel
 
 		this.descPan.revalidate();
 
-		if ( help != null && help.length() > 0 )
+		if ( help != null && !help.isEmpty())
 			{
 			this.helpButton.setEnabled( true );
 			this.helpText.setText( help );
@@ -121,8 +123,8 @@ extends		JPanel
 	 * here.
 	 */
 
-	public void
-	commitChanges( final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig )
+	protected void
+	commitChanges(final ConfigureSpec spec, final UserPrefs prefs, final UserPrefs orig)
 		{
 		final String propName = spec.getPropertyName();
 
@@ -155,14 +157,14 @@ extends		JPanel
 			}
 		}
 
-	public boolean
-	isTupleTable( final ConfigureSpec spec )
+	protected boolean
+	isTupleTable(final ConfigureSpec spec)
 		{
 		return spec.isTupleTable();
 		}
 
-	public boolean
-	isStringArray( final ConfigureSpec spec )
+	protected boolean
+	isStringArray(final ConfigureSpec spec)
 		{
 		return spec.isStringArray();
 		}
@@ -188,15 +190,7 @@ extends		JPanel
 			final PrefsTupleTable ot =
 				orig.getTupleTable( propName, null );
 
-			if ( nt != null && ot != null )
-				{
-				if ( ! nt.equals( ot ) )
-					return true;
-				}
-			else if ( nt != null || ot != null )
-				{
-				return true;
-				}
+				return nt != null && ot != null ? !nt.equals(ot) : nt != null || ot != null;
 			}
 		else if ( this.isStringArray( spec ) )
 			{
@@ -214,25 +208,14 @@ extends		JPanel
 					if ( ! na[i].equals( oa[i] ) )
 						return true;
 				}
-			else if ( na != null || oa != null )
-				{
-				return true;
-				}
+			else return na != null || oa != null;
 			}
 		else
 			{
 			final String ns = prefs.getProperty( propName );
 			final String os = orig.getProperty( propName );
 
-			if ( ns != null && os != null )
-				{
-				if ( ! ns.equals( os ) )
-					return true;
-				}
-			else if ( ns != null || os != null )
-				{
-				return true;
-				}
+				return ns != null && os != null ? !ns.equals(os) : ns != null || os != null;
 			}
 
 		return false;
@@ -241,13 +224,13 @@ extends		JPanel
 	/**
 	 * Override for your own tip.
 	 */
-	protected String
+	private String
 	getHelpButtonToolTipText()
 		{
 		return "Show Help Text";
 		}
 
-	protected JPanel
+	private JPanel
 	establishHelpPanel()
 		{
 		final JLabel lbl;
@@ -271,25 +254,20 @@ extends		JPanel
 		return result;
 		}
 
-	private void
-	toggleHelp()
-		{
-		if ( this.helpIsShowing )
-			{
-			this.editScroller.getViewport().remove( this.helpPanel );
-			this.editScroller.getViewport().setView( this.editPanel );
-			this.editScroller.revalidate();
-			}
-		else
-			{
-			this.editScroller.getViewport().remove( this.editPanel );
-			this.editScroller.getViewport().setView( this.helpPanel );
-			this.editScroller.revalidate();
-			}
-
-		this.repaint( 50 );
-		this.helpIsShowing = ! this.helpIsShowing;
+	private void toggleHelp() {
+		final JViewport editScrollerViewport = this.editScroller.getViewport();
+		if (this.helpIsShowing) {
+			editScrollerViewport.remove(this.helpPanel);
+			editScrollerViewport.setView(this.editPanel);
+		} else {
+			editScrollerViewport.remove(this.editPanel);
+			editScrollerViewport.setView(this.helpPanel);
 		}
+		this.editScroller.revalidate();
+
+		this.repaint(50);
+		this.helpIsShowing = !this.helpIsShowing;
+	}
 
 	private JPanel
 	establishEditPanel( final String type )
@@ -300,13 +278,13 @@ extends		JPanel
 		final JPanel result = new JPanel();
 		result.setLayout( new GridBagLayout() );
 
-		this.editorPanel = this.createEditPanel();
+			final JPanel editorPanel = this.createEditPanel();
 
 		AWTUtilities.constrain(
-			result, this.editorPanel,
-			GridBagConstraints.BOTH,
-			GridBagConstraints.CENTER,
-			0, row++, 1, 1, 1.0, 1.0 );
+				result, editorPanel,
+				GridBagConstraints.BOTH,
+				GridBagConstraints.CENTER,
+				0, row++, 1, 1, 1.0, 1.0 );
 
 		this.descText = new JTextArea( "" );
 		this.descText.setEnabled( false );
@@ -334,7 +312,7 @@ extends		JPanel
 			0, row++, 1, 1, 1.0, 1.0,
 			new Insets( this.descOffset, 5, 5, 5 ) );
 
-		final JPanel fillerPan = new JPanel();
+		final Component fillerPan = new JPanel();
 		AWTUtilities.constrain(
 			result, fillerPan,
 			GridBagConstraints.BOTH,
@@ -349,10 +327,10 @@ extends		JPanel
 		{
 		this.setLayout( new BorderLayout() );
 
-		final JPanel typePan = new JPanel();
+		final Container typePan = new JPanel();
 		typePan.setLayout( new GridBagLayout() );
 
-		final JLabel lbl = new JLabel( type );
+		final JComponent lbl = new JLabel(type );
 		lbl.setBorder( new EmptyBorder( 3, 3, 5, 3 ) );
 		AWTUtilities.constrain(
 			typePan, lbl,

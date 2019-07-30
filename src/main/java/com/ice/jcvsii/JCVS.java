@@ -45,41 +45,40 @@ import com.ice.pref.UserPrefs;
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
-public
 class		JCVS
 	{
-	static public final String		RCS_ID = "$Id: JCVS.java,v 1.9 2003/07/27 04:50:28 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.9 $";
+	public static final String		RCS_ID = "$Id: JCVS.java,v 1.9 2003/07/27 04:50:28 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.9 $";
 
-	static public final String		VERSION_STR = "5.4.2";
+	private static final String		VERSION_STR = "5.4.2";
 
-	static private JCVS		instance;
+	private static JCVS		instance;
 
 	private MainFrame		mainFrame;
 
 
-	static public void
-	main( final String[] argv )
+	public static void
+	main( final String... argv )
 		{
 		final JCVS app = new JCVS();
-		JCVS.instance = app;
+		instance = app;
 		app.instanceMain( argv );
 		}
 
-	static public String
+	public static String
 	getVersionString()
 		{
 		return VERSION_STR;
 		}
 
-	static public MainFrame
+	public static MainFrame
 	getMainFrame()
 		{
-		return JCVS.instance.mainFrame;
+		return instance.mainFrame;
 		}
 
 	private void
-	instanceMain( final String[] argv )
+	instanceMain( final String... argv )
 		{
 		this.processArguments( argv );
 
@@ -92,10 +91,10 @@ class		JCVS
 		// level to ERROR.
 		//
 		final LogManager logMgr = LogManager.getLogManager();
-		final Enumeration loggers = logMgr.getLoggerNames();
+		final Enumeration<String> loggers = logMgr.getLoggerNames();
 		for ( ; loggers.hasMoreElements() ; )
 			{
-			final String nm = (String) loggers.nextElement();
+			final String nm = loggers.nextElement();
 			final Logger l = logMgr.getLogger( nm );
 			l.setLevel( Level.WARNING  );
 			}
@@ -138,41 +137,38 @@ class		JCVS
 		}
 
 	private void
-	processArguments( final String[] argv )
+	processArguments( final String... argv )
 		{
 		final UserPrefs prefs = Config.getPreferences();
 
 		for ( int i = 0 ; i < argv.length ; ++i )
 			{
-			if ( argv[i].equals( "-osname" ) )
-				{
-				prefs.setOSSuffix( argv[++i] );
-				}
-			else if ( argv[i].equals( "-user" ) )
-				{
-				prefs.setUserSuffix( argv[++i] );
-				}
-			else if ( argv[i].equals( "-home" ) )
-				{
-				prefs.setUserHome( argv[++i] );
-				}
-			else
-				{
-				System.err.println
-					( "   argv[" +i+ "] '" +argv[i]+ "' ignored." );
+				switch (argv[i]) {
+				case "-osname":
+					prefs.setOSSuffix(argv[++i]);
+					break;
+				case "-user":
+					prefs.setUserSuffix(argv[++i]);
+					break;
+				case "-home":
+					prefs.setUserHome(argv[++i]);
+					break;
+				default:
+					System.err.println
+							("   argv[" + i + "] '" + argv[i] + "' ignored.");
+					break;
 				}
 			}
 		}
 
-	private
+	private final
 	class		Initiator
 	extends		Thread
 		{
-		JCVSSplash splash;
-		BoundedRangeModel model;
+		final JCVSSplash splash;
+		final BoundedRangeModel model;
 
-		public
-		Initiator( final JCVSSplash s, final BoundedRangeModel m )
+		private Initiator(final JCVSSplash s, final BoundedRangeModel m)
 			{
 			super( "Model" );
 			this.splash = s;
@@ -270,13 +266,13 @@ class		JCVS
 				( "License is available at <http://www.gjt.org/doc/gpl/>" );
 
 			CVSLog.logMsgStderr
-				( "Property 'os.name' = '" + prefs.getOSSuffix() + "'" );
+				("Property 'os.name' = '" + prefs.getOSSuffix() + '\'');
 			CVSLog.logMsgStderr
-				( "Property 'user.name' = '" + prefs.getUserSuffix() + "'" );
+				("Property 'user.name' = '" + prefs.getUserSuffix() + '\'');
 			CVSLog.logMsgStderr
-				( "Property 'user.home' = '" + prefs.getUserHome() + "'" );
+				("Property 'user.home' = '" + prefs.getUserHome() + '\'');
 			CVSLog.logMsgStderr
-				( "Property 'user.dir' = '" + prefs.getCurrentDirectory() + "'" );
+				("Property 'user.dir' = '" + prefs.getCurrentDirectory() + '\'');
 
 			// Establish the CVSTimestamp Formatting Timezone
 			final String tzPropStr =
@@ -286,7 +282,7 @@ class		JCVS
 				{
 				CVSTimestampFormat.setTimeZoneID( tzPropStr );
 				CVSLog.logMsgStderr
-					( "CVS Timestamp timezone set to '" + tzPropStr + "'" );
+					("CVS Timestamp timezone set to '" + tzPropStr + '\'');
 				}
 
 			this.model.setValue( proval += proincr );

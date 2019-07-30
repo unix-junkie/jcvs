@@ -35,28 +35,18 @@ import java.util.ResourceBundle;
  *  <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
-public
+public final
 class		ResourceManager
 	{
-	static public final String		RCS_ID = "$Id: ResourceManager.java,v 1.1 2000/01/28 02:24:45 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.1 $";
+	public static final String		RCS_ID = "$Id: ResourceManager.java,v 1.1 2000/01/28 02:24:45 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.1 $";
 
 	/**
 	 * The table of all ResourceManagers keyed by 'id'.
 	 */
 	private static Hashtable		bundles;
 
-	/**
-	 * Set to true to get processing debugging on stderr.
-	 */
-	private boolean					debug;
-
-	/**
-	 * The resource bundle's name. Used for easy identification.
-	 */
-	private String					name;
-
-	/**
+		/**
 	 * The resource bundle.
 	 */
 	private ResourceBundle			rsrc;
@@ -71,7 +61,7 @@ class		ResourceManager
 	public static void
 	initialize()
 		{
-		ResourceManager.bundles = new Hashtable();
+		bundles = new Hashtable();
 		}
 
 	/**
@@ -89,7 +79,7 @@ class		ResourceManager
 		try {
 			final ResourceBundle rsrc = ResourceBundle.getBundle( name );
 			final ResourceManager rMgr = new ResourceManager( name, rsrc );
-			ResourceManager.bundles.put( id, rMgr );
+			bundles.put( id, rMgr );
 			}
 		catch ( final MissingResourceException ex )
 			{
@@ -107,7 +97,7 @@ class		ResourceManager
 	get( final String id )
 		{
 		return (ResourceManager)
-			ResourceManager.bundles.get( id );
+			bundles.get( id );
 		}
 
 	/**
@@ -121,7 +111,7 @@ class		ResourceManager
 	put( final String id, final ResourceManager rMgr )
 		{
 		return (ResourceManager)
-			ResourceManager.bundles.put( id, rMgr );
+			bundles.put( id, rMgr );
 		}
 
 	/**
@@ -138,12 +128,13 @@ class		ResourceManager
 	 * @param name The (display) name of this resource bundle.
 	 * @param rsrc The resource bundle to be managed.
 	 */
-	public
-	ResourceManager( final String name, final ResourceBundle rsrc )
+	private ResourceManager(final String name, final ResourceBundle rsrc)
 		throws MissingResourceException
 		{
-		this.name = name;
-		this.rsrc = rsrc;
+			/**
+			 * The resource bundle's name. Used for easy identification.
+			 */
+			this.rsrc = rsrc;
 		}
 
 	/**
@@ -155,7 +146,9 @@ class		ResourceManager
 	public void
 	setDebug( final boolean debug )
 		{
-		this.debug = debug;
+			/**
+			 * Set to true to get processing debugging on stderr.
+			 */
 		}
 
 	/**
@@ -183,7 +176,7 @@ class		ResourceManager
 	 */
 
 	public String
-	getFormat( final String key, final Object[] args )
+	getFormat( final String key, final Object... args )
 		{
 		return MessageFormat.format
 			( this.rsrc.getString( key ), args );

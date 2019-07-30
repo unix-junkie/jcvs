@@ -32,6 +32,7 @@ import com.ice.cvsc.CVSRequest;
 import com.ice.cvsc.CVSResponse;
 import com.ice.cvsc.CVSScramble;
 import com.ice.cvsc.CVSUserInterface;
+import com.ice.jcvsii.CVSThread.Monitor;
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
@@ -41,15 +42,15 @@ class		CheckOutPanel
 extends		MainTabPanel
 implements	ActionListener, CVSUserInterface
 	{
-	protected CVSClient			client;
-	protected ConnectInfoPanel	info;
+	private CVSClient			client;
+	private ConnectInfoPanel	info;
 	protected JTextField		argumentsText;
 	protected JTextField		localDirText;
 
-	protected JTextArea			outputText;
-	protected JLabel			feedback;
+	private JTextArea			outputText;
+	private JLabel			feedback;
 
-	protected JButton			actionButton;
+	private JButton			actionButton;
 
 
 	public
@@ -334,12 +335,11 @@ implements	ActionListener, CVSUserInterface
 
 			final CVSResponse response = new CVSResponse();
 
-			final CVSThread thread =
+			final Thread thread =
 				new CVSThread
 					( "CheckOut",
-						this.new MyRunner
-							( project, this.client,
-								request, response, listingModules ),
+					  new MyRunner(project, this.client,
+						       request, response, listingModules),
 						this.new MyMonitor
 							( request, response, listingModules ) );
 
@@ -347,7 +347,7 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	private
+	private static final
 	class		MyRunner
 	implements	Runnable
 		{
@@ -357,10 +357,9 @@ implements	ActionListener, CVSUserInterface
 		private final CVSResponse response;
 		private final boolean listingMods;
 
-		public
-		MyRunner( final CVSProject project, final CVSClient client,
-					final CVSRequest request, final CVSResponse response,
-					final boolean listingMods )
+		private MyRunner(final CVSProject project, final CVSClient client,
+				 final CVSRequest request, final CVSResponse response,
+				 final boolean listingMods)
 			{
 			this.client = client;
 			this.project = project;
@@ -388,16 +387,15 @@ implements	ActionListener, CVSUserInterface
 			}
 		}
 
-	private
+	private final
 	class		MyMonitor
-	implements	CVSThread.Monitor
+	implements	Monitor
 		{
 		private final CVSRequest request;
 		private final CVSResponse response;
 		private final boolean listingMods;
 
-		public
-		MyMonitor( final CVSRequest request, final CVSResponse response, final boolean listingMods )
+		private MyMonitor(final CVSRequest request, final CVSResponse response, final boolean listingMods)
 			{
 			this.request = request;
 			this.response = response;
@@ -440,8 +438,8 @@ implements	ActionListener, CVSUserInterface
 				if ( ! this.listingMods )
 					{
 					final File rootDirFile =
-						new File( request.getLocalDirectory()
-									+ "/" + request.getRepository() );
+						new File(request.getLocalDirectory()
+							 + '/' + request.getRepository() );
 
 					ProjectFrame.openProject
 						( rootDirFile, request.getPassword() );
@@ -458,8 +456,7 @@ implements	ActionListener, CVSUserInterface
 			outputText.revalidate();
 			outputText.repaint();
 
-			if ( this.response != null
-					&& ! this.request.saveTempFiles )
+			if (! this.request.saveTempFiles)
 				{
 				this.response.deleteTempFiles();
 				}

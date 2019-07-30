@@ -38,55 +38,53 @@ import java.text.ParsePosition;
 public class
 HexNumberFormat	extends Format
 	{
-	static public final String		RCS_ID = "$Id: HexNumberFormat.java,v 1.2 1999/04/01 17:27:42 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.2 $";
+	public static final String		RCS_ID = "$Id: HexNumberFormat.java,v 1.2 1999/04/01 17:27:42 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.2 $";
 
-	private static char[]		lowChars;
-	private static char[]		uprChars;
+	private static final char[]		lowChars;
+	private static final char[]		uprChars;
 
 	private final int					count;
-	private final String				pattern;
-	private static char[]		hexChars;
+		private static char[]		hexChars;
 
 	static
 		{
-		HexNumberFormat.lowChars = new char[20];
-		HexNumberFormat.uprChars = new char[20];
+		lowChars = new char[20];
+		uprChars = new char[20];
 
-		HexNumberFormat.uprChars[0] = HexNumberFormat.lowChars[0] = '0';
-		HexNumberFormat.uprChars[1] = HexNumberFormat.lowChars[1] = '1';
-		HexNumberFormat.uprChars[2] = HexNumberFormat.lowChars[2] = '2';
-		HexNumberFormat.uprChars[3] = HexNumberFormat.lowChars[3] = '3';
-		HexNumberFormat.uprChars[4] = HexNumberFormat.lowChars[4] = '4';
-		HexNumberFormat.uprChars[5] = HexNumberFormat.lowChars[5] = '5';
-		HexNumberFormat.uprChars[6] = HexNumberFormat.lowChars[6] = '6';
-		HexNumberFormat.uprChars[7] = HexNumberFormat.lowChars[7] = '7';
-		HexNumberFormat.uprChars[8] = HexNumberFormat.lowChars[8] = '8';
-		HexNumberFormat.uprChars[9] = HexNumberFormat.lowChars[9] = '9';
-		HexNumberFormat.uprChars[10] = 'A'; HexNumberFormat.lowChars[10] = 'a';
-		HexNumberFormat.uprChars[11] = 'B'; HexNumberFormat.lowChars[11] = 'b';
-		HexNumberFormat.uprChars[12] = 'C'; HexNumberFormat.lowChars[12] = 'c';
-		HexNumberFormat.uprChars[13] = 'D'; HexNumberFormat.lowChars[13] = 'd';
-		HexNumberFormat.uprChars[14] = 'E'; HexNumberFormat.lowChars[14] = 'e';
-		HexNumberFormat.uprChars[15] = 'F'; HexNumberFormat.lowChars[15] = 'f';
+		uprChars[0] = lowChars[0] = '0';
+		uprChars[1] = lowChars[1] = '1';
+		uprChars[2] = lowChars[2] = '2';
+		uprChars[3] = lowChars[3] = '3';
+		uprChars[4] = lowChars[4] = '4';
+		uprChars[5] = lowChars[5] = '5';
+		uprChars[6] = lowChars[6] = '6';
+		uprChars[7] = lowChars[7] = '7';
+		uprChars[8] = lowChars[8] = '8';
+		uprChars[9] = lowChars[9] = '9';
+		uprChars[10] = 'A'; lowChars[10] = 'a';
+		uprChars[11] = 'B'; lowChars[11] = 'b';
+		uprChars[12] = 'C'; lowChars[12] = 'c';
+		uprChars[13] = 'D'; lowChars[13] = 'd';
+		uprChars[14] = 'E'; lowChars[14] = 'e';
+		uprChars[15] = 'F'; lowChars[15] = 'f';
 		}
 
-    static public final HexNumberFormat
+    public static HexNumberFormat
 	getInstance()
 		{
 		return new HexNumberFormat( "XXXXXXXX" );
 		}
 
 	public
-	HexNumberFormat( final String pattern )
+	HexNumberFormat( final CharSequence pattern )
 		{
 		super();
-		this.pattern = pattern;
-		this.count = pattern.length();
-		HexNumberFormat.hexChars =
+			this.count = pattern.length();
+		hexChars =
 			pattern.charAt(0) == 'X'
-				? HexNumberFormat.uprChars
-				: HexNumberFormat.lowChars;
+				? uprChars
+				: lowChars;
 		}
 
 	public String
@@ -96,7 +94,7 @@ HexNumberFormat	extends Format
 		final FieldPosition pos = new FieldPosition(0);
 		final StringBuffer hexBuf = new StringBuffer(8);
 
-		this.format( new Integer( hexNum ), hexBuf, pos );
+		this.format(hexNum, hexBuf, pos );
 
 		return hexBuf.toString();
 		}
@@ -111,12 +109,12 @@ HexNumberFormat	extends Format
 		final int end = fieldPos.getEndIndex();
 		final int beg = fieldPos.getBeginIndex();
 
-		int hexNum = ((Integer) hexInt).intValue();
+		int hexNum = (Integer) hexInt;
 
 		for ( int i = 7 ; i >= 0 ; --i )
 			{
-			hexBuf[i] = HexNumberFormat.hexChars[ hexNum & 0x0F ];
-			hexNum = hexNum >> 4;
+			hexBuf[i] = hexChars[ hexNum & 0x0F ];
+				hexNum >>= 4;
 			}
 
 		for ( int i = 8 - this.count ; i < 8 ; ++i )

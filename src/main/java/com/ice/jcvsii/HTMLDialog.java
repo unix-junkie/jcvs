@@ -23,6 +23,7 @@
 package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
@@ -33,6 +34,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -53,17 +55,15 @@ import com.ice.util.AWTUtilities;
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
-public
 class		HTMLDialog
 extends		JDialog
 implements	ActionListener
 	{
-	static public final String		RCS_ID = "$Id: HTMLDialog.java,v 1.2 1999/04/01 19:41:11 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.2 $";
+	public static final String		RCS_ID = "$Id: HTMLDialog.java,v 1.2 1999/04/01 19:41:11 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.2 $";
 
 	private JTextArea	messageText;
 
-	public
 	HTMLDialog( final Frame parent, final String title, final boolean modal, final String html )
 		{
 		super( parent, title, modal );
@@ -80,18 +80,9 @@ implements	ActionListener
 */
 		this.setSize( new Dimension( 480, 320 ) );
 
-		Point location;
+		final Point location;
 
-		if ( parent != null )
-			{
-			location =
-				AWTUtilities.centerDialogInParent( this, parent );
-			}
-		else
-			{
-			location =
-				AWTUtilities.computeDialogLocation( this, 480, 320 );
-			}
+			location = parent != null ? AWTUtilities.centerDialogInParent(this, parent) : AWTUtilities.computeDialogLocation(this, 480, 320);
 
 		this.setLocation( location.x, location.y );
 		}
@@ -108,10 +99,10 @@ implements	ActionListener
 			}
         }
 
-	public void
-	establishDialogContents( final String html )
+	private void
+	establishDialogContents(final String html)
 		{
-		JButton			button;
+		final JButton			button;
 
 		JEditorPane pane = null;
 		EditorKit editor = null;
@@ -127,21 +118,16 @@ implements	ActionListener
 			editor.read( rdr, doc, 0 );
 			pane.setDocument( doc );
 			}
-		catch ( final IOException ex )
-			{
-			ex.printStackTrace( System.err );
-			pane = null;
-			}
-		catch ( final BadLocationException ex )
+		catch ( final IOException | BadLocationException ex )
 			{
 			ex.printStackTrace( System.err );
 			pane = null;
 			}
 
-		final JScrollPane scroller = new JScrollPane();
+			final JScrollPane scroller = new JScrollPane();
 		scroller.getViewport().add( pane );
 
-		final JPanel ctlPan = new JPanel();
+		final Container ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
@@ -150,7 +136,7 @@ implements	ActionListener
 		button.setActionCommand( "OK" );
 		ctlPan.add( BorderLayout.EAST, button );
 
-		final JPanel content = new JPanel();
+		final JComponent content = new JPanel();
 		content.setLayout( new BorderLayout( 0, 8 ) );
 		content.setBorder( new EmptyBorder( 6, 6, 6, 6 ) );
 

@@ -40,28 +40,27 @@ import javax.activation.MimeTypeParseException;
  *
  */
 
-public class
+class
 ComponentFrame extends Frame
 	{
-	private String		contentType;
 
-	/**
+		/**
 	 * creates the frame with the given name
-	 * @param what	the component to display
+	 * @param comp	the component to display
 	 * @param name	the name of the Frame
 	 */
-	public
-	ComponentFrame( final Component comp, final String name, final DataSource source )
+		ComponentFrame( final Component comp, final String name, final DataSource source )
 		{
 		super( name );
 
-		try {
+			String contentType;
+			try {
 			final MimeType mime = new MimeType( source.getContentType() );
-			this.contentType = mime.getBaseType();
+				contentType = mime.getBaseType();
 			}
 		catch ( final MimeTypeParseException ex )
 			{
-			this.contentType = source.getContentType();
+				contentType = source.getContentType();
 			}
 
 		this.addWindowListener( new WinClose() );
@@ -78,12 +77,12 @@ ComponentFrame extends Frame
 		this.loadLayoutProperties();
 		}
 
-	public void
+	private void
 	loadLayoutProperties()
 		{
 		}
 
-	public void
+	private void
 	saveLayoutProperties()
 		{
 		}

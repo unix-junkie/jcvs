@@ -37,7 +37,7 @@ extends		ConfigNumberEditor
 	public boolean
 	isChanged( final UserPrefs prefs, final ConfigureSpec spec, final String numText )
 		{
-		final double cur = Double.valueOf( numText ).doubleValue();
+		final double cur = Double.valueOf( numText );
 		final double old = prefs.getDouble( spec.getPropertyName(), 0 );
 		return cur != old;
 		}

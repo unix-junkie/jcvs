@@ -5,16 +5,15 @@ import java.awt.Dimension;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 
-public
 class		ConfigureTree
 extends		JTree
 	{
 
-	public
-	ConfigureTree( final ConfigureTreeModel model )
+	ConfigureTree( final TreeModel model )
 		{
 		this.setShowsRootHandles( true );
 		this.setRootVisible( false );

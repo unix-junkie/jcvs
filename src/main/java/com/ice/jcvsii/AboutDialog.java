@@ -23,6 +23,7 @@
 package com.ice.jcvsii;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -55,22 +57,18 @@ import com.ice.util.AWTUtilities;
  * @author Timothy Gerard Endres, <a href="mailto:time@ice.com">time@ice.com</a>.
  */
 
-public class
+class
 AboutDialog extends JDialog
 		implements ActionListener
 	{
-	static public final String		RCS_ID = "$Id: AboutDialog.java,v 1.2 1999/04/01 19:41:10 time Exp $";
-	static public final String		RCS_REV = "$Revision: 1.2 $";
+	public static final String		RCS_ID = "$Id: AboutDialog.java,v 1.2 1999/04/01 19:41:10 time Exp $";
+	public static final String		RCS_REV = "$Revision: 1.2 $";
 
-	private final String		messageString;
-	private JTextArea	messageText;
-
-	public
-	AboutDialog( final Frame parent )
+		AboutDialog( final Frame parent )
 		{
 		super( parent, "jCVS II", true );
 
-		this.messageString = null;
+			final String messageString = null;
 
 		this.establishDialogContents();
 
@@ -97,10 +95,10 @@ AboutDialog extends JDialog
 			}
         }
 
-	public void
+	private void
 	establishDialogContents()
 		{
-		JButton			button;
+		final JButton			button;
 
 		Image img = null;
 		try {
@@ -124,11 +122,11 @@ AboutDialog extends JDialog
 				( new EtchedBorder( EtchedBorder.LOWERED ),
 					new EmptyBorder( 5, 5, 5, 5 ) ) );
 
- 		this.messageText = new JTextArea();
-		this.messageText.setOpaque( true );
-		this.messageText.setEditable( false );
-		this.messageText.setMargin( new Insets( 5, 5, 5, 5 ) );
-		this.messageText.setFont( new Font( "Serif", Font.PLAIN, 12 ) );
+			final JTextArea messageText = new JTextArea();
+		messageText.setOpaque(true );
+		messageText.setEditable(false );
+		messageText.setMargin(new Insets(5, 5, 5, 5 ) );
+		messageText.setFont(new Font("Serif", Font.PLAIN, 12 ) );
 
 		final String[] fmtArgs = { JCVS.getVersionString() };
 
@@ -137,12 +135,12 @@ AboutDialog extends JDialog
 		final String msgStr =
 			rmgr.getUIFormat( "about.dialog.text", fmtArgs );
 
-		this.messageText.setText( msgStr );
+		messageText.setText(msgStr );
 
 		final JScrollPane scroller = new JScrollPane();
-		scroller.getViewport().add( this.messageText );
+		scroller.getViewport().add(messageText);
 
-		final JPanel ctlPan = new JPanel();
+		final Container ctlPan = new JPanel();
 		ctlPan.setLayout( new BorderLayout() );
 
 		button = new JButton( rmgr.getUIString( "name.for.ok" ) );
@@ -150,7 +148,7 @@ AboutDialog extends JDialog
 		button.setActionCommand( "OK" );
 		ctlPan.add( BorderLayout.EAST, button );
 
-		final JPanel content = new JPanel();
+		final JComponent content = new JPanel();
 		content.setLayout( new BorderLayout( 0, 8 ) );
 		content.setBorder( new EmptyBorder( 6, 6, 6, 6 ) );
 

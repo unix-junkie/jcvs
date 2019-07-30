@@ -8,21 +8,19 @@ import javax.swing.border.EmptyBorder;
 
 
 
-public
 class		MainTabPanel
 extends		JPanel
 	{
-	protected MainPanel		parent;
+	private final MainPanel		parent;
 
-	public
-	MainTabPanel( final MainPanel parent )
+	MainTabPanel(final MainPanel parent)
 		{
 		super();
 		this.parent = parent;
 		this.setBorder( new EmptyBorder( 4, 4, 4, 4 ) );
 		}
 
-	public MainPanel
+	MainPanel
 	getMainPanel()
 		{
 		return this.parent;
@@ -48,14 +46,14 @@ extends		JPanel
 	// later on to setCursor() on "this" instead!
 	//
 
-	protected void
+	void
 	setWaitCursor()
 		{
 		final Container frame = this.getTopLevelAncestor();
 		MainFrame.setWaitCursor( frame, true );
 		}
 
-	protected void
+	void
 	resetCursor()
 		{
 		final Container frame = this.getTopLevelAncestor();

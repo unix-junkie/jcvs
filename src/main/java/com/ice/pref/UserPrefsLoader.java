@@ -25,8 +25,6 @@ package com.ice.pref;
 import java.io.IOException;
 import java.util.Properties;
 
-
-
 /**
  * This class extends the "global" properties functionality to provide
  * a facility for loading and storing UserPrefs properties.
@@ -40,31 +38,8 @@ import java.util.Properties;
 public abstract
 class       UserPrefsLoader
 extends		Properties
-implements	UserPrefsConstants
 	{
-	private String		appName = null;
-	private String		userName = null;
-	private String		prefsName = null;
-
-
-	public static UserPrefsLoader
-	getDefaultLoader()
-		{
-		return getLoader( UserPrefsConstants.STREAM_LOADER );
-		}
-
-	public static UserPrefsLoader
-	getDefaultLoader( final String appName, final String userName, final String prefsName )
-		{
-		final UserPrefsLoader result =
-			UserPrefsLoader.getDefaultLoader();
-
-		result.setAppName( appName );
-		result.setUserName( userName );
-		result.setPrefsName( prefsName );
-
-		return result;
-		}
+	private String		userName;
 
 	public static UserPrefsLoader
 	getLoader( final String loaderName )
@@ -74,7 +49,7 @@ implements	UserPrefsConstants
 			{
 			return new UserPrefsFileLoader();
 			}
-		else if ( loaderName.equalsIgnoreCase
+		if ( loaderName.equalsIgnoreCase
 				( UserPrefsConstants.STREAM_LOADER ) )
 			{
 			return new UserPrefsStreamLoader();
@@ -83,48 +58,9 @@ implements	UserPrefsConstants
 		return null;
 		}
 
-	public static UserPrefsLoader
-	getLoader(
-			final String loaderName, final String appName,
-			final String userName, final String prefsName )
-		{
-		final UserPrefsLoader result =
-			UserPrefsLoader.getLoader( loaderName );
-
-		if ( result != null )
-			{
-			result.setAppName( appName );
-			result.setUserName( userName );
-			result.setPrefsName( prefsName );
-			}
-
-		return result;
-		}
-
-	public
-	UserPrefsLoader()
-		{
-		}
-
-	public
-	UserPrefsLoader( final String appName, final String userName, final String prefsName )
-		{
-		this.appName = appName;
-		this.userName = userName;
-		this.prefsName = prefsName;
-		}
-
-	public String
-	getAppName()
-		{
-		return this.appName;
-		}
-
-	public void
-	setAppName( final String name )
-		{
-		this.appName = name;
-		}
+	UserPrefsLoader() {
+		// empty
+	}
 
 	public String
 	getUserName()
@@ -136,18 +72,6 @@ implements	UserPrefsConstants
 	setUserName( final String name )
 		{
 		this.userName = name;
-		}
-
-	public String
-	getPrefsName()
-		{
-		return this.prefsName;
-		}
-
-	public void
-	setPrefsName( final String prefsName )
-		{
-		this.prefsName = prefsName;
 		}
 
 	public abstract void

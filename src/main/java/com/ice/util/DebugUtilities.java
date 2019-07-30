@@ -22,23 +22,28 @@
 
 package com.ice.util;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.io.PrintWriter;
 
 
-public class
+final class
 DebugUtilities
 	{
-	public static void
+		private DebugUtilities() {
+		}
+
+		private static void
 	printClassHierarchy(
-			Class aClass, final PrintWriter writer, final String prefix )
+				Class aClass, final PrintWriter writer, final String prefix)
 		{
 		String subPrefix = "-->";
 
 		for ( int i = 0 ; ; ++i )
 			{
 			writer.println
-				( prefix + " " + subPrefix
-					+ " " + aClass.getName() );
+				(prefix + ' ' + subPrefix
+				 + ' ' + aClass.getName() );
 
 			aClass = aClass.getSuperclass();
 
@@ -49,12 +54,12 @@ DebugUtilities
 			}
 		}
 
-	public static void
+	private static void
 	printContainerComponents(
-			final java.awt.Container cont, final PrintWriter writer,
-			final String prefix, final boolean recurse )
+			final Container cont, final PrintWriter writer,
+			final String prefix, final boolean recurse)
 		{
-		final java.awt.Component[] comps = cont.getComponents();
+		final Component[] comps = cont.getComponents();
 
 		if ( comps.length < 1 )
 			{
@@ -64,18 +69,18 @@ DebugUtilities
 
 		for ( int i = 0 ; i < comps.length ; ++i )
 			{
-			DebugUtilities.printClassHierarchy
+			printClassHierarchy
 				( comps[i].getClass(), writer,
-					prefix + "[" +i+ "]" );
+				  prefix + '[' + i + ']');
 
 			if ( recurse )
 				{
-				final Class c = java.awt.Container.class;
+				final Class<Container> c = Container.class;
 				if ( c.isAssignableFrom( comps[i].getClass() ) )
 					{
-					DebugUtilities.printContainerComponents(
-						(java.awt.Container)comps[i], writer,
-							prefix + "[" +i+ "] ", recurse );
+					printContainerComponents(
+							(Container)comps[i], writer,
+							prefix + '[' + i + "] ", recurse );
 					}
 				}
 			}

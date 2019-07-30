@@ -33,11 +33,10 @@ package com.ice.cvsc;
  * @see CVSRequest
  */
 
-public class
-CVSNotifyItem extends Object
-	{
-	static public final String	RCS_ID = "$Id: CVSNotifyItem.java,v 2.2 2003/07/27 01:08:32 time Exp $";
-	static public final String	RCS_REV = "$Revision: 2.2 $";
+class
+CVSNotifyItem {
+	public static final String	RCS_ID = "$Id: CVSNotifyItem.java,v 2.2 2003/07/27 01:08:32 time Exp $";
+	public static final String	RCS_REV = "$Revision: 2.2 $";
 
 	private final String			type;
 	private final String			name;
@@ -49,7 +48,7 @@ CVSNotifyItem extends Object
 	private final String			repository;
 
 
-	public CVSNotifyItem(
+	CVSNotifyItem(
 			final String type, final String name, final String time, final String host,
 			final String wdir, final String watches, final String repository )
 		{
@@ -110,25 +109,25 @@ CVSNotifyItem extends Object
 	getServerExtra()
 		{
 		return
-			this.type + "\t" +
-			this.time + "\t" +
-			this.host + "\t" +
-			this.wdir + "\t" +
-			this.watches;
+				this.type + '\t' +
+				this.time + '\t' +
+				this.host + '\t' +
+				this.wdir + '\t' +
+				this.watches;
 		}
 
 	@Override
 	public String
 	toString()
 		{
-		return "[" +
-			this.type + ","	+
-			this.name + ","	+
-			this.time + ","	+
-			this.host + ","	+
-			this.wdir + ","	+
-			this.watches + ","	+
-			this.repository + "]";
+		return '[' +
+		       this.type + ',' +
+		       this.name + ',' +
+		       this.time + ',' +
+		       this.host + ',' +
+		       this.wdir + ',' +
+		       this.watches + ',' +
+		       this.repository + ']';
 		}
 	}
 

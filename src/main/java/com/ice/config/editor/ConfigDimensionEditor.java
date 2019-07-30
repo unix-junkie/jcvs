@@ -20,8 +20,8 @@ public
 class		ConfigDimensionEditor
 extends		ConfigureEditor
 	{
-	protected JTextField	wField;
-	protected JTextField	hField;
+	private JTextField	wField;
+	private JTextField	hField;
 
 
 	public

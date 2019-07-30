@@ -50,34 +50,34 @@ public
 class		ColumnHeader
 extends		JComponent
 	{
-    protected TableColumnModel		columnModel;
-    protected CellRendererPane		rendererPane;
+    private final TableColumnModel		columnModel;
+    private final CellRendererPane		rendererPane;
     protected MouseInputListener	mouseInputListener;
 
     /**
      * If this flag is true, then the header will repaint the table as
      * a column is dragged or resized.
      */
-    protected boolean	updateTableInRealTime;
+    private boolean	updateTableInRealTime;
 
 	/** The index of the column being resized. 0 if not resizing */
-	transient protected TableColumn	resizingColumn;
+	private transient TableColumn	resizingColumn;
 
 	/** The index of the column being dragged. 0 if not dragging */
-	transient protected TableColumn	draggedColumn;
+	private transient TableColumn	draggedColumn;
 
     /** The distance from its original position the column has been dragged */
-    transient protected int	draggedDistance;
+    private transient int	draggedDistance;
 
     /** Resizing of columns are allowed by the user */
-    protected boolean	resizingAllowed;
+    private boolean	resizingAllowed;
 
     /** Reordering of columns are allowed by the user */
-    protected boolean	reorderingAllowed;
+    private boolean	reorderingAllowed;
 
-	protected ColumnHeaderRenderer	hdrCellRenderer;
+	private ColumnHeaderRenderer	hdrCellRenderer;
 
-	protected EventListenerList resizeListeners;
+	private final EventListenerList resizeListeners;
 
 
 	public
@@ -89,7 +89,7 @@ extends		JComponent
 
 		this.resizeListeners = new EventListenerList();
 
-		this.hdrCellRenderer = this.new DefaultColumnHeaderRenderer();
+		this.hdrCellRenderer = new DefaultColumnHeaderRenderer();
 
         final MouseInputHandler mouseListener = this.new MouseInputHandler();
 
@@ -101,21 +101,21 @@ extends		JComponent
 		}
 
 	public void
-	addResizeListener( final ColumnHeader.ResizeListener l )
+	addResizeListener( final ResizeListener l )
 		{
 		this.resizeListeners.add
-			( ColumnHeader.ResizeListener.class, l );
+			( ResizeListener.class, l );
 		}
 
 	public void
-	removeResizeListener( final ColumnHeader.ResizeListener l )
+	removeResizeListener( final ResizeListener l )
 		{
 		this.resizeListeners.remove
-			( ColumnHeader.ResizeListener.class, l );
+			( ResizeListener.class, l );
 		}
 
-	protected void
-	fireColumnHeadersResized( final boolean isResizing )
+	private void
+	fireColumnHeadersResized(final boolean isResizing)
 		{
 		// Guaranteed to return a non-null array
 		final Object[] listeners = resizeListeners.getListenerList();
@@ -124,19 +124,19 @@ extends		JComponent
 		// those that are interested in this event
 		for ( int i = listeners.length - 2 ; i >= 0 ; i -= 2 )
 			{
-			if ( listeners[i] == ColumnHeader.ResizeListener.class )
+			if ( listeners[i] == ResizeListener.class )
 				{
-				final ColumnHeader.ResizeEvent evt =
-					new ColumnHeader.ResizeEvent( this, isResizing );
+				final ResizeEvent evt =
+						new ResizeEvent(this, isResizing);
 
-				((ColumnHeader.ResizeListener) listeners[ i + 1 ]).
+				((ResizeListener) listeners[i + 1 ]).
 					columnHeadersResized( evt );
 				}
 			}
 		}
 
-	protected void
-	fireColumnHeadersNeedUpdate( final boolean isResizing )
+	private void
+	fireColumnHeadersNeedUpdate(final boolean isResizing)
 		{
 		// Guaranteed to return a non-null array
 		final Object[] listeners = resizeListeners.getListenerList();
@@ -145,18 +145,18 @@ extends		JComponent
 		// those that are interested in this event
 		for ( int i = listeners.length - 2 ; i >= 0 ; i -= 2 )
 			{
-			if ( listeners[i] == ColumnHeader.ResizeListener.class )
+			if ( listeners[i] == ResizeListener.class )
 				{
-				final ColumnHeader.ResizeEvent evt =
-					new ColumnHeader.ResizeEvent( this, isResizing );
+				final ResizeEvent evt =
+						new ResizeEvent(this, isResizing);
 
-				((ColumnHeader.ResizeListener) listeners[ i + 1 ]).
+				((ResizeListener) listeners[i + 1 ]).
 					columnHeadersNeedUpdate( evt );
 				}
 			}
 		}
 
-	public TableColumnModel
+	private TableColumnModel
 	getColumnModel()
 		{
 		return this.columnModel;
@@ -174,43 +174,43 @@ extends		JComponent
 		this.hdrCellRenderer = rend;
 		}
 
-	public TableColumn
+	private TableColumn
 	getDraggedColumn()
 		{
 		return this.draggedColumn;
 		}
 
-	public void
-	setDraggedColumn( final TableColumn col )
+	private void
+	setDraggedColumn(final TableColumn col)
 		{
 		this.draggedColumn = col;
 		}
 
-	public TableColumn
+	private TableColumn
 	getResizingColumn()
 		{
 		return this.resizingColumn;
 		}
 
-	public void
-	setResizingColumn( final TableColumn col )
+	private void
+	setResizingColumn(final TableColumn col)
 		{
 		this.resizingColumn = col;
 		}
 
-	public int
+	private int
 	getDraggedDistance()
 		{
 		return this.draggedDistance;
 		}
 
-	public void
-	setDraggedDistance( final int dist )
+	private void
+	setDraggedDistance(final int dist)
 		{
 		this.draggedDistance = dist;
 		}
 
-	public boolean
+	private boolean
 	getResizingAllowed()
 		{
 		return this.resizingAllowed;
@@ -222,7 +222,7 @@ extends		JComponent
 		this.resizingAllowed = allowed;
 		}
 
-	public boolean
+	private boolean
 	getReorderingAllowed()
 		{
 		return this.reorderingAllowed;
@@ -234,7 +234,7 @@ extends		JComponent
 		this.reorderingAllowed = allowed;
 		}
 
-	public boolean
+	private boolean
 	getUpdateTableInRealTime()
 		{
 		return this.updateTableInRealTime;
@@ -251,8 +251,7 @@ extends		JComponent
      * This class should be treated as a &quot;protected&quot; inner class.
      * Instantiate it only within subclasses of BasicTableUI.
      */
-    public
-	class		MouseInputHandler
+    class		MouseInputHandler
 	implements	MouseInputListener
 		{
         private int lastEffectiveMouseX;
@@ -348,7 +347,7 @@ extends		JComponent
 				rColumn.setPreferredWidth( newWidth );
 
 				final int acheivedDeltaX = rColumn.getWidth() - oldWidth;
-				lastEffectiveMouseX = lastEffectiveMouseX + acheivedDeltaX;
+					lastEffectiveMouseX += acheivedDeltaX;
 
 				fireColumnHeadersResized( true );
 
@@ -360,16 +359,17 @@ extends		JComponent
 					fireColumnHeadersNeedUpdate( true );
 					}
 				}
-			else if ( draggedColumn != null )
-				{
-				move( evt, deltaX );
+			else {
+				if ( draggedColumn != null )
+					{
+					move( evt, deltaX );
+					}
+				else
+					{
+					// Neither dragging nor resizing ...
+					}
 				lastEffectiveMouseX = mouseX;
-				}
-			else
-				{
-				// Neither dragging nor resizing ...
-				lastEffectiveMouseX = mouseX;
-				}
+			}
 			}
 
         @Override
@@ -700,8 +700,8 @@ extends		JComponent
      * @exception IllegalArgumentException	If <I>columnIndex</I> is out
      *						of range
      */
-    public Rectangle
-	getHeaderRect( final int columnIndex )
+	private Rectangle
+	getHeaderRect(final int columnIndex)
 		{
 		final TableColumnModel columnModel = getColumnModel();
 
@@ -761,21 +761,20 @@ extends		JComponent
 	interface	ResizeListener
 	extends		EventListener
 		{
-		public void
-			columnHeadersResized( ResizeEvent event );
+		void
+			columnHeadersResized(ResizeEvent event);
 
-		public void
-			columnHeadersNeedUpdate( ResizeEvent event );
+		void
+			columnHeadersNeedUpdate(ResizeEvent event);
 		}
 
-	public
+	public static
 	class		ResizeEvent
 	extends		AWTEvent
 		{
 		private final boolean		isResizing;
 
-		public
-		ResizeEvent( final Component source, final boolean isResizing )
+		ResizeEvent(final Component source, final boolean isResizing)
 			{
 			super( source, RESERVED_ID_MAX );
 			this.isResizing = isResizing;
@@ -788,21 +787,21 @@ extends		JComponent
 			}
 		}
 
+	@FunctionalInterface
 	public
 	interface	ColumnHeaderRenderer
 		{
-		public Component
+		Component
 			getHeaderCellRendererComponent
-				( ColumnHeader header, Object value, int index );
+				(ColumnHeader header, Object value, int index);
 		}
 
-	private
+	private static final
 	class		DefaultColumnHeaderRenderer
 	extends		JLabel
 	implements	ColumnHeaderRenderer
 		{
-		public
-		DefaultColumnHeaderRenderer()
+		private DefaultColumnHeaderRenderer()
 			{
 			this.setBorder
 				( new CompoundBorder

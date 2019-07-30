@@ -29,18 +29,17 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 
 
-public
 class		DiffLayout
 implements	LayoutManager
 	{
-    private int			leftWidth = 0;
-    private int			rightWidth = 0;
-    private int			preferredWidth = 0;
-    private int			preferredHeight = 0;
+    private int			leftWidth;
+    private int			rightWidth;
+    private int			preferredWidth;
+    private int			preferredHeight;
     private boolean		sizeUnknown = true;
 
 
-    public DiffLayout()
+    DiffLayout()
 		{
 		this.sizeUnknown = true;
 		}
@@ -162,10 +161,13 @@ implements	LayoutManager
 
 		final int nComps = parent.getComponentCount();
 
-		final int previousWidth = 0, previousHeight = 0;
-		int x = insets.left, y = insets.top;
-		final int rowh = 0, start = 0;
-		int xFudge = 0;
+		final int previousWidth = 0;
+			final int previousHeight = 0;
+			int x = insets.left;
+			int y = insets.top;
+			final int rowh = 0;
+			final int start = 0;
+			int xFudge = 0;
 
 		// Go through the components' sizes, if neither
 		// preferredLayoutSize nor minimumLayoutSize has

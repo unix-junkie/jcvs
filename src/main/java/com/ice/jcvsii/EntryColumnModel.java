@@ -26,7 +26,6 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 
-public
 class		EntryColumnModel
 extends		DefaultTableColumnModel
 	{
@@ -36,7 +35,6 @@ extends		DefaultTableColumnModel
 	private static final int		IDX_MOD   = 3;
 
 
-	public
 	EntryColumnModel()
 		{
 		String titleStr;

@@ -22,26 +22,22 @@
 
 package com.ice.util;
 
-public
 class		ExecException
 extends		Exception
 	{
 	private final int		exitValue;
 
-	public
 	ExecException()
 		{
 		super();
 		this.exitValue = 0;
 		}
 
-	public
 	ExecException( final String msg )
 		{
 		this( msg, 0 );
 		}
 
-	public
 	ExecException( final String msg, final int exitValue )
 		{
 		super( msg );

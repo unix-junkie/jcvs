@@ -7,7 +7,7 @@ package com.ice.jni.dde;
  * The JNIDDE class provides native access to Windows DDE.
  */
 
-public class
+public final class
 JNIDDE
 	{
 	/**
@@ -28,19 +28,13 @@ JNIDDE
 	public static final int		SW_RESTORE = 9;
 	public static final int		SW_SHOWDEFAULT = 10;
 
-	/**
-	 * If true, debug the fv parameters and computation.
-	 */
-	public boolean		debugLevel;
-
-
 	static
 		{
 		System.loadLibrary( "ICE_JNIDDE" );
 		}
 
 	public static void
-	main( final String argv[] )
+	main( final String... argv)
 		{
 		if ( argv.length < 3 )
 			{
@@ -49,11 +43,11 @@ JNIDDE
 			return;
 			}
 
-		boolean result;
+		final boolean result;
 
 		try {
 			result =
-				JNIDDE.ddeExecute
+				ddeExecute
 					( argv[0], argv[1], argv[2], false );
 			}
 		catch ( final DDEException ex )

@@ -32,7 +32,7 @@ public
 class		EntryTree
 extends		JTree
 	{
-	protected EntryTreeRenderer	renderer;
+	private final EntryTreeRenderer	renderer;
 
 	public
 	EntryTree( final EntryTreeModel model )

@@ -42,14 +42,14 @@ extends		DefaultMutableTreeNode
 	getPathString()
 		{
 		final TreeNode[] path = this.getPath();
-		final StringBuffer buf = new StringBuffer();
+		final StringBuilder buf = new StringBuilder();
 
 		for ( int i = 0 ; i < path.length ; ++i )
 			{
 			final WorkBenchTreeNode node = (WorkBenchTreeNode) path[i];
 			buf.append( node.getDefinition().getName() );
 			if ( i < path.length - 1 )
-				buf.append( "." );
+				buf.append('.');
 			}
 
 		return buf.toString();

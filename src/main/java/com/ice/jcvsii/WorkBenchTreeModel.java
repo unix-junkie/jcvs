@@ -1,17 +1,18 @@
 
 package com.ice.jcvsii;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.ice.pref.UserPrefs;
 
 
-public
 class		WorkBenchTreeModel
 extends		DefaultTreeModel
 	{
-	public
-	WorkBenchTreeModel( final WorkBenchTreeNode rootNode )
+	WorkBenchTreeModel( final TreeNode rootNode )
 		{
 		super( rootNode );
 		}
@@ -25,8 +26,8 @@ extends		DefaultTreeModel
 		this.recursiveSave( prefs, rootNode );
 		}
 
-	public void
-	recursiveSave( final UserPrefs prefs, final WorkBenchTreeNode rootNode )
+	private void
+	recursiveSave(final UserPrefs prefs, final WorkBenchTreeNode rootNode)
 		{
 		if ( false )
 			System.err.println
@@ -64,8 +65,8 @@ extends		DefaultTreeModel
 	public void
 	fireTreeChanged()
 		{
-		final WorkBenchTreeNode rootNode =
-			(WorkBenchTreeNode) this.getRoot();
+		final DefaultMutableTreeNode rootNode =
+				(DefaultMutableTreeNode) this.getRoot();
 		this.fireTreeStructureChanged
 			( rootNode, rootNode.getPath(), null, null );
 		}
@@ -82,8 +83,8 @@ extends		DefaultTreeModel
 			( rootNode, rootNode.getPath(), null, null );
 		}
 
-	public void
-	recursiveLoad( final UserPrefs prefs, final WorkBenchTreeNode rootNode )
+	private void
+	recursiveLoad(final UserPrefs prefs, final WorkBenchTreeNode rootNode)
 		{
 		final String rootPath = rootNode.getDefinition().getFullPath();
 
@@ -94,7 +95,7 @@ extends		DefaultTreeModel
 
 		for ( final String name : chNames )
 			{
-			propName = "wb." + rootPath + "." + name;
+			propName = "wb." + rootPath + '.' + name;
 
 			final boolean isFolder =
 				! prefs.getBoolean( propName + ".isleaf", true );
@@ -136,7 +137,7 @@ extends		DefaultTreeModel
 					new WorkBenchDefinition
 						( name, rootPath, display, desc, localRoot );
 
-				final WorkBenchTreeNode newNode =
+				final MutableTreeNode newNode =
 					new WorkBenchTreeNode( childDef );
 
 				rootNode.add( newNode );
@@ -145,7 +146,7 @@ extends		DefaultTreeModel
 		}
 
 	private String[]
-	getChildTokens( final WorkBenchTreeNode[] childs )
+	getChildTokens( final WorkBenchTreeNode... childs )
 		{
 		final String[] result = new String[ childs.length ];
 

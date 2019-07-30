@@ -28,199 +28,142 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-
-public class
-CVSLog extends Object
-	{
-	private static final String		RCS_ID = "$Id: CVSLog.java,v 2.7 2003/07/27 01:08:32 time Exp $";
-	private static final String		RCS_REV = "$Revision: 2.7 $";
-	private static final String		RCS_NAME = "$Name:  $";
-
+public final class
+CVSLog {
 	public static final String		DEFAULT_FILENAME = "cvslog.txt";
 
-    public static boolean			debug;
-    public static boolean			debugOpen;
+    private static boolean			debug;
+    private static boolean			debugOpen;
 
-	private static String			filename;
-	private static FileWriter		file;
+	private static String			filename = DEFAULT_FILENAME;
 	private static PrintWriter		stream;
     private static boolean			checked;
     private static boolean			open;
     private static boolean			echo;
-    private static boolean			autoFlush;
+    private static final boolean			autoFlush = true;
+
+	private CVSLog() {
+	}
 
 
-	static
-		{
-		CVSLog.open = false;
-		CVSLog.checked = false;
-		CVSLog.autoFlush = true;
-		CVSLog.debug = false;
-		CVSLog.debugOpen = false;
-
-		CVSLog.filename =
-			new String( CVSLog.DEFAULT_FILENAME );
-		}
-
-	static public void
+	public static void
 	setLogFilename( final String filename )
 		{
 		CVSLog.filename = filename;
-		CVSLog.checked = false;
+		checked = false;
 		}
 
-    static public void
-    setAutoFlush( final boolean autoflush )
-        {
-        CVSLog.autoFlush = autoFlush;
-        }
-
-    static public void
+    public static void
     checkLogOpen()
         {
-		if ( CVSLog.checked )
+		if ( checked )
 			return;
 
-		CVSLog.checked = true;
+		checked = true;
 
-		if ( ! CVSLog.open && CVSLog.filename != null )
+		if ( ! open && filename != null )
 			{
-			CVSLog.openLogFile();
+			openLogFile();
 			}
         }
 
-	static public void
+	private static void
 	openLogFile()
 		{
 		boolean isok = true;
 
-		if ( CVSLog.debugOpen )
+		if ( debugOpen )
 			new Throwable( "OPEN CVS LOG").printStackTrace();
 
-		if ( CVSLog.debug)
+		if ( debug)
 			System.err.println
-				( "CVSLog.openLogFile( " + CVSLog.filename + " )" );
+				( "CVSLog.openLogFile( " + filename + " )" );
 
-		if ( CVSLog.filename == null )
+		if ( filename == null )
 			return;
 
-		try {
-			CVSLog.file = new FileWriter( CVSLog.filename );
+			FileWriter file;
+			try {
+				file = new FileWriter(filename );
 			}
 		catch ( final Exception ex )
 			{
-			CVSLog.logMsg
-				( "error opening log file '" + CVSLog.filename
+			logMsg
+				( "error opening log file '" + filename
 					+ "', trying 'user.dir' - " + ex.getMessage() );
 
 			final String userDirStr = System.getProperty( "user.dir", "" );
 
-			CVSLog.filename =
-				userDirStr + File.separator + CVSLog.DEFAULT_FILENAME;
+			filename =
+				userDirStr + File.separator + DEFAULT_FILENAME;
 
 			try {
-				CVSLog.file = new FileWriter( CVSLog.filename );
+				file = new FileWriter(filename );
 				}
 			catch ( final Exception ex2 )
 				{
-				CVSLog.logMsg
-					( "error opening log file '" + CVSLog.filename
+				logMsg
+					( "error opening log file '" + filename
 						+ "' - " + ex2.getMessage() );
 
-				CVSLog.file = null;
+					file = null;
 				isok = false;
 				}
 			}
 
 		if ( isok )
 			{
-			CVSLog.stream = new PrintWriter( CVSLog.file );
-			CVSLog.open = true;
+			stream = new PrintWriter(file);
+			open = true;
 			}
 
-		CVSLog.echo = false;
+		echo = false;
 		}
 
-    static public void
-    closeLog()
-        {
-		if ( CVSLog.open )
-			{
-			CVSLog.open = false;
-			if ( CVSLog.stream != null )
-				{
-				CVSLog.stream.flush();
-				CVSLog.stream.close();
-				}
-			}
-		CVSLog.checked = false;
-        }
-
-    static public void
-    setEcho( final boolean setting )
-        {
-        CVSLog.echo = setting;
-        }
-
-	static public void
+	public static void
 	traceMsg( final Throwable thrown, final String msg )
 		{
-		CVSLog.logMsg( msg );
-		CVSLog.logMsg( thrown.getMessage() );
+		logMsg( msg );
+		logMsg( thrown.getMessage() );
 
-		if ( ! CVSLog.open )
+		if ( ! open )
 			thrown.printStackTrace( System.err );
 		else
-			thrown.printStackTrace( CVSLog.stream );
+			thrown.printStackTrace( stream );
 
-		if ( CVSLog.autoFlush && CVSLog.open )
-			CVSLog.stream.flush();
+		if ( autoFlush && open )
+			stream.flush();
 		}
 
 
-	static public void
+	public static void
 	logMsg( final String msg )
 		{
-		CVSLog.checkLogOpen();
+		checkLogOpen();
 
-		if ( CVSLog.open )
+		if ( open )
 			{
-			CVSLog.stream.println( msg );
-			if ( CVSLog.autoFlush && CVSLog.open )
-				CVSLog.stream.flush();
+			stream.println( msg );
+			if ( autoFlush && open )
+				stream.flush();
 			}
 
-	    if ( CVSLog.echo )
+	    if ( echo )
 	        {
 	        System.out.println( msg );
 	        }
 		}
 
-	static public void
-	logMsgStdout( final String msg )
-		{
-		CVSLog.checkLogOpen();
-
-		if ( CVSLog.open )
-			{
-			CVSLog.stream.println( msg );
-			if ( CVSLog.autoFlush && CVSLog.open )
-				CVSLog.stream.flush();
-			}
-
-	    System.out.println( msg );
-		}
-
-	static public void
+	public static void
 	logMsgStderr( final String msg )
 		{
-		CVSLog.checkLogOpen();
+		checkLogOpen();
 
-		if ( CVSLog.open )
+		if ( open )
 			{
-			CVSLog.stream.println( msg );
-			if ( CVSLog.autoFlush && CVSLog.open )
-				CVSLog.stream.flush();
+			stream.println( msg );
+			if ( autoFlush && open )
+				stream.flush();
 			}
 
 	    System.err.println( msg );

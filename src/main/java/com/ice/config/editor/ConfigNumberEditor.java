@@ -4,6 +4,7 @@ package com.ice.config.editor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -20,23 +21,22 @@ abstract
 class		ConfigNumberEditor
 extends		ConfigureEditor
 	{
-	protected JTextField	numField;
+	private JTextField	numField;
 
 
-	public
-	ConfigNumberEditor( final String typeTitle )
+	ConfigNumberEditor(final String typeTitle)
 		{
 		super( typeTitle );
 		}
 
-	abstract public String
+	public abstract String
 		getTypeTitle();
 
-	abstract public String
-		formatNumber( UserPrefs prefs, ConfigureSpec spec );
+	protected abstract String
+		formatNumber(UserPrefs prefs, ConfigureSpec spec);
 
-	abstract public boolean
-		isChanged( UserPrefs prefs, ConfigureSpec spec, String numText );
+	protected abstract boolean
+		isChanged(UserPrefs prefs, ConfigureSpec spec, String numText);
 
 	@Override
 	public void
@@ -77,7 +77,7 @@ extends		ConfigureEditor
 		int col = 0;
 		final int row = 0;
 
-		final JLabel lbl = new JLabel( "Value" );
+		final JComponent lbl = new JLabel("Value" );
 		lbl.setBorder( new EmptyBorder( 1, 3, 1, 3 ) );
 		AWTUtilities.constrain(
 			result, lbl,

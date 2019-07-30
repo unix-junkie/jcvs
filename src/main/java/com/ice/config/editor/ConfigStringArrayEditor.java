@@ -20,26 +20,12 @@ extends		ConfigArrayEditor
 		}
 
 	@Override
-	public boolean
-	isTupleTable( final ConfigureSpec spec )
-		{
-		return false;
-		}
-
-	@Override
-	public boolean
-	isStringArray( final ConfigureSpec spec )
-		{
-		return true;
-		}
-
-	@Override
 	public void
 	edit( final UserPrefs prefs, final ConfigureSpec spec )
 		{
 		super.edit( prefs, spec );
 
-		final Vector v = prefs.getStringVector( spec.getPropertyName(), null );
+		final List<String> v = prefs.getStringVector( spec.getPropertyName(), null );
 
 		if ( v != null )
 			{

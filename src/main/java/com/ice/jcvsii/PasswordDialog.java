@@ -38,6 +38,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,7 +52,6 @@ import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		PasswordDialog
 extends		JDialog
 implements	ActionListener
@@ -61,7 +61,6 @@ implements	ActionListener
 	private JTextField		userNameField;
 	private JPasswordField	passwordField;
 
-	public
 	PasswordDialog( final Frame parent, final String userName )
 		{
 		super( parent, "Login Information", true );
@@ -143,8 +142,8 @@ implements	ActionListener
 			}
         }
 
-	public void
-	establishDialogContents( final String userName )
+	private void
+	establishDialogContents(final String userName)
 		{
 		JLabel		label;
 		JButton		button;
@@ -152,7 +151,7 @@ implements	ActionListener
 		final UserPrefs prefs = Config.getPreferences();
 		final ResourceMgr rmgr = ResourceMgr.getInstance();
 
-		final JPanel mainPanel = new JPanel();
+		final JComponent mainPanel = new JPanel();
 		mainPanel.setLayout( new GridBagLayout() );
 		mainPanel.setBorder
 			( new CompoundBorder
@@ -205,7 +204,7 @@ implements	ActionListener
 			1, 1, 1, 1, 1.0, 1.0,
 			new Insets( 5, 1, 10, 1 ) );
 
-		final JPanel controlPanel = new JPanel();
+		final Container controlPanel = new JPanel();
 		controlPanel.setLayout( new GridLayout( 1, 2, 5, 5 ) );
 
 		button = new JButton( rmgr.getUIString( "name.for.ok" ) );
@@ -218,7 +217,7 @@ implements	ActionListener
 		button.setActionCommand( "CANCEL" );
 		controlPanel.add( button );
 
-		final JPanel southPan = new JPanel();
+		final JComponent southPan = new JPanel();
 		southPan.setLayout( new BorderLayout() );
 		southPan.add( BorderLayout.EAST, controlPanel );
 		southPan.setBorder( new EmptyBorder( 12, 0, 2, 0 ) );
@@ -226,7 +225,7 @@ implements	ActionListener
 		final Container content = this.getContentPane();
 		content.setLayout( new BorderLayout() );
 
-		final JPanel contPan = new JPanel();
+		final JComponent contPan = new JPanel();
 		contPan.setLayout( new BorderLayout( 2, 2 ) );
 		contPan.setBorder( new EmptyBorder( 3, 5, 5, 5 ) );
 		content.add( BorderLayout.CENTER, contPan );

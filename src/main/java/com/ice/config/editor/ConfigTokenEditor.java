@@ -1,6 +1,7 @@
 
 package com.ice.config.editor;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -29,14 +30,12 @@ extends		ConfigArrayEditor
 
 		if ( tokens != null )
 			{
-			final List<String> v = new Vector<>();
-			for ( final String token : tokens)
-				v.add( token );
+			final List<String> v = new Vector<>(Arrays.asList(tokens));
 			this.model.setData( v );
 			}
 		else
 			{
-			this.model.setData( new Vector<String>() );
+			this.model.setData( new Vector<>() );
 			}
 
 		this.table.sizeColumnsToFit( -1 );

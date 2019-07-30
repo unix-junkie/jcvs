@@ -55,6 +55,8 @@ import javax.swing.tree.TreePath;
 
 import com.ice.cvsc.CVSEntry;
 import com.ice.cvsc.CVSEntryVector;
+import com.ice.jcvsii.ColumnHeader.ResizeEvent;
+import com.ice.jcvsii.ColumnHeader.ResizeListener;
 import com.ice.pref.MenuPrefs;
 import com.ice.pref.UserPrefs;
 import com.ice.util.JFCUtilities;
@@ -64,7 +66,7 @@ public
 class		EntryPanel
 extends		JPanel
 implements	ActionListener, FocusListener,
-			PropertyChangeListener, ColumnHeader.ResizeListener
+			PropertyChangeListener, ResizeListener
 	{
 	private final ColumnHeader		entriesHeader;
 	private final EntryTree			entriesTree;
@@ -156,9 +158,10 @@ implements	ActionListener, FocusListener,
 	public void
 	loadPreferences( final UserPrefs prefs )
 		{
-		int w, totalW = 0;
+		int w;
+			int totalW = 0;
 
-		final Font f =
+			final Font f =
 			prefs.getFont
 				( ConfigConstants.PROJECT_TREE_FONT, this.getFont() );
 
@@ -225,27 +228,26 @@ implements	ActionListener, FocusListener,
 		{
 		final String propName = evt.getPropertyName();
 		final UserPrefs p = (UserPrefs) evt.getSource();
-		if ( propName.equals( ConfigConstants.PROJECT_TREE_FONT ) )
-			{
-			final Font f =
-				p.getFont
-				( ConfigConstants.PROJECT_TREE_FONT,
-					this.entriesTree.getFont() );
+			switch (propName) {
+			case ConfigConstants.PROJECT_TREE_FONT:
+				final Font f =
+						p.getFont
+								(ConfigConstants.PROJECT_TREE_FONT,
+								 this.entriesTree.getFont());
 
-			this.entriesTree.setFont( f );
-			this.entriesTree.revalidate();
-			this.entriesTree.repaint();
-			}
-		else if ( propName.equals( ConfigConstants.PROJECT_TREE_LINESTYLE ) )
-			{
-			this.entriesTree.putClientProperty
-				( "JTree.lineStyle", evt.getNewValue() );
-			this.entriesTree.repaint();
-			}
-		else if ( propName.equals( ConfigConstants.PROJECT_MODIFIED_FORMAT ) )
-			{
-			this.entriesTree.resetDisplayCaches();
-			this.entriesTree.repaint();
+				this.entriesTree.setFont(f);
+				this.entriesTree.revalidate();
+				this.entriesTree.repaint();
+				break;
+			case ConfigConstants.PROJECT_TREE_LINESTYLE:
+				this.entriesTree.putClientProperty
+						("JTree.lineStyle", evt.getNewValue());
+				this.entriesTree.repaint();
+				break;
+			case ConfigConstants.PROJECT_MODIFIED_FORMAT:
+				this.entriesTree.resetDisplayCaches();
+				this.entriesTree.repaint();
+				break;
 			}
 		}
 
@@ -316,8 +318,8 @@ implements	ActionListener, FocusListener,
 		this.selectModified( this.entriesModel.getEntryRootNode() );
 		}
 
-	public void
-	selectModified( final EntryNode root )
+	private void
+	selectModified(final EntryNode root)
 		{
 		// NOTE This call to getChildCount() is REQUIRED
 		//      in order to get the child nodes loaded so
@@ -426,27 +428,26 @@ implements	ActionListener, FocusListener,
 				command = command.substring(2);
 				final CVSEntryVector vector = new CVSEntryVector();
 
-				if ( selectCh == 'L' )
-					{
-					node.getEntry().addFileEntries( vector );
-					}
-				else if ( selectCh == 'R' )
-					{
-					node.getEntry().addAllSubTreeEntries( vector );
-					}
-				else if ( selectCh == 'X' )
-					{
-					vector.addElement( node.getEntry() );
-					node.getEntry().addFileEntries( vector );
-					}
-				else if ( selectCh == 'Z' )
-					{
-					vector.addElement( node.getEntry() );
-					node.getEntry().addAllSubTreeEntries( vector );
-					}
-				else // 'D' and 'F'
-					{
-					vector.addElement( node.getEntry() );
+					switch (selectCh) {
+					case 'L':
+						node.getEntry().addFileEntries(vector);
+						break;
+					case 'R':
+						node.getEntry().addAllSubTreeEntries(vector);
+						break;
+					case 'X':
+						vector.addElement(node.getEntry());
+						node.getEntry().addFileEntries(vector);
+						break;
+					case 'Z':
+						vector.addElement(node.getEntry());
+						node.getEntry().addAllSubTreeEntries(vector);
+						break;
+					default:
+// 'D' and 'F'
+
+						vector.addElement(node.getEntry());
+						break;
 					}
 
 				if ( this.popupListener != null )
@@ -466,7 +467,7 @@ implements	ActionListener, FocusListener,
 	//
 	@Override
 	public void
-	columnHeadersNeedUpdate( final ColumnHeader.ResizeEvent event )
+	columnHeadersNeedUpdate( final ResizeEvent event )
 		{
 		this.entriesTree.revalidate();
 		this.entriesTree.repaint();
@@ -474,7 +475,7 @@ implements	ActionListener, FocusListener,
 
 	@Override
 	public void
-	columnHeadersResized( final ColumnHeader.ResizeEvent event )
+	columnHeadersResized( final ResizeEvent event )
 		{
 		this.entriesTree.resetCachedSizes();
 		this.entriesTree.revalidate();
@@ -483,8 +484,8 @@ implements	ActionListener, FocusListener,
 	// COLUMN RESIZE LISTENER INTERFACE END
 	//
 
-	public void
-	setRoot( final TreeNode root )
+	private void
+	setRoot(final TreeNode root)
 		{
 		this.entriesModel.setRoot( root );
 		}
@@ -540,18 +541,12 @@ implements	ActionListener, FocusListener,
 		return result;
 		}
 
-	private class
+	private final class
 	EntryPanelMouser extends MouseAdapter
 		{
-		private boolean		isPopupClick = false;
+		private boolean		isPopupClick;
 
-		public
-		EntryPanelMouser()
-			{
-			super();
-			}
-
-		@Override
+			@Override
 		public void
 		mousePressed( final MouseEvent event )
 			{

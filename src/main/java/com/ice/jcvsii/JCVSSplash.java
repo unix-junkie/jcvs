@@ -42,6 +42,7 @@ import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -54,16 +55,13 @@ import javax.swing.border.EtchedBorder;
 import com.ice.util.AWTUtilities;
 
 
-public
 class		JCVSSplash
 extends		JWindow
 implements	KeyListener, MouseListener, ActionListener
 	{
-	protected JPanel			mainPan = null;
-	protected JProgressBar		progress = null;
-	protected BoundedRangeModel	progressModel = null;
+		private JProgressBar		progress;
+	private final BoundedRangeModel	progressModel;
 
-	public
 	JCVSSplash( final String title, final BoundedRangeModel progressModel )
 		{
 		super(/* title */);
@@ -111,9 +109,9 @@ implements	KeyListener, MouseListener, ActionListener
 		this.setBounds( x, y, sz.width, sz.height );
 
 		final Container content = this.getContentPane();
-		this.mainPan = new JPanel();
-		this.mainPan.setLayout( new BorderLayout() );
-		this.mainPan.setBorder
+			final JComponent mainPan = new JPanel();
+		mainPan.setLayout(new BorderLayout() );
+		mainPan.setBorder
 			( new CompoundBorder
 				( new BevelBorder( BevelBorder.RAISED ),
 					new CompoundBorder
@@ -121,9 +119,9 @@ implements	KeyListener, MouseListener, ActionListener
 							new BevelBorder( BevelBorder.LOWERED ) ) ) );
 
 		content.setLayout( new BorderLayout() );
-		content.add( BorderLayout.CENTER, this.mainPan );
+		content.add(BorderLayout.CENTER, mainPan);
 
-		this.mainPan.add( BorderLayout.CENTER, lbl );
+		mainPan.add(BorderLayout.CENTER, lbl );
 
 		lbl.setBorder
 			( new CompoundBorder
@@ -135,11 +133,11 @@ implements	KeyListener, MouseListener, ActionListener
 		if ( progressModel != null )
 			{
 			this.progress = new JProgressBar( progressModel );
-			final JPanel pan = new JPanel();
+			final JComponent pan = new JPanel();
 			pan.setBorder(new EmptyBorder( 2, 5, 5, 5 ) );
 			pan.setLayout( new BorderLayout() );
 			pan.add( BorderLayout.CENTER, this.progress );
-			this.mainPan.add( BorderLayout.SOUTH, pan );
+			mainPan.add(BorderLayout.SOUTH, pan );
 			}
 
 		this.addWindowListener(
@@ -155,7 +153,7 @@ implements	KeyListener, MouseListener, ActionListener
 			);
 		}
 
-	public synchronized void
+	private synchronized void
 	enableDismissEvents()
 		{
 		// Listen for key strokes
@@ -210,7 +208,7 @@ implements	KeyListener, MouseListener, ActionListener
 		}
 
 	public static void
-	main( final String[] args )
+	main( final String... args )
 		{
 		final DefaultBoundedRangeModel model =
 			new DefaultBoundedRangeModel( 0, 0, 0, 100 );
@@ -234,18 +232,17 @@ implements	KeyListener, MouseListener, ActionListener
 				}
 			);
 
-		splash.new Progressor( splash, model ).start();
+		new Progressor(splash, model).start();
 		}
 
-	private
+	private static final
 	class		Progressor
 	extends		Thread
 		{
-		JCVSSplash splash;
-		BoundedRangeModel model;
+		final JCVSSplash splash;
+		final BoundedRangeModel model;
 
-		public
-		Progressor( final JCVSSplash s, final BoundedRangeModel m )
+		private Progressor(final JCVSSplash s, final BoundedRangeModel m)
 			{
 			super( "Model" );
 			this.splash = s;
