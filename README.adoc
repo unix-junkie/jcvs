@@ -1,0 +1,130 @@
+= Welcome To jCVS II
+:toc:
+
+Release 5.3.1, February 18, 2002.
+
+jCVS is a Java based CVS Client. CVS is a source code control
+system based on RCS. The primary benefit of CVS is that	it
+provides a server/client protocol which allows clients such
+as jCVS to be written. jCVS allows any Java capable machine
+to be a CVS client, providing for a totally distributed source
+code management system.
+
+The
+link:docs/manual/index.html[User Manual Table Of Contents]
+is a good place to start. This is the same documentation
+displayed by the builtin help.
+
+For those familiar with Java, cd to `bin/` and `java -jar jcvsii.jar`.
+
+For Windows users, there is a shortcut in the `bin/` directory. If
+you edit the properties, and fix the path to the `javaw.exe`
+program to match your JDK or JRE installation, then you should
+be able to double-click the shortcut and launch jCVS II.
+
+'''
+[#homepage]
+== jCVS Home Page
+
+The
+link:https://web.archive.org/web/20180422034042/http://www.jcvs.org/[jCVS home page]
+will keep you abreast of new releases, as
+well as point you to download locations.
+
+[#license]
+== jCVS Is Free Software
+
+jCVS is free software that is
+licensed to you under the
+link:docs/license.html[GNU General Public License].
+
+This license allows you to use, modify and redistribute
+this software in a fashion that promotes productivity and
+the free exchange of programming concepts.
+
+The CVS client package, `com.ice.cvsc`, is licensed under the
+link:docs/lgpl.html[GNU Library General Public License (LGPL)].
+
+For more information on the history, and future, of
+_free software_, please visit the
+link:http://www.fsf.org[Free Software Foundation].
+
+[#acks]
+== Acknowledgements
+
+Thanks to all of the contributors. If I have inadvertently left your name
+off this list, please let me know!
+
+* link:mailto:ejalbert@cs.stanford.edu[Eric Albert]
+* link:mailto:nick@brainstorm.co.uk[Nick Bower]
+* link:mailto:gcollin@netonomy.com[Gérard Collin]
+* link:mailto:nixnixnix@yahoo.com[Stefaan A Eeckels]
+* link:mailto:ehfortin@sympatico.ca[Etienne-Hugues Fortin]
+* link:mailto:alain@netlinq.nl[Alain Fagot]
+* link:mailto:krogoth2@softhome.net[Richard Garand]
+* link:mailto:Frank.Gerlach@brokat.de[Frank Gerlach]
+* link:mailto:david_gunthorpe@hp.com[David Gunthorpe]
+* link:mailto:d_haase@sitec.de[Dirk Haase]
+* link:mailto:ahub@cscservodata.com[Andreas Huber]
+* link:mailto:sherali.karimov@proxima-tech.com[Sherali Karimov]
+* link:mailto:lli_net@yahoo.com[Liping Li]
+* link:mailto:paul@ags.uni-sb.de[Paul Libbrecht]
+* link:mailto:Thorsten.Ludewig@FH-Wolfenbuettel.DE[Thorsten Ludewig]
+* link:mailto:JEAN.REBILLAT@lanceurs.aeromatra.com[Jean Rebillat]
+* link:mailto:julian@practica.com.au[Julian Salerno]
+* link:mailto:marks@snap.com[Mark Schlagenhauf]
+* link:mailto:wes@sonnenreich.com[Wes Sonnenreich]
+* link:mailto:andrewt@quidnunc.com[Andrew Thompson]
+* link:mailto:mtt@uni-paderborn.de[Matthias Tichy]
+* link:mailto:Usselmann.M@icg-online.de[Manfred Usselmann]
+* link:mailto:rvaughn@pobox.com[Roger Vaughn]
+* link:mailto:urban@svenskatest.se[Urban Widmark]
+* link:mailto:shawn@willden.org[Shawn Willden]
+
+Thanks to all of the daring beta testers:
+
+* link:mailto:bjb@bunyip.com[Brenda Butler]
+* link:mailto:bchaught@fedex.com[Brian Haughton]
+* link:mailto:brianl@prognet.com[Brian Lenihan]
+* link:mailto:blu@ll.mit.edu[Brian Utterback]
+* link:mailto:byronfa@vnd.tek.com[Byron Faber]
+* link:mailto:fpeng@cae.ca[Fung Peng]
+* link:mailto:greg@agog.com[Greg Cockroft]
+* link:mailto:Herve.Poirier@grenoble.rxrc.xerox.com[Herve Poirier]
+* link:mailto:J.M.X.Reymond@frsv.bull.fr[Jean-Max Reymond]
+* link:mailto:jallard@gensym.com[Jim Allard]
+* link:mailto:Klaus.Rehm@extern.uni-regensburg.de[Klaus Rehm]
+* link:mailto:preston@speed.net[Preston Bannister]
+* link:mailto:ebert@pe-muc.de[Rolf Ebert]
+* link:mailto:rick@mailhost.bellhow.com[Rick Noble]
+* link:mailto:tumuluri@verisign.com[Ram Tumuluri (aka rk)]
+* link:mailto:stephen@steneker.com[Stephen Steneker]
+* link:mailto:scorrans@absolute.co.za[Stuart Corrans]
+
+Many thanks to
+Jim Kingdon,
+Mister client/server protocol.
+
+Thanks to
+link:mailto:osm@interguide.com[Owen S. Medd]
+for risking his disk drive to very
+early releases, and knowing where to find good coffee.
+
+We also need to pay serious homage to
+link:mailto:karen@eigeneer.com[my wife]
+for putting
+up with 18 hour days of hacking! I can not thank my wife enough
+for her understanding of
+my _little programming problem_. Maybe it's time for
+that twelve step program....
+
+_Free Software! Get with the program._
+
+tim.
+
+'''
+
+[.text-center]
+readme.html,v 5.3.1 2002/02/18 03:04:14 time +
+Copyright (c) 1997-2002 By Timothy Gerard Endres +
+jCVS is licensed to you under the link:docs/license.html[GNU General Public License].
