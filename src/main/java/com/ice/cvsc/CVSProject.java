@@ -82,7 +82,7 @@ import java.util.zip.GZIPInputStream;
 // MTT-null-list  Matthias Tichy <mtt@uni-paderborn.de>
 //   Fixed to properly handle a null file file.
 //
-// GG-dot-rep  G�rard COLLIN <gcollin@netonomy.com>
+// GG-dot-rep  Gérard COLLIN <gcollin@netonomy.com>
 //   When we see a repository string of ".", it should be ignored.
 //
 
@@ -3158,7 +3158,7 @@ CVSProject
 		//
 		// REVIEW This patch was submitted, but I do not understand
 		//        in what context it ever occurs to be fixed. TGE
-		// GG-NT-no-server  G�rard COLLIN <gcollin@netonomy.com>
+		// GG-NT-no-server  Gérard COLLIN <gcollin@netonomy.com>
 		//    Changed to searching first : after @ because of
 		//    "user@host.domain:C:/src/cvs" specifications
 		//
