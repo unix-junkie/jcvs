@@ -351,6 +351,7 @@ implements	ActionListener, FocusListener,
 			}
 		}
 
+	@SuppressWarnings("RedundantCast")
 	public void
 	expandAll( final boolean expand )
 		{
@@ -366,7 +367,7 @@ implements	ActionListener, FocusListener,
 			{
 			// If the tree is not totally expanded,
 			// this approach quicker.
-			for ( final TreeNode node : Collections.list( root.depthFirstEnumeration() ) )
+			for ( final TreeNode node : Collections.list( (Enumeration<TreeNode>) root.depthFirstEnumeration() ) )
 				{
 				if ( node == root )
 					continue;
