@@ -38,7 +38,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collections;
-import java.util.Enumeration;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -50,6 +49,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -86,8 +86,6 @@ implements	ActionListener, FocusListener,
 	public
 	EntryPanel( final CVSEntry rootEntry, final String localRoot, final ActionListener popupListener )
 		{
-		super();
-
 		this.setLayout( new GridBagLayout() );
 
 		final EntryRootNode rootNode =
@@ -295,17 +293,18 @@ implements	ActionListener, FocusListener,
 		final TreePath rootPath = new TreePath( root.getPath() );
 		this.entriesTree.expandPath( rootPath );
 
-		for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.children()) )
+		for ( final TreeNode node : Collections.list( root.children() ) )
 			{
-			if ( node.isLeaf() )
+			final EntryNode entryNode = (EntryNode) node;
+			if ( entryNode.isLeaf() )
 				{
-				final TreePath path = new TreePath( node.getPath() );
+				final TreePath path = new TreePath( entryNode.getPath() );
 				this.entriesTree.addSelectionPath( path );
 			//	this.entriesTree.expandPath( path );
 				}
 			else
 				{
-				this.selectAll( node );
+				this.selectAll( entryNode );
 				}
 			}
 		}
@@ -326,24 +325,25 @@ implements	ActionListener, FocusListener,
 		//      that the children() enumerator will not be
 		//      empty.
 		final int cnt = root.getChildCount();
-		for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.children()) )
+		for ( final TreeNode node : Collections.list( root.children() ) )
 			{
-			if ( node.isLeaf() )
+			final EntryNode entryNode = (EntryNode) node;
+			if ( entryNode.isLeaf() )
 				{
-				final CVSEntry entry = node.getEntry();
-				if ( entry.isLocalFileModified( node.getLocalFile() )
+				final CVSEntry entry = entryNode.getEntry();
+				if ( entry.isLocalFileModified( entryNode.getLocalFile() )
 						|| entry.isNewUserFile()
 						|| entry.isToBeRemoved()
 						|| entry.isInConflict() )
 					{
-					final TreePath path = new TreePath( node.getPath() );
+					final TreePath path = new TreePath( entryNode.getPath() );
 					this.entriesTree.addSelectionPath( path );
 					this.entriesTree.expandPath( path );
 					}
 				}
 			else
 				{
-				this.selectModified( node );
+				this.selectModified( entryNode );
 				}
 			}
 		}
@@ -363,13 +363,13 @@ implements	ActionListener, FocusListener,
 			{
 			// If the tree is not totally expanded,
 			// this approach quicker.
-			for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.depthFirstEnumeration()) )
+			for ( final TreeNode node : Collections.list( root.depthFirstEnumeration() ) )
 				{
 				if ( node == root )
 					continue;
 				if ( ! node.isLeaf() )
 					this.entriesTree.collapsePath
-						( new TreePath( node.getPath() ) );
+						( new TreePath( ((DefaultMutableTreeNode) node).getPath() ) );
 				}
 			}
 		}
@@ -379,13 +379,14 @@ implements	ActionListener, FocusListener,
 		{
 		// NOTE getChildCount() is used to force load the children.
 		final int cnt = root.getChildCount();
-		for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) root.children()) )
+		for ( final TreeNode node : Collections.list( root.children() ) )
 			{
-			if ( ! node.isLeaf() )
+			final EntryNode entryNode = (EntryNode) node;
+			if ( ! entryNode.isLeaf() )
 				{
 				this.entriesTree.expandPath
-					( new TreePath( node.getPath() ) );
-				this.expandAll( node );
+					( new TreePath( entryNode.getPath() ) );
+				this.expandAll( entryNode );
 				}
 			}
 		}

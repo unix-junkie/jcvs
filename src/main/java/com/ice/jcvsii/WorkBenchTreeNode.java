@@ -1,11 +1,12 @@
 
 package com.ice.jcvsii;
 
-import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import static java.util.Collections.list;
 
 
 public
@@ -61,7 +62,7 @@ extends		DefaultMutableTreeNode
 		final WorkBenchTreeNode[] result =
 			new WorkBenchTreeNode[ this.getChildCount() ];
 
-		final Iterator<Object> it = Collections.list(this.children()).iterator();
+		final Iterator<TreeNode> it = list( this.children() ).iterator();
 		for ( int i = 0 ; it.hasNext() ; ++i )
 			result[i] = (WorkBenchTreeNode) it.next();
 
@@ -76,7 +77,7 @@ extends		DefaultMutableTreeNode
 		final WorkBenchDefinition[] result =
 			new WorkBenchDefinition[ cnt ];
 
-		final Iterator<Object> it = Collections.list(this.children()).iterator();
+		final Iterator<TreeNode> it = list( this.children() ).iterator();
 		for ( int i = 0 ; it.hasNext() ; ++i )
 			{
 			result[i] = ((WorkBenchTreeNode) it.next()).getDefinition();

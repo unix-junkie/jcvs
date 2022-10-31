@@ -50,6 +50,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.TreeNode;
 
 import com.ice.pref.UserPrefs;
 import com.ice.util.AWTUtilities;
@@ -138,9 +139,9 @@ implements	ActionListener
 	private boolean
 	checkUniqueness( final String name )
 		{
-		for ( final WorkBenchTreeNode node : Collections.list((Enumeration<WorkBenchTreeNode>) this.parentNode.children()) )
+		for ( final TreeNode node : Collections.list( this.parentNode.children() ) )
 			{
-			if ( node.getDefinition().getName().equals( name ) )
+			if ( ((WorkBenchTreeNode) node).getDefinition().getName().equals( name ) )
 				return false;
 			}
 

@@ -1,11 +1,10 @@
 
 package com.ice.config;
 
-import java.util.Collections;
-import java.util.Enumeration;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import static java.util.Collections.list;
 
 
 public
@@ -85,10 +84,10 @@ extends		DefaultMutableTreeNode
 	public ConfigureTreeNode
 	getChild( final String name )
 		{
-		for ( final ConfigureTreeNode node : Collections.list((Enumeration<ConfigureTreeNode>) children()) )
+		for ( final TreeNode node : list( this.children() ) )
 			{
 			if ( node.toString().equals( name ) )
-				return node;
+				return (ConfigureTreeNode) node;
 			}
 
 		return null;
