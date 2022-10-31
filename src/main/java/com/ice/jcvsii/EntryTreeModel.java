@@ -22,12 +22,13 @@
 
 package com.ice.jcvsii;
 
-import java.util.Collections;
-import java.util.Enumeration;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
+
+import java.util.Enumeration;
+
+import static java.util.Collections.list;
 
 
 class		EntryTreeModel
@@ -61,6 +62,7 @@ extends		DefaultTreeModel
 		this.fireColumnsResized( getEntryRootNode(), isResizing );
 		}
 
+	@SuppressWarnings("RedundantCast")
 	private void
 	fireColumnsResized(final EntryNode source, final boolean isResizing)
 		{
@@ -75,11 +77,11 @@ extends		DefaultTreeModel
 			for ( int i = 0 ; i < len ; ++i ) ci[i] = i;
 			this.fireTreeNodesChanged( source, path, ci, null );
 
-			for ( final EntryNode cn : Collections.list((Enumeration<EntryNode>) source.children()) )
+			for ( final TreeNode cn : list( (Enumeration<TreeNode>) source.children() ) )
 				{
 				if ( ! cn.isLeaf() )
 					{
-					this.fireColumnsResized( cn, isResizing );
+					this.fireColumnsResized( (EntryNode) cn, isResizing );
 					}
 				}
 			}

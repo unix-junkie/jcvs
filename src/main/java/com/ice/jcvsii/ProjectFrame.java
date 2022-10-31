@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -71,6 +72,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import com.ice.cvsc.CVSArgumentVector;
@@ -1512,6 +1514,7 @@ CVSTracer.traceIf( true,
 	 *        the directory is returned.
 	 */
 
+	@SuppressWarnings("RedundantCast")
 	private CVSEntryVector
 	getSelectedEntries(final boolean expandDirEntries)
 		{
@@ -1532,12 +1535,9 @@ CVSTracer.traceIf( true,
 					}
 				else
 					{
-					final Enumeration chEnum = node.children();
-					for ( ; chEnum.hasMoreElements() ; )
+					for ( final TreeNode chNode : Collections.list( (Enumeration<TreeNode>) node.children() ) )
 						{
-						final EntryNode chNode =
-							(EntryNode) chEnum.nextElement();
-						entries.appendEntry( chNode.getEntry() );
+						entries.appendEntry( ((EntryNode) chNode).getEntry() );
 						}
 					}
 				}
