@@ -24,13 +24,13 @@ package com.ice.jcvsii;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.ice.cvsc.CVSCUtilities;
 import com.ice.cvsc.CVSEntry;
@@ -38,6 +38,8 @@ import com.ice.cvsc.CVSEntry.ChildEvent;
 import com.ice.cvsc.CVSEntry.ChildEventListener;
 import com.ice.cvsc.CVSEntryVector;
 import com.ice.cvsc.CVSTimestamp;
+
+import static java.util.Collections.list;
 
 
 public
@@ -137,15 +139,16 @@ implements	ChildEventListener
 	/**
 	 * Resets the cached display strings so they will be recomputed.
 	 */
+	@SuppressWarnings("RedundantCast")
 	public void
 	resetDisplayCaches()
 		{
 		this.tsCache = null;
 		if ( this.hasLoaded )
 			{
-			for ( final EntryNode node : Collections.list((Enumeration<EntryNode>) this.children()) )
+			for ( final TreeNode node : list( (Enumeration<TreeNode>) this.children() ) )
 				{
-				node.resetDisplayCaches();
+				((EntryNode) node).resetDisplayCaches();
 				}
 			}
 		}
