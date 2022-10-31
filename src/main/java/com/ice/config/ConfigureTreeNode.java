@@ -4,6 +4,8 @@ package com.ice.config;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import java.util.Enumeration;
+
 import static java.util.Collections.list;
 
 
@@ -81,10 +83,11 @@ extends		DefaultMutableTreeNode
 		this.spec = spec;
 		}
 
+	@SuppressWarnings("RedundantCast")
 	public ConfigureTreeNode
 	getChild( final String name )
 		{
-		for ( final TreeNode node : list( this.children() ) )
+		for ( final TreeNode node : list( (Enumeration<TreeNode>) this.children() ) )
 			{
 			if ( node.toString().equals( name ) )
 				return (ConfigureTreeNode) node;

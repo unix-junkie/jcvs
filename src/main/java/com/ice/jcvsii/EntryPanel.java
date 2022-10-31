@@ -38,6 +38,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collections;
+import java.util.Enumeration;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -281,6 +282,7 @@ implements	ActionListener, FocusListener,
 		this.selectAll( this.entriesModel.getEntryRootNode() );
 		}
 
+	@SuppressWarnings("RedundantCast")
 	public void
 	selectAll( final EntryNode root )
 		{
@@ -293,7 +295,7 @@ implements	ActionListener, FocusListener,
 		final TreePath rootPath = new TreePath( root.getPath() );
 		this.entriesTree.expandPath( rootPath );
 
-		for ( final TreeNode node : Collections.list( root.children() ) )
+		for ( final TreeNode node : Collections.list( (Enumeration<TreeNode>) root.children() ) )
 			{
 			final EntryNode entryNode = (EntryNode) node;
 			if ( entryNode.isLeaf() )
@@ -317,6 +319,7 @@ implements	ActionListener, FocusListener,
 		this.selectModified( this.entriesModel.getEntryRootNode() );
 		}
 
+	@SuppressWarnings("RedundantCast")
 	private void
 	selectModified(final EntryNode root)
 		{
@@ -325,7 +328,7 @@ implements	ActionListener, FocusListener,
 		//      that the children() enumerator will not be
 		//      empty.
 		final int cnt = root.getChildCount();
-		for ( final TreeNode node : Collections.list( root.children() ) )
+		for ( final TreeNode node : Collections.list( (Enumeration<TreeNode>) root.children() ) )
 			{
 			final EntryNode entryNode = (EntryNode) node;
 			if ( entryNode.isLeaf() )
@@ -374,12 +377,13 @@ implements	ActionListener, FocusListener,
 			}
 		}
 
+	@SuppressWarnings("RedundantCast")
 	public void
 	expandAll( final EntryNode root )
 		{
 		// NOTE getChildCount() is used to force load the children.
 		final int cnt = root.getChildCount();
-		for ( final TreeNode node : Collections.list( root.children() ) )
+		for ( final TreeNode node : Collections.list( (Enumeration<TreeNode>) root.children() ) )
 			{
 			final EntryNode entryNode = (EntryNode) node;
 			if ( ! entryNode.isLeaf() )

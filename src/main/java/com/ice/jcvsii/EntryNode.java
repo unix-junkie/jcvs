@@ -24,6 +24,7 @@ package com.ice.jcvsii;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -138,13 +139,14 @@ implements	ChildEventListener
 	/**
 	 * Resets the cached display strings so they will be recomputed.
 	 */
+	@SuppressWarnings("RedundantCast")
 	public void
 	resetDisplayCaches()
 		{
 		this.tsCache = null;
 		if ( this.hasLoaded )
 			{
-			for ( final TreeNode node : list( this.children() ) )
+			for ( final TreeNode node : list( (Enumeration<TreeNode>) this.children() ) )
 				{
 				((EntryNode) node).resetDisplayCaches();
 				}

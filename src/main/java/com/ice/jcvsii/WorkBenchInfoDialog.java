@@ -136,10 +136,11 @@ implements	ActionListener
 		return true;
 		}
 
+	@SuppressWarnings("RedundantCast")
 	private boolean
 	checkUniqueness( final String name )
 		{
-		for ( final TreeNode node : Collections.list( this.parentNode.children() ) )
+		for ( final TreeNode node : Collections.list( (Enumeration<TreeNode>) this.parentNode.children() ) )
 			{
 			if ( ((WorkBenchTreeNode) node).getDefinition().getName().equals( name ) )
 				return false;
