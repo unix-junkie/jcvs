@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build (Java ${{ matrix.java-version }})
+    name: Site (Java ${{ matrix.java-version }})
     runs-on: ubuntu-latest
     strategy:
       # We need multiple builds to run even if the 1st one is failing, because
